@@ -1,0 +1,77 @@
+commit 32ec6213b9f698eb48c573b16e8bae40eb7dca8c
+Author: Ville Skyttä <ville.skytta@iki.fi>
+Date:   Fri Jun 24 18:44:32 2011 +0300
+
+    Check doUtilBuildTransaction return value, exit early on failure.
+
+diff --git a/debuginfo-install.py b/debuginfo-install.py
+index 0891f63..177c6c3 100755
+--- a/debuginfo-install.py
++++ b/debuginfo-install.py
+@@ -100,7 +100,9 @@ class DebugInfoInstall(YumUtilBase):
+         
+         self.debugInfo_main()
+         if hasattr(self, 'doUtilBuildTransaction'):
+-            self.doUtilBuildTransaction()
++            errc = self.doUtilBuildTransaction()
++            if errc:
++                sys.exit(errc)
+         else:
+             try:
+                 self.buildTransaction()
+diff --git a/package-cleanup.py b/package-cleanup.py
+index a4eb7d9..4794369 100755
+--- a/package-cleanup.py
++++ b/package-cleanup.py
+@@ -343,7 +343,9 @@ class PackageCleanup(YumUtilBase):
+             self._remove_old_kernels(opts.kernelcount, opts.keepdevel)
+             self.run_with_package_names.add('yum-utils')
+             if hasattr(self, 'doUtilBuildTransaction'):
+-                self.doUtilBuildTransaction()
++                errc = self.doUtilBuildTransaction()
++                if errc:
++                    sys.exit(errc)
+             else:
+                 try:
+                     self.buildTransaction()
+@@ -392,7 +394,9 @@ class PackageCleanup(YumUtilBase):
+             self.run_with_package_names.add('yum-utils')
+ 
+             if hasattr(self, 'doUtilBuildTransaction'):
+-                self.doUtilBuildTransaction()
++                errc = self.doUtilBuildTransaction()
++                if errc:
++                    sys.exit(errc)
+             else:
+                 try:
+                     self.buildTransaction()
+diff --git a/yum-builddep.py b/yum-builddep.py
+index d13c90e..d7a37c3 100755
+--- a/yum-builddep.py
++++ b/yum-builddep.py
+@@ -98,7 +98,9 @@ class YumBuildDep(YumUtilBase):
+             sys.exit(1)
+ 
+         if hasattr(self, 'doUtilBuildTransaction'):
+-            self.doUtilBuildTransaction()
++            errc = self.doUtilBuildTransaction()
++            if errc:
++                sys.exit(errc)
+         else:
+             try:
+                 self.buildTransaction()
+diff --git a/yum-complete-transaction.py b/yum-complete-transaction.py
+index fde1f35..c5074ab 100755
+--- a/yum-complete-transaction.py
++++ b/yum-complete-transaction.py
+@@ -208,7 +208,9 @@ class YumCompleteTransaction(YumUtilBase):
+ 
+         current_count = len(self.tsInfo)
+         if hasattr(self, 'doUtilBuildTransaction'):
+-            self.doUtilBuildTransaction(unfinished_transactions_check=False)
++            errc = self.doUtilBuildTransaction(unfinished_transactions_check=False)
++            if errc:
++                sys.exit(errc)
+         else:
+             try:
+                 self.buildTransaction(unfinished_transactions_check=False)

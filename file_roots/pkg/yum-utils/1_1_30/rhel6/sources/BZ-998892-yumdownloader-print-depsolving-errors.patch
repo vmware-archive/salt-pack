@@ -1,0 +1,16 @@
+diff -up yum-utils-1.1.30/yumdownloader.py.old yum-utils-1.1.30/yumdownloader.py
+--- yum-utils-1.1.30/yumdownloader.py.old	2014-05-14 11:03:01.000000000 +0200
++++ yum-utils-1.1.30/yumdownloader.py	2014-05-14 11:05:57.144816813 +0200
+@@ -175,7 +175,11 @@ class YumDownloader(YumUtilBase):
+                 self.tsInfo.addInstall(po)
+                 self.localPackages.append(po)
+             # Resolve dependencies
+-            self.resolveDeps()
++            result, resultmsgs = self.resolveDeps()
++            if result == 1:
++                for msg in resultmsgs:
++                    self.logger.critical(msg)
++                self.logger.critical('Dependency resolution failed, some packages will not be downloaded.')
+             # Add newly added packages to the toDownload list
+             for pkg in self.tsInfo.getMembers():
+                 if not pkg in toDownload:

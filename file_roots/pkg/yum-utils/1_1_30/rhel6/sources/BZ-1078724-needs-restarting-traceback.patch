@@ -1,0 +1,25 @@
+Index: yum-utils-1.1.30/needs-restarting.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- yum-utils-1.1.30/needs-restarting.py	(revision )
++++ yum-utils-1.1.30/needs-restarting.py	(revision )
+@@ -80,7 +80,8 @@
+     files = []
+     smaps = '/proc/%s/smaps' % pid
+     try:
+-        maps = open(smaps, 'r')
++        with open(smaps, 'r') as maps_f:
++            maps = maps_f.readlines()
+     except (IOError, OSError), e:
+         print >>sys.stderr, "Could not open %s" % smaps
+         return files
+@@ -95,7 +96,6 @@
+         filename = filename.strip()
+         if filename not in files:
+             files.append(filename)
+-    maps.close()
+     return files
+ 
+ def main(args):

@@ -1,0 +1,136 @@
+commit c6138998cca7b51b471980d636d4d0024d8def0b
+Author: James Antill <james@and.org>
+Date:   Fri Jun 10 12:12:57 2011 -0400
+
+    Add --compare-arch for the other side of the multilib. diff. BZ 710579.
+
+diff --git a/docs/repodiff.1 b/docs/repodiff.1
+index 640b023..c421c5d 100644
+--- a/docs/repodiff.1
++++ b/docs/repodiff.1
+@@ -17,14 +17,21 @@ Add a repo. as an new repo.
+ .IP "\fB\-\-archlist, -a\fP"
+ Add architectures to change the default from just comparing source packages.
+ Note that if you want the same as a native
+-"x86_64" architecture machine you need: x86_64,athlon,i686,i586,i486,i386,noarch
++"x86_64" architecture machine you just need to pass "x86_64" (this is different
++from earlier versions where you needed to specify
++"x86_64,athlon,i686,i586,i486,i386,noarch" and you still got "src").
+ .IP "\fB\-\-size, -s\fP"
+ Ouput additional data about the size of the changes.
++.IP "\fB\-\-compare-arch\fP"
++Normally packages are just compared based on their name, this flag makes the
++comparison also use the arch. So foo.i386 and foo.x86_64 are different.
+ .SH "EXAMPLES"
+ .IP "Compare source pkgs in two local repos:"
+ \fBrepodiff --old=/tmp/repo-old --new=/tmp/repo-new\fP
+-.IP "Compare x86_64 binary pkgs in two remote repos, and two local one:"
+-\fBrepodiff -a x86_64,i386,noarch,src --old=http://example.com/repo1-old --old=/tmp/repo-old --new=http://example.com/repo1-new --new=/tmp/repo-new\fP
++.IP "Compare x86_64 compat. binary pkgs in two remote repos, and two local one:"
++\fBrepodiff -a x86_64 --old=http://example.com/repo1-old --old=/tmp/repo-old --new=http://example.com/repo1-new --new=/tmp/repo-new\fP
++.IP "Compare x86_64 compat. binary pkgs, but also compare arch:"
++\fBrepodiff -a x86_64 --compare-arch --old=http://example.com/repo1-old --old=/tmp/repo-old --new=http://example.com/repo1-new --new=/tmp/repo-new\fP
+ .PP 
+ 
+ .SH "SEE ALSO"
+diff --git a/repodiff.py b/repodiff.py
+index c22510e..8c5e582 100755
+--- a/repodiff.py
++++ b/repodiff.py
+@@ -61,7 +61,7 @@ class DiffYum(yum.YumBase):
+             archlist = self.dy_archlist
+         self._getSacks(archlist=archlist, thisrepo=repoid)
+ 
+-    def dy_diff(self):
++    def dy_diff(self, compare_arch=False):
+         add = []
+         remove = []        
+         modified = []
+@@ -75,15 +75,20 @@ class DiffYum(yum.YumBase):
+             """ Returns latest pair of (oldpkg, newpkg) for each package
+                 name. If that name doesn't exist, then it returns None for
+                 that package. """
+-            lastname = None
++            last = None
+             npkg = opkg = None
+             for pkg in sorted(pkgs):
+-                if lastname is None:
+-                    lastname = pkg.name
+-                if lastname != pkg.name:
++                if compare_arch:
++                    key = (pkg.name, pkg.arch)
++                else:
++                    key = pkg.name
++
++                if last is None:
++                    last = key
++                if last != key:
+                     yield opkg, npkg
+                     opkg = npkg = None
+-                    lastname = pkg.name
++                    last = key
+ 
+                 if pkg.repo.id.startswith('old'):
+                     opkg = pkg
+@@ -147,6 +152,8 @@ def parseArgs(args):
+     parser.add_option("-q", "--quiet", default=False, action='store_true')
+     parser.add_option("-a", "--archlist", default=[], action="append",
+                       help="In addition to src.rpms, any arch you want to include")
++    parser.add_option("--compare-arch", default=False, action='store_true',
++                      help="When comparing binary repos. also compare the arch of packages, to see if they are different")
+     parser.add_option("-s", "--size", default=False, action='store_true',
+                       help="Output size changes for any new->old packages")
+     parser.add_option("--simple",  default=False, action='store_true',
+@@ -206,7 +213,7 @@ def main(args):
+             print "Could not setup repo at url %s: %s" % (r, e)
+             sys.exit(1)
+     if not opts.quiet: print 'performing the diff'
+-    ygh = my.dy_diff()
++    ygh = my.dy_diff(opts.compare_arch)
+     
+ 
+ 
+@@ -215,13 +222,19 @@ def main(args):
+     remove_sizechange = 0
+     if ygh.add:
+         for pkg in sorted(ygh.add):
+-            print 'New package: %s-%s-%s' % (pkg.name, pkg.ver, pkg.rel)
++            if opts.compare_arch:
++                print 'New package: %s' % pkg
++            else:
++                print 'New package: %s-%s-%s' % (pkg.name, pkg.ver, pkg.rel)
+             print '             %s\n' % to_unicode(pkg.summary)
+             add_sizechange += int(pkg.size)
+                 
+     if ygh.remove:
+         for pkg in sorted(ygh.remove):
+-            print 'Removed package:  %s-%s-%s' % (pkg.name, pkg.ver, pkg.rel)
++            if opts.compare_arch:
++                print 'Removed package: %s' % pkg
++            else:
++                print 'Removed package:  %s-%s-%s' % (pkg.name, pkg.ver,pkg.rel)
+             if pkg in ygh.obsoleted:
+                 print 'Obsoleted by   :  %s' % ygh.obsoleted[pkg]
+             remove_sizechange += (int(pkg.size))
+@@ -234,10 +247,18 @@ def main(args):
+                 total_sizechange += sizechange
+             
+             if opts.simple:
+-                msg = "%s: %s-%s-%s ->  %s-%s-%s" % (pkg.name, oldpkg.name, 
+-                        oldpkg.ver, oldpkg.rel, pkg.name, pkg.ver, pkg.rel)
++                if opts.compare_arch:
++                    msg = "%s: %s ->  %s" % (pkg.name, oldpkg, pkg)
++                else:
++                    msg = "%s: %s-%s-%s ->  %s-%s-%s" % (pkg.name, oldpkg.name, 
++                                                         oldpkg.ver, oldpkg.rel,
++                                                         pkg.name, pkg.ver,
++                                                         pkg.rel)
+             else:
+-                msg = "%s-%s-%s" % (pkg.name, pkg.ver, pkg.rel)
++                if opts.compare_arch:
++                    msg = "%s" % pkg
++                else:
++                    msg = "%s-%s-%s" % (pkg.name, pkg.ver, pkg.rel)
+                 dashes = "-" * len(msg) 
+                 msg += "\n%s\n" % dashes
+                 # get newest clog time from the oldpkg

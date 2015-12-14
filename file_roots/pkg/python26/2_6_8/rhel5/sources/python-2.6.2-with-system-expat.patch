@@ -1,0 +1,67 @@
+diff -up Python-2.6.2/configure.in.expat Python-2.6.2/configure.in
+--- Python-2.6.2/configure.in.expat	2010-01-25 21:46:42.700858981 -0500
++++ Python-2.6.2/configure.in	2010-01-25 21:46:54.710857387 -0500
+@@ -1898,6 +1898,13 @@ LIBS="$withval $LIBS"
+ ],
+ [AC_MSG_RESULT(no)])
+ 
++# Check for use of the system expat library
++AC_MSG_CHECKING(for --with-system-expat)
++AC_ARG_WITH(system_expat,
++            AC_HELP_STRING(--with-system-expat, build pyexpat module using an installed expat library))
++
++AC_MSG_RESULT($with_system_expat)
++
+ # Check for use of the system libffi library
+ AC_MSG_CHECKING(for --with-system-ffi)
+ AC_ARG_WITH(system_ffi,
+diff -up Python-2.6.2/setup.py.expat Python-2.6.2/setup.py
+--- Python-2.6.2/setup.py.expat	2010-01-25 21:46:48.490911125 -0500
++++ Python-2.6.2/setup.py	2010-01-25 21:46:54.711857933 -0500
+@@ -1196,19 +1196,26 @@ class PyBuildExt(build_ext):
+         #
+         # More information on Expat can be found at www.libexpat.org.
+         #
+-        expatinc = os.path.join(os.getcwd(), srcdir, 'Modules', 'expat')
+-        define_macros = [
+-            ('HAVE_EXPAT_CONFIG_H', '1'),
+-        ]
++        if '--with-system-expat' in sysconfig.get_config_var("CONFIG_ARGS"):
++            expat_inc = []
++            define_macros = []
++            expat_lib = ['expat']
++            expat_sources = []
++        else:
++            expat_inc = [os.path.join(os.getcwd(), srcdir, 'Modules', 'expat')]
++            define_macros = [
++                ('HAVE_EXPAT_CONFIG_H', '1'),
++            ]
++            expat_lib = []
++            expat_sources = ['expat/xmlparse.c',
++                             'expat/xmlrole.c',
++                             'expat/xmltok.c']
+ 
+         exts.append(Extension('pyexpat',
+                               define_macros = define_macros,
+-                              include_dirs = [expatinc],
+-                              sources = ['pyexpat.c',
+-                                         'expat/xmlparse.c',
+-                                         'expat/xmlrole.c',
+-                                         'expat/xmltok.c',
+-                                         ],
++                              include_dirs = expat_inc,
++                              libraries = expat_lib,
++                              sources = ['pyexpat.c'] + expat_sources
+                               ))
+ 
+         # Fredrik Lundh's cElementTree module.  Note that this also
+@@ -1218,7 +1225,8 @@ class PyBuildExt(build_ext):
+             define_macros.append(('USE_PYEXPAT_CAPI', None))
+             exts.append(Extension('_elementtree',
+                                   define_macros = define_macros,
+-                                  include_dirs = [expatinc],
++                                  include_dirs = expat_inc,
++                                  libraries = expat_lib,
+                                   sources = ['_elementtree.c'],
+                                   ))
+         else:

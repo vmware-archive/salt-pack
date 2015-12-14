@@ -1,0 +1,22 @@
+index 8099b19..4f99b6a 100644
+--- a/plugins/fs-snapshot/fs-snapshot.py
++++ b/plugins/fs-snapshot/fs-snapshot.py
+@@ -82,14 +82,15 @@ def inspect_volume_lvm(conduit, volume):
+     if device.startswith("/dev/mapper/"):
+         # convert /dev/mapper name to /dev/vg/lv for use with LVM2 tools
+         # - 'dmsetup splitname' will collapse any escaped characters
+-        p = Popen(["/sbin/dmsetup", "splitname", "--separator", "/",
++        p = Popen(["/sbin/dmsetup", "splitname", "--separator", " ",
+                    "--noheadings", "-c",
+-                   "-o", "vg_name,lv_name", device], stdout=PIPE, stderr=PIPE)
++                   device], stdout=PIPE, stderr=PIPE)
+         err = p.wait()
+         if err:
+             return 0
+         output = p.communicate()[0]
+-        device = output.strip().replace("/dev/mapper/", "/dev/")
++        device = "/".join(output.split()[:2])
++        device = device.replace("/dev/mapper/", "/dev/")
+         volume["device"] = device
+ 
+     # Check if device is managed by lvm

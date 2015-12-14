@@ -1,0 +1,59 @@
+diff -up cpython-59223da36dec/Makefile.pre.in.no-static-lib cpython-59223da36dec/Makefile.pre.in
+--- cpython-59223da36dec/Makefile.pre.in.no-static-lib	2012-08-07 16:43:43.296466422 -0400
++++ cpython-59223da36dec/Makefile.pre.in	2012-08-07 16:44:13.299464371 -0400
+@@ -464,7 +464,7 @@ coverage:
+ 	$(RUNSHARED) $(PYTHON_FOR_BUILD) ./Tools/clinic/clinic.py --make
+ 
+ # Build the interpreter
+-$(BUILDPYTHON):	Modules/python.o $(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY)
++$(BUILDPYTHON):	Modules/python.o $(LDLIBRARY) $(PY3LIBRARY)
+ 	$(LINKCC) $(PY_LDFLAGS) $(LINKFORSHARED) -o $@ Modules/python.o $(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
+ 
+ platform: $(BUILDPYTHON) pybuilddir.txt
+@@ -480,18 +480,6 @@ sharedmods: $(BUILDPYTHON) $(SYSCONFIGDA
+ 		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
+ 		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build
+ 
+-# Build static library
+-# avoid long command lines, same as LIBRARY_OBJS
+-$(LIBRARY): $(LIBRARY_OBJS)
+-	-rm -f $@
+-	$(AR) $(ARFLAGS) $@ Modules/getbuildinfo.o
+-	$(AR) $(ARFLAGS) $@ $(PARSER_OBJS)
+-	$(AR) $(ARFLAGS) $@ $(OBJECT_OBJS)
+-	$(AR) $(ARFLAGS) $@ $(PYTHON_OBJS) Python/frozen.o
+-	$(AR) $(ARFLAGS) $@ $(MODULE_OBJS) $(SIGNAL_OBJS)
+-	$(AR) $(ARFLAGS) $@ $(MODOBJS)
+-	$(RANLIB) $@
+-
+ libpython$(LDVERSION).so: $(LIBRARY_OBJS)
+ 	if test $(INSTSONAME) != $(LDLIBRARY); then \
+ 		$(BLDSHARED) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
+@@ -581,7 +569,7 @@ Modules/Setup: $(srcdir)/Modules/Setup.d
+ 		echo "-----------------------------------------------"; \
+ 	fi
+ 
+-Modules/_testembed: Modules/_testembed.o $(LIBRARY) $(LDLIBRARY) $(PY3LIBRARY)
++Modules/_testembed: Modules/_testembed.o $(LDLIBRARY) $(PY3LIBRARY)
+ 	$(LINKCC) $(PY_LDFLAGS) $(LINKFORSHARED) -o $@ Modules/_testembed.o $(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
+ 
+ ############################################################################
+@@ -1155,18 +1143,6 @@ libainstall:	all python-config
+ 		else	true; \
+ 		fi; \
+ 	done
+-	@if test -d $(LIBRARY); then :; else \
+-		if test "$(PYTHONFRAMEWORKDIR)" = no-framework; then \
+-			if test "$(SHLIB_SUFFIX)" = .dll; then \
+-				$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBPL) ; \
+-			else \
+-				$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
+-				$(RANLIB) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
+-			fi; \
+-		else \
+-			echo Skip install of $(LIBRARY) - use make frameworkinstall; \
+-		fi; \
+-	fi
+ 	$(INSTALL_DATA) Modules/config.c $(DESTDIR)$(LIBPL)/config.c
+ 	$(INSTALL_DATA) Modules/python.o $(DESTDIR)$(LIBPL)/python.o
+ 	$(INSTALL_DATA) $(srcdir)/Modules/config.c.in $(DESTDIR)$(LIBPL)/config.c.in

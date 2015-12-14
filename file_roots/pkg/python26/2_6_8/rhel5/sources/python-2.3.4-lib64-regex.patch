@@ -1,0 +1,18 @@
+--- Python-2.3.4/Lib/test/test_re.py			2004-04-20 23:32:33.000000000 +0200
++++ Python-2.3.4/Lib/test/test_re.py.lib64-regex	2004-05-29 17:36:52.000000000 +0200
+@@ -497,6 +497,15 @@
+         self.assert_(re.compile('bug_926075') is not
+                      re.compile(eval("u'bug_926075'")))
+ 
++    def test_bug_931848(self):
++        try:
++            unicode
++        except NameError:
++            pass
++        pattern = eval('u"[\u002E\u3002\uFF0E\uFF61]"')
++        self.assertEqual(re.compile(pattern).split("a.b.c"),
++                         ['a','b','c'])
++
+ def run_re_tests():
+     from test.re_tests import benchmarks, tests, SUCCEED, FAIL, SYNTAX_ERROR
+     if verbose:

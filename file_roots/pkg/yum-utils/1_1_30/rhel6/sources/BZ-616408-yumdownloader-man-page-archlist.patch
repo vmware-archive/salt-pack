@@ -1,0 +1,23 @@
+commit 35a14be7b6bf913fcda5eaabb1ca8eab7c2b8276
+Author: James Antill <james@and.org>
+Date:   Wed Mar 2 11:32:42 2011 -0500
+
+    Add --archlist to yumdownload man page.
+
+diff --git a/docs/yumdownloader.1 b/docs/yumdownloader.1
+index 0484f30..a8a3b16 100644
+--- a/docs/yumdownloader.1
++++ b/docs/yumdownloader.1
+@@ -19,6 +19,12 @@ Instead of downloading RPMs, list the URLs that would be downloaded.
+ When downloading RPMs, resolve dependencies and also download the required packages.
+ .IP "\fB\-\-source\fP"
+ Instead of downloading the binary RPMs, download the source RPMs.
++.IP "\fB\-\-archlist=ARCH1[,ARCH2...]\fP"
++Limit the query to packages of given architecture(s). Valid values are all
++architectures known to rpm/yum such as 'i386' and 'src' for
++source RPMS. Note that repoquery will now change yum's "arch" to the first
++value in the archlist. So "\-\-archlist=i386,i686" will change yum's canonical
++arch to i386, but allow packages of i386 and i686.
+ .SH "ADDITIONAL OPTIONS"
+ Yumdownloader inherits all other options from yum. See the yum(8) man page
+ for more information

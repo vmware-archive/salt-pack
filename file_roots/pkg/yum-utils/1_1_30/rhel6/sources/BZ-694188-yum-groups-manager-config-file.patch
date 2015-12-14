@@ -1,0 +1,48 @@
+commit bdfbab3d9ad53dcaf661f5c0838aba464d60b17a
+Author: James Antill <james@and.org>
+Date:   Wed Apr 6 14:52:48 2011 -0400
+
+    Convert repoquery/yum-groups-manager to use preconf only. BZ 694188.
+
+diff --git a/repoquery.py b/repoquery.py
+index 64fb4ec..8d3cdb5 100755
+--- a/repoquery.py
++++ b/repoquery.py
+@@ -1292,10 +1292,11 @@ def main(args):
+     repoq.preconf.releasever = opts.releasever
+     if archlist and not archlist[0] == 'src':
+         repoq.preconf.arch = archlist[0]
+-    if opts.conffile:
+-        repoq.doConfigSetup(fn=opts.conffile, debuglevel=initnoise, init_plugins=opts.plugins)
+-    else:
+-        repoq.doConfigSetup(debuglevel=initnoise, init_plugins=opts.plugins)
++    if opts.conffile is not None:
++        repoq.preconf.fn = opts.conffile
++    repoq.preconf.debuglevel = initnoise
++    repoq.preconf.init_plugins = opts.plugins
++    repoq.conf
+ 
+     if opts.repofrompath:
+         # setup the fake repos
+diff --git a/yum-groups-manager.py b/yum-groups-manager.py
+index 27995b3..2cf73c8 100755
+--- a/yum-groups-manager.py
++++ b/yum-groups-manager.py
+@@ -133,12 +133,11 @@ def main():
+     # Borrowing large sections from repoquery/pkg-tree etc.
+     initnoise = (not opts.quiet) * 2
+     yb = yum.YumBase()
+-    yb.doConfigSetup(debuglevel=0, errorlevel=1)
+-    if opts.conffile:
+-        yb.doConfigSetup(fn=opts.conffile, debuglevel=initnoise,
+-                         init_plugins=opts.plugins)
+-    else:
+-        yb.doConfigSetup(debuglevel=initnoise, init_plugins=opts.plugins)
++    if opts.conffile is not None:
++        yb.preconf.fn = opts.conffile
++    yb.preconf.debuglevel = initnoise
++    yb.preconf.init_plugins = opts.plugins
++    yb.conf
+ 
+     # Show what is going on, if --quiet is not set.
+     if not opts.quiet and sys.stdout.isatty():

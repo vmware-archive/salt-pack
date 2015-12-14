@@ -1,0 +1,161 @@
+diff -up yum-utils-1.1.30/yum-builddep.py.old yum-utils-1.1.30/yum-builddep.py
+--- yum-utils-1.1.30/yum-builddep.py.old	2014-04-08 11:51:25.000000000 +0200
++++ yum-utils-1.1.30/yum-builddep.py	2014-04-08 12:00:01.923438610 +0200
+@@ -87,6 +87,10 @@ class YumBuildDep(YumUtilBase):
+             self.logger.error("Error: You must be root to install packages")
+             sys.exit(1)
+ 
++        # Use source rpms
++        self.arch.archlist.append('src')
++        self.setupSourceRepos()
++
+         # Setup yum (Ts, RPM db, Repo & Sack)
+         self.doUtilYumSetup()
+         # Do the real action
+@@ -117,7 +121,6 @@ class YumBuildDep(YumUtilBase):
+         
+     def setupSourceRepos(self):
+         # enable the -source repos for enabled primary repos
+-        archlist = rpmUtils.arch.getArchList() + ['src']    
+         for repo in self.repos.listEnabled():
+             issource_repo = repo.id.endswith('-source')
+             if rhn_source_repos and repo.id.endswith('-source-rpms'):
+@@ -128,24 +131,13 @@ class YumBuildDep(YumUtilBase):
+             elif not issource_repo:
+                 srcrepo = '%s-source' % repo.id
+             else:
+-                # Need to change the arch.
+-                repo.close()
+-                self.repos.disableRepo(repo.id)
+-                srcrepo = repo.id
+-            
++                continue
++
+             for r in self.repos.findRepos(srcrepo):
+                 if r in self.repos.listEnabled():
+                     continue
+                 self.logger.info('Enabling %s repository' % r.id)
+                 r.enable()
+-                # Setup the repo, without a cache
+-                r.setup(0)
+-                # Setup pkgSack with 'src' in the archlist
+-                try:
+-                    self._getSacks(archlist=archlist,thisrepo=r.id)
+-                except yum.Errors.RepoError, e:
+-                    print "Could not setup repo %s: %s" % (r.id, e)
+-                    sys.exit(1)
+ 
+     def install_deps(self, deplist):
+         for dep in deplist:
+@@ -200,7 +192,6 @@ class YumBuildDep(YumUtilBase):
+ 
+         toActOn = []     
+         if srcnames:
+-            self.setupSourceRepos()
+             pkgs = self.pkgSack.returnPackages(patterns=srcnames)
+             exact, match, unmatch = yum.packages.parsePackages(pkgs, srcnames, casematch=1)
+             srpms += exact + match
+diff -up yum-utils-1.1.30/yumdownloader.py.old yum-utils-1.1.30/yumdownloader.py
+--- yum-utils-1.1.30/yumdownloader.py.old	2014-04-08 11:51:25.000000000 +0200
++++ yum-utils-1.1.30/yumdownloader.py	2014-04-08 11:57:45.651116098 +0200
+@@ -94,63 +94,26 @@ class YumDownloader(YumUtilBase):
+             
+         # Setup yum (Ts, RPM db, Repo & Sack)
+         self.doUtilYumSetup(opts)
+-        # Setup source repos
+-        if opts.source:
+-            self.setupSourceRepos()
+         # Do the real action
+         self.exit_code = self.downloadPackages(opts)
+         
+     def setupSourceRepos(self):
+         # enable the -source repos for enabled primary repos
+-        archlist = rpmUtils.arch.getArchList() + ['src']    
+-        # Ok, we have src and bin repos. What we want to do here is:
+-        #
+-        # 1. _enable_ source repos for which the bin repos are enabled.
+-        # 2. _disable_ the _other_ src repos.
+-        #
+-        # ...also we don't want to disable the src repos. for #1 and then
+-        # re-enable them as then we get annoying messages and call .close() on
+-        # them losing the primarydb data etc.
+-
+-        # Get all src repos.
+-        src_repos = {}
+-        repos_source = self.repos.findRepos('*-source')
+-        if rhn_source_repos: # RHN
+-            repos_source += self.repos.findRepos('*-source-rpms')
+-        for repo in repos_source:
+-            src_repos[repo.id] = False
+-
+-        #  Find the enabled bin repos, and mark their respective *-source repo.
+-        # as good.
+-        for repo in self.repos.listEnabled():
+-            if repo.id not in src_repos:
+-                srcrepo = '%s-source' % repo.id
+-                if srcrepo in src_repos:
+-                    src_repos[srcrepo] = True
+-                if not rhn_source_repos:
+-                    continue
+-                if not repo.id.endswith("-rpms"):
+-                    continue
+-                srcrepo = repo.id[:-5] + '-source-rpms'
+-                if srcrepo in src_repos:
+-                    src_repos[srcrepo] = True
+-
+-        # Toggle src repos that are set the wrong way
+-        for repo in repos_source:
+-            if     repo.isEnabled() and not src_repos[repo.id]:
+-                repo.close()
+-                self.repos.disableRepo(repo.id)
+-            if not repo.isEnabled() and     src_repos[repo.id]:
++
++        enabled = {}
++        for repo in self.repos.findRepos('*'):
++            enabled[repo.id] = repo.isEnabled()
++        for repo in self.repos.findRepos('*'):
++            if repo.id.endswith('-source'):
++                primary = repo.id[:-7]
++            elif rhn_source_repos and repo.id.endswith('-source-rpms'):
++                primary = repo.id[:-12] + '-rpms'
++            else:
++                continue
++
++            if not repo.isEnabled() and enabled.get(primary):
+                 self.logger.info('Enabling %s repository' % repo.id)
+                 repo.enable()
+-                # Setup the repo, without a cache
+-                repo.setup(0)
+-                try:
+-                    # Setup pkgSack with 'src' in the archlist
+-                    self._getSacks(archlist=archlist, thisrepo=repo.id)
+-                except yum.Errors.YumBaseError, msg:
+-                    self.logger.critical(str(msg))
+-                    sys.exit(1)
+         
+     def downloadPackages(self,opts):
+         
+@@ -283,6 +246,9 @@ class YumDownloader(YumUtilBase):
+         """do a default setup for all the normal/necessary yum components,
+            really just a shorthand for testing"""
+         try:
++            # Setup source repos
++            if opts.source:
++                self.setupSourceRepos()
+             self._getRepos(doSetup = True)
+             # if '--source' is used the add src to the archlist
+             if opts.source:
+@@ -298,13 +264,6 @@ class YumDownloader(YumUtilBase):
+             self.logger.critical(str(msg))
+             sys.exit(1)
+ 
+-    def _removeEnabledSourceRepos(self):
+-        ''' Disable all enabled *-source repos.'''
+-        for repo in self.repos.listEnabled():
+-            if repo.id.endswith('-source'):
+-                repo.close()
+-                self.repos.disableRepo(repo.id)
+-
+     def addCmdOptions(self):
+         # this if for compability with old API (utils.py from yum < 3.2.23)
+         if hasattr(self,'getOptionGroup'): # check if the group option API is available

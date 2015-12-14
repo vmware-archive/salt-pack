@@ -1,0 +1,20 @@
+commit 872d4e670c0e14f35e77dfc1741719fd1cf10131
+Author: James Antill <james@and.org>
+Date:   Fri Apr 12 15:56:52 2013 -0400
+
+    Don't check timestamps for repofrompath repos. BZ 880944.
+
+diff --git a/repoquery.py b/repoquery.py
+index 0d3e33c..303ee3e 100755
+--- a/repoquery.py
++++ b/repoquery.py
+@@ -1438,7 +1438,8 @@ def main(args):
+                 baseurl = repopath
+                 
+             repoq.add_enable_repo(repoid, baseurls=[baseurl], 
+-                    basecachedir=repoq.conf.cachedir)
++                                  basecachedir=repoq.conf.cachedir,
++                                  timestamp_check=False)
+             if not opts.quiet:
+                 repoq.logger.info( "Added %s repo from %s" % (repoid,repopath))
+ 

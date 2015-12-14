@@ -1,0 +1,134 @@
+{% macro includes(sls_name, pkg_data) -%}
+  {% set pkg_info = pkg_data.get(sls_name, {}) -%}
+  {% set pkg_version = pkg_info.get("version", "") -%}
+  {% set build_deps = pkg_info.get(pkg_version, {}).get("build_deps", []) or pkg_info.get("build_deps", []) -%}
+  {% set additional_deps = pkg_info.get(pkg_version, {}).get("additional_deps", []) or pkg_info.get("additional_deps", []) -%}
+  {% if build_deps or additional_deps -%}
+    {% set sls_includes = [] -%}
+    {% for dep_name in build_deps + additional_deps -%}
+      {% set current_dep = pkg_data.get(dep_name, {}) -%}
+      {% if "version" in current_dep -%}
+        {% set dep_version, dep_release = current_dep["version"].split("-", 1) -%}
+        {% do sls_includes.append("pkg." ~ dep_name ~ "." ~ dep_version.replace(".", "_") ~ "." ~ buildcfg.build_release) -%}
+      {% endif -%}
+    {% endfor -%}
+    {% if sls_includes -%}
+include:
+      {% for item in sls_includes -%}
+  - {{item}}
+      {% endfor %}
+    {% endif -%}
+  {% endif -%}
+{% endmacro %}
+
+{% macro build_deps_recur(sls_name, pkg_data, dep_pkgs) -%}
+  {% set pkg_info = pkg_data.get(sls_name, {}) -%}
+  {% set pkg_version = pkg_info.get("version", "") -%}
+  {% set build_deps = pkg_info.get(pkg_version, {}).get("build_deps", []) or pkg_info.get("build_deps", []) -%}
+  {% set additional_deps = pkg_info.get(pkg_version, {}).get("additional_deps", []) or pkg_info.get("additional_deps", []) -%}
+  {% if build_deps or additional_deps -%}
+    {% for dep_name in build_deps + additional_deps -%}
+      {% set current_dep = pkg_data.get(dep_name, {}) -%}
+      {% if "version" in current_dep -%}
+        {% set dep_version, dep_release = current_dep["version"].split("-", 1) -%}
+        {% if current_dep.get("noarch", False) -%}
+          {% if grains.get("os_family") == "Arch" or grains.get("os_family") == "RedHat" -%}
+            {% set dep_arch = "noarch" -%}
+          {% elif grains.get("os_family") == "Debian" -%}
+            {% set dep_arch = "any" -%}
+          {% endif -%}
+        {% else -%}
+          {% set dep_arch = buildcfg.build_arch -%}
+        {% endif -%}
+        {% set dep_results = current_dep.get(pkg_version, {}).get("results", []) or current_dep.get("results", []) or [current_dep.get("name", dep_name)] -%}
+        {% if dep_results -%}
+        {% for result_name in dep_results -%}
+          {% if grains.get("os_family") == "Arch" or grains.get("os_family") == "RedHat" -%}
+            {% if dep_arch == "i386" and buildcfg.build_dist == "el6" -%}
+              {% set dep_arch = "i686" -%}
+            {% endif -%}
+            {% do dep_pkgs.append(buildcfg.build_dest_dir ~ "/" ~ result_name ~ "-" ~ dep_version ~ "-" ~ dep_release ~ "." ~ buildcfg.build_dist ~ "." ~ dep_arch ~ ".rpm") -%}
+          {% elif grains.get("os_family") == "Debian" -%}
+            {% do dep_pkgs.append(buildcfg.build_dest_dir ~ "/" ~ result_name ~ "-" ~ dep_version ~ "_" ~ dep_release ~ "_" ~ dep_arch ~ ".deb") -%}
+          {% endif -%}
+        {% endfor -%}
+        {% endif -%}
+      {% endif -%}
+      {% if dep_name -%}
+        {% do dep_pkgs.append(build_deps_recur(dep_name, pkg_data, dep_pkgs)) %}
+      {% endif -%}
+    {% endfor -%}
+  {% endif -%}
+{% endmacro %}
+
+{% macro build_deps(sls_name, pkg_data) -%}
+  {% set dep_pkgs = [] -%}
+  {% do dep_pkgs.append(build_deps_recur(sls_name, pkg_data, dep_pkgs)) %}
+  {% if dep_pkgs %}
+    - deps:
+    {% for item in dep_pkgs -%}
+      {% set dep_pkg_item = item|trim -%}
+      {% if dep_pkg_item %}
+      - {{dep_pkg_item}}
+      {% endif -%}
+    {% endfor -%}
+  {% endif -%}
+{% endmacro %}
+
+{% macro results(sls_name, pkg_data) -%}
+  {% set pkg_info = pkg_data.get(sls_name, {}) -%}
+  {% set pkg_version = pkg_info.get("version", "") -%}
+  {% set pkg_results = pkg_info.get(pkg_version, {}).get("results", []) or pkg_info.get("results", []) or [pkg_info.get("name", sls_name)] -%}
+  {% set version, release = pkg_version.split("-", 1) -%}
+  {% if pkg_info.get("noarch", False) -%}
+    {% if grains.get("os_family") == "Arch" or grains.get("os_family") == "RedHat" -%}
+      {% set arch = "noarch" -%}
+    {% elif grains.get("os_family") == "Debian" -%}
+      {% set arch = "any" -%}
+    {% endif -%}
+  {% else -%}
+    {% set arch = buildcfg.build_arch -%}
+  {% endif %}
+    - results:
+  {% for result_name in pkg_results -%}
+    {% if grains.get("os_family") == "Arch" or grains.get("os_family") == "RedHat" %}
+        {% if arch == "i386" and buildcfg.build_dist == "el6" -%}
+          {% set arch = "i686" -%}
+        {% endif -%}
+      - {{result_name}}-{{version}}-{{release}}.{{buildcfg.build_dist}}.{{arch}}.rpm
+    {% elif grains.get("os_family") == "Debian" -%}
+      - {{result_name}}-{{version}}_{{release}}_{{arch}}.deb
+    {% endif -%}
+  {% endfor -%}
+{% endmacro %}
+
+{% macro requires(sls_name, pkg_data) -%}
+  {% set pkg_info = pkg_data.get(sls_name, {}) %}
+  {% set pkg_version = pkg_info.get("version", "") %}
+  {% set build_deps = pkg_info.get(pkg_version, {}).get("build_deps", []) or pkg_info.get("build_deps", []) %}
+  {% set additional_deps = pkg_info.get(pkg_version, {}).get("additional_deps", []) or pkg_info.get("additional_deps", []) %}
+  {% if build_deps or additional_deps %}
+    {% set sls_requires = [] %}
+    {% for dep_name in build_deps + additional_deps %}
+      {% set current_dep = pkg_data.get(dep_name, {}) %}
+      {% if "version" in current_dep %}
+        {% set dep_version = current_dep["version"].split("-", 1)[0] %}
+        {% do sls_requires.append(dep_name ~ "-" ~ dep_version) %}
+      {% endif %}
+    {% endfor %}
+    {% if sls_requires %}
+    - require:
+      {% for item in sls_requires -%}
+      - pkgbuild: {{item}}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro pypi_source(pypi_name, version, compression="gz") -%}
+  {% if compression == "zip" -%}
+    https://pypi.python.org/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.{{compression}}
+  {% else -%}
+    https://pypi.python.org/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.tar.{{compression}}
+  {%- endif %}
+{% endmacro %}

@@ -1,0 +1,21 @@
+commit 7e78967f67f496e6af84caa8e6f47ac63aefcb66
+Author: James Antill <james@and.org>
+Date:   Wed Sep 21 09:54:54 2011 -0400
+
+    Workaround YumBase.up update problem with manual excludes. BZ 734428.
+
+diff --git a/plugins/priorities/priorities.py b/plugins/priorities/priorities.py
+index 202c203..0cdfae2 100644
+--- a/plugins/priorities/priorities.py
++++ b/plugins/priorities/priorities.py
+@@ -164,6 +164,10 @@ def exclude_hook(conduit):
+                                 break
+     if cnt:
+         conduit.info(2, '%d packages excluded due to repository priority protections' % cnt)
++    if check_obsoletes:
++        #  Atm. the update object doesn't get updated when we manually exclude
++        # things ... so delete it. This needs to be re-written.
++        conduit._base.up = None
+ 
+ def _pkglist_to_dict(pl, priority, addArch = False):
+     out = dict()

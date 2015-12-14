@@ -1,0 +1,12 @@
+--- Python-3.3.2/Lib/test/test_gdb.py.orig	2013-07-26 09:52:15.533852708 -0500
++++ Python-3.3.2/Lib/test/test_gdb.py	2013-07-26 15:07:53.733623014 -0500
+@@ -729,8 +729,7 @@
+     foo\(1, 2, 3\)
+ ''')
+ 
+-    @unittest.skipUnless(_thread,
+-                         "Python was compiled without thread support")
++    @unittest.skip('Known failure on ARM: https://bugzilla.redhat.com/show_bug.cgi?id=986713')
+     def test_threads(self):
+         'Verify that "py-bt" indicates threads that are waiting for the GIL'
+         cmd = '''

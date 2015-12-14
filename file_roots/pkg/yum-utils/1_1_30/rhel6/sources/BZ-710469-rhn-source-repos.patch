@@ -1,0 +1,89 @@
+From c8a4bf2f3a77fb0a284a4990313e758f718c1c76 Mon Sep 17 00:00:00 2001
+From: Dennis Gregorovic <dgregor@redhat.com>
+Date: Tue, 9 Aug 2011 16:12:00 -0400
+Subject: [PATCH] Adjust logic for source repos in CDN. BZ 710469, BZ 732649.
+
+We're not sure which of the two source repo naming conventions
+is used, so always search for both.
+---
+ yum-builddep.py  |   11 ++++++++++-
+ yumdownloader.py |   16 ++++++++++++++--
+ 2 files changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/yum-builddep.py b/yum-builddep.py
+index 02db3b0..f911cf9 100755
+--- a/yum-builddep.py
++++ b/yum-builddep.py
+@@ -26,6 +26,8 @@ import logging
+ import rpmUtils
+ import rpm
+ 
++rhn_source_repos = True
++
+ # Copied from yumdownloader (need a yum-utils python module ;)
+ # This is to fix Bug 469
+ # To convert from a pkg to a source pkg, we have a problem in that all we have
+@@ -115,9 +117,16 @@ class YumBuildDep(YumUtilBase):
+         # enable the -source repos for enabled primary repos
+         archlist = rpmUtils.arch.getArchList() + ['src']    
+         for repo in self.repos.listEnabled():
+-            if not repo.id.endswith('-source'):
++            issource_repo = repo.id.endswith('-source')
++            if rhn_source_repos and repo.id.endswith('-source-rpms'):
++                issource_repo = True
++            if rhn_source_repos and (not repo.id.endswith('-source-rpms') and
++                                     repo.id.endswith('-rpms')):
++                srcrepo = '%s-source,%s-source-rpms' % (repo.id, repo.id[:-5])
++            elif not issource_repo:
+                 srcrepo = '%s-source' % repo.id
+             else:
++                # Need to change the arch.
+                 repo.close()
+                 self.repos.disableRepo(repo.id)
+                 srcrepo = repo.id
+diff --git a/yumdownloader.py b/yumdownloader.py
+index 6af3682..7107ae6 100755
+--- a/yumdownloader.py
++++ b/yumdownloader.py
+@@ -31,6 +31,8 @@ import shutil
+ import rpmUtils
+ import logging
+ 
++rhn_source_repos = True
++
+ # This is to fix Bug 469
+ # To convert from a pkg to a source pkg, we have a problem in that all we have
+ # is "sourcerpm", which can be a different nevra ... but just to make it fun
+@@ -112,7 +114,10 @@ class YumDownloader(YumUtilBase):
+ 
+         # Get all src repos.
+         src_repos = {}
+-        for repo in self.repos.findRepos('*-source'):
++        repos_source = self.repos.findRepos('*-source')
++        if rhn_source_repos: # RHN
++            repos_source += self.repos.findRepos('*-source-rpms')
++        for repo in repos_source:
+             src_repos[repo.id] = False
+ 
+         #  Find the enabled bin repos, and mark their respective *-source repo.
+@@ -122,9 +127,16 @@ class YumDownloader(YumUtilBase):
+                 srcrepo = '%s-source' % repo.id
+                 if srcrepo in src_repos:
+                     src_repos[srcrepo] = True
++                if not rhn_source_repos:
++                    continue
++                if not repo.id.endswith("-rpms"):
++                    continue
++                srcrepo = repo.id[:-5] + '-source-rpms'
++                if srcrepo in src_repos:
++                    src_repos[srcrepo] = True
+ 
+         # Toggle src repos that are set the wrong way
+-        for repo in self.repos.findRepos('*-source'):
++        for repo in repos_source:
+             if     repo.isEnabled() and not src_repos[repo.id]:
+                 repo.close()
+                 self.repos.disableRepo(repo.id)
+-- 
+1.7.4.4
+

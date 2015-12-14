@@ -1,0 +1,50 @@
+diff -up Python-2.6.4/Makefile.pre.in.no-static-lib Python-2.6.4/Makefile.pre.in
+--- Python-2.6.4/Makefile.pre.in.no-static-lib	2010-01-18 13:11:10.975859689 -0500
++++ Python-2.6.4/Makefile.pre.in	2010-01-18 13:14:27.524859334 -0500
+@@ -382,7 +382,7 @@ coverage:
+ 
+ 
+ # Build the interpreter
+-$(BUILDPYTHON):	Modules/python.o $(LIBRARY) $(LDLIBRARY)
++$(BUILDPYTHON):	Modules/python.o $(LDLIBRARY)
+ 		$(LINKCC) $(CFLAGS) $(LDFLAGS) $(LINKFORSHARED) -o $@ \
+ 			Modules/python.o \
+ 			$(BLDLIBRARY) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
+@@ -398,18 +398,6 @@ sharedmods: $(BUILDPYTHON)
+ 	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py build;; \
+ 	esac
+ 
+-# Build static library
+-# avoid long command lines, same as LIBRARY_OBJS
+-$(LIBRARY): $(LIBRARY_OBJS)
+-	-rm -f $@
+-	$(AR) cr $@ Modules/getbuildinfo.o
+-	$(AR) cr $@ $(PARSER_OBJS)
+-	$(AR) cr $@ $(OBJECT_OBJS)
+-	$(AR) cr $@ $(PYTHON_OBJS)
+-	$(AR) cr $@ $(MODULE_OBJS) $(SIGNAL_OBJS)
+-	$(AR) cr $@ $(MODOBJS)
+-	$(RANLIB) $@
+-
+ libpython$(VERSION).so: $(LIBRARY_OBJS)
+ 	if test $(INSTSONAME) != $(LDLIBRARY); then \
+ 		$(LDSHARED) $(LDFLAGS) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
+@@ -945,18 +933,6 @@ libainstall:	all
+ 		else	true; \
+ 		fi; \
+ 	done
+-	@if test -d $(LIBRARY); then :; else \
+-		if test "$(PYTHONFRAMEWORKDIR)" = no-framework; then \
+-			if test "$(SO)" = .dll; then \
+-				$(INSTALL_DATA) $(LDLIBRARY) $(DESTDIR)$(LIBPL) ; \
+-			else \
+-				$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
+-				$(RANLIB) $(DESTDIR)$(LIBPL)/$(LIBRARY) ; \
+-			fi; \
+-		else \
+-			echo Skip install of $(LIBRARY) - use make frameworkinstall; \
+-		fi; \
+-	fi
+ 	$(INSTALL_DATA) Modules/config.c $(DESTDIR)$(LIBPL)/config.c
+ 	$(INSTALL_DATA) Modules/python.o $(DESTDIR)$(LIBPL)/python.o
+ 	$(INSTALL_DATA) $(srcdir)/Modules/config.c.in $(DESTDIR)$(LIBPL)/config.c.in

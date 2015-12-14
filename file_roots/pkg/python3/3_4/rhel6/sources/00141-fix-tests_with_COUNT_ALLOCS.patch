@@ -1,0 +1,113 @@
+diff -r e245b0d7209b Lib/test/test_gc.py
+--- a/Lib/test/test_gc.py	Sun Oct 20 02:01:29 2013 -0700
++++ b/Lib/test/test_gc.py	Fri Nov 08 13:25:29 2013 +0100
+@@ -127,10 +127,16 @@
+         del a
+         self.assertNotEqual(gc.collect(), 0)
+         del B, C
+-        self.assertNotEqual(gc.collect(), 0)
++        if hasattr(sys, 'getcounts'):
++            self.assertEqual(gc.collect(), 0)
++        else:
++            self.assertNotEqual(gc.collect(), 0)
+         A.a = A()
+         del A
+-        self.assertNotEqual(gc.collect(), 0)
++        if hasattr(sys, 'getcounts'):
++            self.assertEqual(gc.collect(), 0)
++        else:
++            self.assertNotEqual(gc.collect(), 0)
+         self.assertEqual(gc.collect(), 0)
+ 
+     def test_method(self):
+@@ -618,6 +624,8 @@
+         stderr = run_command(code % "gc.DEBUG_SAVEALL")
+         self.assertNotIn(b"uncollectable objects at shutdown", stderr)
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_gc_main_module_at_shutdown(self):
+         # Create a reference cycle through the __main__ module and check
+         # it gets collected at interpreter shutdown.
+@@ -632,6 +640,8 @@
+         rc, out, err = assert_python_ok('-c', code)
+         self.assertEqual(out.strip(), b'__del__ called')
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_gc_ordinary_module_at_shutdown(self):
+         # Same as above, but with a non-__main__ module.
+         with temp_dir() as script_dir:
+diff -r e245b0d7209b Lib/test/test_module.py
+--- a/Lib/test/test_module.py	Sun Oct 20 02:01:29 2013 -0700
++++ b/Lib/test/test_module.py	Fri Nov 08 13:25:29 2013 +0100
+@@ -81,6 +81,8 @@
+         gc_collect()
+         self.assertEqual(f().__dict__["bar"], 4)
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'), 
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_clear_dict_in_ref_cycle(self):
+         destroyed = []
+         m = ModuleType("foo")
+@@ -96,6 +98,8 @@
+         gc_collect()
+         self.assertEqual(destroyed, [1])
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'), 
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_weakref(self):
+         m = ModuleType("foo")
+         wr = weakref.ref(m)
+@@ -190,6 +194,8 @@
+         self.assertEqual(r[-len(ends_with):], ends_with,
+                          '{!r} does not end with {!r}'.format(r, ends_with))
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'),
++                     'skipping since COUNT_ALLOCS was used, see issue19527')
+     def test_module_finalization_at_shutdown(self):
+         # Module globals and builtins should still be available during shutdown
+         rc, out, err = assert_python_ok("-c", "from test import final_a")
+--- a/Lib/test/test_io.py.orig	2014-01-09 14:43:44.000000000 +0100
++++ b/Lib/test/test_io.py	2014-01-09 14:50:30.839597351 +0100
+@@ -2611,6 +2611,8 @@
+             """.format(iomod=iomod, kwargs=kwargs)
+         return assert_python_ok("-c", code)
+ 
++    @unittest.skipIf(hasattr(sys, 'getrefcount'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_create_at_shutdown_without_encoding(self):
+         rc, out, err = self._check_create_at_shutdown()
+         if err:
+@@ -2621,6 +2623,8 @@
+         else:
+             self.assertEqual("ok", out.decode().strip())
+ 
++    @unittest.skipIf(hasattr(sys, 'getrefcount'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_create_at_shutdown_with_encoding(self):
+         rc, out, err = self._check_create_at_shutdown(encoding='utf-8',
+                                                       errors='strict')
+--- a/Lib/test/test_logging.py.orig	2014-01-09 14:53:07.016388198 +0100
++++ b/Lib/test/test_logging.py	2014-01-09 14:54:25.654282973 +0100
+@@ -3398,6 +3398,8 @@
+         logging.setLoggerClass(logging.Logger)
+         self.assertEqual(logging.getLoggerClass(), logging.Logger)
+ 
++    @unittest.skipIf(hasattr(sys, 'getcounts'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_logging_at_shutdown(self):
+         # Issue #20037
+         code = """if 1:
+
+--- a/Lib/test/test_warnings.py.orig   2014-01-09 15:10:12.454997100 +0100
++++ b/Lib/test/test_warnings.py    2014-01-09 15:11:14.028913478 +0100
+@@ -780,6 +780,8 @@
+             assert_python_ok('-c', 'pass', '-W', 'always', PYTHONPATH=cwd)
+ 
+ class FinalizationTest(unittest.TestCase):
++    @unittest.skipIf(hasattr(sys, 'getcounts'),
++                     'types are immortal if COUNT_ALLOCS is used')
+     def test_finalization(self):
+         # Issue #19421: warnings.warn() should not crash
+         # during Python finalization

@@ -1,0 +1,144 @@
+From 36227721adc8f77af68eba83f1a2503aa5ae1c7a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Zden=C4=9Bk=20Pavlas?= <zpavlas@redhat.com>
+Date: Tue, 13 Sep 2011 08:34:47 +0200
+Subject: [PATCH] Force ASCII apostrophes in man page examples. BZ 659740.
+
+Use Groff's \(aq (vertical apostrophe quote) in examples.
+This prevents rendering them as UTF8 0xe2 0x80 0x99
+which does not work when copy-pasted.
+
+Patch suggested by Ivana Varekova.
+---
+ docs/repoquery.1          |    2 +-
+ docs/show-installed.1     |    2 +-
+ docs/yum-filter-data.1    |   12 ++++++------
+ docs/yum-groups-manager.1 |    4 ++--
+ docs/yum-list-data.1      |    2 +-
+ docs/yum-verify.1         |    6 +++---
+ 6 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/docs/repoquery.1 b/docs/repoquery.1
+index b1d0a08..fe842f5 100644
+--- a/docs/repoquery.1
++++ b/docs/repoquery.1
+@@ -167,7 +167,7 @@ Query groups instead of packages.
+ 
+ .SH "EXAMPLES"
+ .IP "List all packages whose name contains 'perl':"
+-\fBrepoquery '*perl*'\fP
++\fBrepoquery \(aq*perl*\(aq\fP
+ .IP "List all packages depending on openssl:"
+ \fBrepoquery --whatrequires openssl\fP 
+ .IP "List all package names and the repository they come from, nicely formatted:"
+--- a/docs/show-installed.1
++++ b/docs/show-installed.1
+@@ -16,8 +16,8 @@
+ yum, kickstart or human; yum gives the result as a yum command line; kickstart the content of a %packages section; "human" readable is default.
+ .TP
+ .B \-i INPUT, \-\-input=INPUT
+-File to read the package list from instead of using the rpmdb. \- for stdin. The file must contain package names only separated by white space (including newlines). rpm \-qa \-\-qf='%{name}
+-' produces proper output.
++File to read the package list from instead of using the rpmdb. \- for stdin. The file must contain package names only separated by white space (including newlines). rpm \-qa \-\-qf=\(aq%{name}
++\(aq produces proper output.
+ .TP
+ .B \-o OUTPUT, \-\-output=OUTPUT
+ File to write the result to. Stdout is used if option is omited.
+diff --git a/docs/yum-filter-data.1 b/docs/yum-filter-data.1
+index b679162..b26f1fd 100644
+--- a/docs/yum-filter-data.1
++++ b/docs/yum-filter-data.1
+@@ -77,23 +77,23 @@ yum --filter-package-sizes=-1m check-update
+ .PP
+ To apply updates that Dan Walsh has committed use:
+ .IP
+-yum --filter-committers='Dan Walsh *' update
++yum --filter-committers=\(aqDan Walsh *\(aq update
+ .PP
+ To list updates for a specific group use:
+ .IP
+-yum --filter-rpm-groups='App*/Sys*' list updates
++yum --filter-rpm-groups=\(aqApp*/Sys*\(aq list updates
+ .PP
+ To apply updates to a specific set of groups use:
+ .IP
+-yum --filter-rpm-groups='App*/System,Devel*/Lib*,System Environment/Base' update
++yum --filter-rpm-groups=\(aqApp*/System,Devel*/Lib*,System Environment/Base\(aq update
+ .PP
+ To list updates for a set of yum groups use:
+ .IP
+-yum --filter-groups='PostgreSQL Database,Web Server' list updates
++yum --filter-groups=\(aqPostgreSQL Database,Web Server\(aq list updates
+ .PP
+ To apply updates to a specific set of yum groups use:
+ .IP
+-yum --filter-groups='KDE,Core,Printing Support' update
++yum --filter-groups=\(aqKDE,Core,Printing Support\(aq update
+ 
+ .SH "SEE ALSO"
+ .nf
+@@ -109,7 +109,7 @@ James Antill <james.antill@redhat.com>.
+ 
+ .SH "BUGS"
+ Currently yum can't filter packages in all of the commands, so for instance
+-"yum list 'yum*'" doesn't get the results filtered.
++"yum list \(aqyum*\(aq" doesn't get the results filtered.
+ 
+ Apart from that there are no bugs, but should you find any, you should first
+ consult the FAQ section on http://yum.baseurl.org/wiki/Faq and if unsuccessful
+diff --git a/docs/yum-groups-manager.1 b/docs/yum-groups-manager.1
+index 0451cc9..c256c45 100644
+--- a/docs/yum-groups-manager.1
++++ b/docs/yum-groups-manager.1
+@@ -77,11 +77,11 @@ in yum.
+ 
+ .SH "EXAMPLES"
+ .IP "Create a new group metadata file, with a group called yum containing all the packages that start with yum:"
+-\fB yum-groups-manager --name YUM --save groups.xml 'yum*'\fP
++\fB yum-groups-manager --name YUM --save groups.xml \(aqyum*\(aq\fP
+ .IP "After the above command, load the groups.xml data, work with the yum group, make the group not user visible, and remove the yum-skip-broken and yum-priorities packages from it:"
+ \fB yum-groups-manager -n YUM --merge groups.xml --remove yum-skip-broken yum-priorities --not-user-visible\fP
+ .IP "After the above commands, add a description and a translated name to the yum group:"
+-\fB yum-groups-manager -n YUM --merge groups.xml --description 'This is a group with most of the yum packages in it' --translated-name 'en:yum packages'\fP
++\fB yum-groups-manager -n YUM --merge groups.xml --description \(aqThis is a group with most of the yum packages in it\(aq --translated-name \(aqen:yum packages\(aq\fP
+ .SH "FILES"
+ \fByum-groups-manager\fP uses the yum libraries for retrieving information and
+ packages. If no configuration file is specified, the default yum
+diff --git a/docs/yum-list-data.1 b/docs/yum-list-data.1
+index 058dc54..a5477d6 100644
+--- a/docs/yum-list-data.1
++++ b/docs/yum-list-data.1
+@@ -127,7 +127,7 @@ yum list-rpm-groups updates
+ .PP
+ To list all the committers to packages that have yum in their name, use:
+ .IP
+-yum list-committers 'yum*'
++yum list-committers \(aqyum*\(aq
+ .PP
+ To list ranges of the sizes of packages installed or available, use:
+ .IP
+diff --git a/docs/yum-verify.1 b/docs/yum-verify.1
+index c529fee..50ede75 100644
+--- a/docs/yum-verify.1
++++ b/docs/yum-verify.1
+@@ -53,15 +53,15 @@ yum verify-rpm
+ .PP
+ To verify the packages starting with the name yum, use:
+ .IP
+-yum verify 'yum*'
++yum verify \(aqyum*\(aq
+ .PP
+ To verify the binaries that are in a bin directory, use:
+ .IP
+-yum verify --verify-filenames='*bin/*'
++yum verify --verify-filenames=\(aq*bin/*\(aq
+ .PP
+ To verify all include files, Eg. for multilib problems, use:
+ .IP
+-yum verify-all --verify-filenames='/usr/include/*'
++yum verify-all --verify-filenames=\(aq/usr/include/*\(aq
+ 
+ .SH "SEE ALSO"
+ .nf
+-- 
+1.7.4.4
+

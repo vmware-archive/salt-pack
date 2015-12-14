@@ -1,0 +1,22 @@
+commit d46c7081cdd147ea9025367c01a0be20540302aa
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Thu Jan 16 10:44:53 2014 +0100
+
+    Adjust logic for debug repos in CDN. BZ 1052871
+
+diff --git a/debuginfo-install.py b/debuginfo-install.py
+index 0f026f1..bb61a1d 100755
+--- a/debuginfo-install.py
++++ b/debuginfo-install.py
+@@ -86,7 +86,10 @@ class DebugInfoInstall(YumUtilBase):
+         for repo in self.repos.listEnabled():
+             repos[repo.id] = repo
+         for repoid in repos:
+-            di = '%s-debuginfo' % repoid
++            if repoid.endswith('-rpms'):
++                di = repoid[:-5] + '-debug-rpms'
++            else:
++                di = '%s-debuginfo' % repoid
+             if di in repos:
+                 continue
+             repo = repos[repoid]

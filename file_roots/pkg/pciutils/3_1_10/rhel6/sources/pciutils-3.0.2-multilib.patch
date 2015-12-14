@@ -1,0 +1,110 @@
+diff -up pciutils-3.1.10/lib/configure.multilib pciutils-3.1.10/lib/configure
+--- pciutils-3.1.10/lib/configure.multilib	2011-01-07 22:04:28.000000000 +0100
++++ pciutils-3.1.10/lib/configure	2012-09-25 16:07:50.926823161 +0200
+@@ -30,7 +30,7 @@ if [ -z "$HOST" ] ; then
+ 		proc=`/usr/sbin/lsdev -C -c processor -S available -F name | head -1`
+ 		cpu=`/usr/sbin/lsattr -F value -l $proc -a type | sed 's/_.*//'`
+ 	else
+-		cpu=`uname -m | sed 's/^i.86$/i386/;s/^sun4u$/sparc64/;s/^i86pc$/i386/;s/^BePC$/i386/;s/^BeMac$/powerpc/;s/^BeBox$/powerpc/'`
++		cpu=`uname -m | sed 's/^i.86$/i386/;s/^sun4u$/sparc64/;s/^i86pc$/i386/;s/^BePC$/i386/;s/^BeMac$/powerpc/;s/^BeBox$/powerpc/;s/^ia64$/x86_64/'`
+ 	fi
+ 	if [ "$sys" = "GNU/kFreeBSD" -o "$sys" = "DragonFly" ]
+ 	then
+@@ -50,29 +50,64 @@ sys=`echo $host | sed 's/^\([^-]*\)-\([^
+ echo " $host $rel $cpu $sys"
+ 
+ c=config.h
++cm=config.h.mk
+ m=config.mk
+-echo >$c '#define PCI_CONFIG_H'
+-echo >>$c "#define PCI_ARCH_`echo $cpu | tr '[a-z]' '[A-Z]'`"
+-echo >>$c "#define PCI_OS_`echo $sys | tr '[a-z]' '[A-Z]'`"
+ echo >$m 'WITH_LIBS='
++cat >$c <<EOF
++#define PCI_CONFIG_H
++#if defined(__x86_64__)
++#define PCI_ARCH_X86_64
++#define PCI_HAVE_PM_INTEL_CONF
++#elif defined(__ia64__)
++#define PCI_ARCH_IA64
++#define PCI_HAVE_PM_INTEL_CONF
++#elif defined(__i386__)
++#define PCI_ARCH_I386
++#define PCI_HAVE_PM_INTEL_CONF
++#elif defined(__ppc64__) || defined(__powerpc64__)
++#define PCI_ARCH_PPC64
++#elif defined(__ppc__)  || defined(__powerpc__)
++#define PCI_ARCH_PPC
++#elif defined(__s390x__)
++#define PCI_ARCH_S390X
++#elif defined(__s390__)
++#define PCI_ARCH_S390
++#elif defined(__alpha__)
++#define PCI_ARCH_ALPHA
++#else
++#error Unknown Arch
++#endif
++#define PCI_OS_LINUX
++#define PCI_HAVE_PM_LINUX_SYSFS
++#define PCI_HAVE_PM_LINUX_PROC
++#define PCI_HAVE_LINUX_BYTEORDER_H
++#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"
++#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"
++#define PCI_HAVE_64BIT_ADDRESS
++EOF
++
++rm -f $cm
++echo >$cm "#define PCI_ARCH_`echo $cpu | tr 'a-z' 'A-Z'`"
++echo >>$cm "#define PCI_OS_`echo $sys | tr 'a-z' 'A-Z'`"
+ 
+ echo_n "Looking for access methods..."
++echo_n " sysfs proc"
+ LIBRESOLV=-lresolv
+ 
+ case $sys in
+ 	linux*)
+ 		echo_n " sysfs proc"
+-		echo >>$c '#define PCI_HAVE_PM_LINUX_SYSFS'
+-		echo >>$c '#define PCI_HAVE_PM_LINUX_PROC'
+-		echo >>$c '#define PCI_HAVE_LINUX_BYTEORDER_H'
+-		echo >>$c '#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"'
+-		echo >>$c '#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"'
++		echo >>$cm '#define PCI_HAVE_PM_LINUX_SYSFS'
++		echo >>$cm '#define PCI_HAVE_PM_LINUX_PROC'
++		echo >>$cm '#define PCI_HAVE_LINUX_BYTEORDER_H'
++		echo >>$cm '#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"'
++		echo >>$cm '#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"'
+ 		case $cpu in
+ 				i?86|x86_64)	echo_n " i386-ports"
+-						echo >>$c '#define PCI_HAVE_PM_INTEL_CONF'
++						echo >>$cm '#define PCI_HAVE_PM_INTEL_CONF'
+ 						;;
+ 		esac
+-		echo >>$c '#define PCI_HAVE_64BIT_ADDRESS'
++		echo >>$cm '#define PCI_HAVE_64BIT_ADDRESS'
+ 		;;
+ 	sunos)
+ 		case $cpu in
+@@ -161,6 +196,7 @@ else
+ 	echo >>$c '#define PCI_IDS "pci.ids"'
+ fi
+ echo >>$c "#define PCI_PATH_IDS_DIR \"$IDSDIR\""
++echo >>$cm "#define PCI_PATH_IDS_DIR \"$IDSDIR\""
+ 
+ echo_n "Checking for DNS support... "
+ if [ "$DNS" = yes -o "$DNS" = no ] ; then
+@@ -175,6 +211,7 @@ else
+ fi
+ if [ "$DNS" = yes ] ; then
+ 	echo >>$c "#define PCI_USE_DNS"
++	echo >>$cm "#define PCI_USE_DNS"
+ 	echo >>$c "#define PCI_ID_DOMAIN \"pci.id.ucw.cz\""
+ 	echo >>$m "WITH_LIBS+=$LIBRESOLV"
+ fi
+@@ -197,4 +234,5 @@ fi
+ echo >>$m 'PCILIBPC=$(LIBNAME).pc'
+ 
+ echo >>$c "#define PCILIB_VERSION \"$VERSION\""
+-sed '/"/{s/^#define \([^ ]*\) "\(.*\)"$/\1=\2/;p;d;};s/^#define \(.*\)/\1=1/' <$c >>$m
++echo >>$cm "#define PCILIB_VERSION \"$VERSION\""
++sed '/"/{s/^#define \([^ ]*\) "\(.*\)"$/\1=\2/;p;d;};s/^#define \(.*\)/\1=1/' <$cm >>$m

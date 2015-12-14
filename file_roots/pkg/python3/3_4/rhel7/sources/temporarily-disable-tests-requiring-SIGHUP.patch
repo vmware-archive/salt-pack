@@ -1,0 +1,25 @@
+diff -up Python-3.4.0/Lib/test/test_asyncio/test_events.py.orig Python-3.4.0/Lib/test/test_asyncio/test_events.py
+--- Python-3.4.0/Lib/test/test_asyncio/test_events.py.orig	2014-04-15 13:18:49.696215288 +0200
++++ Python-3.4.0/Lib/test/test_asyncio/test_events.py	2014-04-15 13:18:56.104258453 +0200
+@@ -1528,7 +1528,7 @@ class SubprocessTestsMixin:
+         self.check_terminated(proto.returncode)
+         transp.close()
+ 
+-    @unittest.skipIf(sys.platform == 'win32', "Don't have SIGHUP")
++    @unittest.skipIf(True, "Temporarily skipped (rhbz#1088233)")
+     def test_subprocess_send_signal(self):
+         prog = os.path.join(os.path.dirname(__file__), 'echo.py')
+ 
+
+diff -up Python-3.4.0/Lib/test/test_asyncio/test_subprocess.py.orig Python-3.4.0/Lib/test/test_asyncio/test_subprocess.py
+--- Python-3.4.0/Lib/test/test_asyncio/test_subprocess.py.orig	2014-04-17 12:03:32.777827520 +0200
++++ Python-3.4.0/Lib/test/test_asyncio/test_subprocess.py	2014-04-17 12:04:37.614210481 +0200
+@@ -108,7 +108,7 @@ class SubprocessMixin:
+         else:
+             self.assertEqual(-signal.SIGTERM, returncode)
+ 
+-    @unittest.skipIf(sys.platform == 'win32', "Don't have SIGHUP")
++    @unittest.skipIf(True, "Temporarily skipped (rhbz#1088233)")
+     def test_send_signal(self):
+         code = 'import time; print("sleeping", flush=True); time.sleep(3600)'
+         args = [sys.executable, '-c', code]

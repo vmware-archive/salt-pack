@@ -1,0 +1,52 @@
+diff -up Python-3.3.0b1/Lib/test/test_exceptions.py.846849 Python-3.3.0b1/Lib/test/test_exceptions.py
+--- Python-3.3.0b1/Lib/test/test_exceptions.py.846849	2012-06-26 22:19:47.000000000 +0200
++++ Python-3.3.0b1/Lib/test/test_exceptions.py	2012-08-13 17:41:28.845403486 +0200
+@@ -401,6 +401,7 @@ class ExceptionTests(unittest.TestCase):
+         self.assertIsNone(e.__context__)
+         self.assertIsNone(e.__cause__)
+ 
++    @unittest.skip('rhbz#846849')
+     def testChainingDescriptors(self):
+         try:
+             raise Exception()
+diff -up Python-3.3.0b1/Lib/test/test_io.py.846849 Python-3.3.0b1/Lib/test/test_io.py
+--- Python-3.3.0b1/Lib/test/test_io.py.846849	2012-06-26 22:19:48.000000000 +0200
++++ Python-3.3.0b1/Lib/test/test_io.py	2012-08-13 17:41:28.846403451 +0200
+@@ -2938,12 +2938,15 @@ class SignalsTest(unittest.TestCase):
+                 if e.errno != errno.EBADF:
+                     raise
+ 
++    @unittest.skip('rhbz#846849')
+     def test_interrupted_write_unbuffered(self):
+         self.check_interrupted_write(b"xy", b"xy", mode="wb", buffering=0)
+ 
++    @unittest.skip('rhbz#846849')
+     def test_interrupted_write_buffered(self):
+         self.check_interrupted_write(b"xy", b"xy", mode="wb")
+ 
++    @unittest.skip('rhbz#846849')
+     def test_interrupted_write_text(self):
+         self.check_interrupted_write("xy", b"xy", mode="w", encoding="ascii")
+ 
+diff -up Python-3.3.0b1/Lib/test/test_raise.py.846849 Python-3.3.0b1/Lib/test/test_raise.py
+--- Python-3.3.0b1/Lib/test/test_raise.py.846849	2012-08-13 17:42:16.719714213 +0200
++++ Python-3.3.0b1/Lib/test/test_raise.py	2012-08-13 17:43:02.544097272 +0200
+@@ -151,6 +151,7 @@ class TestRaise(unittest.TestCase):
+ 
+ class TestCause(unittest.TestCase):
+ 
++    @unittest.skip('rhbz#846849')
+     def testCauseSyntax(self):
+         try:
+             try:
+diff -up Python-3.3.0b1/Lib/test/test_traceback.py.846849 Python-3.3.0b1/Lib/test/test_traceback.py
+--- Python-3.3.0b1/Lib/test/test_traceback.py.846849	2012-08-13 17:44:19.714374275 +0200
++++ Python-3.3.0b1/Lib/test/test_traceback.py	2012-08-13 17:44:43.515534435 +0200
+@@ -246,6 +246,7 @@ class BaseExceptionReportingTests:
+         self.check_zero_div(blocks[0])
+         self.assertIn('inner_raise() # Marker', blocks[2])
+ 
++    @unittest.skip('rhbz#846849')
+     def test_context_suppression(self):
+         try:
+             try:

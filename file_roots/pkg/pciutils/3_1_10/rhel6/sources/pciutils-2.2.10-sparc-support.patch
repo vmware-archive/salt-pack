@@ -1,0 +1,14 @@
+diff -up pciutils-3.0.0/lib/configure.sparc pciutils-3.0.0/lib/configure
+--- pciutils-3.0.0/lib/configure.sparc	2008-09-01 15:17:44.000000000 +0200
++++ pciutils-3.0.0/lib/configure	2008-09-01 15:17:44.000000000 +0200
+@@ -62,6 +62,10 @@ define PCI_ARCH_S390X
+ #define PCI_ARCH_S390
+ #elif defined(__alpha__)
+ #define PCI_ARCH_ALPHA
++#elif defined(__sparc__) && defined (__arch64__)
++#define PCI_ARCH_SPARC64
++#elif defined(__sparc__)
++#define PCI_ARCH_SPARC
+ #else
+ #error Unknown Arch
+ #endif

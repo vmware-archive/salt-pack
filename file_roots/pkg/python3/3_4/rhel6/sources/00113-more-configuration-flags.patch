@@ -1,0 +1,50 @@
+diff -up Python-3.3.0b1/configure.ac.more-configuration-flags Python-3.3.0b1/configure.ac
+--- Python-3.3.0b1/configure.ac.more-configuration-flags	2012-07-20 13:25:33.232864839 -0400
++++ Python-3.3.0b1/configure.ac	2012-07-20 13:25:33.314863815 -0400
+@@ -2585,6 +2585,30 @@ else AC_MSG_RESULT(no)
+ fi],
+ [AC_MSG_RESULT(no)])
+ 
++AC_MSG_CHECKING(for --with-count-allocs)
++AC_ARG_WITH(count-allocs,
++[  --with(out)count-allocs  enable/disable per-type instance accounting], [
++if test "$withval" != no
++then 
++  AC_DEFINE(COUNT_ALLOCS, 1,
++    [Define to keep records of the number of instances of each type]) 
++    AC_MSG_RESULT(yes)
++else AC_MSG_RESULT(no)
++fi],
++[AC_MSG_RESULT(no)])
++
++AC_MSG_CHECKING(for --with-call-profile)
++AC_ARG_WITH(call-profile,
++[  --with(out)-call-profile  enable/disable statistics on function call invocation], [
++if test "$withval" != no
++then 
++  AC_DEFINE(CALL_PROFILE, 1, 
++    [Define to keep records on function call invocation]) 
++    AC_MSG_RESULT(yes)
++else AC_MSG_RESULT(no)
++fi],
++[AC_MSG_RESULT(no)])
++
+ # Check for Python-specific malloc support
+ AC_MSG_CHECKING(for --with-pymalloc)
+ AC_ARG_WITH(pymalloc,
+diff -up Python-3.3.0b1/pyconfig.h.in.more-configuration-flags Python-3.3.0b1/pyconfig.h.in
+--- Python-3.3.0b1/pyconfig.h.in.more-configuration-flags	2012-07-20 13:25:33.000000000 -0400
++++ Python-3.3.0b1/pyconfig.h.in	2012-07-20 13:26:02.826494869 -0400
+@@ -12,6 +12,12 @@
+    support for AIX C++ shared extension modules. */
+ #undef AIX_GENUINE_CPLUSPLUS
+ 
++/* Define to keep records on function call invocation */
++#undef CALL_PROFILE
++
++/* Define to keep records of the number of instances of each type */
++#undef COUNT_ALLOCS
++
+ /* Define if C doubles are 64-bit IEEE 754 binary format, stored in ARM
+    mixed-endian order (byte order 45670123) */
+ #undef DOUBLE_IS_ARM_MIXED_ENDIAN_IEEE754

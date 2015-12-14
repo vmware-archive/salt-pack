@@ -1,0 +1,12 @@
+diff -up pciutils-3.0.1/lib/configure.superh pciutils-3.0.1/lib/configure
+--- pciutils-3.0.1/lib/configure.superh	2008-09-19 11:37:51.000000000 +0200
++++ pciutils-3.0.1/lib/configure	2008-09-19 11:38:46.133527866 +0200
+@@ -71,6 +71,8 @@ define PCI_ARCH_S390X
+ #define PCI_ARCH_SPARC64
+ #elif defined(__sparc__)
+ #define PCI_ARCH_SPARC
++#elif defined(__sh__)
++#define PCI_ARCH_SH
+ #else
+ #error Unknown Arch
+ #endif

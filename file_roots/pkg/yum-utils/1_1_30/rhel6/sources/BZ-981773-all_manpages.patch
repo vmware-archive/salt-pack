@@ -1,0 +1,240 @@
+commit 3344c94a9ca7aff59a4bfce8fd2bf90fa03a6655
+Author: Mike Miller <mtmiller@ieee.org>
+Date:   Thu Jul 11 10:14:47 2013 +0200
+
+    docs: Add missing man pages for all yum-utils
+
+diff --git a/docs/find-repos-of-install.1 b/docs/find-repos-of-install.1
+new file mode 100644
+index 0000000..77be909
+--- /dev/null
++++ b/docs/find-repos-of-install.1
+@@ -0,0 +1,51 @@
++.\" find-repos-of-install
++.TH "find-repos-of-install" "1" "13 January 2013" "" ""
++.SH "NAME"
++find-repos-of-install \- report which Yum repository a package was installed from
++.SH "SYNOPSIS"
++\fBfind-repos-of-install\fP [options] package1 [package2...]
++.SH "DESCRIPTION"
++.PP
++\fBfind-repos-of-install\fP is a program which reports the Yum repository that
++a specified package was installed from.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-\-version\fP"
++Report program version and exit.
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-\-repoid=REPOID\fP"
++Specify repo ids to query, can be specified multiple times (default is
++all enabled).
++.IP "\fB\-\-enablerepo=ENABLEREPOS\fP"
++In addition to the default set, query the given additional repository, even if
++it is disabled in YUM configuration.  Can be used multiple times.
++.IP "\fB\-\-disablerepo=DISABLEREPOS\fP"
++Do not query the given repository, even if it is enabled in YUM
++configuration.  Can be used multiple times.
++.IP "\fB\-\-repofrompath=REPOID,PATH/URL\fP"
++Specify a path or url to a repository (same path as in a baseurl) to add to
++the repositories for this query. This option can be used multiple times. If
++you want to view only the pkgs from this repository combine this with
++\-\-repoid. The repoid for the repository is specified by REPOID.
++.IP "\fB\-C, \-\-cache\fP"
++Tells repoquery to run entirely from YUM cache - does not download any metadata
++or update the cache. Queries in this mode can fail or give partial/incorrect
++results if the cache isn't fully populated beforehand with eg "yum makecache".
++.IP "\fB\-\-tempcache\fP"
++Use a temp dir for storing/accessing yum-cache.
++.IP "\fB\-\-sync2yumdb\fP"
++Sync anything that is found to the yumdb, if available.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH AUTHORS
++.nf
++See the Authors file included with this program.
++.fi
+diff --git a/docs/needs-restarting.1 b/docs/needs-restarting.1
+new file mode 100644
+index 0000000..74b1904
+--- /dev/null
++++ b/docs/needs-restarting.1
+@@ -0,0 +1,29 @@
++.\" needs-restarting
++.TH "needs-restarting" "1" "13 January 2013" "" ""
++.SH "NAME"
++needs-restarting \- report running processes that have been updated
++.SH "SYNOPSIS"
++\fBneeds-restarting\fP [options]
++.SH "DESCRIPTION"
++.PP
++\fBneeds-restarting\fP is a program that reports a list of process ids that
++started running before they or some component that they use were updated.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-u, \-\-useronly\fP"
++Show processes for my userid only.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+diff --git a/docs/repomanage.1 b/docs/repomanage.1
+new file mode 100644
+index 0000000..4d336a5
+--- /dev/null
++++ b/docs/repomanage.1
+@@ -0,0 +1,38 @@
++.\" repomanage
++.TH "repomanage" "1" "13 January 2013" "" ""
++.SH "NAME"
++repomanage \- list the newest or oldest RPM packages in a directory
++.SH "SYNOPSIS"
++\fBrepomanage\fP [options] directory
++.SH "DESCRIPTION"
++.PP
++\fBrepomanage\fP is a program to manage a directory of RPM packages. It
++displays a list of the newest or oldest packages in a directory for easy
++piping to xargs or similar programs.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-o, \-\-old\fP"
++Print the oldest packages.
++.IP "\fB\-n, \-\-new\fP"
++Print the newest packages.
++.IP "\fB\-s, \-\-space\fP"
++Space-separated instead of newline-separated output.
++.IP "\fB\-k KEEP, \-\-keep=KEEP\fP"
++Newest N packages to keep - defaults to 1.
++.IP "\fB\-c, \-\-nocheck\fP"
++Do not check package payload signatures/digests.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+diff --git a/docs/verifytree.1 b/docs/verifytree.1
+new file mode 100644
+index 0000000..1389e0f
+--- /dev/null
++++ b/docs/verifytree.1
+@@ -0,0 +1,33 @@
++.\" verifytree
++.TH "verifytree" "1" "13 January 2013" "" ""
++.SH "NAME"
++verifytree \- verify that a local yum repository is consistent
++.SH "SYNOPSIS"
++\fBverifytree\fP [options] directory
++.SH "DESCRIPTION"
++.PP
++\fBverifytree\fP is a program that verifies whether a local yum repository is
++consistent.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-a, \-\-checkall\fP"
++Check all packages in the repository.
++.IP "\fB\-t TESTOPIA, \-\-testopia=TESTOPIA\fP"
++Report results to the given testopia run number.
++.IP "\fB\-r, \-\-treeinfo\fP"
++Check the checksums of listed files in a .treeinfo file, if available.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+diff --git a/docs/yum-config-manager.1 b/docs/yum-config-manager.1
+new file mode 100644
+index 0000000..81b895b
+--- /dev/null
++++ b/docs/yum-config-manager.1
+@@ -0,0 +1,39 @@
++.\" yum-config-manager
++.TH "yum-config-manager" "1" "13 January 2013" "" ""
++.SH "NAME"
++yum-config-manager \- manage yum configuration options and yum repositories
++.SH "SYNOPSIS"
++\fByum-config-manager\fP [options]
++.SH "DESCRIPTION"
++.PP
++\fByum-config-manager\fP is a program that can manage main yum configuration
++options, toggle which repositories are enabled or disabled, and add new
++repositories.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-\-save\fP"
++Save the current options (useful with \-\-setopt).
++.IP "\fB\-\-enable\fP"
++Enable the specified repos (automatically saves).
++.IP "\fB\-\-disable\fP"
++Disable the specified repos (automatically saves).
++.IP "\fB\-\-add\-repo=ADDREPO\fP"
++Add (and enable) the repo from the specified file or url.
++.SH "ADDITIONAL OPTIONS"
++Yum-config-manager inherits all other options from yum. See the yum(8)
++man page for more information.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+diff -up yum-utils-1.1.30/docs/Makefile.old yum-utils-1.1.30/docs/Makefile
+--- yum-utils-1.1.30/docs/Makefile.old	2014-08-11 16:00:41.405124150 +0200
++++ yum-utils-1.1.30/docs/Makefile	2014-08-11 16:01:58.973562309 +0200
+@@ -1,7 +1,9 @@
+ DOCS = repoquery package-cleanup repo-rss yumdownloader yum-builddep yum-changelog reposync \
+        yum-list-data yum-filter-data yum-verify yum-utils yum-aliases yum-debug-dump yum-versionlock \
+        yum-groups-manager debuginfo-install repodiff yum-fs-snapshot \
+-       show-installed show-changed-rco yum-debug-restore
++       show-installed show-changed-rco yum-debug-restore \
++       find-repos-of-install needs-restarting repo-graph repoclosure \
++       repomanage repotrack verifytree yum-config-manager
+ DOCS5 = yum-changelog.conf yum-versionlock.conf yum-fs-snapshot.conf
+ DOCS8 = yum-security yum-complete-transaction yumdb
+ 

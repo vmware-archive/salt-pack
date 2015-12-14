@@ -1,0 +1,21 @@
+diff -up Python-3.3.0b2/Lib/test/test_sys.py.fix-COUNT_ALLOCS-failure-in-test_sys Python-3.3.0b2/Lib/test/test_sys.py
+--- Python-3.3.0b2/Lib/test/test_sys.py.fix-COUNT_ALLOCS-failure-in-test_sys	2012-08-11 02:54:16.000000000 -0400
++++ Python-3.3.0b2/Lib/test/test_sys.py	2012-08-13 14:50:15.253720597 -0400
+@@ -835,12 +835,17 @@ class SizeofTest(unittest.TestCase):
+         # type
+         # static type: PyTypeObject
+         s = vsize('P2n15Pl4Pn9Pn11PIP')
++        # COUNT_ALLOCS adds a further 3 Py_ssize_t and 2 pointers:
++        if hasattr(sys, 'getcounts'):
++            s += struct.calcsize('3P2P')
+         check(int, s)
+         # (PyTypeObject + PyNumberMethods + PyMappingMethods +
+         #  PySequenceMethods + PyBufferProcs + 4P)
+         s = vsize('P2n15Pl4Pn9Pn11PIP') + struct.calcsize('34P 3P 10P 2P 4P')
+         # Separate block for PyDictKeysObject with 4 entries
+         s += struct.calcsize("2nPn") + 4*struct.calcsize("n2P")
++        if hasattr(sys, 'getcounts'):
++            s += struct.calcsize('3P2P')
+         # class
+         class newstyleclass(object): pass
+         check(newstyleclass, s)

@@ -1,0 +1,11 @@
+--- CherryPy-3.2.2/cherrypy/test/helper.py.orig	2011-10-27 22:34:31.218368540 -0700
++++ CherryPy-3.2.2/cherrypy/test/helper.py	2011-10-27 22:34:53.093040680 -0700
+@@ -299,7 +299,7 @@
+     def test_gc(self):
+         if self.do_gc_test:
+             self.getPage("/gc/stats")
+-            self.assertBody("Statistics:")
++            self.assertMatchesBody("^Statistics:")
+     # Tell nose to run this last in each class.
+     # Prefer sys.maxint for Python 2.3, which didn't have float('inf')
+     test_gc.compat_co_firstlineno = getattr(sys, 'maxint', None) or float('inf')

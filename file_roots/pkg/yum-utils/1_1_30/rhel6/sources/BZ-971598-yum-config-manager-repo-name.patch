@@ -1,0 +1,20 @@
+commit 08fa4c95c35e17cc099a178edcaf7ecc1fb1fcb9
+Author: James Antill <james@and.org>
+Date:   Tue Jun 18 15:11:18 2013 -0400
+
+    Use new findRepos() API for yum-config-manager. BZ 971599.
+
+diff --git a/yum-config-manager.py b/yum-config-manager.py
+index aed64a2..df90885 100755
+--- a/yum-config-manager.py
++++ b/yum-config-manager.py
+@@ -161,7 +161,8 @@ if opts.enable or opts.disable:
+         only = ['enabled']
+ 
+ if args:
+-    repos = yb.repos.findRepos(','.join(args))
++    repos = yb.repos.findRepos(','.join(args),
++                               name_match=True, ignore_case=True)
+ else:
+     repos = yb.repos.listEnabled()
+ 

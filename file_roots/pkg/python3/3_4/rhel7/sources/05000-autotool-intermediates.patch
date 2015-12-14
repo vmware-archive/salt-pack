@@ -1,0 +1,72 @@
+diff -up ./configure.autotool-intermediates ./configure
+--- ./configure.autotool-intermediates	2013-04-09 14:52:49.831773426 +0200
++++ ./configure	2013-04-09 14:52:53.204765347 +0200
+@@ -802,6 +802,8 @@ with_thread
+ enable_ipv6
+ with_doc_strings
+ with_tsc
++with_count_allocs
++with_call_profile
+ with_pymalloc
+ with_valgrind
+ with_systemtap
+@@ -1479,6 +1481,8 @@ Optional Packages:
+                           deprecated; use --with(out)-threads
+   --with(out)-doc-strings disable/enable documentation strings
+   --with(out)-tsc         enable/disable timestamp counter profile
++  --with(out)count-allocs  enable/disable per-type instance accounting
++  --with(out)-call-profile  enable/disable statistics on function call invocation
+   --with(out)-pymalloc    disable/enable specialized mallocs
+   --with-valgrind         Enable Valgrind support
+   --with(out)-systemtap   disable/enable SystemTap support
+@@ -10117,6 +10121,50 @@ $as_echo "#define WITH_TSC 1" >>confdefs
+ 
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
++else { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-count-allocs" >&5
++$as_echo_n "checking for --with-count-allocs... " >&6; }
++
++# Check whether --with-count-allocs was given.
++if test "${with_count_allocs+set}" = set; then :
++  withval=$with_count_allocs;
++if test "$withval" != no
++then
++
++$as_echo "#define COUNT_ALLOCS 1" >>confdefs.h
++
++    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++$as_echo "yes" >&6; }
++else { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-call-profile" >&5
++$as_echo_n "checking for --with-call-profile... " >&6; }
++
++# Check whether --with-call-profile was given.
++if test "${with_call_profile+set}" = set; then :
++  withval=$with_call_profile;
++if test "$withval" != no
++then
++
++$as_echo "#define CALL_PROFILE 1" >>confdefs.h
++
++    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++$as_echo "yes" >&6; }
+ else { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+ fi

@@ -1,0 +1,39 @@
+commit 58d207202c2b29b42834380c88a1ea72f51d095c
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Fri Jan 31 11:41:35 2014 +0100
+
+    Revert "fs-snapshot: "dmsetup -o" workaround.  BZ 954358"
+    
+    This reverts commit 0c0ddb41f347e9cdf9d3ea124fd87fd28b093a16.
+    
+    Karel Srot from QA convinced me that explicit column list is
+    better than assuming the first two columns are ones we need.
+    Missing support for the "-o" option was just a regression.
+    It's safe to assume it's there to stay.
+    
+    Note that the "-c" option is still required, so we should keep
+    commit 21fc32737ff3838c077fa36fdaeefda0ac5cbac2.
+
+diff --git a/plugins/fs-snapshot/fs-snapshot.py b/plugins/fs-snapshot/fs-snapshot.py
+index 786b0c1..5761e76 100644
+--- a/plugins/fs-snapshot/fs-snapshot.py
++++ b/plugins/fs-snapshot/fs-snapshot.py
+@@ -82,15 +82,14 @@ def inspect_volume_lvm(conduit, volume):
+     if device.startswith("/dev/mapper/"):
+         # convert /dev/mapper name to /dev/vg/lv for use with LVM2 tools
+         # - 'dmsetup splitname' will collapse any escaped characters
+-        p = Popen(["/sbin/dmsetup", "splitname", "--separator", " ",
++        p = Popen(["/sbin/dmsetup", "splitname", "--separator", "/",
+                    "--noheadings", "-c",
+-                   device], stdout=PIPE, stderr=PIPE)
++                   "-o", "vg_name,lv_name", device], stdout=PIPE, stderr=PIPE)
+         err = p.wait()
+         if err:
+             return 0
+         output = p.communicate()[0]
+-        device = "/".join(output.split()[:2])
+-        device = device.replace("/dev/mapper/", "/dev/")
++        device = output.strip().replace("/dev/mapper/", "/dev/")
+         volume["device"] = device
+ 
+     # Check if device is managed by lvm

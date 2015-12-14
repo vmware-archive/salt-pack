@@ -1,0 +1,12 @@
+diff -up yum-utils-1.1.30/needs-restarting.py.old yum-utils-1.1.30/needs-restarting.py
+--- yum-utils-1.1.30/needs-restarting.py.old	2014-08-11 15:46:17.000000000 +0200
++++ yum-utils-1.1.30/needs-restarting.py	2014-08-11 15:47:57.013791806 +0200
+@@ -162,7 +162,7 @@ def main(args):
+     for pid in needing_restart:
+         try:
+             cmdline = open('/proc/' +pid+ '/cmdline', 'r').read()
+-        except OSError, e:
++        except (OSError, IOError), e:
+             print "Couldn't access process information for %s: %s" % (pid, str(e))
+             continue
+         print '%s : %s' % (pid, cmdline)

@@ -1,0 +1,32 @@
+commit d317fd0d8f56eb352c7dbb78bc283c208da9a561
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Tue Jan 14 12:08:43 2014 +0100
+
+    post-transaction-actions: fix filename matching. BZ 1045494
+    
+    I believe the code now works as origanally intended. When installing
+    packages, txmbr.po is AvailablePackage instance and .filelist access
+    may trigger filelist metadata download.
+    
+    Since this runs after the transaction, we may look the package up
+    in rpmdb instead.  On removals, thispo is RPMInstalledPackage already.
+    Thanks to Robert Tomczyk <robert.x.tomczyk@gmail.com> for reporting
+    and testing this.
+
+diff --git a/plugins/post-transaction-actions/post-transaction-actions.py b/plugins/post-transaction-actions/post-transaction-actions.py
+index b4da1ce..804af9c 100644
+--- a/plugins/post-transaction-actions/post-transaction-actions.py
++++ b/plugins/post-transaction-actions/post-transaction-actions.py
+@@ -129,8 +129,10 @@ def posttrans_hook(conduit):
+ 
+             for txmbr in pkgset:
+                 matched = False
+-                #print '%s - %s' % txmbr.name, txmbr.ts_state
+-                if txmbr.po.state in TS_INSTALL_STATES:
++                thispo = txmbr.po
++                if txmbr.output_state in TS_INSTALL_STATES:
++                    # thispo is AvailablePackage; filelist access could trigger download
++                    # of the filelist.  Since it's installed now, use rpmdb data instead.
+                     thispo = _get_installed_po(rpmdb, txmbr.pkgtup)
+         
+                 if not yum.misc.re_glob(a_k):

@@ -1,0 +1,60 @@
+commit 60e4a1fcb9081c68b8603c51d12d07cf2fa3ecf6
+Author: James Antill <james@and.org>
+Date:   Fri Feb 4 11:30:40 2011 -0500
+
+    Have to put the function definitions before the assignments, BZ 674584
+
+diff --git a/yumutils/i18n.py b/yumutils/i18n.py
+index 50d448c..eada8ed 100644
+--- a/yumutils/i18n.py
++++ b/yumutils/i18n.py
+@@ -20,18 +20,6 @@ The yumutils.i18n pythom module for i18n code used by utils and plugins
+ # flag to disable i18n, set it to false to enable dummy wrappers.
+ _use_i18n = True
+ 
+-if _use_i18n:
+-    try:
+-        from kitchen.i18n import easy_gettext_setup
+-        # setup the translation wrappers
+-        _, P_  = easy_gettext_setup('yum-utils') 
+-    except:
+-        _ = dummy_wrapper
+-        P_ = dummyP_wrapper
+-else:
+-    _ = dummy_wrapper
+-    P_ = dummyP_wrapper
+-    
+     
+ def dummy_wrapper(str):
+     '''
+@@ -48,4 +36,16 @@ def dummyP_wrapper(str1, str2, n):
+         return str1
+     else:
+         return str2
+-    
+\ No newline at end of file
++
++if _use_i18n:
++    try:
++        from kitchen.i18n import easy_gettext_setup
++        # setup the translation wrappers
++        _, P_  = easy_gettext_setup('yum-utils') 
++    except:
++        _ = dummy_wrapper
++        P_ = dummyP_wrapper
++else:
++    _ = dummy_wrapper
++    P_ = dummyP_wrapper
++    
+diff -ru yum-utils-1.1.30-orig/yumutils/i18n.py yum-utils-1.1.30/yumutils/i18n.py
+--- yum-utils-1.1.30-orig/yumutils/i18n.py	2011-02-04 16:17:13.666989830 -0500
++++ yum-utils-1.1.30/yumutils/i18n.py	2011-02-04 16:17:52.412073162 -0500
+@@ -18,7 +18,7 @@
+ """
+ 
+ # flag to disable i18n, set it to false to enable dummy wrappers.
+-_use_i18n = True
++_use_i18n = False
+ 
+     
+ def dummy_wrapper(str):

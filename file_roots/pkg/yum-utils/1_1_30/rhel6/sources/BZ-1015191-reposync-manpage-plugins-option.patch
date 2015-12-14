@@ -1,0 +1,12 @@
+diff -up yum-utils-1.1.30/docs/reposync.1.old yum-utils-1.1.30/docs/reposync.1
+--- yum-utils-1.1.30/docs/reposync.1.old	2011-01-13 08:00:20.000000000 +0100
++++ yum-utils-1.1.30/docs/reposync.1	2014-04-18 14:22:43.252459667 +0200
+@@ -28,6 +28,8 @@ Path to download packages to: defaults t
+ Remove packages that fail GPG signature checking after downloading.
+ .IP "\fB\-u, \-\-urls\fP"
+ Just list urls of what would be downloaded, don't download.
++.IP "\fB\-l, \-\-plugins\fP"
++Enable yum plugin support.
+ .IP "\fB\-n, \-\-newest-only\fP"
+ Download only newest packages per-repo.
+ .IP "\fB\-q, \-\-quiet\fP"

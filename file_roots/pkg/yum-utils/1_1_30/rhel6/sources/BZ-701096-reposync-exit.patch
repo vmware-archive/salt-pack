@@ -1,0 +1,41 @@
+commit 5251812b4fd174877a3bd3f5ead030a9e64ecdb8
+Author: Zdeněk Pavlas <zpavlas@redhat.com>
+Date:   Mon Jan 16 15:46:33 2012 +0100
+
+    reposync: return 1 if any pkg download/gpg check fails. BZ 701096.
+
+diff --git a/reposync.py b/reposync.py
+index ba4c8d2..fb2c592 100755
+--- a/reposync.py
++++ b/reposync.py
+@@ -277,6 +277,7 @@ def main():
+ 
+         download_list.sort(sortPkgObj)
+         n = 0
++        exit_code = 0
+         for pkg in download_list:
+             n = n + 1
+             repo = my.repos.getRepo(pkg.repoid)
+@@ -322,6 +323,7 @@ def main():
+             except yum.Errors.RepoError, e:
+                 my.logger.error("Could not retrieve package %s. Error was %s" % (pkg, str(e)))
+                 local_size += sz
++                exit_code = 1
+                 continue
+ 
+             local_size += sz
+@@ -337,12 +339,14 @@ def main():
+                     else:
+                         my.logger.warning('Removing %s due to failed signature check: %s' % (os.path.basename(remote), error))
+                     os.unlink(path)
++                    exit_code = 1
+                     continue
+ 
+             if not os.path.exists(local) or not os.path.samefile(path, local):
+                 shutil.copy2(path, local)
+ 
+     my.closeRpmDB()
++    sys.exit(exit_code)
+ 
+ if __name__ == "__main__":
+     main()

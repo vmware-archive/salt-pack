@@ -1,0 +1,156 @@
+--- /dev/null	2014-03-17 09:14:11.350507767 +0100
++++ yum-utils-1.1.30/docs/repoclosure.1	2014-01-07 17:22:36.000000000 +0100
+@@ -0,0 +1,57 @@
++.\" repoclosure
++.TH "repoclosure" "1" "13 January 2013" "" ""
++.SH "NAME"
++repoclosure \- display a list of unresolved dependencies for a yum repository
++.SH "SYNOPSIS"
++\fBrepoclosure\fP [options]
++.SH "DESCRIPTION"
++.PP
++\fBrepoclosure\fP is a program that reads package metadata from one or more yum
++repositories, checks all dependencies, and displays a list of packages with
++unresolved dependencies.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-c CONFIG, \-\-config=CONFIG\fP"
++Config file to use (defaults to /etc/yum.conf).
++.IP "\fB\-a ARCH, \-\-arch=ARCH\fP"
++Check packages of the given archs, can be specified multiple times (default:
++current arch).
++.IP "\fB\-\-basearch=BASEARCH\fP"
++Set the basearch for yum to run as.
++.IP "\fB\-b, \-\-builddeps\fP"
++Check build dependencies only (needs source repos enabled).
++.IP "\fB\-l LOOKASIDE, \-\-lookaside=LOOKASIDE\fP"
++Specify a lookaside repo id to query, can be specified multiple times.
++.IP "\fB\-r REPOID, \-\-repoid=REPOID\fP"
++Specify repo ids to query, can be specified multiple times (default is
++all enabled).
++.IP "\fB\-t, \-\-tempcache\fP"
++Use a temp dir for storing/accessing yum-cache.
++.IP "\fB\-q, \-\-quiet\fP"
++Run quietly: no warnings printed to stderr.
++.IP "\fB\-n, \-\-newest\fP"
++Check only the newest packages in the repos.
++.IP "\fB\-\-repofrompath=REPOID,PATH/URL\fP"
++Specify a path or url to a repository (same path as in a baseurl) to add to
++the repositories for this query. This option can be used multiple times. If
++you want to view only the pkgs from this repository combine this with
++\-\-repoid. The repoid for the repository is specified by REPOID.
++.IP "\fB\-p PKG, \-\-pkg=PKG\fP"
++Check closure for this package only
++.IP "\fB\-g GROUP, \-\-group=GROUP\fP"
++Check closure for packages in this group only
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+--- /dev/null	2014-03-17 09:14:11.350507767 +0100
++++ yum-utils-1.1.30/docs/repotrack.1	2014-01-07 17:22:36.000000000 +0100
+@@ -0,0 +1,44 @@
++.\" repotrack
++.TH "repotrack" "1" "13 January 2013" "" ""
++.SH "NAME"
++repotrack \- track a package and its dependencies and download them
++.SH "SYNOPSIS"
++\fBrepotrack\fP [options] package1 [package2...]
++.SH "DESCRIPTION"
++.PP
++\fBrepotrack\fP is a program for keeping track of a particular package and its
++dependencies. It will download one or more packages and all dependencies.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-c CONFIG, \-\-config=CONFIG\fP"
++Config file to use (defaults to /etc/yum.conf).
++.IP "\fB\-a ARCH, \-\-arch=ARCH\fP"
++Act as if running the specified arch (default: current arch).
++.IP "\fB\-r REPOID, \-\-repoid=REPOID\fP"
++Specify repo ids to query, can be specified multiple times (default is
++all enabled).
++.IP "\fB\-t, \-\-tempcache\fP"
++Use a temp dir for storing/accessing yum-cache.
++.IP "\fB\-p DESTDIR, \-\-download_path=DESTDIR\fP"
++Path to download packages to.
++.IP "\fB\-u, \-\-urls\fP"
++Instead of downloading RPMs, list the URLs that would be downloaded.
++.IP "\fB\-n, \-\-newest\fP"
++Toggle downloading only the newest packages (defaults to newest-only).
++.IP "\fB\-q, \-\-quiet\fP"
++Output as little information as possible.
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+--- /dev/null	2014-03-17 09:14:11.350507767 +0100
++++ yum-utils-1.1.30/docs/repo-graph.1	2014-01-07 17:22:36.000000000 +0100
+@@ -0,0 +1,32 @@
++.\" repo-graph
++.TH "repo-graph" "1" "13 January 2013" "" ""
++.SH "NAME"
++repo-graph \- output a full package dependency graph in dot format
++.SH "SYNOPSIS"
++\fBrepo-graph\fP [options]
++.SH "DESCRIPTION"
++.PP
++\fBrepo-graph\fP is a program that generates a full package dependency list
++from a yum repository and outputs it in dot format.
++.PP
++.SH "OPTIONS"
++.IP "\fB\-h, \-\-help\fP"
++Display a help message, and then quit.
++.IP "\fB\-\-repoid=REPOID\fP"
++Specify repo ids to query, can be specified multiple times (default is
++all enabled).
++.IP "\fB\-c CONFIG\fP"
++Config file to use (defaults to /etc/yum.conf).
++
++.PP
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi
++
++.PP
++.SH "AUTHORS"
++.nf
++See the Authors file included with this program.
++.fi
+diff -up yum-utils-1.1.30/docs/yum-utils.1.fix yum-utils-1.1.30/docs/yum-utils.1
+--- yum-utils-1.1.30/docs/yum-utils.1.fix	2011-01-13 08:00:20.000000000 +0100
++++ yum-utils-1.1.30/docs/yum-utils.1	2014-03-18 17:01:10.048832925 +0100
+@@ -13,9 +13,9 @@ yum\-utils \- tools for manipulating rep
+ \fBrepoquery\fR \- query yum repositories and get additional information on the them
+ \fBreposync\fR \- synchronize a remote yum repository to a local directory using yum to retrieve packages
+ \fBrepotrack\fR \- track packages and its dependencies and downloads them
++\fBshow\-installed\fR \- print a compact package list making use of comps groups 
+ \fByum\-builddep\fR \- installs missing dependencies to build a specified package
+ \fByum\-complete\-transaction\fR \- finds incomplete or aborted yum transactions and attempts to complete them
+-\fByum\-installed\fR \- print a compact package list making use of comps groups 
+ \fByumdownloader\fR \- downloads packages from yum repositories including source RPMs
+ .SH "DESCRIPTION"
+ .B yum\-utils

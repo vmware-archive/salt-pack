@@ -1,0 +1,18 @@
+# Import base config
+{% import "setup/base_map.jinja" as basecfg %}
+
+# Get the user under which to build
+{# {% set build_runas = pillar.get('build_runas', basecfg.build_runas) %} #}
+{% set build_runas = 'root' %}
+
+# Get the release and architecture
+{% set build_release = pillar.get('build_release', 'ubuntu1404') %}
+{% set build_arch = pillar.get('build_arch', 'amd64') %}
+
+# Set the destination for built packages
+{% set build_dest_dir = basecfg.build_dest ~ '/' ~ build_release ~ '/' ~ build_arch %}
+
+# Set the mock target
+{% set build_tgt = 'ubuntu-' ~ build_arch -%}
+
+

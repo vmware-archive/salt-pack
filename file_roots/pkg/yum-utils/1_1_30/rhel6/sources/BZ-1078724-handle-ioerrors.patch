@@ -1,0 +1,19 @@
+commit a3a73c0c17d4946a298fdc6a5cb7475b9cf9763b
+Author: Valentina Mukhamedzhanova <vmukhame@redhat.com>
+Date:   Tue May 13 10:54:29 2014 +0200
+
+    Handle IOErrors in needs-restarting if the process is already over.
+
+diff --git a/needs-restarting.py b/needs-restarting.py
+index c1a5df2..d26ac42 100755
+--- a/needs-restarting.py
++++ b/needs-restarting.py
+@@ -118,7 +118,7 @@ def main(args):
+     for pid in return_running_pids(uid=myuid):
+         try:
+             pid_start = utils.get_process_time(int(pid), boot_time)['start_time']
+-        except OSError, e:
++        except (OSError, IOError), e:
+             continue
+         found_match = False
+         for fn in get_open_files(pid):

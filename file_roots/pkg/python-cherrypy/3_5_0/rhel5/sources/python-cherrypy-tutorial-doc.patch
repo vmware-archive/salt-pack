@@ -1,0 +1,30 @@
+--- CherryPy-3.5.0.orig/setup.py	2014-08-27 15:34:43.973310337 -0600
++++ CherryPy-3.5.0/setup.py	2014-08-27 15:35:18.131503260 -0600
+@@ -74,7 +74,6 @@
+ cp_license = "BSD"
+ packages = [
+     "cherrypy", "cherrypy.lib",
+-    "cherrypy.tutorial", "cherrypy.test",
+     "cherrypy.process",
+     "cherrypy.scaffold",
+     "cherrypy.wsgiserver",
+@@ -90,19 +89,6 @@
+                            ]),
+     ('cherrypy/scaffold/static', [
+         'cherrypy/scaffold/static/made_with_cherrypy_small.png']),
+-    ('cherrypy/test', ['cherrypy/test/style.css',
+-                       'cherrypy/test/test.pem',
+-                       ]),
+-    ('cherrypy/test/static', ['cherrypy/test/static/index.html',
+-                              'cherrypy/test/static/dirback.jpg', ]),
+-    ('cherrypy/tutorial',
+-        [
+-            'cherrypy/tutorial/tutorial.conf',
+-            'cherrypy/tutorial/README.txt',
+-            'cherrypy/tutorial/pdf_file.pdf',
+-            'cherrypy/tutorial/custom_error.html',
+-        ]
+-     ),
+ ]
+ scripts = ["cherrypy/cherryd"]
+ 

@@ -1,0 +1,509 @@
+commit c349663dae7e7029e20601506fcdcf8541597a13
+Author: James Antill <james@and.org>
+Date:   Tue Mar 15 15:07:28 2011 -0400
+
+    Show how a new package version changes in requires/conflicts/obsoletes.
+
+diff --git a/show-changed-rco.py b/show-changed-rco.py
+new file mode 100755
+index 0000000..f57e27c
+--- /dev/null
++++ b/show-changed-rco.py
+@@ -0,0 +1,265 @@
++#! /usr/bin/python -tt
++
++import yum
++
++import os
++
++from optparse import OptionParser
++from optparse import SUPPRESS_HELP
++
++version = "1.0.0"
++
++
++def _get_npkgs(self, args):
++    pkgs = []
++    for arg in args:
++        if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
++                                      os.path.exists(arg))):
++            thispkg = yum.packages.YumUrlPackage(self, self.ts, arg)
++            pkgs.append(thispkg)
++        elif self.conf.showdupesfromrepos:
++            pkgs.extend(self.pkgSack.returnPackages(patterns=[arg]))
++        else:                
++            try:
++                pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
++            except yum.Errors.PackageSackError:
++                pass
++    return pkgs
++
++def _get_opkgs(self, npkgs, old_packages):
++    if old_packages:
++        return _get_npkgs(self, old_packages)
++    pkg_names = set((pkg.name for pkg in npkgs))
++    return self.rpmdb.searchNames(pkg_names)
++
++def _get_oreqs(pkg, reqs):
++    oreqs = {}
++    for req in reqs:
++        (r,f,v) = req
++        if r.startswith('rpmlib('):
++            continue
++
++        if r not in oreqs:
++            oreqs[r] = set([req])
++        else:
++            oreqs[r].add(req)
++    return oreqs
++
++def _get_reqs(pkg, reqs, oreqs, self_prov_check=True):
++    nreqs = set()
++    creqs = set()
++
++    for req in reqs:
++        (r,f,v) = req
++        if r.startswith('rpmlib('):
++            continue
++
++        if r in oreqs and req in oreqs[r]:
++            continue
++
++        if (r in pkg.provides_names or
++            (r[0] == '/' and r in (pkg.filelist + pkg.dirlist +
++                                   pkg.ghostlist))):
++            if not f or pkg.checkPrco('provides', req):
++                continue
++
++        if r in oreqs:
++            creqs.add(req)
++        else:
++            nreqs.add(req)
++
++    return nreqs, creqs
++
++
++def _print_reqs(yb, pkg, reqs, used_repos):
++    out_reqs = {}
++    for req in reqs:
++        (r,f,v) = req
++        seen = {}
++        out_reqs[req] = []
++        for pkg in sorted(yb.rpmdb.searchProvides(req)):
++            key = (pkg.name, pkg.arch)
++            if key in seen and not yb.conf.showdupesfromrepos:
++                continue
++            seen[key] = pkg
++            out_reqs[req].append(pkg)
++            used_repos.append(pkg.ui_from_repo)
++        for pkg in sorted(yb.pkgSack.searchProvides(req)):
++            key = (pkg.name, pkg.arch)
++            if key in seen and not yb.conf.showdupesfromrepos:
++                continue
++            seen[key] = pkg
++            out_reqs[req].append(pkg)
++            used_repos.append(pkg.ui_from_repo)
++    done = set()
++    for req in sorted(out_reqs):
++        if req in done:
++            continue
++        done.add(req)
++        print " ", yum.misc.prco_tuple_to_string(req)
++        for oreq in sorted(out_reqs):
++            if oreq in done:
++                continue
++            if req == oreq:
++                continue
++            if out_reqs[oreq] == out_reqs[req]:
++                print " ", yum.misc.prco_tuple_to_string(oreq)
++                done.add(oreq)
++        for pkg in out_reqs[req]:
++            print "   ", pkg, pkg.ui_from_repo
++
++def _print_sum(title, used_repos, ind=" ", end=' '):
++    if not used_repos:
++        return
++
++    print title
++    crepos = {}
++    installed = 0
++    available = 0
++    for urepo in used_repos:
++        if urepo not in crepos:
++            crepos[urepo] = 0
++        crepos[urepo] += 1
++        if urepo[0] == '@':
++            installed += 1
++        else:
++            available += 1
++
++    if installed:
++        print ind, "Installed:", installed
++    for urepo in sorted(crepos):
++        if urepo[0] != '@':
++            continue
++        print "%s%s" % (ind, "   "), urepo + ":", crepos[urepo]
++    if available:
++        print ind, "Available:", available
++    for urepo in sorted(crepos):
++        if urepo[0] == '@':
++            continue
++        print "%s%s" % (ind, "   "), urepo + ":", crepos[urepo]
++
++    if end:
++        print end
++
++
++def main():
++    parser = OptionParser(version = "Depcheck version %s" % version)
++    parser.add_option("--releasever", default=None,
++                      help="set value of $releasever in yum config and repo files")
++    parser.add_option("--show-duplicates", action="store_true",
++                      dest="show_dupes",
++                      help="show all versions of packages")
++    parser.add_option("--show-dupes", action="store_true",
++                      help=SUPPRESS_HELP)
++    parser.add_option("--repoid", action="append",
++                      help="specify repoids to query, can be specified multiple times (default is all enabled)")
++    parser.add_option("--enablerepo", action="append", dest="enablerepos",
++                      help="specify additional repoids to query, can be specified multiple times")
++    parser.add_option("--disablerepo", action="append", dest="disablerepos",
++                      help="specify repoids to disable, can be specified multiple times")                      
++    parser.add_option("--repofrompath", action="append",
++                      help="specify repoid & paths of additional repositories - unique repoid and complete path required, can be specified multiple times. Example. --repofrompath=myrepo,/path/to/repo")
++    parser.add_option("--old-packages", action="append",
++                      help="packages to use to compare against, instead of installed")
++    parser.add_option("-C", "--cache", action="store_true",
++                      help="run from cache only")
++    parser.add_option("-c", "--config", dest="conffile", default=None,
++                      help="config file location")
++
++    (opts, args) = parser.parse_args()
++
++
++    yb = yum.YumBase()
++    yb.preconf.releasever = opts.releasever
++    if opts.conffile is not None:
++        yb.preconf.fn = opts.conffile
++
++    if opts.cache:
++        yb.conf.cache = 1
++    elif not yb.setCacheDir():
++        yb.conf.cache = 1
++
++    if opts.show_dupes:
++        yb.conf.showdupesfromrepos = True
++
++    if opts.repoid:
++        found_repos = set()
++        for repo in yb.repos.findRepos('*'):
++            if repo.id not in opts.repoid:
++                repo.disable()
++            else:
++                found_repos.add(repo.id)
++                repo.enable()
++        for not_found in set(opts.repoid).difference(found_repos):
++            yb.logger.error('Repoid %s was not found.' % not_found)
++
++    if opts.disablerepos:
++        for repo_match in opts.disablerepos:
++            for repo in yb.repos.findRepos(repo_match):
++                repo.disable()
++
++    if opts.enablerepos:    
++        for repo_match in opts.enablerepos:
++            for repo in yb.repos.findRepos(repo_match):
++                repo.enable()
++
++    npkgs = _get_npkgs(yb, args)
++    opkgs = {}
++    for pkg in sorted(_get_opkgs(yb, npkgs, opts.old_packages)):
++        opkgs[pkg.name] = pkg
++
++    for pkg in sorted(npkgs):
++        print "New-Package:", pkg, pkg.ui_from_repo
++
++        opkg = None
++        oreqs = {}
++        oobss = {}
++        ocons = {}
++        if pkg.name in opkgs:
++            opkg = opkgs[pkg.name]
++            print "Old-Package:", opkg, opkg.ui_from_repo
++
++            oreqs = _get_oreqs(pkg, opkg.requires)
++            ocons = _get_oreqs(pkg, opkg.conflicts)
++            oobss = _get_oreqs(pkg, opkg.obsoletes)
++
++        used_repos_reqs = []
++        nreqs, creqs = _get_reqs(pkg, pkg.requires, oreqs)
++        if nreqs:
++            print "New-Requires:"
++            _print_reqs(yb, pkg, nreqs, used_repos_reqs)
++        if creqs:
++            print "Modified-Requires:"
++            _print_reqs(yb, pkg, creqs, used_repos_reqs)
++
++        _print_sum("Dep-Requires-Repos:", used_repos_reqs)
++
++        used_repos_cons = []
++        nreqs, creqs = _get_reqs(pkg, pkg.conflicts, ocons)
++        if nreqs:
++            print "New-Conflicts:"
++            _print_reqs(yb, pkg, nreqs, used_repos_cons)
++        if creqs:
++            print "Mod-Conflicts:"
++            _print_reqs(yb, pkg, creqs, used_repos_cons)
++
++        _print_sum("Dep-Conflicts-Repos:", used_repos_cons)
++
++        used_repos_obss = []
++        nreqs, creqs = _get_reqs(pkg, pkg.obsoletes, oobss)
++        if nreqs:
++            print "New-Obsoletes:"
++            _print_reqs(yb, pkg, nreqs, used_repos_obss)
++        if creqs:
++            print "Mod-Obsoletes:"
++            _print_reqs(yb, pkg, creqs, used_repos_obss)
++
++        _print_sum("Dep-Obsoletes-Repos:", used_repos_obss)
++        _print_sum("Dep-Repos:",
++                   used_repos_reqs + used_repos_cons + used_repos_obss,
++                   end='')
++
++
++if __name__ == "__main__":
++    yum.misc.setup_locale()
++    main()
+commit f033884125067cff576e6e02d98e754ca606403e
+Author: James Antill <james@and.org>
+Date:   Mon Mar 28 15:44:04 2011 -0400
+
+    Added --ignore-arch and --skip-new to show-changed-rco.
+
+diff --git a/show-changed-rco.py b/show-changed-rco.py
+index f57e27c..078feec 100755
+--- a/show-changed-rco.py
++++ b/show-changed-rco.py
+@@ -161,6 +161,10 @@ def main():
+                       help="specify repoid & paths of additional repositories - unique repoid and complete path required, can be specified multiple times. Example. --repofrompath=myrepo,/path/to/repo")
+     parser.add_option("--old-packages", action="append",
+                       help="packages to use to compare against, instead of installed")
++    parser.add_option("--ignore-arch", action="store_true",
++                      help="ignore arch when searching for old packages")
++    parser.add_option("--skip-new", action="store_true",
++                      help="skip packages without a matching old package")
+     parser.add_option("-C", "--cache", action="store_true",
+                       help="run from cache only")
+     parser.add_option("-c", "--config", dest="conffile", default=None,
+@@ -206,17 +210,26 @@ def main():
+     npkgs = _get_npkgs(yb, args)
+     opkgs = {}
+     for pkg in sorted(_get_opkgs(yb, npkgs, opts.old_packages)):
++        opkgs[(pkg.name, pkg.arch)] = pkg
+         opkgs[pkg.name] = pkg
+ 
+     for pkg in sorted(npkgs):
+-        print "New-Package:", pkg, pkg.ui_from_repo
+-
+         opkg = None
+         oreqs = {}
+         oobss = {}
+         ocons = {}
+-        if pkg.name in opkgs:
+-            opkg = opkgs[pkg.name]
++        if opts.ignore_arch:
++            if pkg.name in opkgs:
++                opkg = opkgs[pkg.name]
++        elif (pkg.name, pkg.arch) in opkgs:
++            opkg = opkgs[(pkg.name, pkg.arch)]
++
++        if opkg is None and opts.skip_new:
++            continue
++
++        print "New-Package:", pkg, pkg.ui_from_repo
++
++        if opkg is not None:
+             print "Old-Package:", opkg, opkg.ui_from_repo
+ 
+             oreqs = _get_oreqs(pkg, opkg.requires)
+commit ab1c912a5f430544787447fb5cb8c4434b5f7001
+Author: James Antill <james@and.org>
+Date:   Wed Mar 30 12:26:24 2011 -0400
+
+    Add COPYRIGHT info. and docs for show-changed-rco.
+
+diff --git a/docs/Makefile b/docs/Makefile
+index 947498d..d01c1e4 100644
+--- a/docs/Makefile
++++ b/docs/Makefile
+@@ -1,6 +1,7 @@
+ DOCS = repoquery package-cleanup repo-rss yumdownloader yum-builddep yum-changelog reposync \
+        yum-list-data yum-filter-data yum-verify yum-utils yum-aliases yum-debug-dump yum-versionlock \
+-       yum-groups-manager debuginfo-install repodiff yum-fs-snapshot
++       yum-groups-manager debuginfo-install repodiff yum-fs-snapshot \
++       show-installed show-changed-rco
+ DOCS5 = yum-changelog.conf yum-versionlock.conf yum-fs-snapshot.conf
+ DOCS8 = yum-security yum-complete-transaction yumdb
+ 
+diff --git a/docs/show-changed-rco.1 b/docs/show-changed-rco.1
+new file mode 100644
+index 0000000..3e3b62c
+--- /dev/null
++++ b/docs/show-changed-rco.1
+@@ -0,0 +1,67 @@
++.\" show-changed-rco
++.TH "show-installed" "1" "30 March 2011" "James Antill" ""
++.SH "NAME"
++show\-changed-\-rco
++.SH "SYNOPSIS"
++\fBshow\-changed-\-rco\fP [options]
++.SH "DESCRIPTION"
++.PP
++\fBshow\-changed-\-rco\fP gives a compact description of the changes to a
++packages Requires, Conflicts and Obsoletes data from the installed (or old) to
++a specified rpm file.
++.SH OPTIONS
++.TP
++.IP \-h, \-\-help
++show this help message and exit
++.IP "\fB\-C, \-\-cache\fP" 
++Tells repoquery to run entirely from YUM cache - does not download any metadata
++or update the cache. Queries in this mode can fail or give partial/incorrect
++results if the cache isn't fully populated beforehand with eg "yum makecache".
++.IP "\fB\-c <config file>, \-\-config=<config file>\fP"
++Use alternative config file (default is /etc/yum.conf).
++
++.IP "\fB\-\-repoid=<repo>\fP"
++Specify which repository to query. Using this option disables all repositories
++not explicitly enabled with --repoid option (can be used multiple times). By
++default repoquery uses whatever repositories are enabled in YUM configuration.
++.IP "\fB\-\-enablerepo=<repo>\fP"
++In addition to the default set, query the given additional repository, even if
++it is disabled in YUM configuration.  Can be used multiple times.
++.IP "\fB\-\-disablerepo=<repo>\fP"
++Do not query the given repository, even if it is enabled in YUM
++configuration.  Can be used multiple times.
++.IP "\fB\-\-repofrompath=<repoid>,<path/url>\fP"
++Specify a path or url to a repository (same path as in a baseurl) to add to
++the repositories for this query. This option can be used multiple times. If
++you want to view only the pkgs from this repository combine this with
++--repoid. The repoid for the repository is specified by <repoid>.
++
++.IP "\fB\-\-old-packages=<pkg>\fP"
++Explicitly list the valid old packages to match the new packages against.
++.IP "\fB\-\-ignore-arch\fP"
++Ignore arch. so you can compare foo-2.i686 to foo-1.x86_64.
++.IP "\fB\-\-skip-new\fP"
++Only give output for packages which we've found an old package for.
++
++.PP 
++.SH "SEE ALSO"
++.nf
++.I yum.conf (5)
++http://yum.baseurl.org/
++.fi 
++
++.PP 
++.SH "AUTHORS"
++.nf 
++See the Authors file included with this program.
++.fi 
++
++.PP 
++.SH "BUGS"
++There are of course no bugs, but should you find any, you should first
++consult the FAQ section on http://yum.baseurl.org/wiki/Faq and if unsuccessful
++in finding a resolution contact the mailing list: yum-devel@lists.baseurl.org.
++To file a bug use http://bugzilla.redhat.com for Fedora/RHEL/Centos
++related bugs and http://yum.baseurl.org/report for all other bugs.
++
++.fi
+diff --git a/show-changed-rco.py b/show-changed-rco.py
+index 078feec..3489247 100755
+--- a/show-changed-rco.py
++++ b/show-changed-rco.py
+@@ -1,5 +1,19 @@
+ #! /usr/bin/python -tt
+ 
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU Library General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++
+ import yum
+ 
+ import os
+diff --git a/yum-utils.spec b/yum-utils.spec
+index 7959801..19c2f8b 100644
+--- a/yum-utils.spec
++++ b/yum-utils.spec
+@@ -471,6 +471,8 @@ fi
+ %{_mandir}/man1/repoquery.1.*
+ %{_mandir}/man1/repodiff.1.*
+ %{_mandir}/man1/reposync.1.*
++%{_mandir}/man1/show-changed-rco.1.*
++%{_mandir}/man1/show-installed.1.*
+ %{_mandir}/man1/yum-builddep.1.*
+ %{_mandir}/man1/yum-debug-dump.1.*
+ %{_mandir}/man8/yum-complete-transaction.8.*
+commit bebef4feaafd448ad97e9add7504e42f13bb5c6d
+Author: James Antill <james@and.org>
+Date:   Tue Mar 15 15:08:58 2011 -0400
+
+    Add show-changed-rco to the install.
+
+diff --git a/Makefile b/Makefile
+index a12ae1f..668aaf3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ SUBDIRS = docs po yumutils
+ PKGNAME = yum-utils
+-UTILS = package-cleanup debuginfo-install repoclosure repomanage repoquery repo-graph repo-rss yumdownloader yum-builddep repotrack reposync repodiff yum-debug-dump yum-debug-restore verifytree yum-groups-manager find-repos-of-install needs-restarting yum-config-manager show-installed
++UTILS = package-cleanup debuginfo-install repoclosure repomanage repoquery repo-graph repo-rss yumdownloader yum-builddep repotrack reposync repodiff yum-debug-dump yum-debug-restore verifytree yum-groups-manager find-repos-of-install needs-restarting yum-config-manager show-installed show-changed-rco
+ UTILSROOT = yum-complete-transaction yumdb
+ VERSION=$(shell awk '/Version:/ { print $$2 }' ${PKGNAME}.spec)
+ RELEASE=$(shell awk -F%: '/Release:/ { print $$2 }' ${PKGNAME}.spec ')
+commit d3e8a07e2080795af67b0abb8a7277d337557950
+Author: Zdeněk Pavlas <zpavlas@redhat.com>
+Date:   Tue Mar 20 18:18:09 2012 +0100
+
+    Implement --repofrompath option in show-changed-rco.py
+    (was already documented but not implemented)
+
+diff --git a/show-changed-rco.py b/show-changed-rco.py
+index fca53cc..f314ef0 100755
+--- a/show-changed-rco.py
++++ b/show-changed-rco.py
+@@ -194,6 +194,21 @@ def main():
+     if opts.conffile is not None:
+         yb.preconf.fn = opts.conffile
+ 
++    # setup the fake repos
++    for repo in opts.repofrompath or []:
++        tmp = tuple(repo.split(','))
++        if len(tmp) != 2:
++            yb.logger.error("Error: Bad repofrompath argument: %s" %repo)
++            continue
++        repoid,repopath = tmp
++        if repopath[0] == '/':
++            baseurl = 'file://' + repopath
++        else:
++            baseurl = repopath
++        yb.add_enable_repo(repoid, baseurls=[baseurl],
++                           basecachedir=yb.conf.cachedir)
++        yb.logger.info("Added %s repo from %s" % (repoid, repopath))
++
+     if opts.cache:
+         yb.conf.cache = 1
+     elif not yb.setCacheDir():

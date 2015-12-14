@@ -1,0 +1,16 @@
+diff -up yum-utils-1.1.30/repoquery.py.old yum-utils-1.1.30/repoquery.py
+--- yum-utils-1.1.30/repoquery.py.old	2014-05-14 09:33:11.000000000 +0200
++++ yum-utils-1.1.30/repoquery.py	2014-05-14 09:46:51.528781968 +0200
+@@ -1147,7 +1147,11 @@ def main(args):
+         repoq.preconf.fn = opts.conffile
+     repoq.preconf.debuglevel = initnoise
+     repoq.preconf.init_plugins = opts.plugins
+-    repoq.conf
++    try:
++        repoq.conf
++    except yum.Errors.YumBaseError, e:
++        repoq.logger.error(e)
++        sys.exit(1)
+ 
+     if opts.repofrompath:
+         # setup the fake repos

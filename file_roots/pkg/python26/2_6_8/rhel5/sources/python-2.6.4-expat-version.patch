@@ -1,0 +1,53 @@
+diff -up Python-2.6.4/Include/pyexpat.h.expat-version Python-2.6.4/Include/pyexpat.h
+--- Python-2.6.4/Include/pyexpat.h.expat-version	2006-06-19 19:21:25.000000000 -0400
++++ Python-2.6.4/Include/pyexpat.h	2010-03-04 16:55:58.000000000 -0500
+@@ -5,6 +5,28 @@
+ 
+ #define PyExpat_CAPI_MAGIC  "pyexpat.expat_CAPI 1.0"
+ 
++
++/*
++  Definition of XML_Size
++
++  We want to build against the system copy of expat, but XML_Size did not exist
++  in RHEL5's expat version.
++
++  /usr/include/expat_external in expat-devel-2.0.1-8.fc12.i686 contains some
++  preprocessor logic for this, but this is not seen in RHEL5's
++  expat-devel-1.95.8-8.2.1 which instead has the return types hardcoded as
++  "int" from:
++    XMLPARSEAPI(int) XML_GetCurrentLineNumber(XML_Parser parser);
++    XMLPARSEAPI(int) XML_GetCurrentColumnNumber(XML_Parser parser);
++
++  This appears to be necessary for the pyexpat.h in Python-2.6.4 to compile
++  against the system expat.
++
++  Ensure that it matches the hardcoded "int" type from the system expat:
++*/
++typedef int XML_Size;
++
++
+ struct PyExpat_CAPI 
+ {
+     char* magic; /* set to PyExpat_CAPI_MAGIC */
+diff -up Python-2.6.4/Modules/_elementtree.c.expat-version Python-2.6.4/Modules/_elementtree.c
+--- Python-2.6.4/Modules/_elementtree.c.expat-version	2010-03-04 17:00:48.000000000 -0500
++++ Python-2.6.4/Modules/_elementtree.c	2010-03-04 17:01:04.000000000 -0500
+@@ -2003,7 +2003,7 @@ expat_default_handler(XMLParserObject* s
+         Py_XDECREF(res);
+     } else {
+         PyErr_Format(
+-            PyExc_SyntaxError, "undefined entity &%s;: line %ld, column %ld",
++            PyExc_SyntaxError, "undefined entity &%s;: line %d, column %d",
+             PyString_AS_STRING(key),
+             EXPAT(GetErrorLineNumber)(self->parser),
+             EXPAT(GetErrorColumnNumber)(self->parser)
+@@ -2364,7 +2364,7 @@ expat_parse(XMLParserObject* self, char*
+ 
+     if (!ok) {
+         PyErr_Format(
+-            PyExc_SyntaxError, "%s: line %ld, column %ld",
++            PyExc_SyntaxError, "%s: line %d, column %d",
+             EXPAT(ErrorString)(EXPAT(GetErrorCode)(self->parser)),
+             EXPAT(GetErrorLineNumber)(self->parser),
+             EXPAT(GetErrorColumnNumber)(self->parser)

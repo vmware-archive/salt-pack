@@ -1,0 +1,19 @@
+commit 2aac1b1c8b3f5ada029d6772ee6f9bb7c63be172
+Author: Seth Vidal <skvidal@fedoraproject.org>
+Date:   Mon Jul 25 11:17:30 2011 -0400
+
+    typo leaving .conf in ybc.conf.yumvar should just be ybc.yumvar
+
+diff --git a/yum-config-manager.py b/yum-config-manager.py
+index bc7c289..50f5123 100755
+--- a/yum-config-manager.py
++++ b/yum-config-manager.py
+@@ -151,7 +151,7 @@ if (not args and not opts.addrepo) or 'main' in args:
+             # Try the old default
+             fn = '/etc/yum.conf'
+         ybc = yb.conf
+-        writeRawConfigFile(fn, 'main', ybc.conf.yumvar,
++        writeRawConfigFile(fn, 'main', ybc.yumvar,
+                            ybc.cfg.options, ybc.iteritems, ybc.optionobj,
+                            only)
+ 

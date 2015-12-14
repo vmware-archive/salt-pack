@@ -1,0 +1,19 @@
+--- a/docs/package-cleanup.1
++++ b/docs/package-cleanup.1
+@@ -34,6 +34,8 @@ Scan for duplicates in the local RPM dat
+ .IP "\fB\-\-cleandupes\fP"
+ Scan for duplicates in the local RPM database and clean out the
+ older versions.
++.IP "\fB\-\-count <COUNT>\fP"
++Number of duplicate packages to keep on the system (default 2)
+ .PP 
+ .SH "LEAVES OPTIONS" 
+ .IP "\fB\-\-all\fP"
+@@ -47,8 +49,6 @@ When listing leaf nodes do not list deve
+ When listing leaf nodes do not list packages with files in bin directories.
+ .PP 
+ .SH "OLDKERNELS OPTIONS" 
+-.IP "\fB\-\-count <COUNT>\fP"
+-Number of kernel packages to keep on the system (default 2)
+ .IP "\fB\-\-keepdevel\fP"
+ Do not remove kernel-devel packages when removing kernels

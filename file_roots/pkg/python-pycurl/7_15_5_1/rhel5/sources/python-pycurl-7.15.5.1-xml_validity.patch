@@ -1,0 +1,31 @@
+diff -up pycurl-7.15.5.1/doc/callbacks.html.xml_validity pycurl-7.15.5.1/doc/callbacks.html
+--- pycurl-7.15.5.1/doc/callbacks.html.xml_validity	2010-09-29 18:20:12.589807858 +0200
++++ pycurl-7.15.5.1/doc/callbacks.html	2010-09-29 18:20:14.759767907 +0200
+@@ -120,7 +120,7 @@ VERBOSE option must be enabled for this 
+ </pre>
+ 
+ <h2>Other examples</h2>
+-The pycurl distribution also contains a number of test scripts and
++<p>The pycurl distribution also contains a number of test scripts and
+ examples which show how to use the various callbacks in libcurl.
+ For instance, the file 'examples/file_upload.py' in the distribution contains
+ example code for using READFUNCTION, 'tests/test_cb.py' shows
+diff -up pycurl-7.15.5.1/doc/curlshareobject.html.xml_validity pycurl-7.15.5.1/doc/curlshareobject.html
+--- pycurl-7.15.5.1/doc/curlshareobject.html.xml_validity	2010-09-29 18:20:40.677767505 +0200
++++ pycurl-7.15.5.1/doc/curlshareobject.html	2010-09-29 18:22:00.071769406 +0200
+@@ -14,6 +14,7 @@
+ 
+ <p>CurlShare objects have the following methods:</p>
+ 
++<dl>
+ <dt><code>setopt(</code><em>option, value</em><code>)</code> -&gt; <em>None</em></dt>
+ <dd>
+ 
+@@ -23,6 +24,7 @@ href="http://curl.haxx.se/libcurl/c/curl
+ <em>option</em> is specified with the CURLSHOPT_* constants in libcurl,
+ except that the CURLSHOPT_ prefix has been changed to SH_.  Currently,
+ <em>value</em> must be either LOCK_DATA_COOKIE or LOCK_DATA_DNS.
++</p>
+ 
+ <p>Example usage:</p>
+ 

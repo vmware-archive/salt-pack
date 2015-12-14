@@ -1,0 +1,32 @@
+commit 43982eab498dcc266ff50d91feef8a79c76fb925
+Author: Nick Jacek <njacek@redhat.com>
+Date:   Thu Jun 9 16:52:54 2011 -0400
+
+    Stops yumdownloader from attempting to download the same package twice if it is available in multiple repos. BZ 711767
+
+diff --git a/yumdownloader.py b/yumdownloader.py
+index b5fb38a..e6107d4 100755
+--- a/yumdownloader.py
++++ b/yumdownloader.py
+@@ -171,7 +171,7 @@ class YumDownloader(YumUtilBase):
+ 
+             pos = self.pkgSack.returnPackages(patterns=pkgnames)
+             exactmatch, matched, unmatched = parsePackages(pos, pkgnames)
+-            installable = yum.misc.unique(exactmatch + matched)
++            installable = (exactmatch + matched)
+             if not installable: # doing one at a time, apart from groups
+                 self.logger.error('No Match for argument %s' % pkg)
+                 continue
+@@ -221,7 +221,12 @@ class YumDownloader(YumUtilBase):
+         for pkg in toDownload:
+             n,a,e,v,r = pkg.pkgtup
+             packages =  self.pkgSack.searchNevra(n,e,v,r,a)
++            packages.sort()
++            last = None
+             for download in packages:
++                if download.pkgtup == last :
++                    continue
++                last = download.pkgtup
+                 repo = self.repos.getRepo(download.repoid)
+                 remote = download.returnSimple('relativepath')
+                 if opts.urls:

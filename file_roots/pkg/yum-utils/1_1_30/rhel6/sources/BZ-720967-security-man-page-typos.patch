@@ -1,0 +1,45 @@
+commit 95228a57ed3cceccbbccfbacd5fecf90272bb3c5
+Author: James Antill <james@and.org>
+Date:   Tue Aug 9 15:41:04 2011 -0400
+
+    Fix typos in yum-security man page. BZ 720967.
+
+diff --git a/docs/yum-security.8 b/docs/yum-security.8
+index 7e260b0..f504fee 100644
+--- a/docs/yum-security.8
++++ b/docs/yum-security.8
+@@ -109,7 +109,7 @@ distribution.
+ There are four options added to yum that are available in the "list updates", "info updates", "check-update" and "update" commands. They are:
+ .PP 
+ .IP "\fB\--advisory\fP"
+-This option includes packages coresponding to the advisory ID, Eg. FEDORA-2201-123.
++This option includes packages corresponding to the advisory ID, Eg. FEDORA-2201-123.
+ .IP "\fB\--bz\fP"
+ This option includes packages that say they fix a Bugzilla ID, Eg. 123.
+ .IP "\fB\--cve\fP"
+@@ -123,7 +123,7 @@ This option includes packages that say they fix a security issue.
+ 
+ .SH "EXAMPLES"
+ .PP
+-To list all updates that are security relevant, and get a reutrn code on whether there are security updates use:
++To list all updates that are security relevant, and get a return code on whether there are security updates use:
+ .IP
+ yum --security check-update
+ .PP
+@@ -141,7 +141,7 @@ To get a list of all BZs that are fixed for packages you have installed use:
+ .IP
+ yum updateinfo list bugzillas
+ .PP
+-To get a list of all security advisoryies, including the ones you have already
++To get a list of all security advisories, including the ones you have already
+ installed use:
+ .IP
+ yum updateinfo list all security
+@@ -185,6 +185,6 @@ James Antill <james.antill@redhat.com>.
+ .SH "BUGS"
+ The update-minimal command ignores the --obsoletes flag.
+ 
+-The update-minimal command can only directly affect things atm., so if you update pkgA minimally but that requires an update to pkgB then pkgB will be updated to the newest version by the depsolver. Also the above will happen even if you've also minimally updated pkgB, if either the direct (minimal) update for pkgB happens after or if the minimal update for pkgB doesn't satisy the requirements of pkgA.
++The update-minimal command can only directly affect things atm., so if you update pkgA minimally but that requires an update to pkgB then pkgB will be updated to the newest version by the depsolver. Also the above will happen even if you've also minimally updated pkgB, if either the direct (minimal) update for pkgB happens after or if the minimal update for pkgB doesn't satisfy the requirements of pkgA.
+ 
+ The main "problem" is that if the data is not correct the plugin cannot work correctly. For instance "--bz 123" will not fix BZ 123 if a package is updated to fix that BZ without referencing that it does so in the updateinfo.xml.

@@ -1,0 +1,28 @@
+
+Resolves Issue 7564: test_ioctl may fail when run in background
+
+http://bugs.python.org/issue7564
+http://svn.python.org/view?view=revision&revision=83839
+
+
+--- Python-2.6.5/Lib/test/test_ioctl.py.orig	2008-05-24 04:36:45.000000000 -0500
++++ Python-2.6.5/Lib/test/test_ioctl.py	2011-02-21 14:20:43.300710064 -0600
+@@ -10,9 +10,17 @@
+ 
+ try:
+     tty = open("/dev/tty", "r")
+-    tty.close()
+ except IOError:
+     raise TestSkipped("Unable to open /dev/tty")
++else:
++    # Skip if another process is in foreground
++    r = fcntl.ioctl(tty, termios.TIOCGPGRP, "    ")
++    tty.close()
++    rpgrp = struct.unpack("i", r)[0]
++    if rpgrp not in (os.getpgrp(), os.getsid(0)):
++        raise TestSkipped("Neither the process group nor the session "
++                          "are attached to /dev/tty")
++    del tty, r, rpgrp
+ 
+ try:
+     import pty

@@ -1,0 +1,11 @@
+diff -up cpython-59223da36dec/Lib/test/test_posix.py.disable-test_fs_holes-in-rpm-build cpython-59223da36dec/Lib/test/test_posix.py
+--- cpython-59223da36dec/Lib/test/test_posix.py.disable-test_fs_holes-in-rpm-build	2012-08-07 17:15:59.000000000 -0400
++++ cpython-59223da36dec/Lib/test/test_posix.py	2012-08-07 17:16:53.528330330 -0400
+@@ -973,6 +973,7 @@ class PosixTester(unittest.TestCase):
+         posix.RTLD_GLOBAL
+         posix.RTLD_LOCAL
+ 
++    @unittest._skipInRpmBuild('running kernel may not match kernel in chroot')
+     @unittest.skipUnless(hasattr(os, 'SEEK_HOLE'),
+                          "test needs an OS that reports file holes")
+     def test_fs_holes(self):

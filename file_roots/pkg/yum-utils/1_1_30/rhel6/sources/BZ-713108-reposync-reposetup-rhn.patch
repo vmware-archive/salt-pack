@@ -1,0 +1,37 @@
+commit 996bc92659e8b5e0ec549615ed305382304992b6
+Author: Kirby Zhou <kirbyzhou@sogou-inc.com>
+Date:   Tue Aug 9 15:52:02 2011 -0400
+
+    Do repo setup. before RHN/etc. runs, so we can pick their repos. BZ 713108.
+
+diff --git a/reposync.py b/reposync.py
+index 7950854..6aa49cc 100755
+--- a/reposync.py
++++ b/reposync.py
+@@ -162,6 +162,12 @@ def main():
+     elif opts.cachedir:
+         my.repos.setCacheDir(opts.cachedir)
+ 
++    #  Use progress bar display when downloading repo metadata
++    # and package files ... needs to be setup before .repos (ie. RHN/etc.).
++    if not opts.quiet:
++        my.repos.setProgressBar(TextMeter(fo=sys.stdout))
++    my.doRepoSetup()
++
+     if len(opts.repoid) > 0:
+         myrepos = []
+         
+@@ -182,13 +188,6 @@ def main():
+         print >> sys.stderr, "Error: Can't use --norepopath with multiple repositories"
+         sys.exit(1)
+ 
+-    # Use progress bar display when downloading repo metadata
+-    # and package files
+-    if not opts.quiet:
+-        my.repos.setProgressBar(TextMeter(fo=sys.stdout))
+-
+-    my.doRpmDBSetup()
+-    my.doRepoSetup()
+     try:
+         arches = rpmUtils.arch.getArchList(opts.arch)
+         if opts.source:

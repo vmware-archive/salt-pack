@@ -1,0 +1,41 @@
+commit 6c16e5deb222c69817c2f94ee05896ae35ecdf14
+Author: James Antill <james@and.org>
+Date:   Tue Nov 8 12:45:47 2011 -0500
+
+    Allow repodiff to use a mirror/metalink url.
+
+diff --git a/repodiff.py b/repodiff.py
+index 67c162e..daa457b 100755
+--- a/repodiff.py
++++ b/repodiff.py
+@@ -43,7 +43,10 @@ class DiffYum(yum.YumBase):
+         # make our new repo obj
+         newrepo = yum.yumRepo.YumRepository(repoid)
+         newrepo.name = repoid
+-        newrepo.baseurl = [baseurl]
++        if baseurl.startswith("mirror:"):
++            newrepo.mirrorlist = baseurl[len("mirror:"):]
++        else:
++            newrepo.baseurl = [baseurl]
+         newrepo.basecachedir = self.dy_basecachedir
+         newrepo.metadata_expire = 0
+         newrepo.timestamp_check = False
+commit ec05547a9bb900f01ee0261f0e8c456101605fe2
+Author: James Antill <james@and.org>
+Date:   Tue Apr 9 17:40:16 2013 -0400
+
+    Allow --old=/foo urls for repodiff.
+
+diff --git a/repodiff.py b/repodiff.py
+index c16c03e..003294c 100755
+--- a/repodiff.py
++++ b/repodiff.py
+@@ -53,6 +53,8 @@ class DiffYum(yum.YumBase):
+         newrepo.name = repoid
+         if baseurl.startswith("mirror:"):
+             newrepo.mirrorlist = baseurl[len("mirror:"):]
++        elif baseurl.startswith("/"):
++            newrepo.baseurl = ["file:" + baseurl]
+         else:
+             newrepo.baseurl = [baseurl]
+         newrepo.basecachedir = self.dy_basecachedir

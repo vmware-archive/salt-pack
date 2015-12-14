@@ -1,0 +1,20 @@
+diff -up Python-2.7/Python/pythonrun.c.less-verbose-COUNT_ALLOCS Python-2.7/Python/pythonrun.c
+--- Python-2.7/Python/pythonrun.c.less-verbose-COUNT_ALLOCS	2010-08-17 14:49:33.321913909 -0400
++++ Python-2.7/Python/pythonrun.c	2010-08-17 14:54:48.750910403 -0400
+@@ -470,7 +470,15 @@ Py_Finalize(void)
+ 
+     /* Debugging stuff */
+ #ifdef COUNT_ALLOCS
+-    dump_counts(stdout);
++    /* This is a downstream Fedora modification.
++       The upstream default with COUNT_ALLOCS is to always dump the counts to
++       stdout on exit.  For our debug builds its useful to have the info from
++       COUNT_ALLOCS available, but the stdout info here gets in the way, so
++       we make it optional, wrapping it in an environment variable (modelled
++       on the other PYTHONDUMP* env variables):
++    */
++    if (Py_GETENV("PYTHONDUMPCOUNTS"))
++        dump_counts(stdout);
+ #endif
+     /* dump hash stats */
+     _PyHash_Fini();

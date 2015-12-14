@@ -1,0 +1,87 @@
+commit 0dfceeea9f0dc882e4b27174924593790ec01685
+Author: James Antill <james@and.org>
+Date:   Thu Mar 10 12:43:21 2011 -0500
+
+     Port the interpreted sections code from yum's writeRawRepoFile(). Also
+    do the same thing for interpreted values, like baseurl.
+
+diff --git a/yum-config-manager.py b/yum-config-manager.py
+index 26ad932..bc7c289 100755
+--- a/yum-config-manager.py
++++ b/yum-config-manager.py
+@@ -10,6 +10,8 @@ import logging
+ 
+ from iniparse import INIConfig
+ 
++from yum.parser import varReplace
++
+ # Regular expressions to sanitise cache filenames
+ re_url_scheme    = re.compile(r'^\w+:/*(\w+:|www\.)?')
+ re_slash         = re.compile(r'[?/:&#|]+')
+@@ -54,21 +56,43 @@ def sanitize_url_to_fs(url):
+ 
+ 
+ 
+-def writeRawConfigFile(filename, sectionname, cfgoptions, items, optionobj,
++def writeRawConfigFile(filename, section_id, yumvar,
++                       cfgoptions, items, optionobj,
+                        only=None):
+     """
+     From writeRawRepoFile, but so we can alter [main] too.
+     """
+     ini = INIConfig(open(filename))
++
++    osection_id = section_id
++    # b/c repoids can have $values in them we need to map both ways to figure
++    # out which one is which
++    if section_id not in ini._sections:
++        for sect in ini._sections.keys():
++            if varReplace(sect, yumvar) == section_id:
++                section_id = sect
++
+     # Updated the ConfigParser with the changed values
+-    cfgOptions = cfgoptions(sectionname)
++    cfgOptions = cfgoptions(osection_id)
+     for name,value in items():
+         if value is None: # Proxy
+             continue
++
++        if only is not None and name not in only:
++            continue
++
+         option = optionobj(name)
+-        if option.default != value or name in cfgOptions :
+-            if only is None or name in only:
+-                ini[sectionname][name] = option.tostring(value)
++        ovalue = option.tostring(value)
++        #  If the value is the same, but just interpreted ... when we don't want
++        # to keep the interpreted values.
++        if (name in ini[section_id] and
++            ovalue == varReplace(ini[section_id][name], yumvar)):
++            ovalue = ini[section_id][name]
++
++        if name not in cfgOptions and option.default == value:
++            continue
++
++        ini[section_id][name] = ovalue
+     fp =file(filename, "w")
+     fp.write(str(ini))
+     fp.close()
+@@ -127,7 +151,7 @@ if (not args and not opts.addrepo) or 'main' in args:
+             # Try the old default
+             fn = '/etc/yum.conf'
+         ybc = yb.conf
+-        writeRawConfigFile(fn, 'main',
++        writeRawConfigFile(fn, 'main', ybc.conf.yumvar,
+                            ybc.cfg.options, ybc.iteritems, ybc.optionobj,
+                            only)
+ 
+@@ -151,7 +175,7 @@ if not opts.addrepo:
+         print repo.dump()
+         if (opts.save and
+             (only or (hasattr(yb, 'repo_setopts') and repo.id in yb.repo_setopts))):
+-            writeRawConfigFile(repo.repofile, repo.id,
++            writeRawConfigFile(repo.repofile, repo.id, repo.yumvar,
+                                repo.cfg.options, repo.iteritems, repo.optionobj,
+                                only)
+ 

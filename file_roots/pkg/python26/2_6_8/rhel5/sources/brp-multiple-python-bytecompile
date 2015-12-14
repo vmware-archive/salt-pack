@@ -1,0 +1,75 @@
+#!/bin/bash
+errors_terminate=$2
+
+# If using normal root, avoid changing anything.
+if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+	exit 0
+fi
+
+# If we don't have a python interpreter, avoid changing anything.
+default_python=${1:-/usr/bin/python}
+if [ ! -x "$default_python" ]; then
+	exit 0
+fi
+
+# Figure out how deep we need to descend.  We could pick an insanely high
+# number and hope it's enough, but somewhere, somebody's sure to run into it.
+depth=`(find $RPM_BUILD_ROOT -type f -name "*.py" -print0 ; echo /) | \
+       xargs -0 -n 1 dirname | sed 's,[^/],,g' | sort -u | tail -n 1 | wc -c`
+if [ -z "$depth" -o "$depth" -le "1" ]; then
+	exit 0
+fi
+
+# .pyc/.pyo files embed a "magic" value, identifying the ABI version of Python
+# bytecode that they are for.
+#
+# The files below RPM_BUILD_ROOT could be targetting multiple versions of
+# python (e.g. a single build that emits several subpackages e.g. a
+# python26-foo subpackage, a python31-foo subpackage etc)
+#
+# Support this by assuming that below each /usr/lib/python$VERSION/, all
+# .pyc/.pyo files are to be compiled for /usr/bin/python$VERSION.
+# 
+# For example, below /usr/lib/python2.6/, we're targetting /usr/bin/python2.6
+# and below /usr/lib/python3.1/, we're targetting /usr/bin/python3.1
+
+shopt -s nullglob
+for python_libdir in $RPM_BUILD_ROOT/usr/lib{,64}/python[0-9].[0-9]/ ;
+do
+	python_binary=/usr/bin/$(basename $python_libdir)
+	real_libdir=${python_libdir/$RPM_BUILD_ROOT/}
+	echo "Bytecompiling .py files below $python_libdir using $python_binary"
+
+	# Generate normal (.pyc) byte-compiled files.
+	$python_binary -c 'import compileall, sys; sys.exit(not compileall.compile_dir("'"$python_libdir"'", '"$depth"', "'"$real_libdir"'", force=1, quiet=1))'
+	if [ $? -ne 0 -a 0$errors_terminate -ne 0 ]; then
+		# One or more of the files had a syntax error
+		exit 1
+	fi
+
+	# Generate optimized (.pyo) byte-compiled files.
+	$python_binary -O -c 'import compileall, sys; sys.exit(not compileall.compile_dir("'"$python_libdir"'", '"$depth"', "'"$real_libdir"'", force=1, quiet=1))'
+	if [ $? -ne 0 -a 0$errors_terminate -ne 0 ]; then
+		# One or more of the files had a syntax error
+		exit 1
+	fi
+done
+
+
+# Handle other locations in the filesystem using the default python
+# implementation:
+
+# Generate normal (.pyc) byte-compiled files.
+$default_python -c 'import compileall, re, sys; sys.exit (not compileall.compile_dir("'"$RPM_BUILD_ROOT"'", '"$depth"', "/", 1, re.compile(r"'"/bin/|/sbin/|/usr/lib(64)?/python[0-9]\.[0-9]"'"), quiet=1))'
+if [ $? -ne 0 -a 0$errors_terminate -ne 0 ]; then
+	# One or more of the files had a syntax error
+	exit 1
+fi
+
+# Generate optimized (.pyo) byte-compiled files.
+$default_python -O -c 'import compileall, re, sys; sys.exit(not compileall.compile_dir("'"$RPM_BUILD_ROOT"'", '"$depth"', "/", 1, re.compile(r"'"/bin/|/sbin/|/usr/lib(64)?/python[0-9]\.[0-9]"'"), quiet=1))' > /dev/null
+if [ $? -ne 0 -a 0$errors_terminate -ne 0 ]; then
+	# One or more of the files had a syntax error
+	exit 1
+fi
+exit 0

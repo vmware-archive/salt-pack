@@ -1,0 +1,22 @@
+commit 0918bfc0a7ce75c05402462495561c54bc5ce9f7
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Mon Jul 15 10:56:37 2013 +0200
+
+    yum-complete-transaction: unlock yum.pid. BZ 984119
+    
+    We unlock in YumBase.__del__() too, but it's not reliable.
+
+diff --git a/yum-complete-transaction.py b/yum-complete-transaction.py
+index b61df9c..3a9f305 100755
+--- a/yum-complete-transaction.py
++++ b/yum-complete-transaction.py
+@@ -115,7 +115,8 @@ class YumCompleteTransaction(YumUtilBase):
+         else:
+             self.optparser_grp = self.optparser
+         self.addCmdOptions()
+-        self.main()
++        try: self.main()
++        finally: self.unlock()
+ 
+     def clean_up_ts_files(self, timestamp, path, disable=False):
+ 

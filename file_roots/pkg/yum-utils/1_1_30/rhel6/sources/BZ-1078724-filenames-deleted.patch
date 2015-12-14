@@ -1,0 +1,63 @@
+diff -up yum-utils-1.1.30/needs-restarting.py.old yum-utils-1.1.30/needs-restarting.py
+--- yum-utils-1.1.30/needs-restarting.py.old	2014-05-06 10:09:45.256745208 +0200
++++ yum-utils-1.1.30/needs-restarting.py	2014-05-06 10:11:52.385015938 +0200
+@@ -40,6 +40,7 @@
+ import sys
+ import os
+ import yum
++import yum.misc
+ import glob
+ import stat
+ from optparse import OptionParser
+@@ -110,7 +111,7 @@ def main(args):
+     if opts.useronly:
+         myuid = os.getuid()
+     
+-    needing_restart = []
++    needing_restart = set()
+ 
+     boot_time = utils.get_boot_time()
+     for pid in return_running_pids(uid=myuid):
+@@ -123,10 +124,40 @@ def main(args):
+             if found_match:
+                 break
+             
+-            for pkg in my.rpmdb.searchFiles(fn):
++            just_fn = fn.replace('(deleted)', '')
++            just_fn = just_fn.strip()            
++            bogon = False
++            # if the file is in a pkg which has been updated since we started the pid - then it needs t
++            for pkg in my.rpmdb.searchFiles(just_fn):
+                 if float(pkg.installtime) > float(pid_start):
+-                    needing_restart.append(pid)
++                    needing_restart.add(pid)
+                     found_match = True
++                    continue
++                if just_fn in pkg.ghostlist:
++                    bogon = True
++                    break
++            
++            if bogon:
++                continue
++
++            # if the file is deleted 
++            if fn.find('(deleted)') != -1: 
++                # and it is from /*bin/* then it needs to be restarted 
++                if yum.misc.re_primary_filename(just_fn):
++                    needing_restart.add(pid)
++                    found_match = True
++                    continue
++
++                # if the file is from an old ver of an installed pkg - then assume it was just updated 
++                # new pkg doesn't have the same file names. Fabulous huh?!
++                my.conf.cache = False
++                for oldpkg in my.pkgSack.searchFiles(just_fn): # ghostfiles are always bogons
++                    if just_fn in oldpkg.ghostlist:
++                        continue
++                    if my.rpmdb.installed(oldpkg.name):
++                        needing_restart.add(pid)
++                        found_match = True
++                        break
+ 
+     for pid in needing_restart:
+         try:

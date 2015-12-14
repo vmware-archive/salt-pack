@@ -1,0 +1,21 @@
+Author: Jamie Strandboge <jamie@canonical.com>
+Description: require SSL certificate validation by default by using
+ CERT_REQUIRED and using the system /etc/ssl/certs/ca-certificates.crt
+Bug-Ubuntu: https://launchpad.net/bugs/1047054
+Modified for Fedora by Ralph Bean <rbean@redhat.com>
+Modified for EPEL5 by Erik johnson <erik@saltstack.com>
+Bug-Fedora: https://bugzilla.redhat.com/show_bug.cgi?id=855320
+
+Index: urllib3-1.5/urllib3/connectionpool.py
+===================================================================
+--- urllib3-1.5.orig/urllib3/connectionpool.py
++++ urllib3-1.5/urllib3/connectionpool.py
+@@ -504,7 +504,7 @@ class HTTPSConnectionPool(HTTPConnection
+                  strict=False, timeout=None, maxsize=1,
+                  block=False, headers=None,
+                  key_file=None, cert_file=None,
+-                 cert_reqs='CERT_NONE', ca_certs=None):
++                 cert_reqs='CERT_REQUIRED', ca_certs='/etc/pki/tls/certs/ca-bundle.crt'):
+ 
+         super(HTTPSConnectionPool, self).__init__(host, port,
+                                                   strict, timeout, maxsize,

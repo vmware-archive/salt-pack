@@ -1,0 +1,36 @@
+commit 3b33cfb2361e7a17aec89c1a7e8fdb472f0b2f7d
+Author: James Antill <james@and.org>
+Date:   Wed Dec 21 15:48:14 2011 -0500
+
+    Make --oldkernels keep N of each kernel package name. BZ 496580.
+
+diff --git a/package-cleanup.py b/package-cleanup.py
+index da4252b..aebae67 100755
+--- a/package-cleanup.py
++++ b/package-cleanup.py
+@@ -254,12 +254,23 @@ class PackageCleanup(YumUtilBase):
+         else:
+             kver = runningkernel
+             krel = ""
+-        remove = kernels[count:]
++
++        #  This is roughly what we want, but when there are multiple packages
++        # we want to keep N of each.
++        # remove = kernels[count:]
++        kern_name_map = {}
++        for kern in kernels:
++            if kern.name not in kern_name_map:
++                kern_name_map[kern.name] = []
++            kern_name_map[kern.name].append(kern)
++        remove = []
++        for kern in kern_name_map.values():
++            remove.extend(kern[count:])
+         
+         toremove = []
+         # Remove running kernel from remove list
+         for kernel in remove:
+-            if kernel.version == kver and krel.startswith(kernel.release):
++            if kernel.version == kver and kernel.release == krel:
+                 print "Not removing kernel %s-%s because it is the running kernel" % (kver,krel)
+             else:
+                 toremove.append(kernel)

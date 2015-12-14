@@ -1,0 +1,13 @@
+diff -up pciutils-3.0.0/lib/access.c.scan pciutils-3.0.0/lib/access.c
+--- pciutils-3.0.0/lib/access.c.scan	2008-04-10 21:15:47.000000000 +0200
++++ pciutils-3.0.0/lib/access.c	2008-09-01 15:15:27.000000000 +0200
+@@ -16,7 +16,8 @@
+ void
+ pci_scan_bus(struct pci_access *a)
+ {
+-  a->methods->scan(a);
++  if (a->methods)
++    a->methods->scan(a);
+ }
+ 
+ struct pci_dev *

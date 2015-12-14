@@ -1,0 +1,32 @@
+diff -up yum-utils-1.1.30/yum-config-manager.py.old yum-utils-1.1.30/yum-config-manager.py
+--- yum-utils-1.1.30/yum-config-manager.py.old	2014-05-14 11:00:10.000000000 +0200
++++ yum-utils-1.1.30/yum-config-manager.py	2014-05-14 11:01:59.689837737 +0200
+@@ -7,6 +7,7 @@ import yum
+ sys.path.insert(0,'/usr/share/yum-cli')
+ from utils import YumUtilBase
+ import logging
++import fnmatch
+ 
+ from iniparse import INIConfig
+ 
+@@ -97,6 +98,11 @@ def writeRawConfigFile(filename, section
+     fp.write(str(ini))
+     fp.close()
+ 
++def match_repoid(repoid, repo_setopts):
++    for i in repo_setopts:
++        if fnmatch.fnmatch(repoid, i):
++            return True
++
+ NAME = 'yum-config-manager'
+ VERSION = '1.0'
+ USAGE = '"yum-config-manager [options] [section]'
+@@ -174,7 +180,7 @@ if not opts.addrepo:
+             repo.disable()
+         print repo.dump()
+         if (opts.save and
+-            (only or (hasattr(yb, 'repo_setopts') and repo.id in yb.repo_setopts))):
++            (only or (hasattr(yb, 'repo_setopts') and match_repoid(repo.id, yb.repo_setopts)))):
+             writeRawConfigFile(repo.repofile, repo.id, repo.yumvar,
+                                repo.cfg.options, repo.iteritems, repo.optionobj,
+                                only)

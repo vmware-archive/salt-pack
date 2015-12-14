@@ -1,0 +1,42 @@
+
+Resolves http://bugs.python.org/issue10013
+
+Title: fix `./libpython2.6.so: undefined reference to `_PyParser_Grammar` in 
+parallel builds
+
+--- Python-2.6.5/Makefile.pre.in.parallel_bug	2011-02-21 11:46:52.794223000 -0600
++++ Python-2.6.5/Makefile.pre.in	2011-02-21 12:53:41.140881402 -0600
+@@ -197,6 +197,7 @@
+ 
+ ##########################################################################
+ # Grammar
++GRAMMAR_STAMP=	$(srcdir)/grammar-stamp
+ GRAMMAR_H=	$(srcdir)/Include/graminit.h
+ GRAMMAR_C=	$(srcdir)/Python/graminit.c
+ GRAMMAR_INPUT=	$(srcdir)/Grammar/Grammar
+@@ -503,9 +504,24 @@
+ 	$(MAINCC) -c $(PY_CFLAGS) -o $@ $(srcdir)/Modules/python.c
+ 
+ 
+-$(GRAMMAR_H) $(GRAMMAR_C): $(PGEN) $(GRAMMAR_INPUT)
++# GNU "make" interprets rules with two dependents as two copies of the rule.
++# 
++# In a parallel build this can lead to pgen being run twice, once for each of
++# GRAMMAR_H and GRAMMAR_C, leading to race conditions in which the compiler
++# reads a partially-overwritten copy of one of these files, leading to syntax
++# errors (or linker errors if the fragment happens to be syntactically valid C)
++#
++# See http://www.gnu.org/software/hello/manual/automake/Multiple-Outputs.html
++# for more information
++#
++# Introduce ".grammar-stamp" as a contrived single output from PGEN to avoid
++# this:
++$(GRAMMAR_H) $(GRAMMAR_C): $(GRAMMAR_STAMP)
++
++$(GRAMMAR_STAMP): $(PGEN) $(GRAMMAR_INPUT)
+ 		-@$(INSTALL) -d Include
+ 		-$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
++		touch $(GRAMMAR_STAMP)
+ 
+ $(PGEN):	$(PGENOBJS)
+ 		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)

@@ -1,0 +1,837 @@
+diff -up Python-3.3.0rc2/configure.ac.systemtap Python-3.3.0rc2/configure.ac
+--- Python-3.3.0rc2/configure.ac.systemtap	2012-09-09 05:11:14.000000000 -0400
++++ Python-3.3.0rc2/configure.ac	2012-09-10 09:17:21.114511781 -0400
+@@ -2678,6 +2678,23 @@ if test "$with_valgrind" != no; then
+     OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
+ fi
+ 
++# Check for systemtap support
++# On Linux, /usr/bin/dtrace is in fact a shim to SystemTap
++AC_MSG_CHECKING([for --with-systemtap])
++AC_ARG_WITH([systemtap],
++            AC_HELP_STRING([--with(out)-systemtap], [disable/enable SystemTap support]),,
++            with_systemtap=no)
++AC_MSG_RESULT([$with_systemtap])
++if test "$with_systemtap" != no; then
++    AC_DEFINE(WITH_SYSTEMTAP, 1,
++        [Define if you want to compile in SystemTap support])
++    SYSTEMTAPOBJS="Python/pysystemtap.o"
++    SYSTEMTAPDEPS="\$(srcdir)/Python/pysystemtap.h"
++fi
++
++AC_SUBST(SYSTEMTAPOBJS)
++AC_SUBST(SYSTEMTAPDEPS)
++
+ # -I${DLINCLDIR} is added to the compile rule for importdl.o
+ AC_SUBST(DLINCLDIR)
+ DLINCLDIR=.
+diff -up Python-3.3.0rc2/configure.systemtap Python-3.3.0rc2/configure
+--- Python-3.3.0rc2/configure.systemtap	2012-09-09 05:11:14.000000000 -0400
++++ Python-3.3.0rc2/configure	2012-09-10 09:17:21.116511780 -0400
+@@ -618,6 +618,8 @@ TRUE
+ MACHDEP_OBJS
+ DYNLOADFILE
+ DLINCLDIR
++SYSTEMTAPDEPS
++SYSTEMTAPOBJS
+ THREADOBJ
+ LDLAST
+ USE_THREAD_MODULE
+@@ -779,6 +781,7 @@ with_doc_strings
+ with_tsc
+ with_pymalloc
+ with_valgrind
++with_systemtap
+ with_fpectl
+ with_libm
+ with_libc
+@@ -1456,6 +1459,7 @@ Optional Packages:
+   --with(out)-tsc         enable/disable timestamp counter profile
+   --with(out)-pymalloc    disable/enable specialized mallocs
+   --with-valgrind         Enable Valgrind support
++  --with(out)-systemtap   disable/enable SystemTap support
+   --with-fpectl           enable SIGFPE catching
+   --with-libm=STRING      math library
+   --with-libc=STRING      C library
+@@ -10065,6 +10069,31 @@ fi
+     OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
+ fi
+ 
++# Check for systemtap support
++# On Linux, /usr/bin/dtrace is in fact a shim to SystemTap
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-systemtap" >&5
++$as_echo_n "checking for --with-systemtap... " >&6; }
++
++# Check whether --with-systemtap was given.
++if test "${with_systemtap+set}" = set; then :
++  withval=$with_systemtap;
++else
++  with_systemtap=no
++fi
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_systemtap" >&5
++$as_echo "$with_systemtap" >&6; }
++if test "$with_systemtap" != no; then
++
++$as_echo "#define WITH_SYSTEMTAP 1" >>confdefs.h
++
++    SYSTEMTAPOBJS="Python/pysystemtap.o"
++    SYSTEMTAPDEPS="\$(srcdir)/Python/pysystemtap.h"
++fi
++
++
++
++
+ # -I${DLINCLDIR} is added to the compile rule for importdl.o
+ 
+ DLINCLDIR=.
+diff -up Python-3.3.0rc2/Doc/howto/index.rst.systemtap Python-3.3.0rc2/Doc/howto/index.rst
+--- Python-3.3.0rc2/Doc/howto/index.rst.systemtap	2012-09-09 05:10:51.000000000 -0400
++++ Python-3.3.0rc2/Doc/howto/index.rst	2012-09-10 09:17:21.117511779 -0400
+@@ -29,4 +29,5 @@ Currently, the HOWTOs are:
+    argparse.rst
+    ipaddress.rst
+    clinic.rst
++   instrumentation.rst
+ 
+diff -up Python-3.3.0rc2/Doc/howto/instrumentation.rst.systemtap Python-3.3.0rc2/Doc/howto/instrumentation.rst
+--- Python-3.3.0rc2/Doc/howto/instrumentation.rst.systemtap	2012-09-10 09:17:21.117511779 -0400
++++ Python-3.3.0rc2/Doc/howto/instrumentation.rst	2012-09-10 09:17:21.117511779 -0400
+@@ -0,0 +1,295 @@
++.. _instrumentation:
++
++====================================
++Instrumenting CPython with SystemTap
++====================================
++
++:author: David Malcolm <dmalcolm@redhat.com>
++
++DTrace and SystemTap are monitoring tools, each providing a way to inspect
++what the processes on a computer system are doing.  They both use
++domain-specific languages allowing a user to write scripts which:
++
++  - filter which processes are to be observed
++  - gather data from the processes of interest
++  - generate reports on the data
++
++As of Python 3.3, CPython can be built with embedded "markers" that can be
++observed by a SystemTap script, making it easier to monitor what the CPython
++processes on a system are doing.
++
++.. Potentially this document could be expanded to also cover DTrace markers.
++   However, I'm not a DTrace expert.
++
++.. I'm using ".. code-block:: c" for SystemTap scripts, as "c" is syntactically
++   the closest match that Sphinx supports
++
++
++Enabling the static markers
++---------------------------
++
++In order to build CPython with the embedded markers for SystemTap, the
++SystemTap development tools must be installed.
++
++On a Fedora or Red Hat Enterprise Linux machine, this can be done via::
++
++   yum install systemtap-sdt-devel
++
++CPython must then be configured `--with-systemtap`::
++
++   checking for --with-systemtap... yes
++
++You can verify if the SystemTap static markers are present in the built
++binary by seeing if it contains a ".note.stapsdt" section.
++
++.. code-block:: bash
++
++   $ eu-readelf -S ./python | grep .note.stapsdt
++   [29] .note.stapsdt        NOTE         0000000000000000 00308d78 000000b8  0        0   0  4
++
++If you've built python as a shared library (with --enable-shared), you need
++to look instead within the shared library.  For example:
++
++.. code-block:: bash
++
++   $ eu-readelf -S libpython3.3dm.so.1.0 | grep .note.stapsdt
++   [28] .note.stapsdt        NOTE         0000000000000000 00365b68 000000b8  0        0   0  4
++
++Earlier versions of SystemTap stored the markers in a ".probes" section.
++
++For the curious, you can see the metadata for the static markers using this
++invocation.
++
++.. code-block:: bash
++
++  $ eu-readelf -x .note.stapsdt ./python
++
++  Hex dump of section [29] '.note.stapsdt', 184 bytes at offset 0x308d78:
++    0x00000000 08000000 45000000 03000000 73746170 ....E.......stap
++    0x00000010 73647400 d4664b00 00000000 4fc36600 sdt..fK.....O.f.
++    0x00000020 00000000 488d9000 00000000 70797468 ....H.......pyth
++    0x00000030 6f6e0066 756e6374 696f6e5f 5f656e74 on.function__ent
++    0x00000040 72790038 40257261 78203840 25726478 ry.8@%rax 8@%rdx
++    0x00000050 202d3440 25656378 00000000 08000000  -4@%ecx........
++    0x00000060 46000000 03000000 73746170 73647400 F.......stapsdt.
++    0x00000070 0d674b00 00000000 4fc36600 00000000 .gK.....O.f.....
++    0x00000080 4a8d9000 00000000 70797468 6f6e0066 J.......python.f
++    0x00000090 756e6374 696f6e5f 5f726574 75726e00 unction__return.
++    0x000000a0 38402572 61782038 40257264 78202d34 8@%rax 8@%rdx -4
++    0x000000b0 40256563 78000000                   @%ecx...
++
++and a sufficiently modern eu-readelf can print the metadata:
++
++.. code-block:: bash
++
++  $ eu-readelf -n ./python
++
++  Note section [ 1] '.note.gnu.build-id' of 36 bytes at offset 0x190:
++    Owner          Data size  Type
++    GNU                   20  GNU_BUILD_ID
++      Build ID: a28f8db1b224530b0d38ad7b82a249cf7c3f18d6
++
++  Note section [27] '.note.stapsdt' of 184 bytes at offset 0x1ae884:
++    Owner          Data size  Type
++    stapsdt               70  Version: 3
++      PC: 0xe0d3a, Base: 0x14b150, Semaphore: 0x3ae882
++      Provider: python, Name: function__return, Args: '8@%rbx 8@%r13 -4@%eax'
++    stapsdt               69  Version: 3
++      PC: 0xe0f37, Base: 0x14b150, Semaphore: 0x3ae880
++      Provider: python, Name: function__entry, Args: '8@%rbx 8@%r13 -4@%eax'
++
++The above metadata contains information for SystemTap describing how it can
++patch strategically-placed machine code instructions to enable the tracing
++hooks used by a SystemTap script.
++
++
++Static markers
++--------------
++
++The low-level way to use the SystemTap integration is to use the static
++markers directly.  This requires you to explicitly state the binary file
++containing them.
++
++For example, this script can be used to show the call/return hierarchy of a
++Python script:
++
++.. code-block:: c
++
++   probe process('python').mark("function__entry") {
++        filename = user_string($arg1);
++        funcname = user_string($arg2);
++        lineno = $arg3;
++
++        printf("%s => %s in %s:%d\\n",
++               thread_indent(1), funcname, filename, lineno);
++   }
++
++   probe process('python').mark("function__return") {
++       filename = user_string($arg1);
++       funcname = user_string($arg2);
++       lineno = $arg3;
++
++       printf("%s <= %s in %s:%d\\n",
++              thread_indent(-1), funcname, filename, lineno);
++   }
++
++It can be invoked like this:
++
++.. code-block:: bash
++
++   $ stap \
++     show-call-hierarchy.stp \
++     -c ./python test.py
++
++The output looks like this::
++
++   11408 python(8274):        => __contains__ in Lib/_abcoll.py:362
++   11414 python(8274):         => __getitem__ in Lib/os.py:425
++   11418 python(8274):          => encode in Lib/os.py:490
++   11424 python(8274):          <= encode in Lib/os.py:493
++   11428 python(8274):         <= __getitem__ in Lib/os.py:426
++   11433 python(8274):        <= __contains__ in Lib/_abcoll.py:366
++
++where the columns are:
++
++  - time in microseconds since start of script
++
++  - name of executable
++
++  - PID of process
++
++and the remainder indicates the call/return hierarchy as the script executes.
++
++For a `--enable-shared` build of CPython, the markers are contained within the
++libpython shared library, and the probe's dotted path needs to reflect this. For
++example, this line from the above example::
++
++   probe process('python').mark("function__entry") {
++
++should instead read::
++
++   probe process('python').library("libpython3.3dm.so.1.0").mark("function__entry") {
++
++(assuming a debug build of CPython 3.3)
++
++.. I'm reusing the "c:function" type for markers
++
++.. c:function:: function__entry(str filename, str funcname, int lineno)
++
++   This marker indicates that execution of a Python function has begun.  It is
++   only triggered for pure-python (bytecode) functions.
++
++   The filename, function name, and line number are provided back to the
++   tracing script as positional arguments, which must be accessed using
++   `$arg1`, `$arg2`:
++
++       * `$arg1` : `(const char *)` filename, accessible using `user_string($arg1)`
++
++       * `$arg2` : `(const char *)` function name, accessible using
++         `user_string($arg2)`
++
++       * `$arg3` : `int` line number
++
++       * `$arg4` : `(PyFrameObject *)`, the frame being executed
++
++.. c:function:: function__return(str filename, str funcname, int lineno)
++
++   This marker is the converse of `function__entry`, and indicates that
++   execution of a Python function has ended (either via ``return``, or via an
++   exception).  It is only triggered for pure-python (bytecode) functions.
++
++   The arguments are the same as for `function__entry`
++
++
++Tapsets
++-------
++
++The higher-level way to use the SystemTap integration is to use a "tapset":
++SystemTap's equivalent of a library, which hides some of the lower-level
++details of the static markers.
++
++Here is a tapset file, based on a non-shared build of CPython:
++
++.. code-block:: c
++
++    /*
++       Provide a higher-level wrapping around the function__entry and
++       function__return markers:
++     */
++    probe python.function.entry = process("python").mark("function__entry")
++    {
++        filename = user_string($arg1);
++        funcname = user_string($arg2);
++        lineno = $arg3;
++        frameptr = $arg4
++    }
++    probe python.function.return = process("python").mark("function__return")
++    {
++        filename = user_string($arg1);
++        funcname = user_string($arg2);
++        lineno = $arg3;
++        frameptr = $arg4
++    }
++
++If this file is installed in SystemTap's tapset directory (e.g.
++`/usr/share/systemtap/tapset`), then these additional probepoints become
++available:
++
++.. c:function:: python.function.entry(str filename, str funcname, int lineno, frameptr)
++
++   This probe point indicates that execution of a Python function has begun.
++   It is only triggered for pure-python (bytecode) functions.
++
++.. c:function:: python.function.return(str filename, str funcname, int lineno, frameptr)
++
++   This probe point is the converse of `python.function.return`, and indicates
++   that execution of a Python function has ended (either via ``return``, or
++   via an exception).  It is only triggered for pure-python (bytecode) functions.
++
++
++Examples
++--------
++This SystemTap script uses the tapset above to more cleanly implement the
++example given above of tracing the Python function-call hierarchy, without
++needing to directly name the static markers:
++
++.. code-block:: c
++
++    probe python.function.entry
++    {
++      printf("%s => %s in %s:%d\n",
++             thread_indent(1), funcname, filename, lineno);
++    }
++
++    probe python.function.return
++    {
++      printf("%s <= %s in %s:%d\n",
++             thread_indent(-1), funcname, filename, lineno);
++    }
++
++
++The following script uses the tapset above to provide a top-like view of all
++running CPython code, showing the top 20 most frequently-entered bytecode
++frames, each second, across the whole system:
++
++.. code-block:: c
++
++    global fn_calls;
++
++    probe python.function.entry
++    {
++      fn_calls[pid(), filename, funcname, lineno] += 1;
++    }
++
++    probe timer.ms(1000) {
++        printf("\033[2J\033[1;1H") /* clear screen */
++        printf("%6s %80s %6s %30s %6s\n",
++               "PID", "FILENAME", "LINE", "FUNCTION", "CALLS")
++        foreach ([pid, filename, funcname, lineno] in fn_calls- limit 20) {
++            printf("%6d %80s %6d %30s %6d\n",
++                pid, filename, lineno, funcname,
++                fn_calls[pid, filename, funcname, lineno]);
++        }
++        delete fn_calls;
++    }
++
+diff -up Python-3.3.0rc2/Lib/test/test_systemtap.py.systemtap Python-3.3.0rc2/Lib/test/test_systemtap.py
+--- Python-3.3.0rc2/Lib/test/test_systemtap.py.systemtap	2012-09-10 09:17:21.117511779 -0400
++++ Python-3.3.0rc2/Lib/test/test_systemtap.py	2012-09-10 09:17:21.117511779 -0400
+@@ -0,0 +1,234 @@
++# Verify that systemtap static probes work
++#
++import subprocess
++import sys
++import sysconfig
++import os
++import unittest
++
++from test.support import run_unittest, TESTFN, unlink
++
++if '--with-systemtap' not in sysconfig.get_config_var('CONFIG_ARGS'):
++    raise unittest.SkipTest("Python was not configured --with-systemtap")
++
++try:
++    _, stap_version = subprocess.Popen(["stap", "-V"],
++                                       stdout=subprocess.PIPE,
++                                       stderr=subprocess.PIPE,
++                                       ).communicate()
++except OSError:
++    # This is what "no stap" looks like.  There may, however, be other
++    # errors that manifest this way too.
++    raise unittest.SkipTest("Couldn't find stap on the path")
++
++def invoke_systemtap_script(script, cmd):
++    # Start a child process, probing with the given systemtap script
++    # (passed as stdin to the "stap" tool)
++    # The script should be a bytes instance
++    # Return (stdout, stderr) pair
++
++    p = subprocess.Popen(["stap", "-", '-vv', '-c', cmd],
++                         stdin=subprocess.PIPE,
++                         stdout=subprocess.PIPE,
++                         stderr=subprocess.PIPE)
++    out, err = p.communicate(input=script)
++    return out, err
++
++# Verify that stap can run a simple "hello world"-style script
++# This can fail for various reasons:
++# - missing kernel headers
++# - permissions (a non-root user needs to be in the "stapdev" group)
++TRIVIAL_STAP_SCRIPT = b'probe begin { println("hello world") exit () }'
++
++out, err = invoke_systemtap_script(TRIVIAL_STAP_SCRIPT, 'true')
++if out != b'hello world\n':
++    raise unittest.SkipTest("Test systemtap script did not run; stderr was: %s" % err)
++
++# We don't expect stderr to be empty, since we're invoking stap with "-vv": stap
++# will (we hope) generate debugging output on stderr.
++
++def invoke_python_under_systemtap(script, pythoncode=None, pythonfile=None):
++    # Start a child python process, probing with the given systemtap script
++    # (passed as stdin to the "stap" tool)
++    # The script should be a bytes instance
++    # Return (stdout, stderr) pair
++
++    if pythonfile:
++        pythoncmd = '%s %s' % (sys.executable, pythonfile)
++    else:
++        pythoncmd = '%s -c %r' % (sys.executable, pythoncode)
++
++    # The process tree of a stap invocation of a command goes through
++    # something like this:
++    #    stap ->fork/exec(staprun; exec stapio ->f/e(-c cmd); exec staprun -r)
++    # and this trip through setuid leads to LD_LIBRARY_PATH being dropped,
++    # which would lead to an --enable-shared build of python failing to be
++    # find its libpython, with an error like:
++    #    error while loading shared libraries: libpython3.3dm.so.1.0: cannot
++    #    open shared object file: No such file or directory
++    # Hence we need to jump through some hoops to expose LD_LIBRARY_PATH to
++    # the invoked python process:
++    LD_LIBRARY_PATH = os.environ.get('LD_LIBRARY_PATH', '')
++    if LD_LIBRARY_PATH:
++        pythoncmd = 'env LD_LIBRARY_PATH=%s ' % LD_LIBRARY_PATH + pythoncmd
++
++    return invoke_systemtap_script(script, pythoncmd)
++
++# When using the static markers, we need to supply the prefix of a systemtap
++# dotted probe point that containing the marker.
++# See http://sourceware.org/systemtap/langref/Probe_points.html
++#
++# We need to determine if this is a shared-library build
++#
++# Note that sysconfig can get this wrong; see:
++#   http://bugs.python.org/issue14774
++#
++if '--enable-shared' in sysconfig.get_config_var('CONFIG_ARGS'):
++    # For a shared-library build, the markers are in library(INSTSONAME):
++    INSTSONAME = sysconfig.get_config_var('INSTSONAME')
++    probe_prefix = 'process("%s").library("%s")' % (sys.executable, INSTSONAME)
++else:
++    # For a non-shared-library build, we can simply use sys.executable:
++    probe_prefix = 'process("%s")' % sys.executable
++
++# The following script ought to generate lots of lines showing recursive
++# function entry and return, of the form:
++#     11408 python(8274):        => __contains__ in Lib/_abcoll.py:362
++#     11414 python(8274):         => __getitem__ in Lib/os.py:425
++#     11418 python(8274):          => encode in Lib/os.py:490
++#     11424 python(8274):          <= encode in Lib/os.py:493
++#     11428 python(8274):         <= __getitem__ in Lib/os.py:426
++#     11433 python(8274):        <= __contains__ in Lib/_abcoll.py:366
++# where the column are:
++#  - time in microseconds since start of script
++#  - name of executable
++#  - PID of process
++#  and the remainder indicates the call/return hierarchy
++
++hierarchy_script = ('''
++probe %s.mark("function__entry") {
++    filename = user_string($arg1);
++    funcname = user_string($arg2);
++    lineno = $arg3;
++
++    printf("%%s => %%s in %%s:%%d\\n", thread_indent(1), funcname, filename, lineno);
++}
++
++probe %s.mark("function__return") {
++    filename = user_string($arg1);
++    funcname = user_string($arg2);
++    lineno = $arg3;
++
++    printf("%%s <= %%s in %%s:%%d\\n", thread_indent(-1), funcname, filename, lineno);
++}
++''' % (probe_prefix, probe_prefix)).encode('utf-8')
++
++
++class ErrorDumper:
++    # A context manager that dumps extra information if an exception is raised,
++    # to help track down why the problem occurred
++    def __init__(self, out, err):
++        self.out = out
++        self.err = err
++
++    def __enter__(self):
++        pass
++
++    def __exit__(self, type_, value, traceback):
++        if type_:
++            # an exception is being raised:
++            print('stdout: %s' % out.decode())
++            print('stderr: %s' % err.decode())
++
++class SystemtapTests(unittest.TestCase):
++
++    def test_invoking_python(self):
++        # Ensure that we can invoke python under stap, with a trivial stap
++        # script:
++        out, err = invoke_python_under_systemtap(
++            b'probe begin { println("hello from stap") exit () }',
++            pythoncode="print('hello from python')")
++        with ErrorDumper(out, err):
++            self.assertIn(b'hello from stap', out)
++            self.assertIn(b'hello from python', out)
++
++    def test_function_entry(self):
++        # Ensure that the function_entry static marker works
++        out, err = invoke_python_under_systemtap(hierarchy_script)
++        # stdout ought to contain various lines showing recursive function
++        # entry and return (see above)
++
++        # Uncomment this for debugging purposes:
++        # print(out.decode('utf-8'))
++
++        #   Executing the cmdline-supplied "pass":
++        #      0 python(8274): => <module> in <string>:1
++        #      5 python(8274): <= <module> in <string>:1
++        with ErrorDumper(out, err):
++            self.assertIn(b'=> <module> in <string>:1', out,
++                          msg="stdout: %s\nstderr: %s\n" % (out, err))
++
++    def test_function_encoding(self):
++        # Ensure that function names containing non-Latin 1 code
++        # points are handled:
++        pythonfile = TESTFN
++        try:
++            unlink(pythonfile)
++            f = open(pythonfile, "wb")
++            f.write("""
++# Sample script with non-ASCII filename, for use by test_systemtap.py
++# Implicitly UTF-8
++
++def 文字化け():
++    '''Function with non-ASCII identifier; I believe this reads "mojibake"'''
++    print("hello world!")
++
++文字化け()
++""".encode('utf-8'))
++            f.close()
++
++            out, err = invoke_python_under_systemtap(hierarchy_script,
++                                                     pythonfile=pythonfile)
++            out_utf8 = out.decode('utf-8')
++            with ErrorDumper(out, err):
++                self.assertIn('=> <module> in %s:5' % pythonfile, out_utf8)
++                self.assertIn(' => 文字化け in %s:5' % pythonfile, out_utf8)
++                self.assertIn(' <= 文字化け in %s:7' % pythonfile, out_utf8)
++                self.assertIn('<= <module> in %s:9' % pythonfile, out_utf8)
++        finally:
++            unlink(pythonfile)
++
++    @unittest.skipIf(sys.getfilesystemencoding() == 'ascii',
++                     'the test filename is not encodable with ASCII')
++    def test_filename_encoding(self):
++        # Ensure that scripts names containing non-Latin 1 code
++        # points are handled:
++        pythonfile = TESTFN + '_☠.py'
++        try:
++            unlink(pythonfile)
++            f = open(pythonfile, "wb")
++            f.write("""
++def foo():
++    '''Function with non-ASCII identifier; I believe this reads "mojibake"'''
++    print("hello world!")
++
++foo()
++""".encode('utf-8'))
++            f.close()
++
++            out, err = invoke_python_under_systemtap(hierarchy_script,
++                                                     pythonfile=pythonfile)
++            out_utf8 = out.decode('utf-8')
++            with ErrorDumper(out, err):
++                self.assertIn('=> <module> in %s:2' % pythonfile, out_utf8)
++                self.assertIn(' => foo in %s:2' % pythonfile, out_utf8)
++                self.assertIn(' <= foo in %s:4' % pythonfile, out_utf8)
++                self.assertIn('<= <module> in %s:6' % pythonfile, out_utf8)
++        finally:
++            unlink(pythonfile)
++
++def test_main():
++    run_unittest(SystemtapTests)
++
++if __name__ == "__main__":
++    test_main()
+diff -up Python-3.3.0rc2/Makefile.pre.in.systemtap Python-3.3.0rc2/Makefile.pre.in
+--- Python-3.3.0rc2/Makefile.pre.in.systemtap	2012-09-09 05:11:05.000000000 -0400
++++ Python-3.3.0rc2/Makefile.pre.in	2012-09-10 09:19:51.195501518 -0400
+@@ -363,6 +363,7 @@ PYTHON_OBJS=	\
+ 		Python/formatter_unicode.o \
+ 		Python/fileutils.o \
+ 		Python/$(DYNLOADFILE) \
++		@SYSTEMTAPOBJS@ \
+ 		$(LIBOBJS) \
+ 		$(MACHDEP_OBJS) \
+ 		$(THREADOBJ)
+@@ -713,7 +714,8 @@ Objects/setobject.o: $(srcdir)/Objects/s
+ $(OPCODETARGETS_H): $(OPCODETARGETGEN_FILES)
+ 	$(OPCODETARGETGEN) $(OPCODETARGETS_H)
+ 
+-Python/ceval.o: $(OPCODETARGETS_H) $(srcdir)/Python/ceval_gil.h
++Python/ceval.o: $(OPCODETARGETS_H) $(srcdir)/Python/ceval_gil.h \
++			$(srcdir)/Python/ceval_systemtap.h @SYSTEMTAPDEPS@
+ 
+ Python/frozen.o: Python/importlib.h
+ 
+@@ -724,6 +726,13 @@ Objects/typeobject.o: $(srcdir)/Objects/
+ Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
+ 	$(PYTHON) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h > Objects/typeslots.inc
+ 
++# Only needed with --with-systemtap; not a public header:
++$(srcdir)/Python/pysystemtap.h: $(srcdir)/Python/pysystemtap.d
++	dtrace -o $@ $(DFLAGS) -C -h -s $(srcdir)/Python/pysystemtap.d
++
++Python/pysystemtap.o: $(srcdir)/Python/pysystemtap.d Python/ceval.o
++	dtrace -o $@ $(DFLAGS) -C -G -s $(srcdir)/Python/pysystemtap.d Python/ceval.o
++
+ ############################################################################
+ # Header files
+ 
+@@ -1345,6 +1354,7 @@ clean: pycremoval
+ 	-rm -f pybuilddir.txt
+ 	-rm -f Lib/lib2to3/*Grammar*.pickle
+ 	-rm -f Modules/_testembed Modules/_freeze_importlib
++	-rm -f $(srcdir)/Python/pysystemtap.h
+ 
+ profile-removal:
+ 	find . -name '*.gc??' -exec rm -f {} ';'
+diff -up Python-3.3.0rc2/Misc/NEWS.systemtap Python-3.3.0rc2/Misc/NEWS
+--- Python-3.3.0rc2/Misc/NEWS.systemtap	2012-09-09 05:11:05.000000000 -0400
++++ Python-3.3.0rc2/Misc/NEWS	2012-09-10 09:17:21.120511781 -0400
+@@ -619,6 +619,11 @@ Core and Builtins
+ 
+ - Issue #15038: Optimize python Locks on Windows.
+ 
++- Issue #14776: Added a new --with-systemtap configure-time option, which adds
++  static markers for SystemTap so that SystemTap scripts can observe bytecode
++  frames being entered and exited and so generate reports on what Python code
++  is being exectuted.
++
+ Library
+ -------
+ 
+diff -up Python-3.3.0rc2/pyconfig.h.in.systemtap Python-3.3.0rc2/pyconfig.h.in
+--- Python-3.3.0rc2/pyconfig.h.in.systemtap	2012-09-09 05:11:14.000000000 -0400
++++ Python-3.3.0rc2/pyconfig.h.in	2012-09-10 09:17:21.120511781 -0400
+@@ -1306,6 +1306,9 @@
+ /* Define if you want to compile in Python-specific mallocs */
+ #undef WITH_PYMALLOC
+ 
++/* Define if you want to compile in SystemTap support */
++#undef WITH_SYSTEMTAP
++
+ /* Define if you want to compile in rudimentary thread support */
+ #undef WITH_THREAD
+ 
+diff -up Python-3.3.0rc2/Python/ceval.c.systemtap Python-3.3.0rc2/Python/ceval.c
+--- Python-3.3.0rc2/Python/ceval.c.systemtap	2012-09-09 05:11:12.000000000 -0400
++++ Python-3.3.0rc2/Python/ceval.c	2012-09-10 09:17:21.122511781 -0400
+@@ -18,6 +18,8 @@
+ 
+ #include <ctype.h>
+ 
++#include "ceval_systemtap.h"
++
+ #ifndef WITH_TSC
+ 
+ #define READ_TIMESTAMP(var)
+@@ -1160,6 +1162,10 @@ PyEval_EvalFrameEx(PyFrameObject *f, int
+         }
+     }
+ 
++    if (PYTHON_FUNCTION_ENTRY_ENABLED()) {
++        systemtap_function_entry(f);
++    }
++
+     co = f->f_code;
+     names = co->co_names;
+     consts = co->co_consts;
+@@ -3077,6 +3083,11 @@ fast_yield:
+ 
+     /* pop frame */
+ exit_eval_frame:
++
++    if (PYTHON_FUNCTION_RETURN_ENABLED()) {
++        systemtap_function_return(f);
++    }
++
+     Py_LeaveRecursiveCall();
+     f->f_executing = 0;
+     tstate->frame = f->f_back;
+diff -up Python-3.3.0rc2/Python/ceval_systemtap.h.systemtap Python-3.3.0rc2/Python/ceval_systemtap.h
+--- Python-3.3.0rc2/Python/ceval_systemtap.h.systemtap	2012-09-10 09:17:21.122511781 -0400
++++ Python-3.3.0rc2/Python/ceval_systemtap.h	2012-09-10 09:17:21.122511781 -0400
+@@ -0,0 +1,86 @@
++/*
++  Support for SystemTap static markers  
++*/
++
++#ifdef WITH_SYSTEMTAP
++
++#include "pysystemtap.h"
++
++/*
++  A struct to hold all of the information gathered when one of the traceable
++  markers is triggered
++*/
++struct frame_marker_info
++{
++    PyObject *filename_obj;
++    PyObject *funcname_obj;
++    const char *filename;
++    const char *funcname;
++    int lineno;
++};
++
++static void
++get_frame_marker_info(PyFrameObject *f, struct frame_marker_info *fmi)
++{
++    PyObject *ptype;
++    PyObject *pvalue;
++    PyObject *ptraceback;
++
++    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
++
++    fmi->filename_obj = PyUnicode_EncodeFSDefault(f->f_code->co_filename);
++    if (fmi->filename_obj) {
++        fmi->filename = PyBytes_AsString(fmi->filename_obj);
++    } else {
++        fmi->filename = NULL;
++    }
++
++    fmi->funcname_obj = PyUnicode_AsUTF8String(f->f_code->co_name);
++    if (fmi->funcname_obj) {
++        fmi->funcname = PyBytes_AsString(fmi->funcname_obj);
++    } else {
++        fmi->funcname = NULL;
++    }
++
++    fmi->lineno = PyCode_Addr2Line(f->f_code, f->f_lasti);
++
++    PyErr_Restore(ptype, pvalue, ptraceback);
++
++}
++
++static void
++release_frame_marker_info(struct frame_marker_info *fmi)
++{
++    Py_XDECREF(fmi->filename_obj);
++    Py_XDECREF(fmi->funcname_obj);
++}
++
++static void
++systemtap_function_entry(PyFrameObject *f)
++{
++    struct frame_marker_info fmi;
++    get_frame_marker_info(f, &fmi);
++    PYTHON_FUNCTION_ENTRY(fmi.filename, fmi.funcname, fmi.lineno, f);
++    release_frame_marker_info(&fmi);
++}
++
++static void
++systemtap_function_return(PyFrameObject *f)
++{
++    struct frame_marker_info fmi;
++    get_frame_marker_info(f, &fmi);
++    PYTHON_FUNCTION_RETURN(fmi.filename, fmi.funcname, fmi.lineno, f);
++    release_frame_marker_info(&fmi);
++}
++
++#else /* #ifdef WITH_SYSTEMTAP */
++
++/*
++  When configured --without-systemtap, everything compiles away to nothing:
++*/
++#define PYTHON_FUNCTION_ENTRY_ENABLED() 0
++#define PYTHON_FUNCTION_RETURN_ENABLED() 0
++#define systemtap_function_entry(f)
++#define systemtap_function_return(f)
++
++#endif
+diff -up Python-3.3.0rc2/Python/pysystemtap.d.systemtap Python-3.3.0rc2/Python/pysystemtap.d
+--- Python-3.3.0rc2/Python/pysystemtap.d.systemtap	2012-09-10 09:17:21.122511781 -0400
++++ Python-3.3.0rc2/Python/pysystemtap.d	2012-09-10 09:17:21.122511781 -0400
+@@ -0,0 +1,4 @@
++provider python {
++    probe function__entry(const char *, const char *, int, PyFrameObject *);
++    probe function__return(const char *, const char *, int, PyFrameObject *);
++};

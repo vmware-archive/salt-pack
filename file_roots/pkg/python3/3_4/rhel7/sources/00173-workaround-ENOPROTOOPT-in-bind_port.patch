@@ -1,0 +1,12 @@
+--- Python-3.4.0b1/Lib/test/support/__init__.py.orig	2013-11-27 12:14:26.507216624 +0100
++++ Python-3.4.0b1/Lib/test/support/__init__.py	2013-11-27 12:17:01.490805587 +0100
+@@ -593,7 +593,8 @@
+             if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR) == 1:
+                 raise TestFailed("tests should never set the SO_REUSEADDR "   \
+                                  "socket option on TCP/IP sockets!")
+-        if hasattr(socket, 'SO_REUSEPORT'):
++        if hasattr(socket, 'SO_REUSEPORT') \
++                and 'WITHIN_PYTHON_RPM_BUILD' not in os.environ: # rhbz#913732
+             try:
+                 if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT) == 1:
+                     raise TestFailed("tests should never set the SO_REUSEPORT "   \

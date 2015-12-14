@@ -1,0 +1,12 @@
+diff -up yum-utils-1.1.30/docs/yum-security.8.old yum-utils-1.1.30/docs/yum-security.8
+--- yum-utils-1.1.30/docs/yum-security.8.old	2014-05-16 10:41:10.000000000 +0200
++++ yum-utils-1.1.30/docs/yum-security.8	2014-05-16 10:44:27.687125242 +0200
+@@ -118,6 +118,8 @@ This option includes packages that say t
+ This option includes packages that say they fix a bugfix issue.
+ .IP "\fB\--security\fP"
+ This option includes packages that say they fix a security issue.
++.IP "\fB\--sec-severity\fP"
++This option includes security relevant packages of the specified severity.
+ .PP
+ .PP
+ 

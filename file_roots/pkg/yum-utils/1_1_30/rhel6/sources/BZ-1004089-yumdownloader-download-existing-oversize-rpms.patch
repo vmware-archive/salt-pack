@@ -1,0 +1,19 @@
+diff --git a/yumdownloader.py b/yumdownloader.py
++++ ./yumdownloader.py	2014-03-28 16:44:37.976004627 +0100
+@@ -241,10 +241,14 @@ class YumDownloader(YumUtilBase):
+                 if not os.path.exists(opts.destdir):
+                     os.makedirs(opts.destdir)
+                 local = os.path.join(opts.destdir, local)
+-                if (os.path.exists(local) and 
+-                    os.path.getsize(local) == int(download.returnSimple('packagesize'))):
++                path_exists = os.path.exists(local)
++                size_diff = path_exists and cmp(os.path.getsize(local), int(download.returnSimple('packagesize')))
++                if path_exists and size_diff == 0:
+                     self.logger.error("%s already exists and appears to be complete" % local)
+                     continue
++                elif size_diff != 0:
++                    self.logger.error("%s already exists, but the size doesn't match. Unlinking." % local)
++                    yum.misc.unlink_f(local)
+                 # Disable cache otherwise things won't download
+                 repo.cache = 0
+                 download.localpath = local # Hack: to set the localpath we want.

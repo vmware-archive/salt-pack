@@ -1,0 +1,131 @@
+diff -up Python-2.6.8/configure.in.valgrind Python-2.6.8/configure.in
+--- Python-2.6.8/configure.in.valgrind	2012-04-12 13:27:39.301248146 -0400
++++ Python-2.6.8/configure.in	2012-04-12 13:27:39.325247847 -0400
+@@ -2538,6 +2538,19 @@ then
+ fi
+ AC_MSG_RESULT($with_pymalloc)
+ 
++# Check for Valgrind support
++AC_MSG_CHECKING([for --with-valgrind])
++AC_ARG_WITH([valgrind],
++  AC_HELP_STRING([--with-valgrind], [Enable Valgrind support]),,
++  with_valgrind=no)
++AC_MSG_RESULT([$with_valgrind])
++if test "$with_valgrind" != no; then
++    AC_CHECK_HEADER([valgrind/valgrind.h],
++      [AC_DEFINE([WITH_VALGRIND], 1, [Define if you want pymalloc to be disabled when running under valgrind])],
++      [AC_MSG_ERROR([Valgrind support requested but headers not available])]
++    )
++fi
++
+ # Check for --with-wctype-functions
+ AC_MSG_CHECKING(for --with-wctype-functions)
+ AC_ARG_WITH(wctype-functions, 
+diff -up Python-2.6.8/Misc/NEWS.valgrind Python-2.6.8/Misc/NEWS
+--- Python-2.6.8/Misc/NEWS.valgrind	2012-04-10 11:32:08.000000000 -0400
++++ Python-2.6.8/Misc/NEWS	2012-04-12 13:27:39.331247771 -0400
+@@ -68,6 +68,11 @@ What's New in Python 2.6.7 rc 2?
+  allowed.  Python 2.6.7 and beyond will be source only releases.*
+ 
+ 
++- Issue #2422: When compiled with the ``--with-valgrind`` option, the
++  pymalloc allocator will be automatically disabled when running under
++  Valgrind.  This gives improved memory leak detection when running
++  under Valgrind, while taking advantage of pymalloc at other times.
++
+ Library
+ -------
+ 
+diff -up Python-2.6.8/Objects/obmalloc.c.valgrind Python-2.6.8/Objects/obmalloc.c
+--- Python-2.6.8/Objects/obmalloc.c.valgrind	2012-04-10 11:32:10.000000000 -0400
++++ Python-2.6.8/Objects/obmalloc.c	2012-04-12 13:33:21.707967473 -0400
+@@ -2,6 +2,21 @@
+ 
+ #ifdef WITH_PYMALLOC
+ 
++#ifdef WITH_VALGRIND
++#include <valgrind/valgrind.h>
++
++/* If we're using GCC, use __builtin_expect() to reduce overhead of
++   the valgrind checks */
++#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
++#  define UNLIKELY(value) __builtin_expect((value), 0)
++#else
++#  define UNLIKELY(value) (value)
++#endif
++
++/* -1 indicates that we haven't checked that we're running on valgrind yet. */
++static int running_on_valgrind = -1;
++#endif
++
+ /* An object allocator for Python.
+ 
+    Here is an introduction to the layers of the Python memory architecture,
+@@ -737,6 +752,13 @@ PyObject_Malloc(size_t nbytes)
+     if (nbytes > PY_SSIZE_T_MAX)
+         return NULL;
+ 
++#ifdef WITH_VALGRIND
++    if (UNLIKELY(running_on_valgrind == -1))
++        running_on_valgrind = RUNNING_ON_VALGRIND;
++    if (UNLIKELY(running_on_valgrind))
++        goto redirect;
++#endif
++
+     /*
+      * This implicitly redirects malloc(0).
+      */
+@@ -927,6 +949,11 @@ PyObject_Free(void *p)
+     if (p == NULL)      /* free(NULL) has no effect */
+         return;
+ 
++#ifdef WITH_VALGRIND
++    if (UNLIKELY(running_on_valgrind > 0))
++        goto redirect;
++#endif
++
+     pool = POOL_ADDR(p);
+     if (Py_ADDRESS_IN_RANGE(p, pool)) {
+         /* We allocated this address. */
+@@ -1121,6 +1148,7 @@ PyObject_Free(void *p)
+         return;
+     }
+ 
++redirect:
+     /* We didn't allocate this address. */
+     free(p);
+ }
+@@ -1150,6 +1178,12 @@ PyObject_Realloc(void *p, size_t nbytes)
+     if (nbytes > PY_SSIZE_T_MAX)
+         return NULL;
+ 
++#ifdef WITH_VALGRIND
++    /* Treat running_on_valgrind == -1 the same as 0 */
++    if (UNLIKELY(running_on_valgrind > 0))
++        goto redirect;
++#endif
++
+     pool = POOL_ADDR(p);
+     if (Py_ADDRESS_IN_RANGE(p, pool)) {
+         /* We're in charge of this block */
+@@ -1177,6 +1211,7 @@ PyObject_Realloc(void *p, size_t nbytes)
+         }
+         return bp;
+     }
++redirect:
+     /* We're not managing this block.  If nbytes <=
+      * SMALL_REQUEST_THRESHOLD, it's tempting to try to take over this
+      * block.  However, if we do, we need to copy the valid data from
+diff -up Python-2.6.8/pyconfig.h.in.valgrind Python-2.6.8/pyconfig.h.in
+--- Python-2.6.8/pyconfig.h.in.valgrind	2012-04-10 11:32:11.000000000 -0400
++++ Python-2.6.8/pyconfig.h.in	2012-04-12 13:27:39.332247759 -0400
+@@ -1085,6 +1085,9 @@
+ /* Define to empty if the keyword does not work. */
+ #undef volatile
+ 
++/* Define if you want pymalloc to be disabled when running under valgrind */
++#undef WITH_VALGRIND
++
+ 
+ /* Define the macros needed if on a UnixWare 7.x system. */
+ #if defined(__USLC__) && defined(__SCO_VERSION__)

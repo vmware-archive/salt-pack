@@ -186,7 +186,7 @@ pkgbuild_registry:
         - zeromq-devel
 
   rhel6:
-    babel:  
+    babel:
       version: 0.9.4-5.1
       noarch: True
     libsodium:
@@ -229,6 +229,9 @@ pkgbuild_registry:
       noarch: True
     python-crypto:
       version: 2.6.1-2
+    python-crypto26:
+      name: python-crypto2.6
+      version: 2.6.1-4
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -359,7 +362,7 @@ pkgbuild_registry:
         - zeromq-devel
 
   rhel5:
-    babel:  
+    babel:
       version: 0.9.5-2
       noarch: True
       build_deps:
@@ -429,6 +432,9 @@ pkgbuild_registry:
     python-crypto:
       name: python26-crypto
       version: 2.6.1-2
+    python-crypto26:
+      name: python26-crypto2.6
+      version: 2.6.1-4
     python-distribute:
       name: python26-distribute
       version: 0.6.10-4

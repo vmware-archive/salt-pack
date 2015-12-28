@@ -150,6 +150,9 @@ pkgbuild_registry:
       noarch: True
     python-tornado:
       version: 4.2.1-1
+    python-tornado42:
+      name: python-tornado4.2
+      version: 4.2.1-1
     python-timelib:
       version: 0.2.4-1
       noarch: True
@@ -186,7 +189,7 @@ pkgbuild_registry:
         - zeromq-devel
 
   rhel6:
-    babel:  
+    babel:
       version: 0.9.4-5.1
       noarch: True
     libsodium:
@@ -287,6 +290,11 @@ pkgbuild_registry:
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname
+    python-tornado42:
+      name: python-tornado4.2
+      version: 4.2.1-1
+      build_deps:
+        - python-backports-ssl_match_hostname
     python-timelib:
       version: 0.2.4-1
       noarch: True
@@ -359,7 +367,7 @@ pkgbuild_registry:
         - zeromq-devel
 
   rhel5:
-    babel:  
+    babel:
       version: 0.9.5-2
       noarch: True
       build_deps:
@@ -512,6 +520,14 @@ pkgbuild_registry:
         - python-distribute
     python-tornado:
       name: python26-tornado
+      version: 4.2.1-1
+      build_deps:
+        - python-backports-ssl_match_hostname
+        - python-distribute
+      additonal_deps:
+        - python-pycurl
+    python-tornado42:
+      name: python26-tornado4.2
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname

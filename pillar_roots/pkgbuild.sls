@@ -229,8 +229,7 @@ pkgbuild_registry:
       noarch: True
     python-crypto:
       version: 2.6.1-2
-    python-crypto26:
-      name: python-crypto2.6
+    python-crypto-salt:
       version: 2.6.1-4
     python-enum34:
       version: 1.0-4
@@ -432,8 +431,8 @@ pkgbuild_registry:
     python-crypto:
       name: python26-crypto
       version: 2.6.1-2
-    python-crypto26:
-      name: python26-crypto2.6
+    python-crypto-salt:
+      name: python26-crypto-salt
       version: 2.6.1-4
     python-distribute:
       name: python26-distribute

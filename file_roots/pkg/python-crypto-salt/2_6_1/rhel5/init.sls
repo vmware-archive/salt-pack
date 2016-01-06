@@ -2,7 +2,7 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-crypto26" %}
+{% set sls_name = "python-crypto-salt" %}
 {% set pypi_name = "pycrypto" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
@@ -35,6 +35,6 @@
     - sources:
       - salt://{{slspath}}/sources/python-crypto-2.4-fix-pubkey-size-divisions.patch
       - salt://{{slspath}}/sources/python-crypto-2.4-optflags.patch
-      - salt://{{slspath}}/sources/Crypto26_rename.patch
+      - salt://{{slspath}}/sources/Crypto_salt_rename.patch
       - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

@@ -2,11 +2,11 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)" 2>/dev/null)}
 
 %global _modname_old Crypto
-%global _modname_new Crypto26
+%global _modname_new Crypto_salt
 %global _eggname pycrypto26
 
 Summary:        Cryptography library for Python
-Name:           python26-crypto2.6
+Name:           python26-crypto-salt
 Version:        2.6.1
 Release:        4%{?dist}
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
@@ -29,7 +29,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-buildroot-%(id -nu)
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
 
-This package provides version 2.6.1 under an alternate name ("Crypto26"), so
+This package provides version 2.6.1 under an alternate name ("Crypto_salt"), so
 that it can be installed side-by-side with the default version available in
 EPEL.
 
@@ -42,11 +42,11 @@ EPEL.
 # Fix divisions within benchmarking suite:
 %patch1 -p1
 
-# Rename usage of "Crypto" to "Crypto26"
+# Rename usage of "Crypto" to "Crypto_salt"
 %patch2 -p1
 
 %build
-# Rename directory in source to "Crypto26"
+# Rename directory in source to "Crypto_salt"
 mv lib/%{_modname_old} lib/%{_modname_new}
 CFLAGS="%{optflags} -fno-strict-aliasing" %{__python} setup.py build
 

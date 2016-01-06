@@ -1,0 +1,5121 @@
+diff -ur a/lib/Crypto/Cipher/AES.py b/lib/Crypto/Cipher/AES.py
+--- a/lib/Crypto/Cipher/AES.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/AES.py	2016-01-06 13:05:45.701192562 -0600
+@@ -30,8 +30,8 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import AES
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import AES
++    >>> from Crypto_salt import Random
+     >>>
+     >>> key = b'Sixteen byte key'
+     >>> iv = Random.new().read(AES.block_size)
+@@ -46,15 +46,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _AES
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _AES
+ 
+ class AESCipher (blockalgo.BlockAlgo):
+     """AES cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize an AES cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _AES, key, *args, **kwargs)
+ 
+@@ -71,20 +71,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/ARC2.py b/lib/Crypto/Cipher/ARC2.py
+--- a/lib/Crypto/Cipher/ARC2.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/ARC2.py	2016-01-06 13:05:45.691192606 -0600
+@@ -32,7 +32,7 @@
+ 
+ RC2 has a fixed data block size of 8 bytes. Length of its keys can vary from
+ 8 to 128 bits. One particular property of RC2 is that the actual
+-cryptographic strength of the key (*effective key length*) can be reduced 
++cryptographic strength of the key (*effective key length*) can be reduced
+ via a parameter.
+ 
+ Even though RC2 is not cryptographically broken, it has not been analyzed as
+@@ -42,8 +42,8 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import ARC2
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import ARC2
++    >>> from Crypto_salt import Random
+     >>>
+     >>> key = b'Sixteen byte key'
+     >>> iv = Random.new().read(ARC2.block_size)
+@@ -58,15 +58,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _ARC2
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _ARC2
+ 
+ class RC2Cipher (blockalgo.BlockAlgo):
+     """RC2 cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize an ARC2 cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _ARC2, key, *args, **kwargs)
+ 
+@@ -83,20 +83,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/ARC4.py b/lib/Crypto/Cipher/ARC4.py
+--- a/lib/Crypto/Cipher/ARC4.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/ARC4.py	2016-01-06 13:05:45.677859332 -0600
+@@ -42,13 +42,13 @@
+ concatenating key and nonce.
+ 
+ New designs should not use ARC4. A good alternative is AES
+-(`Crypto.Cipher.AES`) in any of the modes that turn it into a stream cipher (OFB, CFB, or CTR).
++(`Crypto_salt.Cipher.AES`) in any of the modes that turn it into a stream cipher (OFB, CFB, or CTR).
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import ARC4
+-    >>> from Crypto.Hash import SHA
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import ARC4
++    >>> from Crypto_salt.Hash import SHA
++    >>> from Crypto_salt import Random
+     >>>
+     >>> key = b'Very long and confidential key'
+     >>> nonce = Random.new().read(16)
+@@ -63,7 +63,7 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import _ARC4
++from Crypto_salt.Cipher import _ARC4
+ 
+ class ARC4Cipher:
+     """ARC4 cipher object"""
+@@ -71,7 +71,7 @@
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize an ARC4 cipher object
+-        
++
+         See also `new()` at the module level."""
+ 
+         self._cipher = _ARC4.new(key, *args, **kwargs)
+diff -ur a/lib/Crypto/Cipher/blockalgo.py b/lib/Crypto/Cipher/blockalgo.py
+--- a/lib/Crypto/Cipher/blockalgo.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/blockalgo.py	2016-01-06 13:05:45.684525969 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  Cipher/blockalgo.py 
++#  Cipher/blockalgo.py
+ #
+ # ===================================================================
+ # The contents of this file are dedicated to the public domain.  To
+@@ -23,8 +23,8 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ #: *Electronic Code Book (ECB)*.
+ #: This is the simplest encryption mode. Each of the plaintext blocks
+@@ -100,7 +100,7 @@
+ #: to the *IV* for the other modes) and increment its lowest **m** bits by
+ #: one (modulo *2^m*) for each block. In most cases, **m** is chosen to be half
+ #: the block size.
+-#: 
++#:
+ #: Reusing the same *initial counter block* for encryptions done with the same
+ #: key lead to catastrophic cryptograhic failures.
+ #:
+@@ -112,7 +112,7 @@
+ 
+ #: OpenPGP. This mode is a variant of CFB, and it is only used in PGP and OpenPGP_ applications.
+ #: An Initialization Vector (*IV*) is required.
+-#: 
++#:
+ #: Unlike CFB, the IV is not transmitted to the receiver. Instead, the *encrypted* IV is.
+ #: The IV is a random data block. Two of its bytes are duplicated to act as a checksum
+ #: for the correctness of the key. The encrypted IV is therefore 2 bytes longer than
+@@ -129,14 +129,14 @@
+             raise ValueError("Parameter '%s' is specified twice" % name)
+         param = args[index]
+     return param or default
+-    
++
+ class BlockAlgo:
+     """Class modelling an abstract block cipher."""
+ 
+     def __init__(self, factory, key, *args, **kwargs):
+         self.mode = _getParameter('mode', 0, args, kwargs, default=MODE_ECB)
+         self.block_size = factory.block_size
+-        
++
+         if self.mode != MODE_OPENPGP:
+             self._cipher = factory.new(key, *args, **kwargs)
+             self.IV = self._cipher.IV
+@@ -147,18 +147,18 @@
+             #  - _encrypted_iv, set in this constructor
+             #  - _done_first_block, set to True after the first encryption
+             #  - _done_last_block, set to True after a partial block is processed
+-            
++
+             self._done_first_block = False
+             self._done_last_block = False
+             self.IV = _getParameter('iv', 1, args, kwargs)
+             if not self.IV:
+                 raise ValueError("MODE_OPENPGP requires an IV")
+-            
++
+             # Instantiate a temporary cipher to process the IV
+             IV_cipher = factory.new(key, MODE_CFB,
+                     b('\x00')*self.block_size,      # IV for CFB
+                     segment_size=self.block_size*8)
+-           
++
+             # The cipher will be used for...
+             if len(self.IV) == self.block_size:
+                 # ... encryption
+@@ -186,11 +186,11 @@
+ 
+     def encrypt(self, plaintext):
+         """Encrypt data with the key and the parameters set at initialization.
+-        
++
+         The cipher object is stateful; encryption of a long block
+         of data can be broken up in two or more calls to `encrypt()`.
+         That is, the statement:
+-            
++
+             >>> c.encrypt(a) + c.encrypt(b)
+ 
+         is always equivalent to:
+@@ -201,7 +201,7 @@
+         or decrypting other data with the same key.
+ 
+         This function does not perform any padding.
+-       
++
+          - For `MODE_ECB`, `MODE_CBC`, and `MODE_OFB`, *plaintext* length
+            (in bytes) must be a multiple of *block_size*.
+ 
+@@ -245,11 +245,11 @@
+ 
+     def decrypt(self, ciphertext):
+         """Decrypt data with the key and the parameters set at initialization.
+-        
++
+         The cipher object is stateful; decryption of a long block
+         of data can be broken up in two or more calls to `decrypt()`.
+         That is, the statement:
+-            
++
+             >>> c.decrypt(a) + c.decrypt(b)
+ 
+         is always equivalent to:
+@@ -260,7 +260,7 @@
+         or decrypting other data with the same key.
+ 
+         This function does not perform any padding.
+-       
++
+          - For `MODE_ECB`, `MODE_CBC`, and `MODE_OFB`, *ciphertext* length
+            (in bytes) must be a multiple of *block_size*.
+ 
+diff -ur a/lib/Crypto/Cipher/Blowfish.py b/lib/Crypto/Cipher/Blowfish.py
+--- a/lib/Crypto/Cipher/Blowfish.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/Blowfish.py	2016-01-06 13:05:45.691192606 -0600
+@@ -31,8 +31,8 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import Blowfish
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import Blowfish
++    >>> from Crypto_salt import Random
+     >>> from struct import pack
+     >>>
+     >>> bs = Blowfish.block_size
+@@ -52,15 +52,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _Blowfish
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _Blowfish
+ 
+ class BlowfishCipher (blockalgo.BlockAlgo):
+     """Blowfish cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize a Blowfish cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _Blowfish, key, *args, **kwargs)
+ 
+@@ -77,20 +77,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/CAST.py b/lib/Crypto/Cipher/CAST.py
+--- a/lib/Crypto/Cipher/CAST.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/CAST.py	2016-01-06 13:05:45.714525837 -0600
+@@ -32,8 +32,8 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import CAST
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import CAST
++    >>> from Crypto_salt import Random
+     >>>
+     >>> key = b'Sixteen byte key'
+     >>> iv = Random.new().read(CAST.block_size)
+@@ -55,15 +55,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _CAST
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _CAST
+ 
+ class CAST128Cipher(blockalgo.BlockAlgo):
+     """CAST-128 cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize a CAST-128 cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _CAST, key, *args, **kwargs)
+ 
+@@ -80,20 +80,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/DES3.py b/lib/Crypto/Cipher/DES3.py
+--- a/lib/Crypto/Cipher/DES3.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/DES3.py	2016-01-06 13:05:45.687859288 -0600
+@@ -44,9 +44,9 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import DES
+-    >>> from Crypto import Random
+-    >>> from Crypto.Util import Counter
++    >>> from Crypto_salt.Cipher import DES
++    >>> from Crypto_salt import Random
++    >>> from Crypto_salt.Util import Counter
+     >>>
+     >>> key = b'-8B key-'
+     >>> nonce = Random.new().read(DES.block_size/2)
+@@ -63,15 +63,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _DES3
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _DES3
+ 
+ class DES3Cipher(blockalgo.BlockAlgo):
+     """TDES cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize a TDES cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _DES3, key, *args, **kwargs)
+ 
+@@ -88,20 +88,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/DES.py b/lib/Crypto/Cipher/DES.py
+--- a/lib/Crypto/Cipher/DES.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/DES.py	2016-01-06 13:05:45.711192518 -0600
+@@ -33,8 +33,8 @@
+ 
+ As an example, encryption can be done as follows:
+ 
+-    >>> from Crypto.Cipher import DES3
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Cipher import DES3
++    >>> from Crypto_salt import Random
+     >>>
+     >>> key = b'Sixteen byte key'
+     >>> iv = Random.new().read(DES3.block_size)
+@@ -50,15 +50,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import blockalgo
+-from Crypto.Cipher import _DES
++from Crypto_salt.Cipher import blockalgo
++from Crypto_salt.Cipher import _DES
+ 
+ class DESCipher(blockalgo.BlockAlgo):
+     """DES cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize a DES cipher object
+-        
++
+         See also `new()` at the module level."""
+         blockalgo.BlockAlgo.__init__(self, _DES, key, *args, **kwargs)
+ 
+@@ -75,20 +75,20 @@
+         Default is `MODE_ECB`.
+       IV : byte string
+         The initialization vector to use for encryption or decryption.
+-        
++
+         It is ignored for `MODE_ECB` and `MODE_CTR`.
+ 
+         For `MODE_OPENPGP`, IV must be `block_size` bytes long for encryption
+         and `block_size` +2 bytes for decryption (in the latter case, it is
+         actually the *encrypted* IV which was prefixed to the ciphertext).
+         It is mandatory.
+-       
++
+         For all other modes, it must be `block_size` bytes longs. It is optional and
+         when not present it will be given a default value of all zeroes.
+       counter : callable
+         (*Only* `MODE_CTR`). A stateful function that returns the next
+         *counter block*, which is a byte string of `block_size` bytes.
+-        For better performance, use `Crypto.Util.Counter`.
++        For better performance, use `Crypto_salt.Util.Counter`.
+       segment_size : integer
+         (*Only* `MODE_CFB`).The number of bits the plaintext and ciphertext
+         are segmented in.
+diff -ur a/lib/Crypto/Cipher/__init__.py b/lib/Crypto/Cipher/__init__.py
+--- a/lib/Crypto/Cipher/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Cipher/__init__.py	2016-01-06 13:05:45.697859244 -0600
+@@ -39,16 +39,16 @@
+ ========================    =======   ========================
+ Module name                 Type      Description
+ ========================    =======   ========================
+-`Crypto.Cipher.AES`         Block     Advanced Encryption Standard
+-`Crypto.Cipher.ARC2`        Block     Alleged RC2
+-`Crypto.Cipher.ARC4`        Stream    Alleged RC4
+-`Crypto.Cipher.Blowfish`    Block     Blowfish
+-`Crypto.Cipher.CAST`        Block     CAST
+-`Crypto.Cipher.DES`         Block     The Data Encryption Standard.
++`Crypto_salt.Cipher.AES`       Block     Advanced Encryption Standard
++`Crypto_salt.Cipher.ARC2`      Block     Alleged RC2
++`Crypto_salt.Cipher.ARC4`      Stream    Alleged RC4
++`Crypto_salt.Cipher.Blowfish`  Block     Blowfish
++`Crypto_salt.Cipher.CAST`      Block     CAST
++`Crypto_salt.Cipher.DES`       Block     The Data Encryption Standard.
+                                       Very commonly used in the past,
+                                       but today its 56-bit keys are too small.
+-`Crypto.Cipher.DES3`        Block     Triple DES.
+-`Crypto.Cipher.XOR`         Stream    The simple XOR cipher.
++`Crypto_salt.Cipher.DES3`      Block     Triple DES.
++`Crypto_salt.Cipher.XOR`       Stream    The simple XOR cipher.
+ ========================    =======   ========================
+ 
+ 
+@@ -64,8 +64,8 @@
+ ==========================    =======================
+ Module name                   Description
+ ==========================    =======================
+-`Crypto.Cipher.PKCS1_v1_5`    PKCS#1 v1.5 encryption, based on RSA key pairs
+-`Crypto.Cipher.PKCS1_OAEP`    PKCS#1 OAEP encryption, based on RSA key pairs
++`Crypto_salt.Cipher.PKCS1_v1_5`    PKCS#1 v1.5 encryption, based on RSA key pairs
++`Crypto_salt.Cipher.PKCS1_OAEP`    PKCS#1 OAEP encryption, based on RSA key pairs
+ ==========================    =======================
+ 
+ :undocumented: __revision__, __package__, _AES, _ARC2, _ARC4, _Blowfish
+diff -ur a/lib/Crypto/Cipher/PKCS1_OAEP.py b/lib/Crypto/Cipher/PKCS1_OAEP.py
+--- a/lib/Crypto/Cipher/PKCS1_OAEP.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/PKCS1_OAEP.py	2016-01-06 13:05:45.704525881 -0600
+@@ -28,8 +28,8 @@
+ 
+ As an example, a sender may encrypt a message in this way:
+ 
+-        >>> from Crypto.Cipher import PKCS1_OAEP
+-        >>> from Crypto.PublicKey import RSA
++        >>> from Crypto_salt.Cipher import PKCS1_OAEP
++        >>> from Crypto_salt.PublicKey import RSA
+         >>>
+         >>> message = 'To be encrypted'
+         >>> key = RSA.importKey(open('pubkey.der').read())
+@@ -54,28 +54,28 @@
+ __revision__ = "$Id$"
+ __all__ = [ 'new', 'PKCS1OAEP_Cipher' ]
+ 
+-import Crypto.Signature.PKCS1_PSS
+-import Crypto.Hash.SHA
++import Crypto_salt.Signature.PKCS1_PSS
++import Crypto_salt.Hash.SHA
+ 
+-from Crypto.Util.py3compat import *
+-import Crypto.Util.number
+-from   Crypto.Util.number import ceil_div
+-from   Crypto.Util.strxor import strxor
++from Crypto_salt.Util.py3compat import *
++import Crypto_salt.Util.number
++from   Crypto_salt.Util.number import ceil_div
++from   Crypto_salt.Util.strxor import strxor
+ 
+ class PKCS1OAEP_Cipher:
+     """This cipher can perform PKCS#1 v1.5 OAEP encryption or decryption."""
+ 
+     def __init__(self, key, hashAlgo, mgfunc, label):
+         """Initialize this PKCS#1 OAEP cipher object.
+-        
++
+         :Parameters:
+          key : an RSA key object
+           If a private half is given, both encryption and decryption are possible.
+           If a public half is given, only encryption is possible.
+          hashAlgo : hash object
+-                The hash function to use. This can be a module under `Crypto.Hash`
++                The hash function to use. This can be a module under `Crypto_salt.Hash`
+                 or an existing hash object created from any of such modules. If not specified,
+-                `Crypto.Hash.SHA` (that is, SHA-1) is used.
++                `Crypto_salt.Hash.SHA` (that is, SHA-1) is used.
+          mgfunc : callable
+                 A mask generation function that accepts two parameters: a string to
+                 use as seed, and the lenth of the mask to generate, in bytes.
+@@ -84,7 +84,7 @@
+                 A label to apply to this particular encryption. If not specified,
+                 an empty string is used. Specifying a label does not improve
+                 security.
+- 
++
+         :attention: Modify the mask generation function only if you know what you are doing.
+                     Sender and receiver must use the same one.
+         """
+@@ -93,12 +93,12 @@
+         if hashAlgo:
+             self._hashObj = hashAlgo
+         else:
+-            self._hashObj = Crypto.Hash.SHA
++            self._hashObj = Crypto_salt.Hash.SHA
+ 
+         if mgfunc:
+             self._mgf = mgfunc
+         else:
+-            self._mgf = lambda x,y: Crypto.Signature.PKCS1_PSS.MGF1(x,y,self._hashObj)
++            self._mgf = lambda x,y: Crypto_salt.Signature.PKCS1_PSS.MGF1(x,y,self._hashObj)
+ 
+         self._label = label
+ 
+@@ -112,16 +112,16 @@
+ 
+     def encrypt(self, message):
+         """Produce the PKCS#1 OAEP encryption of a message.
+-    
++
+         This function is named ``RSAES-OAEP-ENCRYPT``, and is specified in
+         section 7.1.1 of RFC3447.
+-    
++
+         :Parameters:
+          message : string
+                 The message to encrypt, also known as plaintext. It can be of
+                 variable length, but not longer than the RSA modulus (in bytes)
+                 minus 2, minus twice the hash output size.
+-   
++
+         :Return: A string, the ciphertext in which the message is encrypted.
+             It is as long as the RSA modulus (in bytes).
+         :Raise ValueError:
+@@ -129,15 +129,15 @@
+             message.
+         """
+         # TODO: Verify the key is RSA
+-    
++
+         randFunc = self._key._randfunc
+-    
++
+         # See 7.1.1 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+         hLen = self._hashObj.digest_size
+         mLen = len(message)
+-    
++
+         # Step 1b
+         ps_len = k-mLen-2*hLen-2
+         if ps_len<0:
+@@ -165,17 +165,17 @@
+         # Complete step 3c (I2OSP)
+         c = bchr(0x00)*(k-len(m)) + m
+         return c
+-    
++
+     def decrypt(self, ct):
+         """Decrypt a PKCS#1 OAEP ciphertext.
+-    
++
+         This function is named ``RSAES-OAEP-DECRYPT``, and is specified in
+         section 7.1.2 of RFC3447.
+-    
++
+         :Parameters:
+          ct : string
+                 The ciphertext that contains the message to recover.
+-   
++
+         :Return: A string, the original message.
+         :Raise ValueError:
+             If the ciphertext length is incorrect, or if the decryption does not
+@@ -184,12 +184,12 @@
+             If the RSA key has no private half.
+         """
+         # TODO: Verify the key is RSA
+-    
++
+         # See 7.1.2 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+         hLen = self._hashObj.digest_size
+-    
++
+         # Step 1b and 1c
+         if len(ct) != k or k<hLen+2:
+             raise ValueError("Ciphertext with incorrect length.")
+@@ -233,12 +233,12 @@
+ 
+     :Parameters:
+      key : RSA key object
+-      The key to use to encrypt or decrypt the message. This is a `Crypto.PublicKey.RSA` object.
++      The key to use to encrypt or decrypt the message. This is a `Crypto_salt.PublicKey.RSA` object.
+       Decryption is only possible if *key* is a private RSA key.
+      hashAlgo : hash object
+-      The hash function to use. This can be a module under `Crypto.Hash`
++      The hash function to use. This can be a module under `Crypto_salt.Hash`
+       or an existing hash object created from any of such modules. If not specified,
+-      `Crypto.Hash.SHA` (that is, SHA-1) is used.
++      `Crypto_salt.Hash.SHA` (that is, SHA-1) is used.
+      mgfunc : callable
+       A mask generation function that accepts two parameters: a string to
+       use as seed, and the lenth of the mask to generate, in bytes.
+@@ -247,7 +247,7 @@
+       A label to apply to this particular encryption. If not specified,
+       an empty string is used. Specifying a label does not improve
+       security.
+- 
++
+     :attention: Modify the mask generation function only if you know what you are doing.
+       Sender and receiver must use the same one.
+     """
+diff -ur a/lib/Crypto/Cipher/PKCS1_v1_5.py b/lib/Crypto/Cipher/PKCS1_v1_5.py
+--- a/lib/Crypto/Cipher/PKCS1_v1_5.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Cipher/PKCS1_v1_5.py	2016-01-06 13:05:45.694525925 -0600
+@@ -30,9 +30,9 @@
+ 
+ As an example, a sender may encrypt a message in this way:
+ 
+-        >>> from Crypto.Cipher import PKCS1_v1_5
+-        >>> from Crypto.PublicKey import RSA
+-        >>> from Crypto.Hash import SHA
++        >>> from Crypto_salt.Cipher import PKCS1_v1_5
++        >>> from Crypto_salt.PublicKey import RSA
++        >>> from Crypto_salt.Hash import SHA
+         >>>
+         >>> message = 'To be encrypted'
+         >>> h = SHA.new(message)
+@@ -44,8 +44,8 @@
+ At the receiver side, decryption can be done using the private part of
+ the RSA key:
+ 
+-        >>> From Crypto.Hash import SHA
+-        >>> from Crypto import Random
++        >>> From Crypto_salt.Hash import SHA
++        >>> from Crypto_salt import Random
+         >>>
+         >>> key = RSA.importKey(open('privkey.der').read())
+         >>>
+@@ -70,16 +70,16 @@
+ __revision__ = "$Id$"
+ __all__ = [ 'new', 'PKCS115_Cipher' ]
+ 
+-from Crypto.Util.number import ceil_div
+-from Crypto.Util.py3compat import *
+-import Crypto.Util.number
++from Crypto_salt.Util.number import ceil_div
++from Crypto_salt.Util.py3compat import *
++import Crypto_salt.Util.number
+ 
+ class PKCS115_Cipher:
+     """This cipher can perform PKCS#1 v1.5 RSA encryption or decryption."""
+ 
+     def __init__(self, key):
+         """Initialize this PKCS#1 v1.5 cipher object.
+-        
++
+         :Parameters:
+          key : an RSA key object
+           If a private half is given, both encryption and decryption are possible.
+@@ -97,16 +97,16 @@
+ 
+     def encrypt(self, message):
+         """Produce the PKCS#1 v1.5 encryption of a message.
+-    
++
+         This function is named ``RSAES-PKCS1-V1_5-ENCRYPT``, and is specified in
+         section 7.2.1 of RFC3447.
+-        For a complete example see `Crypto.Cipher.PKCS1_v1_5`.
+-    
++        For a complete example see `Crypto_salt.Cipher.PKCS1_v1_5`.
++
+         :Parameters:
+          message : byte string
+                 The message to encrypt, also known as plaintext. It can be of
+                 variable length, but not longer than the RSA modulus (in bytes) minus 11.
+-    
++
+         :Return: A byte string, the ciphertext in which the message is encrypted.
+             It is as long as the RSA modulus (in bytes).
+         :Raise ValueError:
+@@ -115,14 +115,14 @@
+ 
+         """
+         # TODO: Verify the key is RSA
+-    
++
+         randFunc = self._key._randfunc
+-    
++
+         # See 7.2.1 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+         mLen = len(message)
+-    
++
+         # Step 1
+         if mLen > k-11:
+             raise ValueError("Plaintext is too long.")
+@@ -140,44 +140,44 @@
+         # Complete step 3c (I2OSP)
+         c = bchr(0x00)*(k-len(m)) + m
+         return c
+-    
++
+     def decrypt(self, ct, sentinel):
+         """Decrypt a PKCS#1 v1.5 ciphertext.
+-    
++
+         This function is named ``RSAES-PKCS1-V1_5-DECRYPT``, and is specified in
+         section 7.2.2 of RFC3447.
+-        For a complete example see `Crypto.Cipher.PKCS1_v1_5`.
+-    
++        For a complete example see `Crypto_salt.Cipher.PKCS1_v1_5`.
++
+         :Parameters:
+          ct : byte string
+                 The ciphertext that contains the message to recover.
+          sentinel : any type
+                 The object to return to indicate that an error was detected during decryption.
+-    
++
+         :Return: A byte string. It is either the original message or the ``sentinel`` (in case of an error).
+         :Raise ValueError:
+             If the ciphertext length is incorrect
+         :Raise TypeError:
+             If the RSA key has no private half.
+-    
++
+         :attention:
+             You should **never** let the party who submitted the ciphertext know that
+             this function returned the ``sentinel`` value.
+             Armed with such knowledge (for a fair amount of carefully crafted but invalid ciphertexts),
+             an attacker is able to recontruct the plaintext of any other encryption that were carried out
+             with the same RSA public key (see `Bleichenbacher's`__ attack).
+-            
++
+             In general, it should not be possible for the other party to distinguish
+             whether processing at the server side failed because the value returned
+             was a ``sentinel`` as opposed to a random, invalid message.
+-            
++
+             In fact, the second option is not that unlikely: encryption done according to PKCS#1 v1.5
+             embeds no good integrity check. There is roughly one chance
+             in 2^16 for a random ciphertext to be returned as a valid message
+             (although random looking).
+-    
++
+             It is therefore advisabled to:
+-    
++
+             1. Select as ``sentinel`` a value that resembles a plausable random, invalid message.
+             2. Not report back an error as soon as you detect a ``sentinel`` value.
+                Put differently, you should not explicitly check if the returned value is the ``sentinel`` or not.
+@@ -186,19 +186,19 @@
+                It is recommended for it to be the rightmost part ``message``.
+             5. Where possible, monitor the number of errors due to ciphertexts originating from the same party,
+                and slow down the rate of the requests from such party (or even blacklist it altogether).
+-     
++
+             **If you are designing a new protocol, consider using the more robust PKCS#1 OAEP.**
+-    
++
+             .. __: http://www.bell-labs.com/user/bleichen/papers/pkcs.ps
+-    
++
+         """
+-    
++
+         # TODO: Verify the key is RSA
+-    
++
+         # See 7.2.1 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+-    
++
+         # Step 1
+         if len(ct) != k:
+             raise ValueError("Ciphertext with incorrect length.")
+@@ -218,7 +218,7 @@
+ 
+     :Parameters:
+      key : RSA key object
+-      The key to use to encrypt or decrypt the message. This is a `Crypto.PublicKey.RSA` object.
++      The key to use to encrypt or decrypt the message. This is a `Crypto_salt.PublicKey.RSA` object.
+       Decryption is only possible if *key* is a private RSA key.
+ 
+     """
+diff -ur a/lib/Crypto/Cipher/XOR.py b/lib/Crypto/Cipher/XOR.py
+--- a/lib/Crypto/Cipher/XOR.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Cipher/XOR.py	2016-01-06 13:05:45.717859156 -0600
+@@ -32,14 +32,14 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Cipher import _XOR
++from Crypto_salt.Cipher import _XOR
+ 
+ class XORCipher:
+     """XOR cipher object"""
+ 
+     def __init__(self, key, *args, **kwargs):
+         """Initialize a XOR cipher object
+-        
++
+         See also `new()` at the module level."""
+         self._cipher = _XOR.new(key, *args, **kwargs)
+         self.block_size = self._cipher.block_size
+diff -ur a/lib/Crypto/Hash/HMAC.py b/lib/Crypto/Hash/HMAC.py
+--- a/lib/Crypto/Hash/HMAC.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Hash/HMAC.py	2016-01-06 13:05:45.804525440 -0600
+@@ -45,7 +45,7 @@
+ 
+ An example of possible usage is the following:
+ 
+-    >>> from Crypto.Hash import HMAC
++    >>> from Crypto_salt.Hash import HMAC
+     >>>
+     >>> secret = b'Swordfish'
+     >>> h = HMAC.new(secret)
+@@ -63,8 +63,8 @@
+ 
+ __all__ = ['new', 'digest_size', 'HMAC' ]
+ 
+-from Crypto.Util.strxor import strxor_c
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.strxor import strxor_c
++from Crypto_salt.Util.py3compat import *
+ 
+ #: The size of the authentication tag produced by the MAC.
+ #: It matches the digest size on the underlying
+@@ -78,7 +78,7 @@
+     #: It matches the digest size on the underlying
+     #: hashing module used.
+     digest_size = None
+-    
++
+     def __init__(self, key, msg = None, digestmod = None):
+         """Create a new HMAC object.
+ 
+@@ -93,9 +93,9 @@
+             It is equivalent to an early call to `update()`. Optional.
+         :Parameter digestmod:
+             The hash algorithm the HMAC is based on.
+-            Default is `Crypto.Hash.MD5`.
++            Default is `Crypto_salt.Hash.MD5`.
+         :Type digestmod:
+-            A hash module or object instantiated from `Crypto.Hash`
++            A hash module or object instantiated from `Crypto_salt.Hash`
+         """
+         if digestmod is None:
+             import MD5
+@@ -130,21 +130,21 @@
+ 
+     def update(self, msg):
+         """Continue authentication of a message by consuming the next chunk of data.
+-        
++
+         Repeated calls are equivalent to a single call with the concatenation
+         of all the arguments. In other words:
+ 
+            >>> m.update(a); m.update(b)
+-           
++
+         is equivalent to:
+-        
++
+            >>> m.update(a+b)
+ 
+         :Parameters:
+           msg : byte string
+             The next chunk of the message being authenticated
+         """
+- 
++
+         self.inner.update(msg)
+ 
+     def copy(self):
+@@ -169,7 +169,7 @@
+ 
+         This method does not change the state of the MAC object.
+         You can continue updating the object after calling this function.
+-        
++
+         :Return: A byte string of `digest_size` bytes. It may contain non-ASCII
+          characters, including null bytes.
+         """
+@@ -182,7 +182,7 @@
+         authenticated so far.
+ 
+         This method does not change the state of the MAC object.
+-        
++
+         :Return: A string of 2* `digest_size` bytes. It contains only
+          hexadecimal ASCII digits.
+         """
+@@ -203,9 +203,9 @@
+         It is equivalent to an early call to `HMAC.update()`.
+         Optional.
+     :Parameter digestmod:
+-        The hash to use to implement the HMAC. Default is `Crypto.Hash.MD5`.
++        The hash to use to implement the HMAC. Default is `Crypto_salt.Hash.MD5`.
+     :Type digestmod:
+-        A hash module or instantiated object from `Crypto.Hash`
++        A hash module or instantiated object from `Crypto_salt.Hash`
+     :Returns: An `HMAC` object
+     """
+     return HMAC(key, msg, digestmod)
+diff -ur a/lib/Crypto/Hash/MD2.py b/lib/Crypto/Hash/MD2.py
+--- a/lib/Crypto/Hash/MD2.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/MD2.py	2016-01-06 13:05:45.811192077 -0600
+@@ -22,7 +22,7 @@
+ 
+ MD2 is specified in RFC1319_ and it produces the 128 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import MD2
++    >>> from Crypto_salt.Hash import MD2
+     >>>
+     >>> h = MD2.new()
+     >>> h.update(b'Hello')
+@@ -39,15 +39,15 @@
+ 
+ __all__ = ['new', 'digest_size', 'MD2Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+-import Crypto.Hash._MD2 as _MD2
++import Crypto_salt.Hash._MD2 as _MD2
+ hashFactory = _MD2
+ 
+ class MD2Hash(HashAlgo):
+     """Class that implements an MD2 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/MD4.py b/lib/Crypto/Hash/MD4.py
+--- a/lib/Crypto/Hash/MD4.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/MD4.py	2016-01-06 13:05:45.827858671 -0600
+@@ -22,7 +22,7 @@
+ 
+ MD4 is specified in RFC1320_ and produces the 128 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import MD4
++    >>> from Crypto_salt.Hash import MD4
+     >>>
+     >>> h = MD4.new()
+     >>> h.update(b'Hello')
+@@ -39,15 +39,15 @@
+ 
+ __all__ = ['new', 'digest_size', 'MD4Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+-import Crypto.Hash._MD4 as _MD4
++import Crypto_salt.Hash._MD4 as _MD4
+ hashFactory = _MD4
+ 
+ class MD4Hash(HashAlgo):
+     """Class that implements an MD4 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/MD5.py b/lib/Crypto/Hash/MD5.py
+--- a/lib/Crypto/Hash/MD5.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/MD5.py	2016-01-06 13:05:45.824525352 -0600
+@@ -22,7 +22,7 @@
+ 
+ MD5 is specified in RFC1321_ and produces the 128 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import MD5
++    >>> from Crypto_salt.Hash import MD5
+     >>>
+     >>> h = MD5.new()
+     >>> h.update(b'Hello')
+@@ -32,15 +32,15 @@
+ 
+ This algorithm is insecure. Do not use it for new designs.
+ 
+-.. _RFC1321: http://tools.ietf.org/html/rfc1321 
++.. _RFC1321: http://tools.ietf.org/html/rfc1321
+ """
+ 
+ _revision__ = "$Id$"
+ 
+ __all__ = ['new', 'digest_size', 'MD5Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     # The md5 module is deprecated in Python 2.6, so use hashlib when possible.
+@@ -53,7 +53,7 @@
+ 
+ class MD5Hash(HashAlgo):
+     """Class that implements an MD5 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/RIPEMD.py b/lib/Crypto/Hash/RIPEMD.py
+--- a/lib/Crypto/Hash/RIPEMD.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/RIPEMD.py	2016-01-06 13:05:45.797858803 -0600
+@@ -22,7 +22,7 @@
+ 
+ RIPEMD-160_ produces the 160 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import RIPEMD
++    >>> from Crypto_salt.Hash import RIPEMD
+     >>>
+     >>> h = RIPEMD.new()
+     >>> h.update(b'Hello')
+@@ -42,15 +42,15 @@
+ 
+ __all__ = ['new', 'digest_size', 'RIPEMD160Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+-import Crypto.Hash._RIPEMD160 as _RIPEMD160
++import Crypto_salt.Hash._RIPEMD160 as _RIPEMD160
+ hashFactory = _RIPEMD160
+ 
+ class RIPEMD160Hash(HashAlgo):
+     """Class that implements a RIPMD-160 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/SHA224.py b/lib/Crypto/Hash/SHA224.py
+--- a/lib/Crypto/Hash/SHA224.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/SHA224.py	2016-01-06 13:05:45.801192122 -0600
+@@ -23,7 +23,7 @@
+ SHA-224 belongs to the SHA-2_ family of cryptographic hashes.
+ It produces the 224 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import SHA224
++    >>> from Crypto_salt.Hash import SHA224
+     >>>
+     >>> h = SHA224.new()
+     >>> h.update(b'Hello')
+@@ -38,20 +38,20 @@
+ 
+ __all__ = ['new', 'digest_size', 'SHA224Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     import hashlib
+     hashFactory = hashlib.sha224
+ 
+ except ImportError:
+-    from Crypto.Hash import _SHA224
++    from Crypto_salt.Hash import _SHA224
+     hashFactory = _SHA224
+ 
+ class SHA224Hash(HashAlgo):
+     """Class that implements a SHA-224 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/SHA256.py b/lib/Crypto/Hash/SHA256.py
+--- a/lib/Crypto/Hash/SHA256.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/SHA256.py	2016-01-06 13:05:45.814525396 -0600
+@@ -23,7 +23,7 @@
+ SHA-256 belongs to the SHA-2_ family of cryptographic hashes.
+ It produces the 256 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import SHA256
++    >>> from Crypto_salt.Hash import SHA256
+     >>>
+     >>> h = SHA256.new()
+     >>> h.update(b'Hello')
+@@ -38,20 +38,20 @@
+ 
+ __all__ = ['new', 'digest_size', 'SHA256Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     import hashlib
+     hashFactory = hashlib.sha256
+ 
+ except ImportError:
+-    from Crypto.Hash import _SHA256
++    from Crypto_salt.Hash import _SHA256
+     hashFactory = _SHA256
+ 
+ class SHA256Hash(HashAlgo):
+     """Class that implements a SHA-256 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/SHA384.py b/lib/Crypto/Hash/SHA384.py
+--- a/lib/Crypto/Hash/SHA384.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/SHA384.py	2016-01-06 13:05:45.831191989 -0600
+@@ -23,7 +23,7 @@
+ SHA-384 belongs to the SHA-2_ family of cryptographic hashes.
+ It produces the 384 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import SHA384
++    >>> from Crypto_salt.Hash import SHA384
+     >>>
+     >>> h = SHA384.new()
+     >>> h.update(b'Hello')
+@@ -38,20 +38,20 @@
+ 
+ __all__ = ['new', 'digest_size', 'SHA384Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     import hashlib
+     hashFactory = hashlib.sha384
+ 
+ except ImportError:
+-    from Crypto.Hash import _SHA384
++    from Crypto_salt.Hash import _SHA384
+     hashFactory = _SHA384
+ 
+ class SHA384Hash(HashAlgo):
+     """Class that implements a SHA-384 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/SHA512.py b/lib/Crypto/Hash/SHA512.py
+--- a/lib/Crypto/Hash/SHA512.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/SHA512.py	2016-01-06 13:05:45.807858759 -0600
+@@ -23,7 +23,7 @@
+ SHA-512 belongs to the SHA-2_ family of cryptographic hashes.
+ It produces the 512 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import SHA512
++    >>> from Crypto_salt.Hash import SHA512
+     >>>
+     >>> h = SHA512.new()
+     >>> h.update(b'Hello')
+@@ -38,20 +38,20 @@
+ 
+ __all__ = ['new', 'digest_size', 'SHA512Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     import hashlib
+     hashFactory = hashlib.sha512
+ 
+ except ImportError:
+-    from Crypto.Hash import _SHA512
++    from Crypto_salt.Hash import _SHA512
+     hashFactory = _SHA512
+ 
+ class SHA512Hash(HashAlgo):
+     """Class that implements a SHA-512 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/Hash/SHA.py b/lib/Crypto/Hash/SHA.py
+--- a/lib/Crypto/Hash/SHA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Hash/SHA.py	2016-01-06 13:05:45.831191989 -0600
+@@ -22,7 +22,7 @@
+ 
+ SHA-1_ produces the 160 bit digest of a message.
+ 
+-    >>> from Crypto.Hash import SHA
++    >>> from Crypto_salt.Hash import SHA
+     >>>
+     >>> h = SHA.new()
+     >>> h.update(b'Hello')
+@@ -39,8 +39,8 @@
+ 
+ __all__ = ['new', 'digest_size', 'SHA1Hash' ]
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash.hashalgo import HashAlgo
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash.hashalgo import HashAlgo
+ 
+ try:
+     # The sha module is deprecated in Python 2.6, so use hashlib when possible.
+@@ -53,7 +53,7 @@
+ 
+ class SHA1Hash(HashAlgo):
+     """Class that implements a SHA-1 hash
+-    
++
+     :undocumented: block_size
+     """
+ 
+diff -ur a/lib/Crypto/__init__.py b/lib/Crypto/__init__.py
+--- a/lib/Crypto/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/__init__.py	2016-01-06 13:05:45.734525749 -0600
+@@ -25,18 +25,18 @@
+ 
+ Subpackages:
+ 
+-Crypto.Cipher
++Crypto_salt.Cipher
+  Secret-key (AES, DES, ARC4) and public-key encryption (RSA PKCS#1) algorithms
+-Crypto.Hash
++Crypto_salt.Hash
+  Hashing algorithms (MD5, SHA, HMAC)
+-Crypto.Protocol
++Crypto_salt.Protocol
+  Cryptographic protocols (Chaffing, all-or-nothing transform, key derivation
+  functions). This package does not contain any network protocols.
+-Crypto.PublicKey
++Crypto_salt.PublicKey
+  Public-key encryption and signature algorithms (RSA, DSA)
+-Crypto.Signature
++Crypto_salt.Signature
+  Public-key signature algorithms (RSA PKCS#1) 
+-Crypto.Util
++Crypto_salt.Util
+  Various useful modules and functions (long-to-string conversion, random number
+  generation, number theoretic functions)
+ """
+diff -ur a/lib/Crypto/pct_warnings.py b/lib/Crypto/pct_warnings.py
+--- a/lib/Crypto/pct_warnings.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/pct_warnings.py	2016-01-06 13:05:45.674526013 -0600
+@@ -41,13 +41,13 @@
+ #
+ 
+ class RandomPool_DeprecationWarning(CryptoDeprecationWarning):
+-    """Issued when Crypto.Util.randpool.RandomPool is instantiated."""
++    """Issued when Crypto_salt.Util.randpool.RandomPool is instantiated."""
+ 
+ class ClockRewindWarning(CryptoRuntimeWarning):
+     """Warning for when the system clock moves backwards."""
+ 
+ class GetRandomNumber_DeprecationWarning(CryptoDeprecationWarning):
+-    """Issued when Crypto.Util.number.getRandomNumber is invoked."""
++    """Issued when Crypto_salt.Util.number.getRandomNumber is invoked."""
+ 
+ class PowmInsecureWarning(CryptoRuntimeWarning):
+     """Warning for when _fastmath is built without mpz_powm_sec"""
+diff -ur a/lib/Crypto/Protocol/AllOrNothing.py b/lib/Crypto/Protocol/AllOrNothing.py
+--- a/lib/Crypto/Protocol/AllOrNothing.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Protocol/AllOrNothing.py	2016-01-06 13:05:45.727859111 -0600
+@@ -46,8 +46,8 @@
+ 
+ import operator
+ import sys
+-from Crypto.Util.number import bytes_to_long, long_to_bytes
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.number import bytes_to_long, long_to_bytes
++from Crypto_salt.Util.py3compat import *
+ 
+ def isInt(x):
+     test = 0
+@@ -230,7 +230,7 @@
+ 
+     def _inventkey(self, key_size):
+         # Return key_size random bytes
+-        from Crypto import Random
++        from Crypto_salt import Random
+         return Random.new().read(key_size)
+ 
+     def __newcipher(self, key):
+@@ -294,7 +294,7 @@
+             aslong = 1
+ 
+     # ugly hack to force __import__ to give us the end-path module
+-    module = __import__('Crypto.Cipher.'+ciphermodule, None, None, ['new'])
++    module = __import__('Crypto_salt.Cipher.'+ciphermodule, None, None, ['new'])
+ 
+     x = AllOrNothing(module)
+     print 'Original text:\n=========='
+diff -ur a/lib/Crypto/Protocol/Chaffing.py b/lib/Crypto/Protocol/Chaffing.py
+--- a/lib/Crypto/Protocol/Chaffing.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Protocol/Chaffing.py	2016-01-06 13:05:45.721192474 -0600
+@@ -69,7 +69,7 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.number import bytes_to_long
++from Crypto_salt.Util.number import bytes_to_long
+ 
+ class Chaff:
+     """Class implementing the chaff adding algorithm.
+@@ -169,7 +169,7 @@
+         return chaffedblocks
+ 
+     def _randnum(self, size):
+-        from Crypto import Random
++        from Crypto_salt import Random
+         return Random.new().read(size)
+ 
+ 
+@@ -196,7 +196,7 @@
+ 
+     # now get MACs for all the text blocks.  The key is obvious...
+     print 'Calculating MACs...'
+-    from Crypto.Hash import HMAC, SHA
++    from Crypto_salt.Hash import HMAC, SHA
+     key = 'Jefferson'
+     macs = [HMAC.new(key, block, digestmod=SHA).digest()
+             for block in blocks]
+diff -ur a/lib/Crypto/Protocol/__init__.py b/lib/Crypto/Protocol/__init__.py
+--- a/lib/Crypto/Protocol/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Protocol/__init__.py	2016-01-06 13:05:45.724525793 -0600
+@@ -23,15 +23,15 @@
+ Implements various cryptographic protocols.  (Don't expect to find
+ network protocols here.)
+ 
+-Crypto.Protocol.AllOrNothing
++Crypto_salt.Protocol.AllOrNothing
+  Transforms a message into a set of message blocks, such that the blocks
+  can be recombined to get the message back.
+ 
+-Crypto.Protocol.Chaffing
++Crypto_salt.Protocol.Chaffing
+  Takes a set of authenticated message blocks (the wheat) and adds a number
+  of randomly generated blocks (the chaff).
+ 
+-Crypto.Protocol.KDF
++Crypto_salt.Protocol.KDF
+  A collection of standard key derivation functions.
+ 
+ :undocumented: __revision__
+diff -ur a/lib/Crypto/Protocol/KDF.py b/lib/Crypto/Protocol/KDF.py
+--- a/lib/Crypto/Protocol/KDF.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Protocol/KDF.py	2016-01-06 13:05:45.731192430 -0600
+@@ -38,16 +38,16 @@
+ import math
+ import struct
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Hash import SHA as SHA1, HMAC
+-from Crypto.Util.strxor import strxor
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Hash import SHA as SHA1, HMAC
++from Crypto_salt.Util.strxor import strxor
+ 
+ def PBKDF1(password, salt, dkLen, count=1000, hashAlgo=None):
+     """Derive one key from a password (or passphrase).
+ 
+     This function performs key derivation according an old version of
+     the PKCS#5 standard (v1.5).
+-    
++
+     This algorithm is called ``PBKDF1``. Even though it is still described
+     in the latest version of the PKCS#5 standard (version 2, or RFC2898),
+     newer applications should use the more secure and versatile `PBKDF2` instead.
+@@ -60,11 +60,12 @@
+         This value does not need to be kept secret, but it should be randomly
+         chosen for each derivation.
+      dkLen : integer
+-        The length of the desired key. Default is 16 bytes, suitable for instance for `Crypto.Cipher.AES`.
++        The length of the desired key. Default is 16 bytes, suitable for
++        instance for `Crypto_salt.Cipher.AES`.
+      count : integer
+         The number of iterations to carry out. It's recommended to use at least 1000.
+      hashAlgo : module
+-        The hash algorithm to use, as a module or an object from the `Crypto.Hash` package.
++        The hash algorithm to use, as a module or an object from the `Crypto_salt.Hash` package.
+         The digest length must be no shorter than ``dkLen``.
+         The default algorithm is `SHA1`.
+ 
+@@ -97,7 +98,8 @@
+         This value does not need to be kept secret, but it should be randomly
+         chosen for each derivation. It is recommended to be at least 8 bytes long.
+      dkLen : integer
+-        The cumulative length of the desired keys. Default is 16 bytes, suitable for instance for `Crypto.Cipher.AES`.
++        The cumulative length of the desired keys. Default is 16 bytes,
++        suitable for instance for `Crypto_salt.Cipher.AES`.
+      count : integer
+         The number of iterations to carry out. It's recommended to use at least 1000.
+      prf : callable
+diff -ur a/lib/Crypto/PublicKey/_DSA.py b/lib/Crypto/PublicKey/_DSA.py
+--- a/lib/Crypto/PublicKey/_DSA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/PublicKey/_DSA.py	2016-01-06 13:05:45.657859420 -0600
+@@ -27,11 +27,11 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.PublicKey.pubkey import *
+-from Crypto.Util import number
+-from Crypto.Util.number import bytes_to_long, long_to_bytes
+-from Crypto.Hash import SHA
+-from Crypto.Util.py3compat import *
++from Crypto_salt.PublicKey.pubkey import *
++from Crypto_salt.Util import number
++from Crypto_salt.Util.number import bytes_to_long, long_to_bytes
++from Crypto_salt.Hash import SHA
++from Crypto_salt.Util.py3compat import *
+ 
+ class error (Exception):
+     pass
+diff -ur a/lib/Crypto/PublicKey/DSA.py b/lib/Crypto/PublicKey/DSA.py
+--- a/lib/Crypto/PublicKey/DSA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/PublicKey/DSA.py	2016-01-06 13:05:45.671192695 -0600
+@@ -57,9 +57,9 @@
+ them from known components. DSA keys allows you to perform basic signing and
+ verification.
+ 
+-    >>> from Crypto.Random import random
+-    >>> from Crypto.PublicKey import DSA
+-    >>> from Crypto.Hash import SHA
++    >>> from Crypto_salt.Random import random
++    >>> from Crypto_salt.PublicKey import DSA
++    >>> from Crypto_salt.Hash import SHA
+     >>>
+     >>> message = "Hello"
+     >>> key = DSA.generate(1024)
+@@ -83,13 +83,13 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+-from Crypto.PublicKey import _DSA, _slowmath, pubkey
+-from Crypto import Random
++from Crypto_salt.PublicKey import _DSA, _slowmath, pubkey
++from Crypto_salt import Random
+ 
+ try:
+-    from Crypto.PublicKey import _fastmath
++    from Crypto_salt.PublicKey import _fastmath
+ except ImportError:
+     _fastmath = None
+ 
+@@ -241,7 +241,7 @@
+     A DSA key factory.
+ 
+     This class is only internally used to implement the methods of the
+-    `Crypto.PublicKey.DSA` module.
++    `Crypto_salt.PublicKey.DSA` module.
+     """
+  
+     def __init__(self, **kwargs):
+@@ -307,7 +307,7 @@
+                             a single integer N and return a string of random data
+                             N bytes long.
+                             If not specified, a new one will be instantiated
+-                            from ``Crypto.Random``.
++                            from ``Crypto_salt.Random``.
+          progress_func : callable
+                             Optional function that will be called with a short string
+                             containing the key parameter currently being generated;
+@@ -315,7 +315,7 @@
+                             waiting for a key to be generated.
+ 
+         :attention: You should always use a cryptographically secure random number generator,
+-            such as the one defined in the ``Crypto.Random`` module; **don't** just use the
++            such as the one defined in the ``Crypto_salt.Random`` module; **don't** just use the
+             current time and the ``random`` module.
+ 
+         :Return: A DSA key object (`_DSAobj`).
+diff -ur a/lib/Crypto/PublicKey/ElGamal.py b/lib/Crypto/PublicKey/ElGamal.py
+--- a/lib/Crypto/PublicKey/ElGamal.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/PublicKey/ElGamal.py	2016-01-06 13:05:45.647859464 -0600
+@@ -81,11 +81,11 @@
+ them from known components. ElGamal keys allows you to perform basic signing,
+ verification, encryption, and decryption.
+ 
+-    >>> from Crypto import Random
+-    >>> from Crypto.Random import random
+-    >>> from Crypto.PublicKey import ElGamal
+-    >>> from Crypto.Util.number import GCD
+-    >>> from Crypto.Hash import SHA
++    >>> from Crypto_salt import Random
++    >>> from Crypto_salt.Random import random
++    >>> from Crypto_salt.PublicKey import ElGamal
++    >>> from Crypto_salt.Util.number import GCD
++    >>> from Crypto_salt.Hash import SHA
+     >>>
+     >>> message = "Hello"
+     >>> key = ElGamal.generate(1024, Random.new().read)
+@@ -109,8 +109,8 @@
+ 
+ __all__ = ['generate', 'construct', 'error', 'ElGamalobj']
+ 
+-from Crypto.PublicKey.pubkey import *
+-from Crypto.Util import number
++from Crypto_salt.PublicKey.pubkey import *
++from Crypto_salt.Util import number
+ 
+ class error (Exception):
+     pass
+@@ -137,7 +137,7 @@
+             waiting for a key to be generated.
+ 
+     :attention: You should always use a cryptographically secure random number generator,
+-        such as the one defined in the ``Crypto.Random`` module; **don't** just use the
++        such as the one defined in the ``Crypto_salt.Random`` module; **don't** just use the
+         current time and the ``random`` module.
+ 
+     :Return: An ElGamal key object (`ElGamalobj`).
+diff -ur a/lib/Crypto/PublicKey/__init__.py b/lib/Crypto/PublicKey/__init__.py
+--- a/lib/Crypto/PublicKey/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/PublicKey/__init__.py	2016-01-06 13:05:45.664526057 -0600
+@@ -28,9 +28,9 @@
+ ========================  =============================================
+ Module                    Description
+ ========================  =============================================
+-Crypto.PublicKey.DSA      Digital Signature Algorithm (Signature only)
+-Crypto.PublicKey.ElGamal  (Signing and encryption)
+-Crypto.PublicKey.RSA      (Signing, encryption, and blinding)
++Crypto_salt.PublicKey.DSA      Digital Signature Algorithm (Signature only)
++Crypto_salt.PublicKey.ElGamal  (Signing and encryption)
++Crypto_salt.PublicKey.RSA      (Signing, encryption, and blinding)
+ ========================  =============================================
+ 
+ :undocumented: _DSA, _RSA, _fastmath, _slowmath, pubkey
+diff -ur a/lib/Crypto/PublicKey/pubkey.py b/lib/Crypto/PublicKey/pubkey.py
+--- a/lib/Crypto/PublicKey/pubkey.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/PublicKey/pubkey.py	2016-01-06 13:05:45.654526101 -0600
+@@ -27,7 +27,7 @@
+ __revision__ = "$Id$"
+ 
+ import types, warnings
+-from Crypto.Util.number import *
++from Crypto_salt.Util.number import *
+ 
+ # Basic public key class
+ class pubkey:
+diff -ur a/lib/Crypto/PublicKey/_RSA.py b/lib/Crypto/PublicKey/_RSA.py
+--- a/lib/Crypto/PublicKey/_RSA.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/PublicKey/_RSA.py	2016-01-06 13:05:45.667859376 -0600
+@@ -26,8 +26,8 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.PublicKey import pubkey
+-from Crypto.Util import number
++from Crypto_salt.PublicKey import pubkey
++from Crypto_salt.Util import number
+ 
+ def generate_py(bits, randfunc, progress_func=None, e=65537):
+     """generate(bits:int, randfunc:callable, progress_func:callable, e:int)
+diff -ur a/lib/Crypto/PublicKey/RSA.py b/lib/Crypto/PublicKey/RSA.py
+--- a/lib/Crypto/PublicKey/RSA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/PublicKey/RSA.py	2016-01-06 13:05:45.651192783 -0600
+@@ -42,7 +42,7 @@
+ This module provides facilities for generating fresh, new RSA keys, constructing
+ them from known components, exporting them, and importing them.
+ 
+-    >>> from Crypto.PublicKey import RSA
++    >>> from Crypto_salt.PublicKey import RSA
+     >>>
+     >>> key = RSA.generate(2048)
+     >>> f = open('mykey.pem','w')
+@@ -55,7 +55,7 @@
+ Even though you may choose to  directly use the methods of an RSA key object
+ to perform the primitive cryptographic operations (e.g. `_RSAobj.encrypt`),
+ it is recommended to use one of the standardized schemes instead (like
+-`Crypto.Cipher.PKCS1_v1_5` or `Crypto.Signature.PKCS1_v1_5`).
++`Crypto_salt.Cipher.PKCS1_v1_5` or `Crypto_salt.Signature.PKCS1_v1_5`).
+ 
+ .. _RSA: http://en.wikipedia.org/wiki/RSA_%28algorithm%29
+ .. _ECRYPT: http://www.ecrypt.eu.org/documents/D.SPA.17.pdf
+@@ -69,24 +69,24 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
+-#from Crypto.Util.python_compat import *
+-from Crypto.Util.number import getRandomRange, bytes_to_long, long_to_bytes
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
++#from Crypto_salt.Util.python_compat import *
++from Crypto_salt.Util.number import getRandomRange, bytes_to_long, long_to_bytes
+ 
+-from Crypto.PublicKey import _RSA, _slowmath, pubkey
+-from Crypto import Random
++from Crypto_salt.PublicKey import _RSA, _slowmath, pubkey
++from Crypto_salt import Random
+ 
+-from Crypto.Util.asn1 import DerObject, DerSequence, DerNull
++from Crypto_salt.Util.asn1 import DerObject, DerSequence, DerNull
+ import binascii
+ import struct
+ 
+-from Crypto.Util.number import inverse
++from Crypto_salt.Util.number import inverse
+ 
+-from Crypto.Util.number import inverse
++from Crypto_salt.Util.number import inverse
+ 
+ try:
+-    from Crypto.PublicKey import _fastmath
++    from Crypto_salt.PublicKey import _fastmath
+ except ImportError:
+     _fastmath = None
+ 
+@@ -141,7 +141,7 @@
+          cryptographic padding, and you should not directly encrypt data with
+          this method. Failure to do so may lead to security vulnerabilities.
+          It is recommended to use modules
+-         `Crypto.Cipher.PKCS1_OAEP` or `Crypto.Cipher.PKCS1_v1_5` instead.
++         `Crypto_salt.Cipher.PKCS1_OAEP` or `Crypto_salt.Cipher.PKCS1_v1_5` instead.
+ 
+         :Return: A tuple with two items. The first item is the ciphertext
+          of the same type as the plaintext (string or long). The second item
+@@ -159,7 +159,7 @@
+          cryptographic padding, and you should not directly decrypt data with
+          this method. Failure to do so may lead to security vulnerabilities.
+          It is recommended to use modules
+-         `Crypto.Cipher.PKCS1_OAEP` or `Crypto.Cipher.PKCS1_v1_5` instead.
++         `Crypto_salt.Cipher.PKCS1_OAEP` or `Crypto_salt.Cipher.PKCS1_v1_5` instead.
+ 
+         :Parameter ciphertext: The piece of data to decrypt with RSA. It may
+          not be numerically larger than the RSA module (**n**). If a tuple,
+@@ -183,7 +183,7 @@
+          cryptographic padding, and you should not directly sign data with
+          this method. Failure to do so may lead to security vulnerabilities.
+          It is recommended to use modules
+-         `Crypto.Signature.PKCS1_PSS` or `Crypto.Signature.PKCS1_v1_5` instead.
++         `Crypto_salt.Signature.PKCS1_PSS` or `Crypto_salt.Signature.PKCS1_v1_5` instead.
+ 
+         :Parameter M: The piece of data to sign with RSA. It may
+          not be numerically larger than the RSA module (**n**).
+@@ -206,7 +206,7 @@
+          cryptographic padding, and you should not directly verify data with
+          this method. Failure to do so may lead to security vulnerabilities.
+          It is recommended to use modules
+-         `Crypto.Signature.PKCS1_PSS` or `Crypto.Signature.PKCS1_v1_5` instead.
++         `Crypto_salt.Signature.PKCS1_PSS` or `Crypto_salt.Signature.PKCS1_v1_5` instead.
+  
+         :Parameter M: The expected message.
+         :Type M: byte string or long
+@@ -227,7 +227,7 @@
+         #(ciphertext,) = c
+         (ciphertext,) = c[:1]  # HACK - We should use the previous line
+                                # instead, but this is more compatible and we're
+-                               # going to replace the Crypto.PublicKey API soon
++                               # going to replace the Crypto_salt.PublicKey API soon
+                                # anyway.
+ 
+         # Blinded RSA decryption (to prevent timing attacks):
+@@ -253,7 +253,7 @@
+         #(s,) = sig
+         (s,) = sig[:1]  # HACK - We should use the previous line instead, but
+                         # this is more compatible and we're going to replace
+-                        # the Crypto.PublicKey API soon anyway.
++                        # the Crypto_salt.PublicKey API soon anyway.
+         return self.key._verify(m, s)
+ 
+     def has_private(self):
+@@ -379,13 +379,13 @@
+                 objenc = None
+                 if passphrase and keyType.endswith('PRIVATE'):
+                     # We only support 3DES for encryption
+-                    import Crypto.Hash.MD5
+-                    from Crypto.Cipher import DES3
+-                    from Crypto.Protocol.KDF import PBKDF1
++                    import Crypto_salt.Hash.MD5
++                    from Crypto_salt.Cipher import DES3
++                    from Crypto_salt.Protocol.KDF import PBKDF1
+                     salt = self._randfunc(8)
+-                    key =  PBKDF1(passphrase, salt, 16, 1, Crypto.Hash.MD5)
+-                    key += PBKDF1(key+passphrase, salt, 8, 1, Crypto.Hash.MD5)
+-                    objenc = DES3.new(key, Crypto.Cipher.DES3.MODE_CBC, salt)
++                    key =  PBKDF1(passphrase, salt, 16, 1, Crypto_salt.Hash.MD5)
++                    key += PBKDF1(key+passphrase, salt, 8, 1, Crypto_salt.Hash.MD5)
++                    objenc = DES3.new(key, Crypto_salt.Cipher.DES3.MODE_CBC, salt)
+                     pem += b('Proc-Type: 4,ENCRYPTED\n')
+                     pem += b('DEK-Info: DES-EDE3-CBC,') + binascii.b2a_hex(salt).upper() + b('\n\n')
+                 
+@@ -406,7 +406,7 @@
+     """
+     An RSA key factory.
+ 
+-    This class is only internally used to implement the methods of the `Crypto.PublicKey.RSA` module.
++    This class is only internally used to implement the methods of the `Crypto_salt.PublicKey.RSA` module.
+ 
+     :sort: __init__,generate,construct,importKey
+     :undocumented: _g*, _i*
+@@ -471,7 +471,7 @@
+                             a single integer N and return a string of random data
+                             N bytes long.
+                             If not specified, a new one will be instantiated
+-                            from ``Crypto.Random``.
++                            from ``Crypto_salt.Random``.
+ 
+          progress_func : callable
+                             Optional function that will be called with a short string
+@@ -487,7 +487,7 @@
+                             choice: other common values are 5, 7, 17, and 257.
+ 
+         :attention: You should always use a cryptographically secure random number generator,
+-            such as the one defined in the ``Crypto.Random`` module; **don't** just use the
++            such as the one defined in the ``Crypto_salt.Random`` module; **don't** just use the
+             current time and the ``random`` module.
+ 
+         :attention: Exponent 3 is also widely used, but it requires very special care when padding
+@@ -641,18 +641,18 @@
+                         raise ValueError("PEM encryption format not supported.")
+                     algo, salt = DEK[1].split(b(','))
+                     salt = binascii.a2b_hex(salt)
+-                    import Crypto.Hash.MD5
+-                    from Crypto.Cipher import DES, DES3
+-                    from Crypto.Protocol.KDF import PBKDF1
++                    import Crypto_salt.Hash.MD5
++                    from Crypto_salt.Cipher import DES, DES3
++                    from Crypto_salt.Protocol.KDF import PBKDF1
+                     if algo==b("DES-CBC"):
+                         # This is EVP_BytesToKey in OpenSSL
+-                        key = PBKDF1(passphrase, salt, 8, 1, Crypto.Hash.MD5)
+-                        keyobj = DES.new(key, Crypto.Cipher.DES.MODE_CBC, salt)
++                        key = PBKDF1(passphrase, salt, 8, 1, Crypto_salt.Hash.MD5)
++                        keyobj = DES.new(key, Crypto_salt.Cipher.DES.MODE_CBC, salt)
+                     elif algo==b("DES-EDE3-CBC"):
+                         # Note that EVP_BytesToKey is note exactly the same as PBKDF1
+-                        key =  PBKDF1(passphrase, salt, 16, 1, Crypto.Hash.MD5)
+-                        key += PBKDF1(key+passphrase, salt, 8, 1, Crypto.Hash.MD5)
+-                        keyobj = DES3.new(key, Crypto.Cipher.DES3.MODE_CBC, salt)
++                        key =  PBKDF1(passphrase, salt, 16, 1, Crypto_salt.Hash.MD5)
++                        key += PBKDF1(key+passphrase, salt, 8, 1, Crypto_salt.Hash.MD5)
++                        keyobj = DES3.new(key, Crypto_salt.Cipher.DES3.MODE_CBC, salt)
+                     else:
+                         raise ValueError("Unsupport PEM encryption algorithm.")
+                     lines = lines[2:]
+diff -ur a/lib/Crypto/PublicKey/_slowmath.py b/lib/Crypto/PublicKey/_slowmath.py
+--- a/lib/Crypto/PublicKey/_slowmath.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/PublicKey/_slowmath.py	2016-01-06 13:05:45.661192738 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Pure Python implementation of the RSA-related portions of Crypto.PublicKey._fastmath."""
++"""Pure Python implementation of the RSA-related portions of Crypto_salt.PublicKey._fastmath."""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -31,8 +31,8 @@
+ import sys
+ 
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.number import size, inverse, GCD
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.number import size, inverse, GCD
+ 
+ class error(Exception):
+     pass
+diff -ur a/lib/Crypto/Random/Fortuna/FortunaAccumulator.py b/lib/Crypto/Random/Fortuna/FortunaAccumulator.py
+--- a/lib/Crypto/Random/Fortuna/FortunaAccumulator.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Random/Fortuna/FortunaAccumulator.py	2016-01-06 13:05:45.614526278 -0600
+@@ -26,14 +26,14 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+     
+ from binascii import b2a_hex
+ import time
+ import warnings
+ 
+-from Crypto.pct_warnings import ClockRewindWarning
++from Crypto_salt.pct_warnings import ClockRewindWarning
+ import SHAd256
+ 
+ import FortunaGenerator
+@@ -130,7 +130,7 @@
+         # This is not part of the standard Fortuna definition, and using this
+         # function frequently can weaken Fortuna's ability to resist a state
+         # compromise extension attack, but we need this in order to properly
+-        # implement Crypto.Random.atfork().  Otherwise, forked child processes
++        # implement Crypto_salt.Random.atfork().  Otherwise, forked child processes
+         # might continue to use their parent's PRNG state for up to 100ms in
+         # some cases. (e.g. CVE-2013-1445)
+         self.last_reseed = None
+diff -ur a/lib/Crypto/Random/Fortuna/FortunaGenerator.py b/lib/Crypto/Random/Fortuna/FortunaGenerator.py
+--- a/lib/Crypto/Random/Fortuna/FortunaGenerator.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Random/Fortuna/FortunaGenerator.py	2016-01-06 13:05:45.607859640 -0600
+@@ -26,14 +26,14 @@
+ 
+ import sys
+ if sys.version_info[0] is 2 and  sys.version_info[1] is 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import struct
+ 
+-from Crypto.Util.number import ceil_shift, exact_log2, exact_div
+-from Crypto.Util import Counter
+-from Crypto.Cipher import AES
++from Crypto_salt.Util.number import ceil_shift, exact_log2, exact_div
++from Crypto_salt.Util import Counter
++from Crypto_salt.Cipher import AES
+ 
+ import SHAd256
+ 
+diff -ur a/lib/Crypto/Random/Fortuna/SHAd256.py b/lib/Crypto/Random/Fortuna/SHAd256.py
+--- a/lib/Crypto/Random/Fortuna/SHAd256.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Random/Fortuna/SHAd256.py	2016-01-06 13:05:45.611192959 -0600
+@@ -33,12 +33,12 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ from binascii import b2a_hex
+ 
+-from Crypto.Hash import SHA256
++from Crypto_salt.Hash import SHA256
+ 
+ assert SHA256.digest_size == 32
+ 
+diff -ur a/lib/Crypto/Random/__init__.py b/lib/Crypto/Random/__init__.py
+--- a/lib/Crypto/Random/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Random/__init__.py	2016-01-06 13:05:45.604526322 -0600
+@@ -25,8 +25,8 @@
+ __revision__ = "$Id$"
+ __all__ = ['new']
+ 
+-from Crypto.Random import OSRNG
+-from Crypto.Random import _UserFriendlyRNG
++from Crypto_salt.Random import OSRNG
++from Crypto_salt.Random import _UserFriendlyRNG
+ 
+ def new(*args, **kwargs):
+     """Return a file-like object that outputs cryptographically random bytes."""
+diff -ur a/lib/Crypto/Random/OSRNG/__init__.py b/lib/Crypto/Random/OSRNG/__init__.py
+--- a/lib/Crypto/Random/OSRNG/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Random/OSRNG/__init__.py	2016-01-06 13:05:45.631192871 -0600
+@@ -29,11 +29,11 @@
+ import os
+ 
+ if os.name == 'posix':
+-    from Crypto.Random.OSRNG.posix import new
++    from Crypto_salt.Random.OSRNG.posix import new
+ elif os.name == 'nt':
+-    from Crypto.Random.OSRNG.nt import new
++    from Crypto_salt.Random.OSRNG.nt import new
+ elif hasattr(os, 'urandom'):
+-    from Crypto.Random.OSRNG.fallback import new
++    from Crypto_salt.Random.OSRNG.fallback import new
+ else:
+     raise ImportError("Not implemented")
+ 
+diff -ur a/lib/Crypto/Random/OSRNG/posix.py b/lib/Crypto/Random/OSRNG/posix.py
+--- a/lib/Crypto/Random/OSRNG/posix.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Random/OSRNG/posix.py	2016-01-06 13:05:45.627859552 -0600
+@@ -30,7 +30,7 @@
+ import stat
+ 
+ from rng_base import BaseRNG
+-from Crypto.Util.py3compat import b
++from Crypto_salt.Util.py3compat import b
+ 
+ class DevURandomRNG(BaseRNG):
+ 
+diff -ur a/lib/Crypto/Random/OSRNG/rng_base.py b/lib/Crypto/Random/OSRNG/rng_base.py
+--- a/lib/Crypto/Random/OSRNG/rng_base.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Random/OSRNG/rng_base.py	2016-01-06 13:05:45.617859596 -0600
+@@ -25,7 +25,7 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+ class BaseRNG(object):
+ 
+diff -ur a/lib/Crypto/Random/random.py b/lib/Crypto/Random/random.py
+--- a/lib/Crypto/Random/random.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Random/random.py	2016-01-06 13:05:45.637859508 -0600
+@@ -27,10 +27,10 @@
+ __revision__ = "$Id$"
+ __all__ = ['StrongRandom', 'getrandbits', 'randrange', 'randint', 'choice', 'shuffle', 'sample']
+ 
+-from Crypto import Random
++from Crypto_salt import Random
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+ class StrongRandom(object):
+     def __init__(self, rng=None, randfunc=None):
+@@ -137,6 +137,6 @@
+ sample = _r.sample
+ 
+ # These are at the bottom to avoid problems with recursive imports
+-from Crypto.Util.number import ceil_div, bytes_to_long, long_to_bytes, size
++from Crypto_salt.Util.number import ceil_div, bytes_to_long, long_to_bytes, size
+ 
+ # vim:set ts=4 sw=4 sts=4 expandtab:
+diff -ur a/lib/Crypto/Random/_UserFriendlyRNG.py b/lib/Crypto/Random/_UserFriendlyRNG.py
+--- a/lib/Crypto/Random/_UserFriendlyRNG.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Random/_UserFriendlyRNG.py	2016-01-06 13:05:45.641192827 -0600
+@@ -26,7 +26,7 @@
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+ import os
+ import threading
+@@ -34,8 +34,8 @@
+ import time
+ from math import floor
+ 
+-from Crypto.Random import OSRNG
+-from Crypto.Random.Fortuna import FortunaAccumulator
++from Crypto_salt.Random import OSRNG
++from Crypto_salt.Random.Fortuna import FortunaAccumulator
+ 
+ class _EntropySource(object):
+     def __init__(self, accumulator, src_num):
+@@ -91,7 +91,7 @@
+         the operating system.
+         """
+ 
+-        # Save the pid (helps ensure that Crypto.Random.atfork() gets called)
++        # Save the pid (helps ensure that Crypto_salt.Random.atfork() gets called)
+         self._pid = os.getpid()
+ 
+         # Collect entropy from the operating system and feed it to
+diff -ur a/lib/Crypto/SelfTest/Cipher/common.py b/lib/Crypto/SelfTest/Cipher/common.py
+--- a/lib/Crypto/SelfTest/Cipher/common.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/common.py	2016-01-06 13:05:45.941191505 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Hash/common.py: Common code for Crypto.SelfTest.Hash
++#  SelfTest/Hash/common.py: Common code for Crypto_salt.SelfTest.Hash
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -29,7 +29,7 @@
+ import sys
+ import unittest
+ from binascii import a2b_hex, b2a_hex
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # For compatibility with Python 2.1 and Python 2.2
+ if sys.hexversion < 0x02030000:
+@@ -94,7 +94,7 @@
+ 
+         # Handle CTR mode parameters.  By default, we use Counter.new(self.module.block_size)
+         if hasattr(self.module, "MODE_CTR") and self.mode == self.module.MODE_CTR:
+-            from Crypto.Util import Counter
++            from Crypto_salt.Util import Counter
+             ctr_class = _extract(params, 'ctr_class', Counter.new)
+             ctr_params = _extract(params, 'ctr_params', {}).copy()
+             if ctr_params.has_key('prefix'): ctr_params['prefix'] = a2b_hex(b(ctr_params['prefix']))
+@@ -198,7 +198,7 @@
+         return """Regression test: %s with MODE_CTR should raise OverflowError on wraparound when shortcut used""" % (self.module_name,)
+ 
+     def runTest(self):
+-        from Crypto.Util import Counter
++        from Crypto_salt.Util import Counter
+ 
+         for disable_shortcut in (0, 1): # (False, True) Test CTR-mode shortcut and PyObject_CallObject code paths
+             for little_endian in (0, 1): # (False, True) Test both endiannesses
+@@ -227,7 +227,7 @@
+ 
+ class RoundtripTest(unittest.TestCase):
+     def __init__(self, module, params):
+-        from Crypto import Random
++        from Crypto_salt import Random
+         unittest.TestCase.__init__(self)
+         self.module = module
+         self.iv = Random.get_random_bytes(module.block_size)
+diff -ur a/lib/Crypto/SelfTest/Cipher/__init__.py b/lib/Crypto/SelfTest/Cipher/__init__.py
+--- a/lib/Crypto/SelfTest/Cipher/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/__init__.py	2016-01-06 13:05:45.921191593 -0600
+@@ -28,16 +28,16 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.Cipher import test_AES;      tests += test_AES.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_ARC2;     tests += test_ARC2.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_ARC4;     tests += test_ARC4.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_Blowfish; tests += test_Blowfish.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_CAST;     tests += test_CAST.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_DES3;     tests += test_DES3.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_DES;      tests += test_DES.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_XOR;      tests += test_XOR.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_pkcs1_15; tests += test_pkcs1_15.get_tests(config=config)
+-    from Crypto.SelfTest.Cipher import test_pkcs1_oaep; tests += test_pkcs1_oaep.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_AES;      tests += test_AES.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_ARC2;     tests += test_ARC2.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_ARC4;     tests += test_ARC4.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_Blowfish; tests += test_Blowfish.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_CAST;     tests += test_CAST.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_DES3;     tests += test_DES3.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_DES;      tests += test_DES.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_XOR;      tests += test_XOR.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_pkcs1_15; tests += test_pkcs1_15.get_tests(config=config)
++    from Crypto_salt.SelfTest.Cipher import test_pkcs1_oaep; tests += test_pkcs1_oaep.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_AES.py b/lib/Crypto/SelfTest/Cipher/test_AES.py
+--- a/lib/Crypto/SelfTest/Cipher/test_AES.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_AES.py	2016-01-06 13:05:45.911191637 -0600
+@@ -22,12 +22,12 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.AES"""
++"""Self-test suite for Crypto_salt.Cipher.AES"""
+ 
+ __revision__ = "$Id$"
+ 
+ from common import dict     # For compatibility with Python 2.1 and 2.2
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ from binascii import hexlify
+ 
+ # This is a list of (plaintext, ciphertext, key[, description[, params]]) tuples.
+@@ -1421,7 +1421,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import AES
++    from Crypto_salt.Cipher import AES
+     from common import make_block_tests
+     return make_block_tests(AES, "AES", test_data)
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_ARC2.py b/lib/Crypto/SelfTest/Cipher/test_ARC2.py
+--- a/lib/Crypto/SelfTest/Cipher/test_ARC2.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_ARC2.py	2016-01-06 13:05:45.914524955 -0600
+@@ -22,14 +22,14 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.ARC2"""
++"""Self-test suite for Crypto_salt.Cipher.ARC2"""
+ 
+ __revision__ = "$Id$"
+ 
+ from common import dict     # For compatibility with Python 2.1 and 2.2
+ 
+ import unittest
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (plaintext, ciphertext, key[, description[, extra_params]]) tuples.
+ test_data = [
+@@ -99,7 +99,7 @@
+ 
+     def setUp(self):
+         global ARC2
+-        from Crypto.Cipher import ARC2
++        from Crypto_salt.Cipher import ARC2
+ 
+     def runTest(self):
+         """ARC2 with keylength > 128"""
+@@ -108,7 +108,7 @@
+         self.assertRaises(ValueError, ARC2.new, key, mode)
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import ARC2
++    from Crypto_salt.Cipher import ARC2
+     from common import make_block_tests
+ 
+     tests = make_block_tests(ARC2, "ARC2", test_data)
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_ARC4.py b/lib/Crypto/SelfTest/Cipher/test_ARC4.py
+--- a/lib/Crypto/SelfTest/Cipher/test_ARC4.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_ARC4.py	2016-01-06 13:05:45.917858274 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.ARC4"""
++"""Self-test suite for Crypto_salt.Cipher.ARC4"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (plaintext, ciphertext, key[, description]) tuples.
+ test_data = [
+@@ -69,7 +69,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import ARC4
++    from Crypto_salt.Cipher import ARC4
+     from common import make_stream_tests
+     return make_stream_tests(ARC4, "ARC4", test_data)
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_Blowfish.py b/lib/Crypto/SelfTest/Cipher/test_Blowfish.py
+--- a/lib/Crypto/SelfTest/Cipher/test_Blowfish.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_Blowfish.py	2016-01-06 13:05:45.927858230 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.Blowfish"""
++"""Self-test suite for Crypto_salt.Cipher.Blowfish"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (plaintext, ciphertext, key) tuples.
+ test_data = [
+@@ -101,7 +101,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import Blowfish
++    from Crypto_salt.Cipher import Blowfish
+     from common import make_block_tests
+     return make_block_tests(Blowfish, "Blowfish", test_data)
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_CAST.py b/lib/Crypto/SelfTest/Cipher/test_CAST.py
+--- a/lib/Crypto/SelfTest/Cipher/test_CAST.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_CAST.py	2016-01-06 13:05:45.944524823 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.CAST"""
++"""Self-test suite for Crypto_salt.Cipher.CAST"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (plaintext, ciphertext, key) tuples.
+ test_data = [
+@@ -45,7 +45,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import CAST
++    from Crypto_salt.Cipher import CAST
+     from common import make_block_tests
+     return make_block_tests(CAST, "CAST", test_data)
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_DES3.py b/lib/Crypto/SelfTest/Cipher/test_DES3.py
+--- a/lib/Crypto/SelfTest/Cipher/test_DES3.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_DES3.py	2016-01-06 13:05:45.934524867 -0600
+@@ -22,12 +22,12 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.DES3"""
++"""Self-test suite for Crypto_salt.Cipher.DES3"""
+ 
+ __revision__ = "$Id$"
+ 
+ from common import dict     # For compatibility with Python 2.1 and 2.2
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ from binascii import hexlify
+ 
+ # This is a list of (plaintext, ciphertext, key, description) tuples.
+@@ -321,7 +321,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import DES3
++    from Crypto_salt.Cipher import DES3
+     from common import make_block_tests
+     return make_block_tests(DES3, "DES3", test_data)
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_DES.py b/lib/Crypto/SelfTest/Cipher/test_DES.py
+--- a/lib/Crypto/SelfTest/Cipher/test_DES.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_DES.py	2016-01-06 13:05:45.947858142 -0600
+@@ -22,12 +22,12 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.DES"""
++"""Self-test suite for Crypto_salt.Cipher.DES"""
+ 
+ __revision__ = "$Id$"
+ 
+ from common import dict     # For compatibility with Python 2.1 and 2.2
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ import unittest
+ 
+ # This is a list of (plaintext, ciphertext, key, description) tuples.
+@@ -310,7 +310,7 @@
+     errors described herein.
+     """
+     def runTest(self):
+-        from Crypto.Cipher import DES
++        from Crypto_salt.Cipher import DES
+         from binascii import b2a_hex
+ 
+         X = []
+@@ -327,7 +327,7 @@
+             b2a_hex(b('\x1B\x1A\x2D\xDB\x4C\x64\x24\x38')))
+ 
+ def get_tests(config={}):
+-    from Crypto.Cipher import DES
++    from Crypto_salt.Cipher import DES
+     from common import make_block_tests
+     return make_block_tests(DES, "DES", test_data) + [RonRivestTest()]
+ 
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_pkcs1_15.py b/lib/Crypto/SelfTest/Cipher/test_pkcs1_15.py
+--- a/lib/Crypto/SelfTest/Cipher/test_pkcs1_15.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_pkcs1_15.py	2016-01-06 13:05:45.921191593 -0600
+@@ -25,11 +25,11 @@
+ import unittest
+ import sys
+ 
+-from Crypto.PublicKey import RSA
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+-from Crypto import Random
+-from Crypto.Cipher import PKCS1_v1_5 as PKCS
+-from Crypto.Util.py3compat import *
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt import Random
++from Crypto_salt.Cipher import PKCS1_v1_5 as PKCS
++from Crypto_salt.Util.py3compat import *
+ 
+ def rws(t):
+     """Remove white spaces, tabs, and new lines from a string"""
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_pkcs1_oaep.py b/lib/Crypto/SelfTest/Cipher/test_pkcs1_oaep.py
+--- a/lib/Crypto/SelfTest/Cipher/test_pkcs1_oaep.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_pkcs1_oaep.py	2016-01-06 13:05:45.924524911 -0600
+@@ -26,13 +26,13 @@
+ 
+ import unittest
+ 
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.PublicKey import RSA
+-from Crypto.Cipher import PKCS1_OAEP as PKCS
+-from Crypto.Hash import MD2,MD5,SHA as SHA1,SHA256,RIPEMD
+-from Crypto import Random
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt.Cipher import PKCS1_OAEP as PKCS
++from Crypto_salt.Hash import MD2,MD5,SHA as SHA1,SHA256,RIPEMD
++from Crypto_salt import Random
+ 
+ def rws(t):
+     """Remove white spaces, tabs, and new lines from a string"""
+diff -ur a/lib/Crypto/SelfTest/Cipher/test_XOR.py b/lib/Crypto/SelfTest/Cipher/test_XOR.py
+--- a/lib/Crypto/SelfTest/Cipher/test_XOR.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Cipher/test_XOR.py	2016-01-06 13:05:45.931191549 -0600
+@@ -22,13 +22,13 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Cipher.XOR"""
++"""Self-test suite for Crypto_salt.Cipher.XOR"""
+ 
+ import unittest
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (plaintext, ciphertext, key) tuples.
+ test_data = [
+@@ -54,13 +54,13 @@
+ 
+     def runTest(self):
+         """33-byte key (should raise ValueError under current implementation)"""
+-        # Crypto.Cipher.XOR previously truncated its inputs at 32 bytes.  Now
++        # Crypto_salt.Cipher.XOR previously truncated its inputs at 32 bytes.  Now
+         # it should raise a ValueError if the length is too long.
+         self.assertRaises(ValueError, XOR.new, "x"*33)
+ 
+ def get_tests(config={}):
+     global XOR
+-    from Crypto.Cipher import XOR
++    from Crypto_salt.Cipher import XOR
+     from common import make_stream_tests
+     return make_stream_tests(XOR, "XOR", test_data) + [TruncationSelfTest()]
+ 
+diff -ur a/lib/Crypto/SelfTest/Hash/common.py b/lib/Crypto/SelfTest/Hash/common.py
+--- a/lib/Crypto/SelfTest/Hash/common.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/common.py	2016-01-06 13:05:46.044524383 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Hash/common.py: Common code for Crypto.SelfTest.Hash
++#  SelfTest/Hash/common.py: Common code for Crypto_salt.SelfTest.Hash
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -29,7 +29,7 @@
+ import sys
+ import unittest
+ import binascii
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # For compatibility with Python 2.1 and Python 2.2
+ if sys.hexversion < 0x02030000:
+diff -ur a/lib/Crypto/SelfTest/Hash/__init__.py b/lib/Crypto/SelfTest/Hash/__init__.py
+--- a/lib/Crypto/SelfTest/Hash/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/__init__.py	2016-01-06 13:05:46.031191108 -0600
+@@ -28,17 +28,17 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.Hash import test_HMAC;   tests += test_HMAC.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_MD2;    tests += test_MD2.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_MD4;    tests += test_MD4.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_MD5;    tests += test_MD5.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_RIPEMD; tests += test_RIPEMD.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_SHA;    tests += test_SHA.get_tests(config=config)
+-    from Crypto.SelfTest.Hash import test_SHA256; tests += test_SHA256.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_HMAC;   tests += test_HMAC.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_MD2;    tests += test_MD2.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_MD4;    tests += test_MD4.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_MD5;    tests += test_MD5.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_RIPEMD; tests += test_RIPEMD.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_SHA;    tests += test_SHA.get_tests(config=config)
++    from Crypto_salt.SelfTest.Hash import test_SHA256; tests += test_SHA256.get_tests(config=config)
+     try:
+-        from Crypto.SelfTest.Hash import test_SHA224; tests += test_SHA224.get_tests(config=config)
+-        from Crypto.SelfTest.Hash import test_SHA384; tests += test_SHA384.get_tests(config=config)
+-        from Crypto.SelfTest.Hash import test_SHA512; tests += test_SHA512.get_tests(config=config)
++        from Crypto_salt.SelfTest.Hash import test_SHA224; tests += test_SHA224.get_tests(config=config)
++        from Crypto_salt.SelfTest.Hash import test_SHA384; tests += test_SHA384.get_tests(config=config)
++        from Crypto_salt.SelfTest.Hash import test_SHA512; tests += test_SHA512.get_tests(config=config)
+     except ImportError:
+         import sys
+         sys.stderr.write("SelfTest: warning: not testing SHA224/SHA384/SHA512 modules (not available)\n")
+diff -ur a/lib/Crypto/SelfTest/Hash/test_HMAC.py b/lib/Crypto/SelfTest/Hash/test_HMAC.py
+--- a/lib/Crypto/SelfTest/Hash/test_HMAC.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_HMAC.py	2016-01-06 13:05:46.017857833 -0600
+@@ -22,12 +22,12 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.HMAC"""
++"""Self-test suite for Crypto_salt.Hash.HMAC"""
+ 
+ __revision__ = "$Id$"
+ 
+ from common import dict     # For compatibility with Python 2.1 and 2.2
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (key, data, results, description) tuples.
+ test_data = [
+@@ -203,11 +203,11 @@
+ 
+ def get_tests(config={}):
+     global test_data
+-    from Crypto.Hash import HMAC, MD5, SHA as SHA1, SHA256
++    from Crypto_salt.Hash import HMAC, MD5, SHA as SHA1, SHA256
+     from common import make_mac_tests
+     hashmods = dict(MD5=MD5, SHA1=SHA1, SHA256=SHA256, default=None)
+     try:
+-        from Crypto.Hash import SHA224, SHA384, SHA512
++        from Crypto_salt.Hash import SHA224, SHA384, SHA512
+         hashmods.update(dict(SHA224=SHA224, SHA384=SHA384, SHA512=SHA512))
+         test_data += hashlib_test_data
+     except ImportError:
+diff -ur a/lib/Crypto/SelfTest/Hash/test_MD2.py b/lib/Crypto/SelfTest/Hash/test_MD2.py
+--- a/lib/Crypto/SelfTest/Hash/test_MD2.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_MD2.py	2016-01-06 13:05:46.011191196 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.MD2"""
++"""Self-test suite for Crypto_salt.Hash.MD2"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (expected_result, input[, description]) tuples.
+ test_data = [
+@@ -50,7 +50,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import MD2
++    from Crypto_salt.Hash import MD2
+     from common import make_hash_tests
+     return make_hash_tests(MD2, "MD2", test_data,
+         digest_size=16,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_MD4.py b/lib/Crypto/SelfTest/Hash/test_MD4.py
+--- a/lib/Crypto/SelfTest/Hash/test_MD4.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_MD4.py	2016-01-06 13:05:46.041191064 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.MD4"""
++"""Self-test suite for Crypto_salt.Hash.MD4"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (expected_result, input[, description]) tuples.
+ test_data = [
+@@ -50,7 +50,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import MD4
++    from Crypto_salt.Hash import MD4
+     from common import make_hash_tests
+     return make_hash_tests(MD4, "MD4", test_data,
+         digest_size=16,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_MD5.py b/lib/Crypto/SelfTest/Hash/test_MD5.py
+--- a/lib/Crypto/SelfTest/Hash/test_MD5.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_MD5.py	2016-01-06 13:05:46.037857745 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.MD5"""
++"""Self-test suite for Crypto_salt.Hash.MD5"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (expected_result, input[, description]) tuples.
+ test_data = [
+@@ -50,7 +50,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import MD5
++    from Crypto_salt.Hash import MD5
+     from common import make_hash_tests
+     return make_hash_tests(MD5, "MD5", test_data,
+         digest_size=16,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_RIPEMD.py b/lib/Crypto/SelfTest/Hash/test_RIPEMD.py
+--- a/lib/Crypto/SelfTest/Hash/test_RIPEMD.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_RIPEMD.py	2016-01-06 13:05:46.047857701 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-#"""Self-test suite for Crypto.Hash.RIPEMD"""
++#"""Self-test suite for Crypto_salt.Hash.RIPEMD"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (expected_result, input[, description]) tuples.
+ test_data = [
+@@ -59,7 +59,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import RIPEMD
++    from Crypto_salt.Hash import RIPEMD
+     from common import make_hash_tests
+     return make_hash_tests(RIPEMD, "RIPEMD", test_data,
+         digest_size=20,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_SHA224.py b/lib/Crypto/SelfTest/Hash/test_SHA224.py
+--- a/lib/Crypto/SelfTest/Hash/test_SHA224.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_SHA224.py	2016-01-06 13:05:46.021191152 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.SHA224"""
++"""Self-test suite for Crypto_salt.Hash.SHA224"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -51,7 +51,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import SHA224
++    from Crypto_salt.Hash import SHA224
+     from common import make_hash_tests
+     return make_hash_tests(SHA224, "SHA224", test_data,
+         digest_size=28,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_SHA256.py b/lib/Crypto/SelfTest/Hash/test_SHA256.py
+--- a/lib/Crypto/SelfTest/Hash/test_SHA256.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_SHA256.py	2016-01-06 13:05:46.027857789 -0600
+@@ -22,17 +22,17 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.SHA256"""
++"""Self-test suite for Crypto_salt.Hash.SHA256"""
+ 
+ __revision__ = "$Id$"
+ 
+ import unittest
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ class LargeSHA256Test(unittest.TestCase):
+     def runTest(self):
+         """SHA256: 512/520 MiB test"""
+-        from Crypto.Hash import SHA256
++        from Crypto_salt.Hash import SHA256
+         zeros = bchr(0x00) * (1024*1024)
+ 
+         h = SHA256.new(zeros)
+@@ -77,7 +77,7 @@
+          'Franz jagt im komplett verwahrlosten Taxi quer durch Bayern'),
+     ]
+ 
+-    from Crypto.Hash import SHA256
++    from Crypto_salt.Hash import SHA256
+     from common import make_hash_tests
+     tests = make_hash_tests(SHA256, "SHA256", test_data,
+         digest_size=32,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_SHA384.py b/lib/Crypto/SelfTest/Hash/test_SHA384.py
+--- a/lib/Crypto/SelfTest/Hash/test_SHA384.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_SHA384.py	2016-01-06 13:05:46.004524558 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.SHA384"""
++"""Self-test suite for Crypto_salt.Hash.SHA384"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -49,7 +49,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import SHA384
++    from Crypto_salt.Hash import SHA384
+     from common import make_hash_tests
+     return make_hash_tests(SHA384, "SHA384", test_data,
+         digest_size=48,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_SHA512.py b/lib/Crypto/SelfTest/Hash/test_SHA512.py
+--- a/lib/Crypto/SelfTest/Hash/test_SHA512.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_SHA512.py	2016-01-06 13:05:46.007857878 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.SHA512"""
++"""Self-test suite for Crypto_salt.Hash.SHA512"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -46,7 +46,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import SHA512
++    from Crypto_salt.Hash import SHA512
+     from common import make_hash_tests
+     return make_hash_tests(SHA512, "SHA512", test_data,
+         digest_size=64,
+diff -ur a/lib/Crypto/SelfTest/Hash/test_SHA.py b/lib/Crypto/SelfTest/Hash/test_SHA.py
+--- a/lib/Crypto/SelfTest/Hash/test_SHA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Hash/test_SHA.py	2016-01-06 13:05:46.034524426 -0600
+@@ -22,11 +22,11 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Hash.SHA"""
++"""Self-test suite for Crypto_salt.Hash.SHA"""
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # Test vectors from various sources
+ # This is a list of (expected_result, input[, description]) tuples.
+@@ -50,7 +50,7 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Hash import SHA
++    from Crypto_salt.Hash import SHA
+     from common import make_hash_tests
+     return make_hash_tests(SHA, "SHA", test_data,
+         digest_size=20,
+diff -ur a/lib/Crypto/SelfTest/__init__.py b/lib/Crypto/SelfTest/__init__.py
+--- a/lib/Crypto/SelfTest/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/__init__.py	2016-01-06 13:05:45.967858054 -0600
+@@ -49,7 +49,7 @@
+     perform some of the tests.  For example, the following would test only the
+     hash modules:
+ 
+-        Crypto.SelfTest.run(Crypto.SelfTest.Hash)
++        Crypto_salt.SelfTest.run(Crypto_salt.SelfTest.Hash)
+ 
+     """
+     if config is None:
+@@ -76,13 +76,13 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest import Cipher; tests += Cipher.get_tests(config=config)
+-    from Crypto.SelfTest import Hash;   tests += Hash.get_tests(config=config)
+-    from Crypto.SelfTest import Protocol; tests += Protocol.get_tests(config=config)
+-    from Crypto.SelfTest import PublicKey; tests += PublicKey.get_tests(config=config)
+-    from Crypto.SelfTest import Random; tests += Random.get_tests(config=config)
+-    from Crypto.SelfTest import Util;   tests += Util.get_tests(config=config)
+-    from Crypto.SelfTest import Signature;   tests += Signature.get_tests(config=config)
++    from Crypto_salt.SelfTest import Cipher; tests += Cipher.get_tests(config=config)
++    from Crypto_salt.SelfTest import Hash;   tests += Hash.get_tests(config=config)
++    from Crypto_salt.SelfTest import Protocol; tests += Protocol.get_tests(config=config)
++    from Crypto_salt.SelfTest import PublicKey; tests += PublicKey.get_tests(config=config)
++    from Crypto_salt.SelfTest import Random; tests += Random.get_tests(config=config)
++    from Crypto_salt.SelfTest import Util;   tests += Util.get_tests(config=config)
++    from Crypto_salt.SelfTest import Signature;   tests += Signature.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Protocol/__init__.py b/lib/Crypto/SelfTest/Protocol/__init__.py
+--- a/lib/Crypto/SelfTest/Protocol/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Protocol/__init__.py	2016-01-06 13:05:45.964524735 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Protocol/__init__.py: Self-tests for Crypto.Protocol
++#  SelfTest/Protocol/__init__.py: Self-tests for Crypto_salt.Protocol
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -22,15 +22,15 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test for Crypto.Protocol"""
++"""Self-test for Crypto_salt.Protocol"""
+ 
+ __revision__ = "$Id$"
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.Protocol import test_chaffing;       tests += test_chaffing.get_tests(config=config)
+-    from Crypto.SelfTest.Protocol import test_rfc1751;        tests += test_rfc1751.get_tests(config=config)
+-    from Crypto.SelfTest.Protocol import test_AllOrNothing;        tests += test_AllOrNothing.get_tests(config=config)
++    from Crypto_salt.SelfTest.Protocol import test_chaffing;       tests += test_chaffing.get_tests(config=config)
++    from Crypto_salt.SelfTest.Protocol import test_rfc1751;        tests += test_rfc1751.get_tests(config=config)
++    from Crypto_salt.SelfTest.Protocol import test_AllOrNothing;        tests += test_AllOrNothing.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Protocol/test_AllOrNothing.py b/lib/Crypto/SelfTest/Protocol/test_AllOrNothing.py
+--- a/lib/Crypto/SelfTest/Protocol/test_AllOrNothing.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Protocol/test_AllOrNothing.py	2016-01-06 13:05:45.954524779 -0600
+@@ -1,5 +1,5 @@
+ #
+-# Test script for Crypto.Protocol.AllOrNothing
++# Test script for Crypto_salt.Protocol.AllOrNothing
+ #
+ # Part of the Python Cryptography Toolkit
+ #
+@@ -26,8 +26,8 @@
+ __revision__ = "$Id$"
+ 
+ import unittest
+-from Crypto.Protocol import AllOrNothing
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Protocol import AllOrNothing
++from Crypto_salt.Util.py3compat import *
+ 
+ text = b("""\
+ When in the Course of human events, it becomes necessary for one people to
+@@ -53,7 +53,7 @@
+     def runTest(self):
+         "Simple test of AllOrNothing"
+ 
+-        from Crypto.Cipher import AES
++        from Crypto_salt.Cipher import AES
+         import base64
+ 
+         # The current AllOrNothing will fail
+diff -ur a/lib/Crypto/SelfTest/Protocol/test_chaffing.py b/lib/Crypto/SelfTest/Protocol/test_chaffing.py
+--- a/lib/Crypto/SelfTest/Protocol/test_chaffing.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Protocol/test_chaffing.py	2016-01-06 13:05:45.961191416 -0600
+@@ -1,5 +1,5 @@
+ #
+-# Test script for Crypto.Protocol.Chaffing
++# Test script for Crypto_salt.Protocol.Chaffing
+ #
+ # Part of the Python Cryptography Toolkit
+ #
+@@ -26,7 +26,7 @@
+ __revision__ = "$Id$"
+ 
+ import unittest
+-from Crypto.Protocol import Chaffing
++from Crypto_salt.Protocol import Chaffing
+ 
+ text = """\
+ When in the Course of human events, it becomes necessary for one people to
+diff -ur a/lib/Crypto/SelfTest/Protocol/test_KDF.py b/lib/Crypto/SelfTest/Protocol/test_KDF.py
+--- a/lib/Crypto/SelfTest/Protocol/test_KDF.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Protocol/test_KDF.py	2016-01-06 13:05:45.957858098 -0600
+@@ -25,10 +25,10 @@
+ import unittest
+ from binascii import unhexlify
+ 
+-from Crypto.SelfTest.st_common import list_test_cases
+-from Crypto.Hash import SHA as SHA1,HMAC
++from Crypto_salt.SelfTest.st_common import list_test_cases
++from Crypto_salt.Hash import SHA as SHA1,HMAC
+ 
+-from Crypto.Protocol.KDF import *
++from Crypto_salt.Protocol.KDF import *
+ 
+ def t2b(t): return unhexlify(b(t))
+ 
+diff -ur a/lib/Crypto/SelfTest/Protocol/test_rfc1751.py b/lib/Crypto/SelfTest/Protocol/test_rfc1751.py
+--- a/lib/Crypto/SelfTest/Protocol/test_rfc1751.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Protocol/test_rfc1751.py	2016-01-06 13:05:45.961191416 -0600
+@@ -1,5 +1,5 @@
+ #
+-# Test script for Crypto.Util.RFC1751.
++# Test script for Crypto_salt.Util.RFC1751.
+ #
+ # Part of the Python Cryptography Toolkit
+ #
+@@ -27,8 +27,8 @@
+ 
+ import binascii
+ import unittest
+-from Crypto.Util import RFC1751
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util import RFC1751
++from Crypto_salt.Util.py3compat import *
+ 
+ test_data = [('EB33F77EE73D4053', 'TIDE ITCH SLOW REIN RULE MOT'),
+              ('CCAC2AED591056BE4F90FD441C534766',
+diff -ur a/lib/Crypto/SelfTest/PublicKey/__init__.py b/lib/Crypto/SelfTest/PublicKey/__init__.py
+--- a/lib/Crypto/SelfTest/PublicKey/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/PublicKey/__init__.py	2016-01-06 13:05:45.897858362 -0600
+@@ -30,10 +30,10 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.PublicKey import test_DSA;       tests += test_DSA.get_tests(config=config)
+-    from Crypto.SelfTest.PublicKey import test_RSA;       tests += test_RSA.get_tests(config=config)
+-    from Crypto.SelfTest.PublicKey import test_importKey; tests += test_importKey.get_tests(config=config)
+-    from Crypto.SelfTest.PublicKey import test_ElGamal;   tests += test_ElGamal.get_tests(config=config)
++    from Crypto_salt.SelfTest.PublicKey import test_DSA;       tests += test_DSA.get_tests(config=config)
++    from Crypto_salt.SelfTest.PublicKey import test_RSA;       tests += test_RSA.get_tests(config=config)
++    from Crypto_salt.SelfTest.PublicKey import test_importKey; tests += test_importKey.get_tests(config=config)
++    from Crypto_salt.SelfTest.PublicKey import test_ElGamal;   tests += test_ElGamal.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/PublicKey/test_DSA.py b/lib/Crypto/SelfTest/PublicKey/test_DSA.py
+--- a/lib/Crypto/SelfTest/PublicKey/test_DSA.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/PublicKey/test_DSA.py	2016-01-06 13:05:45.894525044 -0600
+@@ -22,18 +22,18 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.PublicKey.DSA"""
++"""Self-test suite for Crypto_salt.PublicKey.DSA"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ import os
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import unittest
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+ 
+ def _sws(s):
+     """Remove whitespace from a text or byte string"""
+@@ -74,9 +74,9 @@
+ 
+     def setUp(self):
+         global DSA, Random, bytes_to_long, size
+-        from Crypto.PublicKey import DSA
+-        from Crypto import Random
+-        from Crypto.Util.number import bytes_to_long, inverse, size
++        from Crypto_salt.PublicKey import DSA
++        from Crypto_salt import Random
++        from Crypto_salt.Util.number import bytes_to_long, inverse, size
+ 
+         self.dsa = DSA
+ 
+@@ -222,7 +222,7 @@
+     tests = []
+     tests += list_test_cases(DSATest)
+     try:
+-        from Crypto.PublicKey import _fastmath
++        from Crypto_salt.PublicKey import _fastmath
+         tests += list_test_cases(DSAFastMathTest)
+     except ImportError:
+         from distutils.sysconfig import get_config_var
+diff -ur a/lib/Crypto/SelfTest/PublicKey/test_ElGamal.py b/lib/Crypto/SelfTest/PublicKey/test_ElGamal.py
+--- a/lib/Crypto/SelfTest/PublicKey/test_ElGamal.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/PublicKey/test_ElGamal.py	2016-01-06 13:05:45.891191725 -0600
+@@ -20,16 +20,16 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.PublicKey.ElGamal"""
++"""Self-test suite for Crypto_salt.PublicKey.ElGamal"""
+ 
+ __revision__ = "$Id$"
+ 
+ import unittest
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+-from Crypto import Random
+-from Crypto.PublicKey import ElGamal
+-from Crypto.Util.number import *
+-from Crypto.Util.py3compat import *
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt import Random
++from Crypto_salt.PublicKey import ElGamal
++from Crypto_salt.Util.number import *
++from Crypto_salt.Util.py3compat import *
+ 
+ class ElGamalTest(unittest.TestCase):
+ 
+diff -ur a/lib/Crypto/SelfTest/PublicKey/test_importKey.py b/lib/Crypto/SelfTest/PublicKey/test_importKey.py
+--- a/lib/Crypto/SelfTest/PublicKey/test_importKey.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/PublicKey/test_importKey.py	2016-01-06 13:05:45.901191681 -0600
+@@ -26,11 +26,11 @@
+ 
+ import unittest
+ 
+-from Crypto.PublicKey import RSA
+-from Crypto.SelfTest.st_common import *
+-from Crypto.Util.py3compat import *
+-from Crypto.Util.number import inverse
+-from Crypto.Util import asn1
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt.SelfTest.st_common import *
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Util.number import inverse
++from Crypto_salt.Util import asn1
+ 
+ def der2pem(der, text='PUBLIC'):
+     import binascii
+@@ -331,7 +331,7 @@
+ def get_tests(config={}):
+     tests = []
+     try:
+-        from Crypto.PublicKey import _fastmath
++        from Crypto_salt.PublicKey import _fastmath
+         tests += list_test_cases(ImportKeyTestsFast)
+     except ImportError:
+         pass
+diff -ur a/lib/Crypto/SelfTest/PublicKey/test_RSA.py b/lib/Crypto/SelfTest/PublicKey/test_RSA.py
+--- a/lib/Crypto/SelfTest/PublicKey/test_RSA.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/PublicKey/test_RSA.py	2016-01-06 13:05:45.887858406 -0600
+@@ -22,18 +22,18 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.PublicKey.RSA"""
++"""Self-test suite for Crypto_salt.PublicKey.RSA"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ import os
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import unittest
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+ 
+ class RSATest(unittest.TestCase):
+     # Test vectors from "RSA-OAEP and RSA-PSS test vectors (.zip file)"
+@@ -89,9 +89,9 @@
+ 
+     def setUp(self):
+         global RSA, Random, bytes_to_long
+-        from Crypto.PublicKey import RSA
+-        from Crypto import Random
+-        from Crypto.Util.number import bytes_to_long, inverse
++        from Crypto_salt.PublicKey import RSA
++        from Crypto_salt import Random
++        from Crypto_salt.Util.number import bytes_to_long, inverse
+         self.n = bytes_to_long(a2b_hex(self.modulus))
+         self.p = bytes_to_long(a2b_hex(self.prime_factor))
+ 
+@@ -392,7 +392,7 @@
+     tests = []
+     tests += list_test_cases(RSATest)
+     try:
+-        from Crypto.PublicKey import _fastmath
++        from Crypto_salt.PublicKey import _fastmath
+         tests += list_test_cases(RSAFastMathTest)
+     except ImportError:
+         from distutils.sysconfig import get_config_var
+diff -ur a/lib/Crypto/SelfTest/Random/Fortuna/__init__.py b/lib/Crypto/SelfTest/Random/Fortuna/__init__.py
+--- a/lib/Crypto/SelfTest/Random/Fortuna/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/Fortuna/__init__.py	2016-01-06 13:05:45.864525176 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test for the Crypto.Random.Fortuna package"""
++"""Self-test for the Crypto_salt.Random.Fortuna package"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,9 +30,9 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.Random.Fortuna import test_FortunaAccumulator; tests += test_FortunaAccumulator.get_tests(config=config)
+-    from Crypto.SelfTest.Random.Fortuna import test_FortunaGenerator;   tests += test_FortunaGenerator.get_tests(config=config)
+-    from Crypto.SelfTest.Random.Fortuna import test_SHAd256;            tests += test_SHAd256.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random.Fortuna import test_FortunaAccumulator; tests += test_FortunaAccumulator.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random.Fortuna import test_FortunaGenerator;   tests += test_FortunaGenerator.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random.Fortuna import test_SHAd256;            tests += test_SHAd256.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaAccumulator.py b/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaAccumulator.py
+--- a/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaAccumulator.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaAccumulator.py	2016-01-06 13:05:45.857858539 -0600
+@@ -22,14 +22,14 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-tests for Crypto.Random.Fortuna.FortunaAccumulator"""
++"""Self-tests for Crypto_salt.Random.Fortuna.FortunaAccumulator"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import unittest
+ from binascii import b2a_hex
+@@ -37,7 +37,7 @@
+ class FortunaAccumulatorTests(unittest.TestCase):
+     def setUp(self):
+         global FortunaAccumulator
+-        from Crypto.Random.Fortuna import FortunaAccumulator
++        from Crypto_salt.Random.Fortuna import FortunaAccumulator
+ 
+     def test_FortunaPool(self):
+         """FortunaAccumulator.FortunaPool"""
+@@ -179,7 +179,7 @@
+         fa.random_data(1)
+ 
+ def get_tests(config={}):
+-    from Crypto.SelfTest.st_common import list_test_cases
++    from Crypto_salt.SelfTest.st_common import list_test_cases
+     return list_test_cases(FortunaAccumulatorTests)
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaGenerator.py b/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaGenerator.py
+--- a/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaGenerator.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/Fortuna/test_FortunaGenerator.py	2016-01-06 13:05:45.854525220 -0600
+@@ -22,14 +22,14 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-tests for Crypto.Random.Fortuna.FortunaGenerator"""
++"""Self-tests for Crypto_salt.Random.Fortuna.FortunaGenerator"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import unittest
+ from binascii import b2a_hex
+@@ -37,7 +37,7 @@
+ class FortunaGeneratorTests(unittest.TestCase):
+     def setUp(self):
+         global FortunaGenerator
+-        from Crypto.Random.Fortuna import FortunaGenerator
++        from Crypto_salt.Random.Fortuna import FortunaGenerator
+ 
+     def test_generator(self):
+         """FortunaGenerator.AESGenerator"""
+@@ -73,7 +73,7 @@
+         self.assertRaises(AssertionError, fg._pseudo_random_data, 2**20+1)
+ 
+ def get_tests(config={}):
+-    from Crypto.SelfTest.st_common import list_test_cases
++    from Crypto_salt.SelfTest.st_common import list_test_cases
+     return list_test_cases(FortunaGeneratorTests)
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/Fortuna/test_SHAd256.py b/lib/Crypto/SelfTest/Random/Fortuna/test_SHAd256.py
+--- a/lib/Crypto/SelfTest/Random/Fortuna/test_SHAd256.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/Fortuna/test_SHAd256.py	2016-01-06 13:05:45.867858494 -0600
+@@ -22,10 +22,10 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.Fortuna.SHAd256"""
++"""Self-test suite for Crypto_salt.Random.Fortuna.SHAd256"""
+ 
+ __revision__ = "$Id$"
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ # This is a list of (expected_result, input[, description]) tuples.
+ test_data = [
+@@ -43,8 +43,8 @@
+ ]
+ 
+ def get_tests(config={}):
+-    from Crypto.Random.Fortuna import SHAd256
+-    from Crypto.SelfTest.Hash.common import make_hash_tests
++    from Crypto_salt.Random.Fortuna import SHAd256
++    from Crypto_salt.SelfTest.Hash.common import make_hash_tests
+     return make_hash_tests(SHAd256, "SHAd256", test_data, 32)
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/__init__.py b/lib/Crypto/SelfTest/Random/__init__.py
+--- a/lib/Crypto/SelfTest/Random/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/__init__.py	2016-01-06 13:05:45.847858582 -0600
+@@ -28,11 +28,11 @@
+ 
+ def get_tests(config={}):
+     tests = []
+-    from Crypto.SelfTest.Random import Fortuna;             tests += Fortuna.get_tests(config=config)
+-    from Crypto.SelfTest.Random import OSRNG;               tests += OSRNG.get_tests(config=config)
+-    from Crypto.SelfTest.Random import test_random;         tests += test_random.get_tests(config=config)
+-    from Crypto.SelfTest.Random import test_rpoolcompat;    tests += test_rpoolcompat.get_tests(config=config)
+-    from Crypto.SelfTest.Random import test__UserFriendlyRNG; tests += test__UserFriendlyRNG.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random import Fortuna;             tests += Fortuna.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random import OSRNG;               tests += OSRNG.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random import test_random;         tests += test_random.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random import test_rpoolcompat;    tests += test_rpoolcompat.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random import test__UserFriendlyRNG; tests += test__UserFriendlyRNG.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/__init__.py b/lib/Crypto/SelfTest/Random/OSRNG/__init__.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/__init__.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/__init__.py	2016-01-06 13:05:45.867858494 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test for Crypto.Random.OSRNG package"""
++"""Self-test for Crypto_salt.Random.OSRNG package"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -31,13 +31,13 @@
+ def get_tests(config={}):
+     tests = []
+     if os.name == 'nt':
+-        from Crypto.SelfTest.Random.OSRNG import test_nt;        tests += test_nt.get_tests(config=config)
+-        from Crypto.SelfTest.Random.OSRNG import test_winrandom; tests += test_winrandom.get_tests(config=config)
++        from Crypto_salt.SelfTest.Random.OSRNG import test_nt;        tests += test_nt.get_tests(config=config)
++        from Crypto_salt.SelfTest.Random.OSRNG import test_winrandom; tests += test_winrandom.get_tests(config=config)
+     elif os.name == 'posix':
+-        from Crypto.SelfTest.Random.OSRNG import test_posix;     tests += test_posix.get_tests(config=config)
++        from Crypto_salt.SelfTest.Random.OSRNG import test_posix;     tests += test_posix.get_tests(config=config)
+     if hasattr(os, 'urandom'):
+-        from Crypto.SelfTest.Random.OSRNG import test_fallback;      tests += test_fallback.get_tests(config=config)
+-    from Crypto.SelfTest.Random.OSRNG import test_generic;       tests += test_generic.get_tests(config=config)
++        from Crypto_salt.SelfTest.Random.OSRNG import test_fallback;      tests += test_fallback.get_tests(config=config)
++    from Crypto_salt.SelfTest.Random.OSRNG import test_generic;       tests += test_generic.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/test_fallback.py b/lib/Crypto/SelfTest/Random/OSRNG/test_fallback.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/test_fallback.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/test_fallback.py	2016-01-06 13:05:45.871191813 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.OSRNG.fallback"""
++"""Self-test suite for Crypto_salt.Random.OSRNG.fallback"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,10 +30,10 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.OSRNG.fallback.new()"""
++        """Crypto_salt.Random.OSRNG.fallback.new()"""
+         # Import the OSRNG.nt module and try to use it
+-        import Crypto.Random.OSRNG.fallback
+-        randobj = Crypto.Random.OSRNG.fallback.new()
++        import Crypto_salt.Random.OSRNG.fallback
++        randobj = Crypto_salt.Random.OSRNG.fallback.new()
+         x = randobj.read(16)
+         y = randobj.read(16)
+         self.assertNotEqual(x, y)
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/test_generic.py b/lib/Crypto/SelfTest/Random/OSRNG/test_generic.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/test_generic.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/test_generic.py	2016-01-06 13:05:45.877858450 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.OSRNG"""
++"""Self-test suite for Crypto_salt.Random.OSRNG"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,10 +30,10 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.OSRNG.new()"""
++        """Crypto_salt.Random.OSRNG.new()"""
+         # Import the OSRNG module and try to use it
+-        import Crypto.Random.OSRNG
+-        randobj = Crypto.Random.OSRNG.new()
++        import Crypto_salt.Random.OSRNG
++        randobj = Crypto_salt.Random.OSRNG.new()
+         x = randobj.read(16)
+         y = randobj.read(16)
+         self.assertNotEqual(x, y)
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/test_nt.py b/lib/Crypto/SelfTest/Random/OSRNG/test_nt.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/test_nt.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/test_nt.py	2016-01-06 13:05:45.881191769 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.OSRNG.nt"""
++"""Self-test suite for Crypto_salt.Random.OSRNG.nt"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,10 +30,10 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.OSRNG.nt.new()"""
++        """Crypto_salt.Random.OSRNG.nt.new()"""
+         # Import the OSRNG.nt module and try to use it
+-        import Crypto.Random.OSRNG.nt
+-        randobj = Crypto.Random.OSRNG.nt.new()
++        import Crypto_salt.Random.OSRNG.nt
++        randobj = Crypto_salt.Random.OSRNG.nt.new()
+         x = randobj.read(16)
+         y = randobj.read(16)
+         self.assertNotEqual(x, y)
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/test_posix.py b/lib/Crypto/SelfTest/Random/OSRNG/test_posix.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/test_posix.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/test_posix.py	2016-01-06 13:05:45.874525132 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.OSRNG.posix"""
++"""Self-test suite for Crypto_salt.Random.OSRNG.posix"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,10 +30,10 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.OSRNG.posix.new()"""
++        """Crypto_salt.Random.OSRNG.posix.new()"""
+         # Import the OSRNG.nt module and try to use it
+-        import Crypto.Random.OSRNG.posix
+-        randobj = Crypto.Random.OSRNG.posix.new()
++        import Crypto_salt.Random.OSRNG.posix
++        randobj = Crypto_salt.Random.OSRNG.posix.new()
+         x = randobj.read(16)
+         y = randobj.read(16)
+         self.assertNotEqual(x, y)
+diff -ur a/lib/Crypto/SelfTest/Random/OSRNG/test_winrandom.py b/lib/Crypto/SelfTest/Random/OSRNG/test_winrandom.py
+--- a/lib/Crypto/SelfTest/Random/OSRNG/test_winrandom.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/OSRNG/test_winrandom.py	2016-01-06 13:05:45.881191769 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.OSRNG.winrandom"""
++"""Self-test suite for Crypto_salt.Random.OSRNG.winrandom"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -30,9 +30,9 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.OSRNG.winrandom"""
++        """Crypto_salt.Random.OSRNG.winrandom"""
+         # Import the winrandom module and try to use it
+-        from Crypto.Random.OSRNG import winrandom
++        from Crypto_salt.Random.OSRNG import winrandom
+         randobj = winrandom.new()
+         x = randobj.get_bytes(16)
+         y = randobj.get_bytes(16)
+diff -ur a/lib/Crypto/SelfTest/Random/test_random.py b/lib/Crypto/SelfTest/Random/test_random.py
+--- a/lib/Crypto/SelfTest/Random/test_random.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/test_random.py	2016-01-06 13:05:45.837858627 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Util/test_generic.py: Self-test for the Crypto.Random.new() function
++#  SelfTest/Util/test_generic.py: Self-test for the Crypto_salt.Random.new() function
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -22,21 +22,21 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Random.new()"""
++"""Self-test suite for Crypto_salt.Random.new()"""
+ 
+ __revision__ = "$Id$"
+ 
+ import unittest
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Random.new()"""
++        """Crypto_salt.Random.new()"""
+         # Import the Random module and try to use it
+-        from Crypto import Random
++        from Crypto_salt import Random
+         randobj = Random.new()
+         x = randobj.read(16)
+         y = randobj.read(16)
+@@ -54,7 +54,7 @@
+         # vonmisesvariate(), paretovariate()
+         # weibullvariate()
+         # WichmannHill(), whseed(), SystemRandom()
+-        from Crypto.Random import random
++        from Crypto_salt.Random import random
+         x = random.getrandbits(16*8)
+         y = random.getrandbits(16*8)
+         self.assertNotEqual(x, y)
+diff -ur a/lib/Crypto/SelfTest/Random/test_rpoolcompat.py b/lib/Crypto/SelfTest/Random/test_rpoolcompat.py
+--- a/lib/Crypto/SelfTest/Random/test_rpoolcompat.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/test_rpoolcompat.py	2016-01-06 13:05:45.841191945 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test for the Crypto.Util.randpool.RandomPool wrapper class"""
++"""Self-test for the Crypto_salt.Util.randpool.RandomPool wrapper class"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -31,9 +31,9 @@
+ 
+ class SimpleTest(unittest.TestCase):
+     def runTest(self):
+-        """Crypto.Util.randpool.RandomPool"""
++        """Crypto_salt.Util.randpool.RandomPool"""
+         # Import the winrandom module and try to use it
+-        from Crypto.Util.randpool import RandomPool
++        from Crypto_salt.Util.randpool import RandomPool
+         sys.stderr.write("SelfTest: You can ignore the RandomPool_DeprecationWarning that follows.\n")
+         rpool = RandomPool()
+         x = rpool.get_bytes(16)
+diff -ur a/lib/Crypto/SelfTest/Random/test__UserFriendlyRNG.py b/lib/Crypto/SelfTest/Random/test__UserFriendlyRNG.py
+--- a/lib/Crypto/SelfTest/Random/test__UserFriendlyRNG.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Random/test__UserFriendlyRNG.py	2016-01-06 13:05:45.851191901 -0600
+@@ -1,5 +1,5 @@
+ # -*- coding: utf-8 -*-
+-# Self-tests for the user-friendly Crypto.Random interface
++# Self-tests for the user-friendly Crypto_salt.Random interface
+ #
+ # Written in 2013 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -21,7 +21,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for generic Crypto.Random stuff """
++"""Self-test suite for generic Crypto_salt.Random stuff """
+ 
+ from __future__ import nested_scopes
+ 
+@@ -34,16 +34,16 @@
+ import time
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ try:
+     import multiprocessing
+ except ImportError:
+     multiprocessing = None
+ 
+-import Crypto.Random._UserFriendlyRNG
+-import Crypto.Random.random
++import Crypto_salt.Random._UserFriendlyRNG
++import Crypto_salt.Random.random
+ 
+ class RNGForkTest(unittest.TestCase):
+ 
+@@ -52,7 +52,7 @@
+         Get `FortunaAccumulator.reseed_count`, the global count of the
+         number of times that the PRNG has been reseeded.
+         """
+-        rng_singleton = Crypto.Random._UserFriendlyRNG._get_singleton()
++        rng_singleton = Crypto_salt.Random._UserFriendlyRNG._get_singleton()
+         rng_singleton._lock.acquire()
+         try:
+             return rng_singleton._fa.reseed_count
+@@ -73,8 +73,8 @@
+         reseed_count_before = self._get_reseed_count()
+ 
+         # One or both of these calls together should trigger a reseed right here.
+-        Crypto.Random._UserFriendlyRNG._get_singleton().reinit()
+-        Crypto.Random.get_random_bytes(1)
++        Crypto_salt.Random._UserFriendlyRNG._get_singleton().reinit()
++        Crypto_salt.Random.get_random_bytes(1)
+ 
+         reseed_count_after = self._get_reseed_count()
+         self.assertNotEqual(reseed_count_before, reseed_count_after)  # sanity check: test should reseed parent before forking
+@@ -87,9 +87,9 @@
+                 os.close(rfd)
+                 f = os.fdopen(wfd, "wb")
+ 
+-                Crypto.Random.atfork()
++                Crypto_salt.Random.atfork()
+ 
+-                data = Crypto.Random.get_random_bytes(16)
++                data = Crypto_salt.Random.get_random_bytes(16)
+ 
+                 f.write(data)
+                 f.close()
+@@ -113,9 +113,9 @@
+ 
+ # For RNGMultiprocessingForkTest
+ def _task_main(q):
+-    a = Crypto.Random.get_random_bytes(16)
++    a = Crypto_salt.Random.get_random_bytes(16)
+     time.sleep(0.1)     # wait 100 ms
+-    b = Crypto.Random.get_random_bytes(16)
++    b = Crypto_salt.Random.get_random_bytes(16)
+     q.put(binascii.b2a_hex(a))
+     q.put(binascii.b2a_hex(b))
+     q.put(None)      # Wait for acknowledgment
+@@ -134,11 +134,11 @@
+ 
+         # Reseed the pool
+         time.sleep(0.15)
+-        Crypto.Random._UserFriendlyRNG._get_singleton().reinit()
+-        Crypto.Random.get_random_bytes(1)
++        Crypto_salt.Random._UserFriendlyRNG._get_singleton().reinit()
++        Crypto_salt.Random.get_random_bytes(1)
+ 
+         # Start the child processes
+-        pool = multiprocessing.Pool(processes=n_procs, initializer=Crypto.Random.atfork)
++        pool = multiprocessing.Pool(processes=n_procs, initializer=Crypto_salt.Random.atfork)
+         map_result = pool.map_async(_task_main, queues)
+ 
+         # Get the results, ensuring that no pool processes are reused.
+diff -ur a/lib/Crypto/SelfTest/Signature/test_pkcs1_15.py b/lib/Crypto/SelfTest/Signature/test_pkcs1_15.py
+--- a/lib/Crypto/SelfTest/Signature/test_pkcs1_15.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Signature/test_pkcs1_15.py	2016-01-06 13:05:45.991191284 -0600
+@@ -24,12 +24,12 @@
+ 
+ import unittest
+ 
+-from Crypto.PublicKey import RSA
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+-from Crypto.Hash import *
+-from Crypto import Random
+-from Crypto.Signature import PKCS1_v1_5 as PKCS
+-from Crypto.Util.py3compat import *
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt.Hash import *
++from Crypto_salt import Random
++from Crypto_salt.Signature import PKCS1_v1_5 as PKCS
++from Crypto_salt.Util.py3compat import *
+ 
+ def isStr(s):
+         t = ''
+diff -ur a/lib/Crypto/SelfTest/Signature/test_pkcs1_pss.py b/lib/Crypto/SelfTest/Signature/test_pkcs1_pss.py
+--- a/lib/Crypto/SelfTest/Signature/test_pkcs1_pss.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Signature/test_pkcs1_pss.py	2016-01-06 13:05:45.997857921 -0600
+@@ -26,12 +26,12 @@
+ 
+ import unittest
+ 
+-from Crypto.PublicKey import RSA
+-from Crypto import Random
+-from Crypto.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
+-from Crypto.Hash import *
+-from Crypto.Signature import PKCS1_PSS as PKCS
+-from Crypto.Util.py3compat import *
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt import Random
++from Crypto_salt.SelfTest.st_common import list_test_cases, a2b_hex, b2a_hex
++from Crypto_salt.Hash import *
++from Crypto_salt.Signature import PKCS1_PSS as PKCS
++from Crypto_salt.Util.py3compat import *
+ 
+ def isStr(s):
+         t = ''
+diff -ur a/lib/Crypto/SelfTest/st_common.py b/lib/Crypto/SelfTest/st_common.py
+--- a/lib/Crypto/SelfTest/st_common.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/st_common.py	2016-01-06 13:05:46.051191020 -0600
+@@ -30,8 +30,8 @@
+ import binascii
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ class _list_testloader(unittest.TestLoader):
+     suiteClass = list
+diff -ur a/lib/Crypto/SelfTest/Util/__init__.py b/lib/Crypto/SelfTest/Util/__init__.py
+--- a/lib/Crypto/SelfTest/Util/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Util/__init__.py	2016-01-06 13:05:45.981191328 -0600
+@@ -31,9 +31,9 @@
+ def get_tests(config={}):
+     tests = []
+     if os.name == 'nt':
+-        from Crypto.SelfTest.Util import test_winrandom; tests += test_winrandom.get_tests(config=config)
+-    from Crypto.SelfTest.Util import test_number; tests += test_number.get_tests(config=config)
+-    from Crypto.SelfTest.Util import test_Counter; tests += test_Counter.get_tests(config=config)
++        from Crypto_salt.SelfTest.Util import test_winrandom; tests += test_winrandom.get_tests(config=config)
++    from Crypto_salt.SelfTest.Util import test_number; tests += test_number.get_tests(config=config)
++    from Crypto_salt.SelfTest.Util import test_Counter; tests += test_Counter.get_tests(config=config)
+     return tests
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Util/test_asn1.py b/lib/Crypto/SelfTest/Util/test_asn1.py
+--- a/lib/Crypto/SelfTest/Util/test_asn1.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Util/test_asn1.py	2016-01-06 13:05:45.977858010 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Util/test_asn.py: Self-test for the Crypto.Util.asn1 module
++#  SelfTest/Util/test_asn.py: Self-test for the Crypto_salt.Util.asn1 module
+ #
+ # ===================================================================
+ # The contents of this file are dedicated to the public domain.  To
+@@ -20,15 +20,15 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-tests for Crypto.Util.asn1"""
++"""Self-tests for Crypto_salt.Util.asn1"""
+ 
+ __revision__ = "$Id$"
+ 
+ import unittest
+ import sys
+ 
+-from Crypto.Util.py3compat import *
+-from Crypto.Util.asn1 import DerSequence, DerObject
++from Crypto_salt.Util.py3compat import *
++from Crypto_salt.Util.asn1 import DerSequence, DerObject
+ 
+ class DerObjectTests(unittest.TestCase):
+ 
+@@ -280,7 +280,7 @@
+ 		self.assertRaises(ValueError, der.decode, b('\x30\x04\x02\x01\xFF'))
+ 
+ def get_tests(config={}):
+-    from Crypto.SelfTest.st_common import list_test_cases
++    from Crypto_salt.SelfTest.st_common import list_test_cases
+     listTests = []
+     listTests += list_test_cases(DerObjectTests)
+     listTests += list_test_cases(DerSequenceTests)
+diff -ur a/lib/Crypto/SelfTest/Util/test_Counter.py b/lib/Crypto/SelfTest/Util/test_Counter.py
+--- a/lib/Crypto/SelfTest/Util/test_Counter.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Util/test_Counter.py	2016-01-06 13:05:45.974524691 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Util/test_Counter: Self-test for the Crypto.Util.Counter module
++#  SelfTest/Util/test_Counter: Self-test for the Crypto_salt.Util.Counter module
+ #
+ # Written in 2009 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -22,21 +22,21 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-tests for Crypto.Util.Counter"""
++"""Self-tests for Crypto_salt.Util.Counter"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ import unittest
+ 
+ class CounterTests(unittest.TestCase):
+     def setUp(self):
+         global Counter
+-        from Crypto.Util import Counter
++        from Crypto_salt.Util import Counter
+ 
+     def test_BE_shortcut(self):
+         """Big endian, shortcut enabled"""
+@@ -155,7 +155,7 @@
+         self.assertEqual(1, c.carry)
+ 
+ def get_tests(config={}):
+-    from Crypto.SelfTest.st_common import list_test_cases
++    from Crypto_salt.SelfTest.st_common import list_test_cases
+     return list_test_cases(CounterTests)
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Util/test_number.py b/lib/Crypto/SelfTest/Util/test_number.py
+--- a/lib/Crypto/SelfTest/Util/test_number.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/SelfTest/Util/test_number.py	2016-01-06 13:05:45.971191372 -0600
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-
+ #
+-#  SelfTest/Util/test_number.py: Self-test for parts of the Crypto.Util.number module
++#  SelfTest/Util/test_number.py: Self-test for parts of the Crypto_salt.Util.number module
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -22,13 +22,13 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-tests for (some of) Crypto.Util.number"""
++"""Self-tests for (some of) Crypto_salt.Util.number"""
+ 
+ __revision__ = "$Id$"
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+ import unittest
+ 
+@@ -38,7 +38,7 @@
+ class MiscTests(unittest.TestCase):
+     def setUp(self):
+         global number, math
+-        from Crypto.Util import number
++        from Crypto_salt.Util import number
+         import math
+ 
+     def test_ceil_shift(self):
+@@ -285,7 +285,7 @@
+         self.assertEqual(e, k.e)
+ 
+ def get_tests(config={}):
+-    from Crypto.SelfTest.st_common import list_test_cases
++    from Crypto_salt.SelfTest.st_common import list_test_cases
+     return list_test_cases(MiscTests)
+ 
+ if __name__ == '__main__':
+diff -ur a/lib/Crypto/SelfTest/Util/test_winrandom.py b/lib/Crypto/SelfTest/Util/test_winrandom.py
+--- a/lib/Crypto/SelfTest/Util/test_winrandom.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/SelfTest/Util/test_winrandom.py	2016-01-06 13:05:45.987857965 -0600
+@@ -22,7 +22,7 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-"""Self-test suite for Crypto.Util.winrandom"""
++"""Self-test suite for Crypto_salt.Util.winrandom"""
+ 
+ __revision__ = "$Id$"
+ 
+@@ -32,7 +32,7 @@
+     def runTest(self):
+         """winrandom: simple test"""
+         # Import the winrandom module and try to use it
+-        from Crypto.Util import winrandom
++        from Crypto_salt.Util import winrandom
+         randobj = winrandom.new()
+         x = randobj.get_bytes(16)
+         y = randobj.get_bytes(16)
+diff -ur a/lib/Crypto/Signature/PKCS1_PSS.py b/lib/Crypto/Signature/PKCS1_PSS.py
+--- a/lib/Crypto/Signature/PKCS1_PSS.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Signature/PKCS1_PSS.py	2016-01-06 13:05:45.787858847 -0600
+@@ -29,10 +29,10 @@
+ For example, a sender may authenticate a message using SHA-1 and PSS like
+ this:
+ 
+-    >>> from Crypto.Signature import PKCS1_PSS
+-    >>> from Crypto.Hash import SHA
+-    >>> from Crypto.PublicKey import RSA
+-    >>> from Crypto import Random
++    >>> from Crypto_salt.Signature import PKCS1_PSS
++    >>> from Crypto_salt.Hash import SHA
++    >>> from Crypto_salt.PublicKey import RSA
++    >>> from Crypto_salt import Random
+     >>>
+     >>> message = 'To be signed'
+     >>> key = RSA.importKey(open('privkey.der').read())
+@@ -66,12 +66,12 @@
+ __revision__ = "$Id$"
+ __all__ = [ 'new', 'PSS_SigScheme' ]
+ 
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-import Crypto.Util.number
+-from Crypto.Util.number import ceil_shift, ceil_div, long_to_bytes
+-from Crypto.Util.strxor import strxor
++    from Crypto_salt.Util.py21compat import *
++import Crypto_salt.Util.number
++from Crypto_salt.Util.number import ceil_shift, ceil_div, long_to_bytes
++from Crypto_salt.Util.strxor import strxor
+ 
+ class PSS_SigScheme:
+     """This signature scheme can perform PKCS#1 PSS RSA signature or verification."""
+@@ -106,7 +106,7 @@
+         :Parameters:
+          mhash : hash object
+                 The hash that was carried out over the message. This is an object
+-                belonging to the `Crypto.Hash` module.
++                belonging to the `Crypto_salt.Hash` module.
+    
+         :Return: The PSS signature encoded as a string.
+         :Raise ValueError:
+@@ -133,7 +133,7 @@
+         else:
+              mgf  = lambda x,y: MGF1(x,y,mhash)
+  
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+     
+         # See 8.1.1 in RFC3447
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+@@ -157,7 +157,7 @@
+         :Parameters:
+          mhash : hash object
+                 The hash that was carried out over the message. This is an object
+-                belonging to the `Crypto.Hash` module.
++                belonging to the `Crypto_salt.Hash` module.
+          S : string
+                 The signature that needs to be validated.
+     
+@@ -175,7 +175,7 @@
+         else:
+             mgf  = lambda x,y: MGF1(x,y,mhash)
+ 
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+     
+         # See 8.1.2 in RFC3447
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+@@ -340,7 +340,7 @@
+ 
+     :Parameters:
+      key : RSA key object
+-        The key to use to sign or verify the message. This is a `Crypto.PublicKey.RSA` object.
++        The key to use to sign or verify the message. This is a `Crypto_salt.PublicKey.RSA` object.
+         Signing is only possible if *key* is a private RSA key.
+      mgfunc : callable
+         A mask generation function that accepts two parameters: a string to
+diff -ur a/lib/Crypto/Signature/PKCS1_v1_5.py b/lib/Crypto/Signature/PKCS1_v1_5.py
+--- a/lib/Crypto/Signature/PKCS1_v1_5.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Signature/PKCS1_v1_5.py	2016-01-06 13:05:45.791192166 -0600
+@@ -30,9 +30,9 @@
+ For example, a sender may authenticate a message using SHA-1 like
+ this:
+ 
+-        >>> from Crypto.Signature import PKCS1_v1_5
+-        >>> from Crypto.Hash import SHA
+-        >>> from Crypto.PublicKey import RSA
++        >>> from Crypto_salt.Signature import PKCS1_v1_5
++        >>> from Crypto_salt.Hash import SHA
++        >>> from Crypto_salt.PublicKey import RSA
+         >>>
+         >>> message = 'To be signed'
+         >>> key = RSA.importKey(open('privkey.der').read())
+@@ -60,10 +60,10 @@
+ __revision__ = "$Id$"
+ __all__ = [ 'new', 'PKCS115_SigScheme' ]
+ 
+-import Crypto.Util.number
+-from Crypto.Util.number import ceil_div
+-from Crypto.Util.asn1 import DerSequence, DerNull, DerOctetString
+-from Crypto.Util.py3compat import *
++import Crypto_salt.Util.number
++from Crypto_salt.Util.number import ceil_div
++from Crypto_salt.Util.asn1 import DerSequence, DerNull, DerOctetString
++from Crypto_salt.Util.py3compat import *
+ 
+ class PKCS115_SigScheme:
+     """This signature scheme can perform PKCS#1 v1.5 RSA signature or verification."""
+@@ -91,7 +91,7 @@
+         :Parameters:
+          mhash : hash object
+                 The hash that was carried out over the message. This is an object
+-                belonging to the `Crypto.Hash` module.
++                belonging to the `Crypto_salt.Hash` module.
+     
+         :Return: The signature encoded as a string.
+         :Raise ValueError:
+@@ -103,7 +103,7 @@
+         # TODO: Verify the key is RSA
+     
+         # See 8.2.1 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+     
+         # Step 1
+@@ -126,7 +126,7 @@
+         :Parameters:
+          mhash : hash object
+                 The hash that was carried out over the message. This is an object
+-                belonging to the `Crypto.Hash` module.
++                belonging to the `Crypto_salt.Hash` module.
+          S : string
+                 The signature that needs to be validated.
+     
+@@ -135,7 +135,7 @@
+         # TODO: Verify the key is RSA
+     
+         # See 8.2.2 in RFC3447
+-        modBits = Crypto.Util.number.size(self._key.n)
++        modBits = Crypto_salt.Util.number.size(self._key.n)
+         k = ceil_div(modBits,8) # Convert from bits to bytes
+     
+         # Step 1
+@@ -228,7 +228,7 @@
+ 
+     :Parameters:
+      key : RSA key object
+-      The key to use to sign or verify the message. This is a `Crypto.PublicKey.RSA` object.
++      The key to use to sign or verify the message. This is a `Crypto_salt.PublicKey.RSA` object.
+       Signing is only possible if *key* is a private RSA key.
+ 
+     """
+diff -ur a/lib/Crypto/Util/asn1.py b/lib/Crypto/Util/asn1.py
+--- a/lib/Crypto/Util/asn1.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Util/asn1.py	2016-01-06 13:05:45.771192254 -0600
+@@ -20,9 +20,9 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-from Crypto.Util.number import long_to_bytes, bytes_to_long
++from Crypto_salt.Util.number import long_to_bytes, bytes_to_long
+ import sys
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ __all__ = [ 'DerObject', 'DerInteger', 'DerOctetString', 'DerNull', 'DerSequence', 'DerObjectId' ]
+ 
+diff -ur a/lib/Crypto/Util/Counter.py b/lib/Crypto/Util/Counter.py
+--- a/lib/Crypto/Util/Counter.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Util/Counter.py	2016-01-06 13:05:45.751192342 -0600
+@@ -31,18 +31,18 @@
+ to start with an initial, random *counter block* value, and increment it as
+ the next block is processed.
+ 
+-The block ciphers from `Crypto.Cipher` (when configured in *MODE_CTR* mode)
++The block ciphers from `Crypto_salt.Cipher` (when configured in *MODE_CTR* mode)
+ invoke a callable object (the *counter* parameter) to get the next *counter block*.
+ Unfortunately, the Python calling protocol leads to major performance degradations.
+ 
+ The counter functions instantiated by this module will be invoked directly
+-by the ciphers in `Crypto.Cipher`. The fact that the Python layer is bypassed
++by the ciphers in `Crypto_salt.Cipher`. The fact that the Python layer is bypassed
+ lead to more efficient (and faster) execution of CTR cipher modes.
+ 
+ An example of usage is the following:
+ 
+-    >>> from Crypto.Cipher import AES
+-    >>> from Crypto.Util import Counter
++    >>> from Crypto_salt.Cipher import AES
++    >>> from Crypto_salt.Util import Counter
+     >>>
+     >>> pt = b'\x00'*1000000
+     >>> ctr = Counter.new(128)
+@@ -53,10 +53,10 @@
+ """
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
+-from Crypto.Util.py3compat import *
++    from Crypto_salt.Util.py21compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+-from Crypto.Util import _counter
++from Crypto_salt.Util import _counter
+ import struct
+ 
+ # Factory function
+@@ -89,7 +89,7 @@
+         as the counter wraps around. If False (default), the counter will
+         simply restart from zero.
+       disable_shortcut : boolean
+-        If True, do not make ciphers from `Crypto.Cipher` bypass the Python
++        If True, do not make ciphers from `Crypto_salt.Cipher` bypass the Python
+         layer when invoking the counter block function.
+         If False (default), bypass the Python layer.
+     :Returns:
+diff -ur a/lib/Crypto/Util/__init__.py b/lib/Crypto/Util/__init__.py
+--- a/lib/Crypto/Util/__init__.py	2013-10-14 16:38:10.000000000 -0500
++++ b/lib/Crypto/Util/__init__.py	2016-01-06 13:05:45.777858891 -0600
+@@ -21,13 +21,13 @@
+ """Miscellaneous modules
+ 
+ Contains useful modules that don't belong into any of the
+-other Crypto.* subpackages.
++other Crypto_salt.* subpackages.
+ 
+-Crypto.Util.number        Number-theoretic functions (primality testing, etc.)
+-Crypto.Util.randpool      Random number generation
+-Crypto.Util.RFC1751       Converts between 128-bit keys and human-readable
++Crypto_salt.Util.number        Number-theoretic functions (primality testing, etc.)
++Crypto_salt.Util.randpool      Random number generation
++Crypto_salt.Util.RFC1751       Converts between 128-bit keys and human-readable
+                           strings of words.
+-Crypto.Util.asn1          Minimal support for ASN.1 DER encoding
++Crypto_salt.Util.asn1          Minimal support for ASN.1 DER encoding
+ 
+ """
+ 
+diff -ur a/lib/Crypto/Util/_number_new.py b/lib/Crypto/Util/_number_new.py
+--- a/lib/Crypto/Util/_number_new.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Util/_number_new.py	2016-01-06 13:05:45.784525529 -0600
+@@ -22,14 +22,14 @@
+ # SOFTWARE.
+ # ===================================================================
+ 
+-## NOTE: Do not import this module directly.  Import these functions from Crypto.Util.number.
++## NOTE: Do not import this module directly.  Import these functions from Crypto_salt.Util.number.
+ 
+ __revision__ = "$Id$"
+ __all__ = ['ceil_shift', 'ceil_div', 'floor_div', 'exact_log2', 'exact_div']
+ 
+ import sys
+ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
+-    from Crypto.Util.py21compat import *
++    from Crypto_salt.Util.py21compat import *
+ 
+ def ceil_shift(n, b):
+     """Return ceil(n / 2**b) without performing any floating-point or division operations.
+diff -ur a/lib/Crypto/Util/number.py b/lib/Crypto/Util/number.py
+--- a/lib/Crypto/Util/number.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Util/number.py	2016-01-06 13:05:45.741192386 -0600
+@@ -26,15 +26,15 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.pct_warnings import GetRandomNumber_DeprecationWarning, PowmInsecureWarning
++from Crypto_salt.pct_warnings import GetRandomNumber_DeprecationWarning, PowmInsecureWarning
+ from warnings import warn as _warn
+ import math
+ import sys
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ bignum = long
+ try:
+-    from Crypto.PublicKey import _fastmath
++    from Crypto_salt.PublicKey import _fastmath
+ except ImportError:
+     # For production, we are going to let import issues due to gmp/mpir shared
+     # libraries not loading slide silently and use slowmath. If you'd rather
+@@ -83,7 +83,7 @@
+ 
+ def getRandomNumber(N, randfunc=None):
+     """Deprecated.  Use getRandomInteger or getRandomNBitInteger instead."""
+-    warnings.warn("Crypto.Util.number.getRandomNumber has confusing semantics"+
++    warnings.warn("Crypto_salt.Util.number.getRandomNumber has confusing semantics"+
+     "and has been deprecated.  Use getRandomInteger or getRandomNBitInteger instead.",
+         GetRandomNumber_DeprecationWarning)
+     return getRandomNBitInteger(N, randfunc)
+@@ -444,8 +444,8 @@
+     # This is called in a function instead of at the module level in order to
+     # avoid problems with recursive imports
+     global Random, StrongRandom
+-    from Crypto import Random
+-    from Crypto.Random.random import StrongRandom
++    from Crypto_salt import Random
++    from Crypto_salt.Random.random import StrongRandom
+ 
+ 
+ 
+diff -ur a/lib/Crypto/Util/randpool.py b/lib/Crypto/Util/randpool.py
+--- a/lib/Crypto/Util/randpool.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Util/randpool.py	2016-01-06 13:05:45.744525705 -0600
+@@ -26,8 +26,8 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.pct_warnings import RandomPool_DeprecationWarning
+-import Crypto.Random
++from Crypto_salt.pct_warnings import RandomPool_DeprecationWarning
++import Crypto_salt.Random
+ import warnings
+ 
+ class RandomPool:
+@@ -38,7 +38,7 @@
+     def __init__(self, numbytes = 160, cipher=None, hash=None, file=None):
+         warnings.warn("This application uses RandomPool, which is BROKEN in older releases.  See http://www.pycrypto.org/randpool-broken",
+             RandomPool_DeprecationWarning)
+-        self.__rng = Crypto.Random.new()
++        self.__rng = Crypto_salt.Random.new()
+         self.bytes = numbytes
+         self.bits = self.bytes * 8
+         self.entropy = self.bits
+diff -ur a/lib/Crypto/Util/RFC1751.py b/lib/Crypto/Util/RFC1751.py
+--- a/lib/Crypto/Util/RFC1751.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Util/RFC1751.py	2016-01-06 13:05:45.764525616 -0600
+@@ -28,7 +28,7 @@
+ 
+ 
+ import binascii
+-from Crypto.Util.py3compat import *
++from Crypto_salt.Util.py3compat import *
+ 
+ binary={0:'0000', 1:'0001', 2:'0010', 3:'0011', 4:'0100', 5:'0101',
+         6:'0110', 7:'0111', 8:'1000', 9:'1001', 10:'1010', 11:'1011',
+diff -ur a/lib/Crypto/Util/winrandom.py b/lib/Crypto/Util/winrandom.py
+--- a/lib/Crypto/Util/winrandom.py	2012-05-24 07:55:30.000000000 -0500
++++ b/lib/Crypto/Util/winrandom.py	2016-01-06 13:05:45.781192209 -0600
+@@ -1,5 +1,5 @@
+ #
+-#  Util/winrandom.py : Stub for Crypto.Random.OSRNG.winrandom
++#  Util/winrandom.py : Stub for Crypto_salt.Random.OSRNG.winrandom
+ #
+ # Written in 2008 by Dwayne C. Litzenberger <dlitz@dlitz.net>
+ #
+@@ -23,6 +23,6 @@
+ 
+ __revision__ = "$Id$"
+ 
+-from Crypto.Random.OSRNG.winrandom import *
++from Crypto_salt.Random.OSRNG.winrandom import *
+ 
+ # vim:set ts=4 sw=4 sts=4 expandtab:
+diff -ur a/pct-speedtest.py b/pct-speedtest.py
+--- a/pct-speedtest.py	2013-10-14 16:38:10.000000000 -0500
++++ b/pct-speedtest.py	2016-01-06 13:05:46.274523369 -0600
+@@ -27,11 +27,11 @@
+ import os
+ import sys
+ 
+-from Crypto.PublicKey import RSA
+-from Crypto.Cipher import AES, ARC2, ARC4, Blowfish, CAST, DES3, DES, XOR
+-from Crypto.Hash import MD2, MD4, MD5, SHA256, SHA
++from Crypto_salt.PublicKey import RSA
++from Crypto_salt.Cipher import AES, ARC2, ARC4, Blowfish, CAST, DES3, DES, XOR
++from Crypto_salt.Hash import MD2, MD4, MD5, SHA256, SHA
+ try:
+-    from Crypto.Hash import RIPEMD
++    from Crypto_salt.Hash import RIPEMD
+ except ImportError: # Some builds of PyCrypto don't have the RIPEMD module
+     RIPEMD = None
+ 
+diff -ur a/setup.py b/setup.py
+--- a/setup.py	2013-10-14 16:38:10.000000000 -0500
++++ b/setup.py	2016-01-06 13:05:45.544526586 -0600
+@@ -51,7 +51,7 @@
+ if sys.platform == 'win32':
+     HTONS_LIBS = ['ws2_32']
+     plat_ext = [
+-                Extension("Crypto.Random.OSRNG.winrandom",
++                Extension("Crypto_salt.Random.OSRNG.winrandom",
+                           libraries = HTONS_LIBS + ['advapi32'],
+                           include_dirs=['src/'],
+                           sources=["src/winrand.c"])
+@@ -80,10 +80,10 @@
+ else:
+     EXCLUDE_PY = [
+         # We don't want Py3k to choke on the 2.x compat code
+-        ('Crypto.Util', 'py21compat'), 
++        ('Crypto_salt.Util', 'py21compat'),
+     ]
+     if sys.platform != "win32": # Avoid nt.py, as 2to3 can't fix it w/o winrandom
+-        EXCLUDE_PY += [('Crypto.Random.OSRNG','nt')]
++        EXCLUDE_PY += [('Crypto_salt.Random.OSRNG','nt')]
+ 
+ # Work around the print / print() issue with Python 2.x and 3.x. We only need
+ # to print at one point of the code, which makes this easy
+@@ -164,18 +164,18 @@
+             pass
+         elif ac.get("HAVE_LIBMPIR"):
+             # Change library to libmpir if libgmp is missing
+-            self.__change_extension_lib(["Crypto.PublicKey._fastmath"],
++            self.__change_extension_lib(["Crypto_salt.PublicKey._fastmath"],
+                 ['mpir'])
+             # And if this is MSVC, we need to add a linker option
+             # to make a static libmpir link well into a dynamic _fastmath
+             if self.compiler.compiler_type == 'msvc':
+-                self.__add_extension_link_option(["Crypto.PublicKey._fastmath"],
++                self.__add_extension_link_option(["Crypto_salt.PublicKey._fastmath"],
+                     ["/NODEFAULTLIB:LIBCMT"])
+         else:
+             # No MP library; use _slowmath.
+             PrintErr ("warning: GMP or MPIR library not found; Not building "+
+-                "Crypto.PublicKey._fastmath.")
+-            self.__remove_extensions(["Crypto.PublicKey._fastmath"])
++                "Crypto_salt.PublicKey._fastmath.")
++            self.__remove_extensions(["Crypto_salt.PublicKey._fastmath"])
+ 
+     def __add_extension_link_option(self, names, options):
+         """Add linker options for the specified extension(s)"""
+@@ -318,19 +318,19 @@
+         old_path = sys.path[:]
+         try:
+             sys.path.insert(0, self.build_dir)
+-            from Crypto import SelfTest
++            from Crypto_salt import SelfTest
+             moduleObj = None
+             if self.module:
+                 if self.module.count('.')==0:
+                     # Test a whole a sub-package
+-                    full_module = "Crypto.SelfTest." + self.module
++                    full_module = "Crypto_salt.SelfTest." + self.module
+                     module_name = self.module
+                 else:
+                     # Test only a module
+                     # Assume only one dot is present
+                     comps = self.module.split('.')
+                     module_name = "test_" + comps[1]
+-                    full_module = "Crypto.SelfTest." + comps[0] + "." + module_name
++                    full_module = "Crypto_salt.SelfTest." + comps[0] + "." + module_name
+                 # Import sub-package or module
+                 moduleObj = __import__( full_module, globals(), locals(), module_name )
+             SelfTest.run(module=moduleObj, verbosity=self.verbose, stream=sys.stdout, config=self.config)
+@@ -341,98 +341,98 @@
+         # Run slower self-tests
+         self.announce("running extended self-tests")
+ 
+-kw = {'name':"pycrypto",
+-      'version':"2.6.1",  # See also: lib/Crypto/__init__.py
++kw = {'name':"pycrypto26",
++      'version':"2.6.1",  # See also: lib/Crypto_salt/__init__.py
+       'description':"Cryptographic modules for Python.",
+       'author':"Dwayne C. Litzenberger",
+       'author_email':"dlitz@dlitz.net",
+       'url':"http://www.pycrypto.org/",
+ 
+       'cmdclass' : {'build_configure': PCTBuildConfigure, 'build_ext': PCTBuildExt, 'build_py': PCTBuildPy, 'test': TestCommand },
+-      'packages' : ["Crypto", "Crypto.Hash", "Crypto.Cipher", "Crypto.Util",
+-                  "Crypto.Random",
+-                  "Crypto.Random.Fortuna",
+-                  "Crypto.Random.OSRNG",
+-                  "Crypto.SelfTest",
+-                  "Crypto.SelfTest.Cipher",
+-                  "Crypto.SelfTest.Hash",
+-                  "Crypto.SelfTest.Protocol",
+-                  "Crypto.SelfTest.PublicKey",
+-                  "Crypto.SelfTest.Random",
+-                  "Crypto.SelfTest.Random.Fortuna",
+-                  "Crypto.SelfTest.Random.OSRNG",
+-                  "Crypto.SelfTest.Util",
+-                  "Crypto.SelfTest.Signature",
+-                  "Crypto.Protocol",
+-                  "Crypto.PublicKey",
+-                  "Crypto.Signature"],
+-      'package_dir' : { "Crypto": "lib/Crypto" },
++      'packages' : ["Crypto_salt", "Crypto_salt.Hash", "Crypto_salt.Cipher", "Crypto_salt.Util",
++                  "Crypto_salt.Random",
++                  "Crypto_salt.Random.Fortuna",
++                  "Crypto_salt.Random.OSRNG",
++                  "Crypto_salt.SelfTest",
++                  "Crypto_salt.SelfTest.Cipher",
++                  "Crypto_salt.SelfTest.Hash",
++                  "Crypto_salt.SelfTest.Protocol",
++                  "Crypto_salt.SelfTest.PublicKey",
++                  "Crypto_salt.SelfTest.Random",
++                  "Crypto_salt.SelfTest.Random.Fortuna",
++                  "Crypto_salt.SelfTest.Random.OSRNG",
++                  "Crypto_salt.SelfTest.Util",
++                  "Crypto_salt.SelfTest.Signature",
++                  "Crypto_salt.Protocol",
++                  "Crypto_salt.PublicKey",
++                  "Crypto_salt.Signature"],
++      'package_dir' : { "Crypto_salt": "lib/Crypto_salt" },
+       'ext_modules': plat_ext + [
+             # _fastmath (uses GNU mp library)
+-            Extension("Crypto.PublicKey._fastmath",
++            Extension("Crypto_salt.PublicKey._fastmath",
+                       include_dirs=['src/','/usr/include/'],
+                       libraries=['gmp'],
+                       sources=["src/_fastmath.c"]),
+ 
+             # Hash functions
+-            Extension("Crypto.Hash._MD2",
++            Extension("Crypto_salt.Hash._MD2",
+                       include_dirs=['src/'],
+                       sources=["src/MD2.c"]),
+-            Extension("Crypto.Hash._MD4",
++            Extension("Crypto_salt.Hash._MD4",
+                       include_dirs=['src/'],
+                       sources=["src/MD4.c"]),
+-            Extension("Crypto.Hash._SHA256",
++            Extension("Crypto_salt.Hash._SHA256",
+                       include_dirs=['src/'],
+                       sources=["src/SHA256.c"]),
+-            Extension("Crypto.Hash._SHA224",
++            Extension("Crypto_salt.Hash._SHA224",
+                       include_dirs=['src/'],
+                       sources=["src/SHA224.c"]),
+-            Extension("Crypto.Hash._SHA384",
++            Extension("Crypto_salt.Hash._SHA384",
+                       include_dirs=['src/'],
+                       sources=["src/SHA384.c"]),
+-            Extension("Crypto.Hash._SHA512",
++            Extension("Crypto_salt.Hash._SHA512",
+                       include_dirs=['src/'],
+                       sources=["src/SHA512.c"]),
+-            Extension("Crypto.Hash._RIPEMD160",
++            Extension("Crypto_salt.Hash._RIPEMD160",
+                       include_dirs=['src/'],
+                       sources=["src/RIPEMD160.c"],
+                       define_macros=[endianness_macro()]),
+ 
+             # Block encryption algorithms
+-            Extension("Crypto.Cipher._AES",
++            Extension("Crypto_salt.Cipher._AES",
+                       include_dirs=['src/'],
+                       sources=["src/AES.c"]),
+-            Extension("Crypto.Cipher._ARC2",
++            Extension("Crypto_salt.Cipher._ARC2",
+                       include_dirs=['src/'],
+                       sources=["src/ARC2.c"]),
+-            Extension("Crypto.Cipher._Blowfish",
++            Extension("Crypto_salt.Cipher._Blowfish",
+                       include_dirs=['src/'],
+                       sources=["src/Blowfish.c"]),
+-            Extension("Crypto.Cipher._CAST",
++            Extension("Crypto_salt.Cipher._CAST",
+                       include_dirs=['src/'],
+                       sources=["src/CAST.c"]),
+-            Extension("Crypto.Cipher._DES",
++            Extension("Crypto_salt.Cipher._DES",
+                       include_dirs=['src/', 'src/libtom/'],
+                       sources=["src/DES.c"]),
+-            Extension("Crypto.Cipher._DES3",
++            Extension("Crypto_salt.Cipher._DES3",
+                       include_dirs=['src/', 'src/libtom/'],
+                       sources=["src/DES3.c"]),
+ 
+             # Stream ciphers
+-            Extension("Crypto.Cipher._ARC4",
++            Extension("Crypto_salt.Cipher._ARC4",
+                       include_dirs=['src/'],
+                       sources=["src/ARC4.c"]),
+-            Extension("Crypto.Cipher._XOR",
++            Extension("Crypto_salt.Cipher._XOR",
+                       include_dirs=['src/'],
+                       sources=["src/XOR.c"]),
+ 
+             # Utility modules
+-            Extension("Crypto.Util.strxor",
++            Extension("Crypto_salt.Util.strxor",
+                       include_dirs=['src/'],
+                       sources=['src/strxor.c']),
+ 
+             # Counter modules
+-            Extension("Crypto.Util._counter",
++            Extension("Crypto_salt.Util._counter",
+                       include_dirs=['src/'],
+                       sources=['src/_counter.c']),
+     ]
+@@ -469,5 +469,5 @@
+ if (sys.platform == 'win32' and sys.version_info[0] == 3 and
+     'build' in sys.argv[1:]):
+     PrintErr("\nSecond pass to allow 2to3 to fix nt.py. No cause for alarm.\n")
+-    touch("./lib/Crypto/Random/OSRNG/nt.py")
++    touch("./lib/Crypto_salt/Random/OSRNG/nt.py")
+     core.setup(**kw)
+diff -ur a/src/block_template.c b/src/block_template.c
+--- a/src/block_template.c	2013-10-14 16:38:10.000000000 -0500
++++ b/src/block_template.c	2016-01-06 13:05:46.097857481 -0600
+@@ -35,7 +35,7 @@
+ 
+ #include "Python.h"
+ #include "pycrypto_compat.h"
+-#include "modsupport.h" 
++#include "modsupport.h"
+ 
+ #include "_counter.h"
+ 
+@@ -59,9 +59,9 @@
+ #endif
+ #define _MODULE_STRING _XSTR(MODULE_NAME)
+ 
+-typedef struct 
++typedef struct
+ {
+-	PyObject_HEAD 
++	PyObject_HEAD
+ 	int mode, count, segment_size;
+ 	unsigned char IV[BLOCK_SIZE], oldCipher[BLOCK_SIZE];
+ 	PyObject *counter;
+@@ -94,7 +94,7 @@
+ 
+ static void
+ ALGdealloc(PyObject *ptr)
+-{		
++{
+ 	ALGobject *self = (ALGobject *)ptr;
+ 
+ 	/* Overwrite the contents of the object */
+@@ -109,7 +109,7 @@
+ 
+ 
+ 
+-static char ALGnew__doc__[] = 
++static char ALGnew__doc__[] =
+ "new(key, [mode], [IV]): Return a new " _MODULE_STRING " encryption object.";
+ 
+ static char *kwlist[] = {"key", "mode", "IV", "counter", "segment_size",
+@@ -140,20 +140,20 @@
+ #ifdef PCT_ARC2_MODULE
+ 					 , &effective_keylen
+ #endif
+-		)) 
++		))
+ 	{
+ 		return NULL;
+ 	}
+ 
+-	if (mode<MODE_ECB || mode>MODE_CTR) 
++	if (mode<MODE_ECB || mode>MODE_CTR)
+ 	{
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "Unknown cipher feedback mode %i",
+ 			     mode);
+ 		return NULL;
+ 	}
+ 	if (mode == MODE_PGP) {
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "MODE_PGP is not supported anymore");
+ 		return NULL;
+ 	}
+@@ -181,7 +181,7 @@
+ 	if (mode == MODE_CFB) {
+ 		if (segment_size == 0) segment_size = 8;
+ 		if (segment_size < 1 || segment_size > BLOCK_SIZE*8 || ((segment_size & 7) != 0)) {
+-			PyErr_Format(PyExc_ValueError, 
++			PyErr_Format(PyExc_ValueError,
+ 				     "segment_size must be multiple of 8 (bits) "
+ 				     "between 1 and %i", BLOCK_SIZE*8);
+ 			return NULL;
+@@ -199,13 +199,13 @@
+ #endif
+ 			counter_shortcut = 1;
+ 		} else if (!PyCallable_Check(counter)) {
+-			PyErr_SetString(PyExc_ValueError, 
++			PyErr_SetString(PyExc_ValueError,
+ 					"'counter' parameter must be a callable object");
+ 			return NULL;
+ 		}
+ 	} else {
+ 		if (counter != NULL) {
+-			PyErr_SetString(PyExc_ValueError, 
++			PyErr_SetString(PyExc_ValueError,
+ 					"'counter' parameter only useful with CTR mode");
+ 			return NULL;
+ 		}
+@@ -255,26 +255,26 @@
+ 	unsigned char temp[BLOCK_SIZE];
+ 	int i, j, len;
+ 	PyObject *result;
+-  
++
+ 	if (!PyArg_Parse(args, "s#", &str, &len))
+ 		return NULL;
+ 	if (len==0)			/* Handle empty string */
+ 	{
+ 		return PyBytes_FromStringAndSize(NULL, 0);
+ 	}
+-	if ( (len % BLOCK_SIZE) !=0 && 
++	if ( (len % BLOCK_SIZE) !=0 &&
+ 	     (self->mode!=MODE_CFB) &&
+ 	     (self->mode!=MODE_CTR))
+ 	{
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "Input strings must be "
+ 			     "a multiple of %i in length",
+ 			     BLOCK_SIZE);
+ 		return NULL;
+ 	}
+-	if (self->mode == MODE_CFB && 
++	if (self->mode == MODE_CFB &&
+ 	    (len % (self->segment_size/8) !=0)) {
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "Input strings must be a multiple of "
+ 			     "the segment size %i in length",
+ 			     self->segment_size/8);
+@@ -282,9 +282,9 @@
+ 	}
+ 
+ 	buffer=malloc(len);
+-	if (buffer==NULL) 
++	if (buffer==NULL)
+ 	{
+-		PyErr_SetString(PyExc_MemoryError, 
++		PyErr_SetString(PyExc_MemoryError,
+ 				"No memory available in "
+ 				_MODULE_STRING " encrypt");
+ 		return NULL;
+@@ -292,15 +292,15 @@
+ 	Py_BEGIN_ALLOW_THREADS;
+ 	switch(self->mode)
+ 	{
+-	case(MODE_ECB):      
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++	case(MODE_ECB):
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			block_encrypt(&(self->st), str+i, buffer+i);
+ 		}
+ 		break;
+ 
+-	case(MODE_CBC):      
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++	case(MODE_CBC):
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			for(j=0; j<BLOCK_SIZE; j++)
+ 			{
+@@ -311,34 +311,34 @@
+ 		}
+ 		break;
+ 
+-	case(MODE_CFB):      
+-		for(i=0; i<len; i+=self->segment_size/8) 
++	case(MODE_CFB):
++		for(i=0; i<len; i+=self->segment_size/8)
+ 		{
+ 			block_encrypt(&(self->st), self->IV, temp);
+ 			for (j=0; j<self->segment_size/8; j++) {
+ 				buffer[i+j] = str[i+j] ^ temp[j];
+ 			}
+ 			if (self->segment_size == BLOCK_SIZE * 8) {
+-				/* s == b: segment size is identical to 
++				/* s == b: segment size is identical to
+ 				   the algorithm block size */
+ 				memcpy(self->IV, buffer + i, BLOCK_SIZE);
+ 			}
+ 			else if ((self->segment_size % 8) == 0) {
+ 				int sz = self->segment_size/8;
+-				memmove(self->IV, self->IV + sz, 
++				memmove(self->IV, self->IV + sz,
+ 					BLOCK_SIZE-sz);
+ 				memcpy(self->IV + BLOCK_SIZE - sz, buffer + i,
+ 				       sz);
+ 			}
+ 			else {
+-				/* segment_size is not a multiple of 8; 
++				/* segment_size is not a multiple of 8;
+ 				   currently this can't happen */
+ 			}
+ 		}
+ 		break;
+ 
+ 	case(MODE_OFB):
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			block_encrypt(&(self->st), self->IV, temp);
+ 			memcpy(self->IV, temp, BLOCK_SIZE);
+@@ -346,7 +346,7 @@
+ 			{
+ 				buffer[i+j] = str[i+j] ^ temp[j];
+ 			}
+-		}      
++		}
+ 		break;
+ 
+ 	case(MODE_CTR):
+@@ -461,7 +461,7 @@
+ 
+ 	default:
+ 		Py_BLOCK_THREADS;
+-		PyErr_Format(PyExc_SystemError, 
++		PyErr_Format(PyExc_SystemError,
+ 			     "Unknown ciphertext feedback mode %i; "
+ 			     "this shouldn't happen",
+ 			     self->mode);
+@@ -500,24 +500,24 @@
+ 	}
+ 	if ( (len % BLOCK_SIZE) !=0 && (self->mode!=MODE_CFB))
+ 	{
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "Input strings must be "
+ 			     "a multiple of %i in length",
+ 			     BLOCK_SIZE);
+ 		return NULL;
+ 	}
+-	if (self->mode == MODE_CFB && 
++	if (self->mode == MODE_CFB &&
+ 	    (len % (self->segment_size/8) !=0)) {
+-		PyErr_Format(PyExc_ValueError, 
++		PyErr_Format(PyExc_ValueError,
+ 			     "Input strings must be a multiple of "
+ 			     "the segment size %i in length",
+ 			     self->segment_size/8);
+ 		return NULL;
+ 	}
+ 	buffer=malloc(len);
+-	if (buffer==NULL) 
++	if (buffer==NULL)
+ 	{
+-		PyErr_SetString(PyExc_MemoryError, 
++		PyErr_SetString(PyExc_MemoryError,
+ 				"No memory available in " _MODULE_STRING
+ 				" decrypt");
+ 		return NULL;
+@@ -525,19 +525,19 @@
+ 	Py_BEGIN_ALLOW_THREADS;
+ 	switch(self->mode)
+ 	{
+-	case(MODE_ECB):      
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++	case(MODE_ECB):
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			block_decrypt(&(self->st), str+i, buffer+i);
+ 		}
+ 		break;
+ 
+-	case(MODE_CBC):      
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++	case(MODE_CBC):
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			memcpy(self->oldCipher, self->IV, BLOCK_SIZE);
+ 			block_decrypt(&(self->st), str+i, temp);
+-			for(j=0; j<BLOCK_SIZE; j++) 
++			for(j=0; j<BLOCK_SIZE; j++)
+ 			{
+ 				buffer[i+j]=temp[j]^self->IV[j];
+ 				self->IV[j]=str[i+j];
+@@ -545,34 +545,34 @@
+ 		}
+ 		break;
+ 
+-	case(MODE_CFB):      
+-		for(i=0; i<len; i+=self->segment_size/8) 
++	case(MODE_CFB):
++		for(i=0; i<len; i+=self->segment_size/8)
+ 		{
+ 			block_encrypt(&(self->st), self->IV, temp);
+ 			for (j=0; j<self->segment_size/8; j++) {
+ 				buffer[i+j] = str[i+j]^temp[j];
+ 			}
+ 			if (self->segment_size == BLOCK_SIZE * 8) {
+-				/* s == b: segment size is identical to 
++				/* s == b: segment size is identical to
+ 				   the algorithm block size */
+ 				memcpy(self->IV, str + i, BLOCK_SIZE);
+ 			}
+ 			else if ((self->segment_size % 8) == 0) {
+ 				int sz = self->segment_size/8;
+-				memmove(self->IV, self->IV + sz, 
++				memmove(self->IV, self->IV + sz,
+ 					BLOCK_SIZE-sz);
+-				memcpy(self->IV + BLOCK_SIZE - sz, str + i, 
++				memcpy(self->IV + BLOCK_SIZE - sz, str + i,
+ 				       sz);
+ 			}
+ 			else {
+-				/* segment_size is not a multiple of 8; 
++				/* segment_size is not a multiple of 8;
+ 				   currently this can't happen */
+ 			}
+ 		}
+ 		break;
+ 
+ 	case (MODE_OFB):
+-		for(i=0; i<len; i+=BLOCK_SIZE) 
++		for(i=0; i<len; i+=BLOCK_SIZE)
+ 		{
+ 			block_encrypt(&(self->st), self->IV, temp);
+ 			memcpy(self->IV, temp, BLOCK_SIZE);
+@@ -580,12 +580,12 @@
+ 			{
+ 				buffer[i+j] = str[i+j] ^ self->IV[j];
+ 			}
+-		}      
++		}
+ 		break;
+ 
+ 	default:
+ 		Py_BLOCK_THREADS;
+-		PyErr_Format(PyExc_SystemError, 
++		PyErr_Format(PyExc_SystemError,
+ 			     "Unknown ciphertext feedback mode %i; "
+ 			     "this shouldn't happen",
+ 			     self->mode);
+@@ -615,7 +615,7 @@
+ ALGsetattr(PyObject *ptr, char *name, PyObject *v)
+ {
+   ALGobject *self=(ALGobject *)ptr;
+-  if (strcmp(name, "IV") != 0) 
++  if (strcmp(name, "IV") != 0)
+     {
+       PyErr_Format(PyExc_AttributeError,
+ 		   "non-existent block cipher object attribute '%s'",
+@@ -638,9 +638,9 @@
+ #endif
+       return -1;
+     }
+-  if (PyBytes_Size(v)!=BLOCK_SIZE) 
++  if (PyBytes_Size(v)!=BLOCK_SIZE)
+     {
+-      PyErr_Format(PyExc_ValueError, 
++      PyErr_Format(PyExc_ValueError,
+ 		   _MODULE_STRING " IV must be %i bytes long",
+ 		   BLOCK_SIZE);
+       return -1;
+@@ -664,7 +664,7 @@
+ 
+   if (PyUnicode_CompareWithASCIIString(attr, "IV") == 0)
+ #else
+-  if (strcmp(name, "IV") == 0) 
++  if (strcmp(name, "IV") == 0)
+ #endif
+     {
+       return(PyBytes_FromStringAndSize((char *) self->IV, BLOCK_SIZE));
+@@ -756,7 +756,7 @@
+ #ifdef IS_PY3K
+ static struct PyModuleDef moduledef = {
+ 	PyModuleDef_HEAD_INIT,
+-	"Crypto.Cipher." _MODULE_STRING,
++	"Crypto_salt.Cipher." _MODULE_STRING,
+ 	NULL,
+ 	-1,
+ 	modulemethods,
+@@ -798,7 +798,7 @@
+ #else
+ 	ALGtype.ob_type = &PyType_Type;
+ 	/* Create the module and add the functions */
+-	m = Py_InitModule("Crypto.Cipher." _MODULE_STRING, modulemethods);
++	m = Py_InitModule("Crypto_salt.Cipher." _MODULE_STRING, modulemethods);
+ #endif
+ 
+ 	PyModule_AddIntConstant(m, "MODE_ECB", MODE_ECB);
+diff -ur a/src/_fastmath.c b/src/_fastmath.c
+--- a/src/_fastmath.c	2013-10-14 16:38:10.000000000 -0500
++++ b/src/_fastmath.c	2016-01-06 13:05:46.221190270 -0600
+@@ -272,7 +272,7 @@
+ 		return 2;
+ 	}
+ 
+-    if ((mpz_size (key->p) != 0) && (mpz_size (key->q) != 0) && 
++    if ((mpz_size (key->p) != 0) && (mpz_size (key->q) != 0) &&
+         (mpz_size (key->u) != 0))
+     {
+         /* fast path */
+@@ -348,7 +348,7 @@
+ }
+ 
+ static PyMethodDef dsaKey__methods__[] = {
+-	{"_sign", (PyCFunction) dsaKey__sign, METH_VARARGS, 
++	{"_sign", (PyCFunction) dsaKey__sign, METH_VARARGS,
+ 	 "Sign the given long."},
+ 	{"_verify", (PyCFunction) dsaKey__verify, METH_VARARGS,
+ 	 "Verify that the signature is valid."},
+@@ -385,7 +385,7 @@
+ #ifdef IS_PY3K
+ 	PyVarObject_HEAD_INIT (NULL, 0)  /* deferred type init for compilation on Windows, type will be filled in at runtime */
+ #else
+-	PyObject_HEAD_INIT (NULL) 
++	PyObject_HEAD_INIT (NULL)
+ 	0,				/*ob_size*/
+ #endif
+ 	"dsaKey",
+@@ -427,7 +427,7 @@
+ #ifdef IS_PY3K
+ 	PyVarObject_HEAD_INIT (NULL, 0)  /* deferred type init for compilation on Windows, type will be filled in at runtime */
+ #else
+-	PyObject_HEAD_INIT (NULL) 
++	PyObject_HEAD_INIT (NULL)
+ 	0,				/*ob_size*/
+ #endif
+ 	"rsaKey",		/*tp_name*/
+@@ -472,7 +472,7 @@
+ 	PyLongObject *y = NULL, *g = NULL, *p = NULL, *q = NULL, *x = NULL;
+ 	dsaKey *key;
+ 	if (!PyArg_ParseTuple(args, "O!O!O!O!|O!", &PyLong_Type, &y,
+-			      &PyLong_Type, &g, &PyLong_Type, &p, 
++			      &PyLong_Type, &g, &PyLong_Type, &p,
+ 			      &PyLong_Type, &q, &PyLong_Type, &x))
+ 		return NULL;
+ 
+@@ -713,12 +713,12 @@
+ static PyObject *
+ rsaKey_new (PyObject * self, PyObject * args)
+ {
+-	PyLongObject *n = NULL, *e = NULL, *d = NULL, *p = NULL, *q = NULL, 
++	PyLongObject *n = NULL, *e = NULL, *d = NULL, *p = NULL, *q = NULL,
+                      *u = NULL;
+ 	rsaKey *key;
+ 
+ 	if (!PyArg_ParseTuple(args, "O!O!|O!O!O!O!", &PyLong_Type, &n,
+-			      &PyLong_Type, &e, &PyLong_Type, &d, 
++			      &PyLong_Type, &e, &PyLong_Type, &d,
+ 			      &PyLong_Type, &p, &PyLong_Type, &q,
+                               &PyLong_Type, &u))
+ 		return NULL;
+@@ -853,7 +853,7 @@
+   generic:
+ 		return PyObject_GenericGetAttr((PyObject *) key, attr);
+ #else
+-		return Py_FindMethod (rsaKey__methods__, 
++		return Py_FindMethod (rsaKey__methods__,
+ 				      (PyObject *) key, attr);
+ #endif
+ }
+@@ -928,7 +928,7 @@
+ {
+ 	PyObject *l, *lsig;
+ 	mpz_t v, vsig;
+-	if (!PyArg_ParseTuple(args, "O!O!", 
++	if (!PyArg_ParseTuple(args, "O!O!",
+ 			      &PyLong_Type, &l, &PyLong_Type, &lsig))
+ 	{
+ 		return NULL;
+@@ -954,7 +954,7 @@
+ 	PyObject *l, *lblind, *r, *retval;
+ 	mpz_t v, vblind;
+ 	int result;
+-	if (!PyArg_ParseTuple (args, "O!O!", &PyLong_Type, &l, 
++	if (!PyArg_ParseTuple (args, "O!O!", &PyLong_Type, &l,
+                                &PyLong_Type, &lblind))
+ 		{
+ 			return NULL;
+@@ -993,7 +993,7 @@
+ 	PyObject *l, *lblind, *r, *retval;
+ 	mpz_t v, vblind;
+ 	int result;
+-	if (!PyArg_ParseTuple (args, "O!O!", &PyLong_Type, &l, 
++	if (!PyArg_ParseTuple (args, "O!O!", &PyLong_Type, &l,
+                                &PyLong_Type, &lblind))
+ 		{
+ 			return NULL;
+@@ -1134,14 +1134,14 @@
+ }
+ 
+ 
+-/* Returns a new reference to a rng from the Crypto.Random module. */
++/* Returns a new reference to a rng from the Crypto_salt.Random module. */
+ static PyObject *
+ getRNG (void)
+ {
+ 	/* PyModule_GetDict, PyDict_GetItemString return a borrowed ref */
+ 	PyObject *module, *module_dict, *new_func, *rng;
+ 
+-	module = PyImport_ImportModule ("Crypto.Random");
++	module = PyImport_ImportModule ("Crypto_salt.Random");
+ 	if (!module)
+ 		return NULL;
+ 	module_dict = PyModule_GetDict (module);
+@@ -1149,13 +1149,13 @@
+ 	new_func = PyDict_GetItemString (module_dict, "new");
+ 	if (new_func == NULL) {
+ 		PyErr_SetString (PyExc_RuntimeError,
+-						 "Crypto.Random.new is missing.");
++						 "Crypto_salt.Random.new is missing.");
+ 		return NULL;
+ 	}
+ 	if (!PyCallable_Check (new_func))
+ 	{
+ 		PyErr_SetString (PyExc_RuntimeError,
+-						 "Crypto.Random.new is not callable.");
++						 "Crypto_salt.Random.new is not callable.");
+ 		return NULL;
+ 	}
+ 	rng = PyObject_CallObject (new_func, NULL);
+@@ -1697,14 +1697,14 @@
+ {
+     PyObject *_fastmath_module;
+     PyObject *_fastmath_dict;
+- 
++
+ #ifdef IS_PY3K
+ 	/* PyType_Ready automatically fills in ob_type with &PyType_Type if it's not already set */
+ 	if (PyType_Ready(&rsaKeyType) < 0)
+ 		return NULL;
+ 	if (PyType_Ready(&dsaKeyType) < 0)
+ 		return NULL;
+-	
++
+ 	_fastmath_module = PyModule_Create(&moduledef);
+ 	if (_fastmath_module == NULL)
+         return NULL;
+diff -ur a/src/hash_template.c b/src/hash_template.c
+--- a/src/hash_template.c	2013-10-14 16:38:10.000000000 -0500
++++ b/src/hash_template.c	2016-01-06 13:05:46.244523501 -0600
+@@ -21,7 +21,7 @@
+  * SOFTWARE.
+  * ===================================================================
+  */
+-  
++
+ /* Basic object type */
+ 
+ #ifdef HAVE_CONFIG_H
+@@ -85,7 +85,7 @@
+ 
+ /* External methods for a hashing object */
+ 
+-static char ALG_copy__doc__[] = 
++static char ALG_copy__doc__[] =
+ "copy(): Return a copy of the hashing object.";
+ 
+ static PyObject *
+@@ -96,15 +96,15 @@
+ 	if (!PyArg_ParseTuple(args, "")) {
+ 		return NULL;
+ 	}
+-	
++
+ 	if ( (newobj = newALGobject())==NULL)
+ 		return NULL;
+ 
+ 	hash_copy(&(self->st), &(newobj->st));
+-	return((PyObject *)newobj); 
++	return((PyObject *)newobj);
+ }
+ 
+-static char ALG_digest__doc__[] = 
++static char ALG_digest__doc__[] =
+ "digest(): Return the digest value as a string of binary data.";
+ 
+ static PyObject *
+@@ -116,7 +116,7 @@
+ 	return (PyObject *)hash_digest(&(self->st));
+ }
+ 
+-static char ALG_hexdigest__doc__[] = 
++static char ALG_hexdigest__doc__[] =
+ "hexdigest(): Return the digest value as a string of hexadecimal digits.";
+ 
+ static PyObject *
+@@ -156,7 +156,7 @@
+ 	return retval;
+ }
+ 
+-static char ALG_update__doc__[] = 
++static char ALG_update__doc__[] =
+ "update(string): Update this hashing object's state with the provided string.";
+ 
+ static PyObject *
+@@ -180,10 +180,10 @@
+ 
+ /** Forward declaration for this module's new() method **/
+ static char ALG_new__doc__[] =
+-"new([string]): Return a new " _MODULE_STRING 
++"new([string]): Return a new " _MODULE_STRING
+ " hashing object.  An optional string "
+ "argument may be provided; if present, this string will be "
+-"automatically hashed into the initial state of the object."; 
++"automatically hashed into the initial state of the object.";
+ 
+ static PyObject *ALG_new(PyObject*, PyObject*);
+ 
+@@ -206,7 +206,7 @@
+ #ifdef IS_PY3K
+ 	if (!PyUnicode_Check(attr))
+ 		goto generic;
+- 
++
+ 	if (PyUnicode_CompareWithASCIIString(attr, "digest_size")==0)
+ 		return PyLong_FromLong(DIGEST_SIZE);
+ #else
+@@ -274,7 +274,7 @@
+         ALGobject *new;
+ 	unsigned char *cp = NULL;
+ 	int len;
+-	
++
+ 	if ((new = newALGobject()) == NULL)
+ 		return NULL;
+ 
+@@ -287,7 +287,7 @@
+         hash_init(&(new->st));
+ 
+ 	if (PyErr_Occurred()) {
+-		Py_DECREF(new); 
++		Py_DECREF(new);
+ 		return NULL;
+ 	}
+ 	if (cp) {
+@@ -309,7 +309,7 @@
+ #ifdef IS_PY3K
+ static struct PyModuleDef moduledef = {
+ 	PyModuleDef_HEAD_INIT,
+-	"Crypto.Hash." _MODULE_STRING,
++	"Crypto_salt.Hash." _MODULE_STRING,
+ 	NULL,
+ 	-1,
+ 	ALG_functions,
+@@ -349,7 +349,7 @@
+         return NULL;
+ #else
+ 	ALGtype.ob_type = &PyType_Type;
+-	m = Py_InitModule("Crypto.Hash." _MODULE_STRING, ALG_functions);
++	m = Py_InitModule("Crypto_salt.Hash." _MODULE_STRING, ALG_functions);
+ #endif
+ 
+ 	/* Add some symbolic constants to the module */
+@@ -358,7 +358,7 @@
+ 
+ 	/* Check for errors */
+ 	if (PyErr_Occurred())
+-		Py_FatalError("can't initialize module " 
++		Py_FatalError("can't initialize module "
+                               _MODULE_STRING);
+ #ifdef IS_PY3K
+ 	return m;
+diff -ur a/src/stream_template.c b/src/stream_template.c
+--- a/src/stream_template.c	2013-10-14 16:38:10.000000000 -0500
++++ b/src/stream_template.c	2016-01-06 13:05:46.194523722 -0600
+@@ -54,9 +54,9 @@
+ 	 *
+ 	 */
+ 
+-typedef struct 
++typedef struct
+ {
+-	PyObject_HEAD 
++	PyObject_HEAD
+ 	stream_state st;
+ } ALGobject;
+ 
+@@ -90,7 +90,7 @@
+ 	PyObject_Del(ptr);
+ }
+ 
+-static char ALGnew__doc__[] = 
++static char ALGnew__doc__[] =
+ "Return a new " _MODULE_STRING " encryption object.";
+ 
+ static char *kwlist[] = {"key", NULL};
+@@ -103,7 +103,7 @@
+ 	int keylen;
+ 
+ 	new = newALGobject();
+-	if (!PyArg_ParseTupleAndKeywords(args, kwdict, "s#", kwlist, 
++	if (!PyArg_ParseTupleAndKeywords(args, kwdict, "s#", kwlist,
+ 					 &key, &keylen))
+ 	{
+ 		Py_DECREF(new);
+@@ -112,14 +112,14 @@
+ 
+ 	if (KEY_SIZE!=0 && keylen != KEY_SIZE)
+ 	{
+-		PyErr_SetString(PyExc_ValueError, 
++		PyErr_SetString(PyExc_ValueError,
+ 				_MODULE_STRING " key must be "
+ 				"KEY_SIZE bytes long");
+ 		return NULL;
+ 	}
+ 	if (KEY_SIZE== 0 && keylen == 0)
+ 	{
+-		PyErr_SetString(PyExc_ValueError, 
++		PyErr_SetString(PyExc_ValueError,
+ 				_MODULE_STRING " key cannot be "
+ 				"the null string (0 bytes long)");
+ 		return NULL;
+@@ -248,7 +248,7 @@
+ 
+ static struct PyMethodDef modulemethods[] =
+ {
+-	{"new", (PyCFunction) ALGnew, 
++	{"new", (PyCFunction) ALGnew,
+ 	 METH_VARARGS|METH_KEYWORDS, ALGnew__doc__},
+ 	{NULL, NULL}			/* sentinel */
+ };
+@@ -300,7 +300,7 @@
+ #ifdef IS_PY3K
+  static struct PyModuleDef moduledef = {
+ 	PyModuleDef_HEAD_INIT,
+-	"Crypto.Cipher." _MODULE_STRING,
++	"Crypto_salt.Cipher." _MODULE_STRING,
+ 	NULL,
+ 	-1,
+ 	modulemethods,
+@@ -328,7 +328,7 @@
+  _MODULE_NAME (void)
+  {
+  	PyObject *m, *d, *x;
+- 
++
+ #ifdef IS_PY3K
+ 	/* PyType_Ready automatically fills in ob_type with &PyType_Type if it's not already set */
+ 	if (PyType_Ready(&ALGtype) < 0)
+@@ -341,14 +341,14 @@
+ #else
+ 	ALGtype.ob_type = &PyType_Type;
+ 	/* Create the module and add the functions */
+-	m = Py_InitModule("Crypto.Cipher." _MODULE_STRING, modulemethods);
++	m = Py_InitModule("Crypto_salt.Cipher." _MODULE_STRING, modulemethods);
+ #endif
+- 
++
+  	/* Add some symbolic constants to the module */
+  	d = PyModule_GetDict(m);
+ 	x = PyUnicode_FromString(_MODULE_STRING ".error");
+  	PyDict_SetItemString(d, "error", x);
+- 
++
+  	PyModule_AddIntConstant(m, "block_size", BLOCK_SIZE);
+ 	PyModule_AddIntConstant(m, "key_size", KEY_SIZE);
+ 
+@@ -360,5 +360,5 @@
+ 	return m;
+ #endif
+  }
+- 
++
+ /* vim:set ts=4 sw=4 sts=0 noexpandtab: */

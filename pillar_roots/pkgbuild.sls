@@ -150,6 +150,8 @@ pkgbuild_registry:
       noarch: True
     python-tornado:
       version: 4.2.1-1
+    python-tornado-salt:
+      version: 4.2.1-1
     python-timelib:
       version: 0.2.4-1
       noarch: True
@@ -286,6 +288,10 @@ pkgbuild_registry:
       version: 1.9.0-2
       noarch: True
     python-tornado:
+      version: 4.2.1-1
+      build_deps:
+        - python-backports-ssl_match_hostname
+    python-tornado-salt:
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname
@@ -517,6 +523,14 @@ pkgbuild_registry:
         - python-distribute
     python-tornado:
       name: python26-tornado
+      version: 4.2.1-1
+      build_deps:
+        - python-backports-ssl_match_hostname
+        - python-distribute
+      additonal_deps:
+        - python-pycurl
+    python-tornado-salt:
+      name: python26-tornado-salt
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname

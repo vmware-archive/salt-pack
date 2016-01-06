@@ -1,0 +1,3832 @@
+diff -ur a/setup.py b/setup.py
+--- a/setup.py	2015-07-17 10:39:13.000000000 -0500
++++ b/setup.py	2016-01-06 10:02:39.576568085 -0600
+@@ -109,8 +109,8 @@
+     # This extension builds and works on pypy as well, although pypy's jit
+     # produces equivalent performance.
+     kwargs['ext_modules'] = [
+-        Extension('tornado.speedups',
+-                  sources=['tornado/speedups.c']),
++        Extension('tornado_salt.speedups',
++                  sources=['tornado_salt/speedups.c']),
+     ]
+ 
+     if os.environ.get('TORNADO_EXTENSION') != '1':
+@@ -132,14 +132,14 @@
+     kwargs['install_requires'] = install_requires
+ 
+ setup(
+-    name="tornado",
++    name="tornado_salt",
+     version=version,
+-    packages=["tornado", "tornado.test", "tornado.platform"],
++    packages=["tornado_salt", "tornado_salt.test", "tornado_salt.platform"],
+     package_data={
+         # data files need to be listed both here (which determines what gets
+         # installed) and in MANIFEST.in (which determines what gets included
+         # in the sdist tarball)
+-        "tornado.test": [
++        "tornado_salt.test": [
+             "README",
+             "csv_translations/fr_FR.csv",
+             "gettext_translations/fr_FR/LC_MESSAGES/tornado_test.mo",
+diff -ur a/tornado/auth.py b/tornado/auth.py
+--- a/tornado/auth.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/auth.py	2016-01-06 10:02:39.793236442 -0600
+@@ -18,7 +18,7 @@
+ authentication schemes.
+ 
+ All the classes in this file are class mixins designed to be used with
+-the `tornado.web.RequestHandler` class.  They are used in two ways:
++the `tornado_salt.web.RequestHandler` class.  They are used in two ways:
+ 
+ * On a login handler, use methods such as ``authenticate_redirect()``,
+   ``authorize_redirect()``, and ``get_authenticated_user()`` to
+@@ -36,9 +36,9 @@
+ 
+ .. testcode::
+ 
+-    class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
+-                                   tornado.auth.GoogleOAuth2Mixin):
+-        @tornado.gen.coroutine
++    class GoogleOAuth2LoginHandler(tornado_salt.web.RequestHandler,
++                                   tornado_salt.auth.GoogleOAuth2Mixin):
++        @tornado_salt.gen.coroutine
+         def get(self):
+             if self.get_argument('code', False):
+                 user = yield self.get_authenticated_user(
+@@ -75,14 +75,14 @@
+ import time
+ import uuid
+ 
+-from tornado.concurrent import TracebackFuture, return_future
+-from tornado import gen
+-from tornado import httpclient
+-from tornado import escape
+-from tornado.httputil import url_concat
+-from tornado.log import gen_log
+-from tornado.stack_context import ExceptionStackContext
+-from tornado.util import u, unicode_type, ArgReplacer
++from tornado_salt.concurrent import TracebackFuture, return_future
++from tornado_salt import gen
++from tornado_salt import httpclient
++from tornado_salt import escape
++from tornado_salt.httputil import url_concat
++from tornado_salt.log import gen_log
++from tornado_salt.stack_context import ExceptionStackContext
++from tornado_salt.util import u, unicode_type, ArgReplacer
+ 
+ try:
+     import urlparse  # py2
+@@ -114,7 +114,7 @@
+ 
+ 
+ def _auth_return_future(f):
+-    """Similar to tornado.concurrent.return_future, but uses the auth
++    """Similar to tornado_salt.concurrent.return_future, but uses the auth
+     module's legacy callback interface.
+ 
+     Note that when using this decorator the ``callback`` parameter
+@@ -628,7 +628,7 @@
+     To authenticate with Twitter, register your application with
+     Twitter at http://twitter.com/apps. Then copy your Consumer Key
+     and Consumer Secret to the application
+-    `~tornado.web.Application.settings` ``twitter_consumer_key`` and
++    `~tornado_salt.web.Application.settings` ``twitter_consumer_key`` and
+     ``twitter_consumer_secret``. Use this mixin on the handler for the
+     URL you registered as your application's callback URL.
+ 
+@@ -637,9 +637,9 @@
+ 
+     .. testcode::
+ 
+-        class TwitterLoginHandler(tornado.web.RequestHandler,
+-                                  tornado.auth.TwitterMixin):
+-            @tornado.gen.coroutine
++        class TwitterLoginHandler(tornado_salt.web.RequestHandler,
++                                  tornado_salt.auth.TwitterMixin):
++            @tornado_salt.gen.coroutine
+             def get(self):
+                 if self.get_argument("oauth_token", None):
+                     user = yield self.get_authenticated_user()
+@@ -702,10 +702,10 @@
+ 
+         .. testcode::
+ 
+-            class MainHandler(tornado.web.RequestHandler,
+-                              tornado.auth.TwitterMixin):
+-                @tornado.web.authenticated
+-                @tornado.gen.coroutine
++            class MainHandler(tornado_salt.web.RequestHandler,
++                              tornado_salt.auth.TwitterMixin):
++                @tornado_salt.web.authenticated
++                @tornado_salt.gen.coroutine
+                 def get(self):
+                     new_entry = yield self.twitter_request(
+                         "/statuses/update",
+@@ -802,9 +802,9 @@
+ 
+         .. testcode::
+ 
+-            class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
+-                                           tornado.auth.GoogleOAuth2Mixin):
+-                @tornado.gen.coroutine
++            class GoogleOAuth2LoginHandler(tornado_salt.web.RequestHandler,
++                                           tornado_salt.auth.GoogleOAuth2Mixin):
++                @tornado_salt.gen.coroutine
+                 def get(self):
+                     if self.get_argument('code', False):
+                         user = yield self.get_authenticated_user(
+@@ -870,9 +870,9 @@
+ 
+         .. testcode::
+ 
+-            class FacebookGraphLoginHandler(tornado.web.RequestHandler,
+-                                            tornado.auth.FacebookGraphMixin):
+-              @tornado.gen.coroutine
++            class FacebookGraphLoginHandler(tornado_salt.web.RequestHandler,
++                                            tornado_salt.auth.FacebookGraphMixin):
++              @tornado_salt.gen.coroutine
+               def get(self):
+                   if self.get_argument("code", False):
+                       user = yield self.get_authenticated_user(
+@@ -961,10 +961,10 @@
+ 
+         ..testcode::
+ 
+-            class MainHandler(tornado.web.RequestHandler,
+-                              tornado.auth.FacebookGraphMixin):
+-                @tornado.web.authenticated
+-                @tornado.gen.coroutine
++            class MainHandler(tornado_salt.web.RequestHandler,
++                              tornado_salt.auth.FacebookGraphMixin):
++                @tornado_salt.web.authenticated
++                @tornado_salt.gen.coroutine
+                 def get(self):
+                     new_entry = yield self.facebook_request(
+                         "/me/feed",
+diff -ur a/tornado/autoreload.py b/tornado/autoreload.py
+--- a/tornado/autoreload.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/autoreload.py	2016-01-06 10:02:39.589901522 -0600
+@@ -18,7 +18,7 @@
+ 
+ Most applications should not access this module directly.  Instead,
+ pass the keyword argument ``autoreload=True`` to the
+-`tornado.web.Application` constructor (or ``debug=True``, which
++`tornado_salt.web.Application` constructor (or ``debug=True``, which
+ enables this setting and several others).  This will enable autoreload
+ mode as well as checking for changes to templates and static
+ resources.  Note that restarting is a destructive operation and any
+@@ -65,14 +65,14 @@
+ #
+ # We address the former problem by setting the $PYTHONPATH environment
+ # variable before re-execution so the new process will see the correct
+-# path.  We attempt to address the latter problem when tornado.autoreload
++# path.  We attempt to address the latter problem when tornado_salt.autoreload
+ # is run as __main__, although we can't fix the general case because
+ # we cannot reliably reconstruct the original command line
+ # (http://bugs.python.org/issue14208).
+ 
+ if __name__ == "__main__":
+     # This sys.path manipulation must come before our imports (as much
+-    # as possible - if we introduced a tornado.sys or tornado.os
++    # as possible - if we introduced a tornado_salt.sys or tornado_salt.os
+     # module we'd be in trouble), or else our imports would become
+     # relative again despite the future import.
+     #
+@@ -90,10 +90,10 @@
+ import subprocess
+ import weakref
+ 
+-from tornado import ioloop
+-from tornado.log import gen_log
+-from tornado import process
+-from tornado.util import exec_in
++from tornado_salt import ioloop
++from tornado_salt.log import gen_log
++from tornado_salt import process
++from tornado_salt.util import exec_in
+ 
+ try:
+     import signal
+@@ -126,7 +126,7 @@
+         return
+     _io_loops[io_loop] = True
+     if len(_io_loops) > 1:
+-        gen_log.warning("tornado.autoreload started more than once in the same process")
++        gen_log.warning("tornado_salt.autoreload started more than once in the same process")
+     if _has_execv:
+         add_reload_hook(functools.partial(io_loop.close, all_fds=True))
+     modify_times = {}
+@@ -160,7 +160,7 @@
+ 
+     Note that for open file and socket handles it is generally
+     preferable to set the ``FD_CLOEXEC`` flag (using `fcntl` or
+-    ``tornado.platform.auto.set_close_exec``) instead
++    ``tornado_salt.platform.auto.set_close_exec``) instead
+     of using a reload hook to close them.
+     """
+     _reload_hooks.append(fn)
+@@ -251,8 +251,8 @@
+ 
+ _USAGE = """\
+ Usage:
+-  python -m tornado.autoreload -m module.to.run [args...]
+-  python -m tornado.autoreload path/to/script.py [args...]
++  python -m tornado_salt.autoreload -m module.to.run [args...]
++  python -m tornado_salt.autoreload path/to/script.py [args...]
+ """
+ 
+ 
+@@ -261,11 +261,11 @@
+ 
+     Scripts may be specified by filename or module name::
+ 
+-        python -m tornado.autoreload -m tornado.test.runtests
+-        python -m tornado.autoreload tornado/test/runtests.py
++        python -m tornado_salt.autoreload -m tornado_salt.test.runtests
++        python -m tornado_salt.autoreload tornado/test/runtests.py
+ 
+     Running a script with this wrapper is similar to calling
+-    `tornado.autoreload.wait` at the end of the script, but this wrapper
++    `tornado_salt.autoreload.wait` at the end of the script, but this wrapper
+     can catch import-time problems like syntax errors that would otherwise
+     prevent the script from reaching its call to `wait`.
+     """
+diff -ur a/tornado/concurrent.py b/tornado/concurrent.py
+--- a/tornado/concurrent.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/concurrent.py	2016-01-06 10:02:39.739902693 -0600
+@@ -29,9 +29,9 @@
+ import traceback
+ import sys
+ 
+-from tornado.log import app_log
+-from tornado.stack_context import ExceptionStackContext, wrap
+-from tornado.util import raise_exc_info, ArgReplacer
++from tornado_salt.log import app_log
++from tornado_salt.stack_context import ExceptionStackContext, wrap
++from tornado_salt.util import raise_exc_info, ArgReplacer
+ 
+ try:
+     from concurrent import futures
+@@ -133,7 +133,7 @@
+     Tornado they are normally used with `.IOLoop.add_future` or by
+     yielding them in a `.gen.coroutine`.
+ 
+-    `tornado.concurrent.Future` is similar to
++    `tornado_salt.concurrent.Future` is similar to
+     `concurrent.futures.Future`, but not thread-safe (and therefore
+     faster for use with single-threaded event loops).
+ 
+@@ -145,7 +145,7 @@
+     ``TracebackFuture``, which is now a deprecated alias for this class.
+ 
+     .. versionchanged:: 4.0
+-       `tornado.concurrent.Future` is always a thread-unsafe ``Future``
++       `tornado_salt.concurrent.Future` is always a thread-unsafe ``Future``
+        with support for the ``exc_info`` methods.  Previously it would
+        be an alias for the thread-safe `concurrent.futures.Future`
+        if that package was available and fall back to the thread-unsafe
+diff -ur a/tornado/curl_httpclient.py b/tornado/curl_httpclient.py
+--- a/tornado/curl_httpclient.py	2015-06-13 14:41:18.000000000 -0500
++++ b/tornado/curl_httpclient.py	2016-01-06 10:02:39.746569411 -0600
+@@ -26,14 +26,14 @@
+ import time
+ from io import BytesIO
+ 
+-from tornado import httputil
+-from tornado import ioloop
+-from tornado import stack_context
++from tornado_salt import httputil
++from tornado_salt import ioloop
++from tornado_salt import stack_context
+ 
+-from tornado.escape import utf8, native_str
+-from tornado.httpclient import HTTPResponse, HTTPError, AsyncHTTPClient, main
++from tornado_salt.escape import utf8, native_str
++from tornado_salt.httpclient import HTTPResponse, HTTPError, AsyncHTTPClient, main
+ 
+-curl_log = logging.getLogger('tornado.curl_httpclient')
++curl_log = logging.getLogger('tornado_salt.curl_httpclient')
+ 
+ 
+ class CurlAsyncHTTPClient(AsyncHTTPClient):
+diff -ur a/tornado/escape.py b/tornado/escape.py
+--- a/tornado/escape.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/escape.py	2016-01-06 10:02:39.733235974 -0600
+@@ -25,7 +25,7 @@
+ import re
+ import sys
+ 
+-from tornado.util import unicode_type, basestring_type, u
++from tornado_salt.util import unicode_type, basestring_type, u
+ 
+ try:
+     from urllib.parse import parse_qs as _parse_qs  # py3
+@@ -274,7 +274,7 @@
+ # but it gets all exponential on certain patterns (such as too many trailing
+ # dots), causing the regex matcher to never return.
+ # This regex should avoid those problems.
+-# Use to_unicode instead of tornado.util.u - we don't want backslashes getting
++# Use to_unicode instead of tornado_salt.util.u - we don't want backslashes getting
+ # processed as escapes.
+ _URL_RE = re.compile(to_unicode(r"""\b((?:([\w-]+):(/{1,3})|www[.])(?:(?:(?:[^\s&()]|&amp;|&quot;)*(?:[^!"#$%&'()*+,.:;<=>?@\[\]^`{|}~\s]))|(?:\((?:[^\s&()]|&amp;|&quot;)*\)))+)"""))
+ 
+diff -ur a/tornado/gen.py b/tornado/gen.py
+--- a/tornado/gen.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/gen.py	2016-01-06 10:02:39.753236130 -0600
+@@ -1,4 +1,4 @@
+-"""``tornado.gen`` is a generator-based interface to make it easier to
++"""``tornado_salt.gen`` is a generator-based interface to make it easier to
+ work in an asynchronous environment.  Code using the ``gen`` module
+ is technically asynchronous, but it is written as a single generator
+ instead of a collection of separate functions.
+@@ -63,7 +63,7 @@
+ <https://pypi.python.org/pypi/singledispatch>`_ package on older
+ versions), additional types of objects may be yielded. Tornado includes
+ support for ``asyncio.Future`` and Twisted's ``Deferred`` class when
+-``tornado.platform.asyncio`` and ``tornado.platform.twisted`` are imported.
++``tornado_salt.platform.asyncio`` and ``tornado_salt.platform.twisted`` are imported.
+ See the `convert_yielded` function to extend this mechanism.
+ 
+ .. versionchanged:: 3.2
+@@ -83,11 +83,11 @@
+ import types
+ import weakref
+ 
+-from tornado.concurrent import Future, TracebackFuture, is_future, chain_future
+-from tornado.ioloop import IOLoop
+-from tornado.log import app_log
+-from tornado import stack_context
+-from tornado.util import raise_exc_info
++from tornado_salt.concurrent import Future, TracebackFuture, is_future, chain_future
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.log import app_log
++from tornado_salt import stack_context
++from tornado_salt.util import raise_exc_info
+ 
+ try:
+     from functools import singledispatch  # py34+
+@@ -136,7 +136,7 @@
+     In most cases, functions decorated with `engine` should take
+     a ``callback`` argument and invoke it with their result when
+     they are finished.  One notable exception is the
+-    `~tornado.web.RequestHandler` :ref:`HTTP verb methods <verbs>`,
++    `~tornado_salt.web.RequestHandler` :ref:`HTTP verb methods <verbs>`,
+     which use ``self.finish()`` in place of a callback argument.
+     """
+     func = _make_coroutine_wrapper(func, replace_callback=False)
+@@ -790,7 +790,7 @@
+ 
+ 
+ class Runner(object):
+-    """Internal implementation of `tornado.gen.engine`.
++    """Internal implementation of `tornado_salt.gen.engine`.
+ 
+     Maintains information about pending callbacks and their results.
+ 
+@@ -1012,7 +1012,7 @@
+ 
+         @convert_yielded.register(asyncio.Future)
+         def _(asyncio_future):
+-            return tornado.platform.asyncio.to_tornado_future(asyncio_future)
++            return tornado_salt.platform.asyncio.to_tornado_future(asyncio_future)
+ 
+     .. versionadded:: 4.1
+     """
+diff -ur a/tornado/http1connection.py b/tornado/http1connection.py
+--- a/tornado/http1connection.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/http1connection.py	2016-01-06 10:02:39.796569802 -0600
+@@ -23,14 +23,14 @@
+ 
+ import re
+ 
+-from tornado.concurrent import Future
+-from tornado.escape import native_str, utf8
+-from tornado import gen
+-from tornado import httputil
+-from tornado import iostream
+-from tornado.log import gen_log, app_log
+-from tornado import stack_context
+-from tornado.util import GzipDecompressor
++from tornado_salt.concurrent import Future
++from tornado_salt.escape import native_str, utf8
++from tornado_salt import gen
++from tornado_salt import httputil
++from tornado_salt import iostream
++from tornado_salt.log import gen_log, app_log
++from tornado_salt import stack_context
++from tornado_salt.util import GzipDecompressor
+ 
+ 
+ class _QuietException(Exception):
+diff -ur a/tornado/httpclient.py b/tornado/httpclient.py
+--- a/tornado/httpclient.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/httpclient.py	2016-01-06 10:02:39.586568162 -0600
+@@ -35,7 +35,7 @@
+ 
+ To select ``curl_httpclient``, call `AsyncHTTPClient.configure` at startup::
+ 
+-    AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
++    AsyncHTTPClient.configure("tornado_salt.curl_httpclient.CurlAsyncHTTPClient")
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+@@ -44,11 +44,11 @@
+ import time
+ import weakref
+ 
+-from tornado.concurrent import TracebackFuture
+-from tornado.escape import utf8, native_str
+-from tornado import httputil, stack_context
+-from tornado.ioloop import IOLoop
+-from tornado.util import Configurable
++from tornado_salt.concurrent import TracebackFuture
++from tornado_salt.escape import utf8, native_str
++from tornado_salt import httputil, stack_context
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.util import Configurable
+ 
+ 
+ class HTTPClient(object):
+@@ -146,7 +146,7 @@
+ 
+     @classmethod
+     def configurable_default(cls):
+-        from tornado.simple_httpclient import SimpleAsyncHTTPClient
++        from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient
+         return SimpleAsyncHTTPClient
+ 
+     @classmethod
+@@ -276,7 +276,7 @@
+ 
+         Example::
+ 
+-           AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
++           AsyncHTTPClient.configure("tornado_salt.curl_httpclient.CurlAsyncHTTPClient")
+         """
+         super(AsyncHTTPClient, cls).configure(impl, **kwargs)
+ 
+@@ -316,7 +316,7 @@
+         :arg string url: URL to fetch
+         :arg string method: HTTP method, e.g. "GET" or "POST"
+         :arg headers: Additional HTTP headers to pass on the request
+-        :type headers: `~tornado.httputil.HTTPHeaders` or `dict`
++        :type headers: `~tornado_salt.httputil.HTTPHeaders` or `dict`
+         :arg body: HTTP request body as a string (byte or unicode; if unicode
+            the utf-8 encoding will be used)
+         :arg body_producer: Callable used for lazy/asynchronous request bodies.
+@@ -518,7 +518,7 @@
+ 
+     * reason: human-readable reason phrase describing the status code
+ 
+-    * headers: `tornado.httputil.HTTPHeaders` object
++    * headers: `tornado_salt.httputil.HTTPHeaders` object
+ 
+     * effective_url: final location of the resource after following any
+       redirects
+@@ -628,7 +628,7 @@
+ 
+ 
+ def main():
+-    from tornado.options import define, options, parse_command_line
++    from tornado_salt.options import define, options, parse_command_line
+     define("print_headers", type=bool, default=False)
+     define("print_body", type=bool, default=True)
+     define("follow_redirects", type=bool, default=True)
+diff -ur a/tornado/httpserver.py b/tornado/httpserver.py
+--- a/tornado/httpserver.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/httpserver.py	2016-01-06 10:02:39.779903004 -0600
+@@ -18,26 +18,26 @@
+ 
+ Typical applications have little direct interaction with the `HTTPServer`
+ class except to start a server at the beginning of the process
+-(and even that is often done indirectly via `tornado.web.Application.listen`).
++(and even that is often done indirectly via `tornado_salt.web.Application.listen`).
+ 
+ .. versionchanged:: 4.0
+ 
+    The ``HTTPRequest`` class that used to live in this module has been moved
+-   to `tornado.httputil.HTTPServerRequest`.  The old name remains as an alias.
++   to `tornado_salt.httputil.HTTPServerRequest`.  The old name remains as an alias.
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+ import socket
+ 
+-from tornado.escape import native_str
+-from tornado.http1connection import HTTP1ServerConnection, HTTP1ConnectionParameters
+-from tornado import gen
+-from tornado import httputil
+-from tornado import iostream
+-from tornado import netutil
+-from tornado.tcpserver import TCPServer
+-from tornado.util import Configurable
++from tornado_salt.escape import native_str
++from tornado_salt.http1connection import HTTP1ServerConnection, HTTP1ConnectionParameters
++from tornado_salt import gen
++from tornado_salt import httputil
++from tornado_salt import iostream
++from tornado_salt import netutil
++from tornado_salt.tcpserver import TCPServer
++from tornado_salt.util import Configurable
+ 
+ 
+ class HTTPServer(TCPServer, Configurable,
+@@ -47,7 +47,7 @@
+     A server is defined by a subclass of `.HTTPServerConnectionDelegate`,
+     or, for backwards compatibility, a callback that takes an
+     `.HTTPServerRequest` as an argument. The delegate is usually a
+-    `tornado.web.Application`.
++    `tornado_salt.web.Application`.
+ 
+     `HTTPServer` supports keep-alive connections by default
+     (automatically for HTTP/1.1, or for HTTP/1.0 when the client
+@@ -73,18 +73,18 @@
+        HTTPServer(applicaton, ssl_options=ssl_ctx)
+ 
+     `HTTPServer` initialization follows one of three patterns (the
+-    initialization methods are defined on `tornado.tcpserver.TCPServer`):
++    initialization methods are defined on `tornado_salt.tcpserver.TCPServer`):
+ 
+-    1. `~tornado.tcpserver.TCPServer.listen`: simple single-process::
++    1. `~tornado_salt.tcpserver.TCPServer.listen`: simple single-process::
+ 
+             server = HTTPServer(app)
+             server.listen(8888)
+             IOLoop.current().start()
+ 
+-       In many cases, `tornado.web.Application.listen` can be used to avoid
++       In many cases, `tornado_salt.web.Application.listen` can be used to avoid
+        the need to explicitly create the `HTTPServer`.
+ 
+-    2. `~tornado.tcpserver.TCPServer.bind`/`~tornado.tcpserver.TCPServer.start`:
++    2. `~tornado_salt.tcpserver.TCPServer.bind`/`~tornado_salt.tcpserver.TCPServer.start`:
+        simple multi-process::
+ 
+             server = HTTPServer(app)
+@@ -96,20 +96,20 @@
+        to the `HTTPServer` constructor.  `~.TCPServer.start` will always start
+        the server on the default singleton `.IOLoop`.
+ 
+-    3. `~tornado.tcpserver.TCPServer.add_sockets`: advanced multi-process::
++    3. `~tornado_salt.tcpserver.TCPServer.add_sockets`: advanced multi-process::
+ 
+-            sockets = tornado.netutil.bind_sockets(8888)
+-            tornado.process.fork_processes(0)
++            sockets = tornado_salt.netutil.bind_sockets(8888)
++            tornado_salt.process.fork_processes(0)
+             server = HTTPServer(app)
+             server.add_sockets(sockets)
+             IOLoop.current().start()
+ 
+        The `~.TCPServer.add_sockets` interface is more complicated,
+-       but it can be used with `tornado.process.fork_processes` to
++       but it can be used with `tornado_salt.process.fork_processes` to
+        give you more flexibility in when the fork happens.
+        `~.TCPServer.add_sockets` can also be used in single-process
+        servers if you want to create your listening sockets in some
+-       way other than `tornado.netutil.bind_sockets`.
++       way other than `tornado_salt.netutil.bind_sockets`.
+ 
+     .. versionchanged:: 4.0
+        Added ``decompress_request``, ``chunk_size``, ``max_header_size``,
+@@ -123,7 +123,7 @@
+        documentation) instead of one ``(request_conn)``.
+ 
+     .. versionchanged:: 4.2
+-       `HTTPServer` is now a subclass of `tornado.util.Configurable`.
++       `HTTPServer` is now a subclass of `tornado_salt.util.Configurable`.
+     """
+     def __init__(self, *args, **kwargs):
+         # Ignore args to __init__; real initialization belongs in
+diff -ur a/tornado/httputil.py b/tornado/httputil.py
+--- a/tornado/httputil.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/httputil.py	2016-01-06 10:02:39.583234804 -0600
+@@ -17,7 +17,7 @@
+ """HTTP utility code shared by clients and servers.
+ 
+ This module also defines the `HTTPServerRequest` class which is exposed
+-via `tornado.web.RequestHandler.request`.
++via `tornado_salt.web.RequestHandler.request`.
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+@@ -31,9 +31,9 @@
+ import re
+ import time
+ 
+-from tornado.escape import native_str, parse_qs_bytes, utf8
+-from tornado.log import gen_log
+-from tornado.util import ObjectDict
++from tornado_salt.escape import native_str, parse_qs_bytes, utf8
++from tornado_salt.log import gen_log
++from tornado_salt.util import ObjectDict
+ 
+ try:
+     import Cookie  # py2
+@@ -333,7 +333,7 @@
+        sequentially on a single connection.
+ 
+     .. versionchanged:: 4.0
+-       Moved from ``tornado.httpserver.HTTPRequest``.
++       Moved from ``tornado_salt.httpserver.HTTPRequest``.
+     """
+     def __init__(self, method=None, uri=None, version="HTTP/1.0", headers=None,
+                  body=None, host=None, files=None, connection=None,
+diff -ur a/tornado/ioloop.py b/tornado/ioloop.py
+--- a/tornado/ioloop.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/ioloop.py	2016-01-06 10:02:39.779903004 -0600
+@@ -43,10 +43,10 @@
+ import traceback
+ import math
+ 
+-from tornado.concurrent import TracebackFuture, is_future
+-from tornado.log import app_log, gen_log
+-from tornado import stack_context
+-from tornado.util import Configurable, errno_from_exception, timedelta_to_seconds
++from tornado_salt.concurrent import TracebackFuture, is_future
++from tornado_salt.log import app_log, gen_log
++from tornado_salt import stack_context
++from tornado_salt.util import Configurable, errno_from_exception, timedelta_to_seconds
+ 
+ try:
+     import signal
+@@ -58,7 +58,7 @@
+ except ImportError:
+     import _thread as thread  # py3
+ 
+-from tornado.platform.auto import set_close_exec, Waker
++from tornado_salt.platform.auto import set_close_exec, Waker
+ 
+ 
+ _POLL_TIMEOUT = 3600.0
+@@ -83,7 +83,7 @@
+ 
+         import errno
+         import functools
+-        import tornado.ioloop
++        import tornado_salt.ioloop
+         import socket
+ 
+         def connection_ready(sock, fd, events):
+@@ -104,7 +104,7 @@
+             sock.bind(("", port))
+             sock.listen(128)
+ 
+-            io_loop = tornado.ioloop.IOLoop.current()
++            io_loop = tornado_salt.ioloop.IOLoop.current()
+             callback = functools.partial(connection_ready, sock)
+             io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
+             io_loop.start()
+@@ -235,13 +235,13 @@
+     @classmethod
+     def configurable_default(cls):
+         if hasattr(select, "epoll"):
+-            from tornado.platform.epoll import EPollIOLoop
++            from tornado_salt.platform.epoll import EPollIOLoop
+             return EPollIOLoop
+         if hasattr(select, "kqueue"):
+             # Python 2.6+ on BSD or Mac
+-            from tornado.platform.kqueue import KQueueIOLoop
++            from tornado_salt.platform.kqueue import KQueueIOLoop
+             return KQueueIOLoop
+-        from tornado.platform.select import SelectIOLoop
++        from tornado_salt.platform.select import SelectIOLoop
+         return SelectIOLoop
+ 
+     def initialize(self, make_current=None):
+@@ -369,8 +369,8 @@
+         This method should be called from start() in subclasses.
+         """
+         if not any([logging.getLogger().handlers,
+-                    logging.getLogger('tornado').handlers,
+-                    logging.getLogger('tornado.application').handlers]):
++                    logging.getLogger('tornado_salt').handlers,
++                    logging.getLogger('tornado_salt.application').handlers]):
+             logging.basicConfig()
+ 
+     def stop(self):
+@@ -409,7 +409,7 @@
+         a maximum duration for the function.  If the timeout expires,
+         a `TimeoutError` is raised.
+ 
+-        This method is useful in conjunction with `tornado.gen.coroutine`
++        This method is useful in conjunction with `tornado_salt.gen.coroutine`
+         to allow asynchronous calls in a ``main()`` function::
+ 
+             @gen.coroutine
+@@ -656,9 +656,9 @@
+ class PollIOLoop(IOLoop):
+     """Base class for IOLoops built around a select-like function.
+ 
+-    For concrete implementations, see `tornado.platform.epoll.EPollIOLoop`
+-    (Linux), `tornado.platform.kqueue.KQueueIOLoop` (BSD and Mac), or
+-    `tornado.platform.select.SelectIOLoop` (all platforms).
++    For concrete implementations, see `tornado_salt.platform.epoll.EPollIOLoop`
++    (Linux), `tornado_salt.platform.kqueue.KQueueIOLoop` (BSD and Mac), or
++    `tornado_salt.platform.select.SelectIOLoop` (all platforms).
+     """
+     def initialize(self, impl, time_func=None, **kwargs):
+         super(PollIOLoop, self).initialize(**kwargs)
+diff -ur a/tornado/iostream.py b/tornado/iostream.py
+--- a/tornado/iostream.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/iostream.py	2016-01-06 10:02:39.786569723 -0600
+@@ -34,15 +34,15 @@
+ import sys
+ import re
+ 
+-from tornado.concurrent import TracebackFuture
+-from tornado import ioloop
+-from tornado.log import gen_log, app_log
+-from tornado.netutil import ssl_wrap_socket, ssl_match_hostname, SSLCertificateError, _client_ssl_defaults, _server_ssl_defaults
+-from tornado import stack_context
+-from tornado.util import errno_from_exception
++from tornado_salt.concurrent import TracebackFuture
++from tornado_salt import ioloop
++from tornado_salt.log import gen_log, app_log
++from tornado_salt.netutil import ssl_wrap_socket, ssl_match_hostname, SSLCertificateError, _client_ssl_defaults, _server_ssl_defaults
++from tornado_salt import stack_context
++from tornado_salt.util import errno_from_exception
+ 
+ try:
+-    from tornado.platform.posix import _set_nonblocking
++    from tornado_salt.platform.posix import _set_nonblocking
+ except ImportError:
+     _set_nonblocking = None
+ 
+@@ -952,8 +952,8 @@
+ 
+     .. testcode::
+ 
+-        import tornado.ioloop
+-        import tornado.iostream
++        import tornado_salt.ioloop
++        import tornado_salt.iostream
+         import socket
+ 
+         def send_request():
+@@ -971,13 +971,13 @@
+         def on_body(data):
+             print(data)
+             stream.close()
+-            tornado.ioloop.IOLoop.current().stop()
++            tornado_salt.ioloop.IOLoop.current().stop()
+ 
+         if __name__ == '__main__':
+             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+-            stream = tornado.iostream.IOStream(s)
++            stream = tornado_salt.iostream.IOStream(s)
+             stream.connect(("friendfeed.com", 80), send_request)
+-            tornado.ioloop.IOLoop.current().start()
++            tornado_salt.ioloop.IOLoop.current().start()
+ 
+     .. testoutput::
+        :hide:
+diff -ur a/tornado/locale.py b/tornado/locale.py
+--- a/tornado/locale.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/locale.py	2016-01-06 10:02:39.783236364 -0600
+@@ -18,10 +18,10 @@
+ 
+ To load a locale and generate a translated string::
+ 
+-    user_locale = tornado.locale.get("es_LA")
++    user_locale = tornado_salt.locale.get("es_LA")
+     print user_locale.translate("Sign out")
+ 
+-`tornado.locale.get()` returns the closest matching locale, not necessarily the
++`tornado_salt.locale.get()` returns the closest matching locale, not necessarily the
+ specific locale you requested. You can support pluralization with
+ additional arguments to `~Locale.translate()`, e.g.::
+ 
+@@ -47,9 +47,9 @@
+ import os
+ import re
+ 
+-from tornado import escape
+-from tornado.log import gen_log
+-from tornado.util import u
++from tornado_salt import escape
++from tornado_salt.log import gen_log
++from tornado_salt.util import u
+ 
+ _default_locale = "en_US"
+ _translations = {}
+diff -ur a/tornado/locks.py b/tornado/locks.py
+--- a/tornado/locks.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/locks.py	2016-01-06 10:02:39.769902927 -0600
+@@ -15,7 +15,7 @@
+ """
+ .. testsetup:: *
+ 
+-    from tornado import ioloop, gen, locks
++    from tornado_salt import ioloop, gen, locks
+     io_loop = ioloop.IOLoop.current()
+ """
+ 
+@@ -25,8 +25,8 @@
+ 
+ import collections
+ 
+-from tornado import gen, ioloop
+-from tornado.concurrent import Future
++from tornado_salt import gen, ioloop
++from tornado_salt.concurrent import Future
+ 
+ 
+ class _TimeoutGarbageCollector(object):
+@@ -102,7 +102,7 @@
+         # Wait up to 1 second.
+         yield condition.wait(timeout=datetime.timedelta(seconds=1))
+ 
+-    The method raises `tornado.gen.TimeoutError` if there's no notification
++    The method raises `tornado_salt.gen.TimeoutError` if there's no notification
+     before the deadline.
+     """
+ 
+@@ -219,7 +219,7 @@
+     def wait(self, timeout=None):
+         """Block until the internal flag is true.
+ 
+-        Returns a Future, which raises `tornado.gen.TimeoutError` after a
++        Returns a Future, which raises `tornado_salt.gen.TimeoutError` after a
+         timeout.
+         """
+         if timeout is None:
+@@ -261,8 +261,8 @@
+ 
+        from collections import deque
+ 
+-       from tornado import gen, ioloop
+-       from tornado.concurrent import Future
++       from tornado_salt import gen, ioloop
++       from tornado_salt.concurrent import Future
+ 
+        # Ensure reliable doctest output: resolve Futures one at a time.
+        futures_q = deque([Future() for _ in range(3)])
+@@ -414,7 +414,7 @@
+ 
+     `acquire` supports the context manager protocol:
+ 
+-    >>> from tornado import gen, locks
++    >>> from tornado_salt import gen, locks
+     >>> lock = locks.Lock()
+     >>>
+     >>> @gen.coroutine
+@@ -436,7 +436,7 @@
+     def acquire(self, timeout=None):
+         """Attempt to lock. Returns a Future.
+ 
+-        Returns a Future, which raises `tornado.gen.TimeoutError` after a
++        Returns a Future, which raises `tornado_salt.gen.TimeoutError` after a
+         timeout.
+         """
+         return self._block.acquire(timeout)
+diff -ur a/tornado/log.py b/tornado/log.py
+--- a/tornado/log.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/log.py	2016-01-06 10:02:39.743236051 -0600
+@@ -17,15 +17,15 @@
+ 
+ Tornado uses three logger streams:
+ 
+-* ``tornado.access``: Per-request logging for Tornado's HTTP servers (and
++* ``tornado_salt.access``: Per-request logging for Tornado's HTTP servers (and
+   potentially other servers in the future)
+-* ``tornado.application``: Logging of errors from application code (i.e.
++* ``tornado_salt.application``: Logging of errors from application code (i.e.
+   uncaught exceptions from callbacks)
+-* ``tornado.general``: General-purpose logging, including any errors
++* ``tornado_salt.general``: General-purpose logging, including any errors
+   or warnings from Tornado itself.
+ 
+ These streams may be configured independently using the standard library's
+-`logging` module.  For example, you may wish to send ``tornado.access`` logs
++`logging` module.  For example, you may wish to send ``tornado_salt.access`` logs
+ to a separate file for analysis.
+ """
+ from __future__ import absolute_import, division, print_function, with_statement
+@@ -34,8 +34,8 @@
+ import logging.handlers
+ import sys
+ 
+-from tornado.escape import _unicode
+-from tornado.util import unicode_type, basestring_type
++from tornado_salt.escape import _unicode
++from tornado_salt.util import unicode_type, basestring_type
+ 
+ try:
+     import curses
+@@ -43,9 +43,9 @@
+     curses = None
+ 
+ # Logger objects for internal tornado use
+-access_log = logging.getLogger("tornado.access")
+-app_log = logging.getLogger("tornado.application")
+-gen_log = logging.getLogger("tornado.general")
++access_log = logging.getLogger("tornado_salt.access")
++app_log = logging.getLogger("tornado_salt.application")
++gen_log = logging.getLogger("tornado_salt.general")
+ 
+ 
+ def _stderr_supports_color():
+@@ -77,7 +77,7 @@
+     * Robust against str/bytes encoding problems.
+ 
+     This formatter is enabled automatically by
+-    `tornado.options.parse_command_line` (unless ``--logging=none`` is
++    `tornado_salt.options.parse_command_line` (unless ``--logging=none`` is
+     used).
+     """
+     DEFAULT_FORMAT = '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+@@ -179,11 +179,11 @@
+ def enable_pretty_logging(options=None, logger=None):
+     """Turns on formatted logging output as configured.
+ 
+-    This is called automatically by `tornado.options.parse_command_line`
+-    and `tornado.options.parse_config_file`.
++    This is called automatically by `tornado_salt.options.parse_command_line`
++    and `tornado_salt.options.parse_config_file`.
+     """
+     if options is None:
+-        from tornado.options import options
++        from tornado_salt.options import options
+     if options.logging is None or options.logging.lower() == 'none':
+         return
+     if logger is None:
+@@ -216,7 +216,7 @@
+     """
+     if options is None:
+         # late import to prevent cycle
+-        from tornado.options import options
++        from tornado_salt.options import options
+     options.define("logging", default="info",
+                    help=("Set the Python log level. If 'none', tornado won't touch the "
+                          "logging configuration."),
+diff -ur a/tornado/netutil.py b/tornado/netutil.py
+--- a/tornado/netutil.py	2015-07-04 13:27:20.000000000 -0500
++++ b/tornado/netutil.py	2016-01-06 10:02:39.756569489 -0600
+@@ -24,10 +24,10 @@
+ import socket
+ import stat
+ 
+-from tornado.concurrent import dummy_executor, run_on_executor
+-from tornado.ioloop import IOLoop
+-from tornado.platform.auto import set_close_exec
+-from tornado.util import u, Configurable, errno_from_exception
++from tornado_salt.concurrent import dummy_executor, run_on_executor
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.platform.auto import set_close_exec
++from tornado_salt.util import u, Configurable, errno_from_exception
+ 
+ try:
+     import ssl
+@@ -295,15 +295,15 @@
+     chosen with the `Resolver.configure <.Configurable.configure>`
+     class method::
+ 
+-        Resolver.configure('tornado.netutil.ThreadedResolver')
++        Resolver.configure('tornado_salt.netutil.ThreadedResolver')
+ 
+     The implementations of this interface included with Tornado are
+ 
+-    * `tornado.netutil.BlockingResolver`
+-    * `tornado.netutil.ThreadedResolver`
+-    * `tornado.netutil.OverrideResolver`
+-    * `tornado.platform.twisted.TwistedResolver`
+-    * `tornado.platform.caresresolver.CaresResolver`
++    * `tornado_salt.netutil.BlockingResolver`
++    * `tornado_salt.netutil.ThreadedResolver`
++    * `tornado_salt.netutil.OverrideResolver`
++    * `tornado_salt.platform.twisted.TwistedResolver`
++    * `tornado_salt.platform.caresresolver.CaresResolver`
+     """
+     @classmethod
+     def configurable_base(cls):
+@@ -397,7 +397,7 @@
+ 
+     The thread pool size can be configured with::
+ 
+-        Resolver.configure('tornado.netutil.ThreadedResolver',
++        Resolver.configure('tornado_salt.netutil.ThreadedResolver',
+                            num_threads=10)
+ 
+     .. versionchanged:: 3.1
+@@ -503,7 +503,7 @@
+         if server_hostname is not None and getattr(ssl, 'HAS_SNI'):
+             # Python doesn't have server-side SNI support so we can't
+             # really unittest this, but it can be manually tested with
+-            # python3.2 -m tornado.httpclient https://sni.velox.ch
++            # python3.2 -m tornado_salt.httpclient https://sni.velox.ch
+             return context.wrap_socket(socket, server_hostname=server_hostname,
+                                        **kwargs)
+         else:
+diff -ur a/tornado/options.py b/tornado/options.py
+--- a/tornado/options.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/options.py	2016-01-06 10:02:39.736569333 -0600
+@@ -19,7 +19,7 @@
+ Each module defines its own options which are added to the global
+ option namespace, e.g.::
+ 
+-    from tornado.options import define, options
++    from tornado_salt.options import define, options
+ 
+     define("mysql_host", default="127.0.0.1:3306", help="Main user DB")
+     define("memcache_hosts", default="127.0.0.1:11011", multiple=True,
+@@ -37,9 +37,9 @@
+ Your ``main()`` method can parse the command line or parse a config file with
+ either::
+ 
+-    tornado.options.parse_command_line()
++    tornado_salt.options.parse_command_line()
+     # or
+-    tornado.options.parse_config_file("/etc/server.conf")
++    tornado_salt.options.parse_config_file("/etc/server.conf")
+ 
+ Command line formats are what you would expect (``--myoption=myvalue``).
+ Config files are just Python files. Global names become options, e.g.::
+@@ -52,7 +52,7 @@
+ `define`). We also accept multi-value options. See the documentation for
+ `define()` below.
+ 
+-`tornado.options.options` is a singleton instance of `OptionParser`, and
++`tornado_salt.options.options` is a singleton instance of `OptionParser`, and
+ the top-level functions in this module (`define`, `parse_command_line`, etc)
+ simply call methods on it.  You may create additional `OptionParser`
+ instances to define isolated sets of options, such as for subcommands.
+@@ -65,7 +65,7 @@
+    alone so you can manage it yourself, either pass ``--logging=none``
+    on the command line or do the following to disable it in code::
+ 
+-       from tornado.options import options, parse_command_line
++       from tornado_salt.options import options, parse_command_line
+        options.logging = None
+        parse_command_line()
+ """
+@@ -79,10 +79,10 @@
+ import os
+ import textwrap
+ 
+-from tornado.escape import _unicode, native_str
+-from tornado.log import define_logging_options
+-from tornado import stack_context
+-from tornado.util import basestring_type, exec_in
++from tornado_salt.escape import _unicode, native_str
++from tornado_salt.log import define_logging_options
++from tornado_salt import stack_context
++from tornado_salt.util import basestring_type, exec_in
+ 
+ 
+ class Error(Exception):
+@@ -93,7 +93,7 @@
+ class OptionParser(object):
+     """A collection of options, a dictionary with object-like access.
+ 
+-    Normally accessed via static functions in the `tornado.options` module,
++    Normally accessed via static functions in the `tornado_salt.options` module,
+     which reference a global instance.
+     """
+     def __init__(self):
+@@ -138,7 +138,7 @@
+ 
+         Useful for copying options into Application settings::
+ 
+-            from tornado.options import define, parse_command_line, options
++            from tornado_salt.options import define, parse_command_line, options
+ 
+             define('template_path', group='application')
+             define('static_path', group='application')
+diff -ur a/tornado/platform/asyncio.py b/tornado/platform/asyncio.py
+--- a/tornado/platform/asyncio.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/platform/asyncio.py	2016-01-06 10:02:39.596568241 -0600
+@@ -3,8 +3,8 @@
+ This is a work in progress and interfaces are subject to change.
+ 
+ To test:
+-python3.4 -m tornado.test.runtests --ioloop=tornado.platform.asyncio.AsyncIOLoop
+-python3.4 -m tornado.test.runtests --ioloop=tornado.platform.asyncio.AsyncIOMainLoop
++python3.4 -m tornado_salt.test.runtests --ioloop=tornado_salt.platform.asyncio.AsyncIOLoop
++python3.4 -m tornado_salt.test.runtests --ioloop=tornado_salt.platform.asyncio.AsyncIOMainLoop
+ (the tests log a few warnings with AsyncIOMainLoop because they leave some
+ unfinished callbacks on the event loop that fail when it resumes)
+ """
+@@ -12,10 +12,10 @@
+ from __future__ import absolute_import, division, print_function, with_statement
+ import functools
+ 
+-import tornado.concurrent
+-from tornado.gen import convert_yielded
+-from tornado.ioloop import IOLoop
+-from tornado import stack_context
++import tornado_salt.concurrent
++from tornado_salt.gen import convert_yielded
++from tornado_salt.ioloop import IOLoop
++from tornado_salt import stack_context
+ 
+ try:
+     # Import the real asyncio module for py33+ first.  Older versions of the
+@@ -145,16 +145,16 @@
+ 
+ 
+ def to_tornado_future(asyncio_future):
+-    """Convert an ``asyncio.Future`` to a `tornado.concurrent.Future`."""
+-    tf = tornado.concurrent.Future()
+-    tornado.concurrent.chain_future(asyncio_future, tf)
++    """Convert an ``asyncio.Future`` to a `tornado_salt.concurrent.Future`."""
++    tf = tornado_salt.concurrent.Future()
++    tornado_salt.concurrent.chain_future(asyncio_future, tf)
+     return tf
+ 
+ 
+ def to_asyncio_future(tornado_future):
+-    """Convert a `tornado.concurrent.Future` to an ``asyncio.Future``."""
++    """Convert a `tornado_salt.concurrent.Future` to an ``asyncio.Future``."""
+     af = asyncio.Future()
+-    tornado.concurrent.chain_future(tornado_future, af)
++    tornado_salt.concurrent.chain_future(tornado_future, af)
+     return af
+ 
+ if hasattr(convert_yielded, 'register'):
+diff -ur a/tornado/platform/auto.py b/tornado/platform/auto.py
+--- a/tornado/platform/auto.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/platform/auto.py	2016-01-06 10:02:39.603234960 -0600
+@@ -16,11 +16,11 @@
+ 
+ """Implementation of platform-specific functionality.
+ 
+-For each function or class described in `tornado.platform.interface`,
++For each function or class described in `tornado_salt.platform.interface`,
+ the appropriate platform-specific implementation exists in this module.
+ Most code that needs access to this functionality should do e.g.::
+ 
+-    from tornado.platform.auto import set_close_exec
++    from tornado_salt.platform.auto import set_close_exec
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+@@ -28,15 +28,15 @@
+ import os
+ 
+ if 'APPENGINE_RUNTIME' in os.environ:
+-    from tornado.platform.common import Waker
++    from tornado_salt.platform.common import Waker
+ 
+     def set_close_exec(fd):
+         pass
+ elif os.name == 'nt':
+-    from tornado.platform.common import Waker
+-    from tornado.platform.windows import set_close_exec
++    from tornado_salt.platform.common import Waker
++    from tornado_salt.platform.windows import set_close_exec
+ else:
+-    from tornado.platform.posix import set_close_exec, Waker
++    from tornado_salt.platform.posix import set_close_exec, Waker
+ 
+ try:
+     # monotime monkey-patches the time module to have a monotonic function
+diff -ur a/tornado/platform/caresresolver.py b/tornado/platform/caresresolver.py
+--- a/tornado/platform/caresresolver.py	2015-02-08 13:33:20.000000000 -0600
++++ b/tornado/platform/caresresolver.py	2016-01-06 10:02:39.593234881 -0600
+@@ -2,9 +2,9 @@
+ import pycares
+ import socket
+ 
+-from tornado import gen
+-from tornado.ioloop import IOLoop
+-from tornado.netutil import Resolver, is_valid_ip
++from tornado_salt import gen
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.netutil import Resolver, is_valid_ip
+ 
+ 
+ class CaresResolver(Resolver):
+@@ -16,7 +16,7 @@
+ 
+     c-ares fails to resolve some names when ``family`` is ``AF_UNSPEC``,
+     so it is only recommended for use in ``AF_INET`` (i.e. IPv4).  This is
+-    the default for ``tornado.simple_httpclient``, but other libraries
++    the default for ``tornado_salt.simple_httpclient``, but other libraries
+     may default to ``AF_UNSPEC``.
+ 
+     .. versionchanged:: 4.1
+diff -ur a/tornado/platform/common.py b/tornado/platform/common.py
+--- a/tornado/platform/common.py	2015-02-08 13:33:16.000000000 -0600
++++ b/tornado/platform/common.py	2016-01-06 10:02:39.609901678 -0600
+@@ -4,7 +4,7 @@
+ import errno
+ import socket
+ 
+-from tornado.platform import interface
++from tornado_salt.platform import interface
+ 
+ 
+ class Waker(interface.Waker):
+diff -ur a/tornado/platform/epoll.py b/tornado/platform/epoll.py
+--- a/tornado/platform/epoll.py	2015-04-26 20:02:04.000000000 -0500
++++ b/tornado/platform/epoll.py	2016-01-06 10:02:39.593234881 -0600
+@@ -18,7 +18,7 @@
+ 
+ import select
+ 
+-from tornado.ioloop import PollIOLoop
++from tornado_salt.ioloop import PollIOLoop
+ 
+ 
+ class EPollIOLoop(PollIOLoop):
+diff -ur a/tornado/platform/interface.py b/tornado/platform/interface.py
+--- a/tornado/platform/interface.py	2015-02-08 13:33:22.000000000 -0600
++++ b/tornado/platform/interface.py	2016-01-06 10:02:39.599901600 -0600
+@@ -17,8 +17,8 @@
+ """Interfaces for platform-specific functionality.
+ 
+ This module exists primarily for documentation purposes and as base classes
+-for other tornado.platform modules.  Most code should import the appropriate
+-implementation from `tornado.platform.auto`.
++for other tornado_salt.platform modules.  Most code should import the appropriate
++implementation from `tornado_salt.platform.auto`.
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+@@ -32,7 +32,7 @@
+ class Waker(object):
+     """A socket-like object that can wake another thread from ``select()``.
+ 
+-    The `~tornado.ioloop.IOLoop` will add the Waker's `fileno()` to
++    The `~tornado_salt.ioloop.IOLoop` will add the Waker's `fileno()` to
+     its ``select`` (or ``epoll`` or ``kqueue``) calls.  When another
+     thread wants to wake up the loop, it calls `wake`.  Once it has woken
+     up, it will call `consume` to do any necessary per-wake cleanup.  When
+diff -ur a/tornado/platform/kqueue.py b/tornado/platform/kqueue.py
+--- a/tornado/platform/kqueue.py	2015-04-26 20:02:04.000000000 -0500
++++ b/tornado/platform/kqueue.py	2016-01-06 10:02:39.606568318 -0600
+@@ -18,7 +18,7 @@
+ 
+ import select
+ 
+-from tornado.ioloop import IOLoop, PollIOLoop
++from tornado_salt.ioloop import IOLoop, PollIOLoop
+ 
+ assert hasattr(select, 'kqueue'), 'kqueue not supported'
+ 
+diff -ur a/tornado/platform/posix.py b/tornado/platform/posix.py
+--- a/tornado/platform/posix.py	2015-02-08 13:33:23.000000000 -0600
++++ b/tornado/platform/posix.py	2016-01-06 10:02:39.603234960 -0600
+@@ -21,7 +21,7 @@
+ import fcntl
+ import os
+ 
+-from tornado.platform import interface
++from tornado_salt.platform import interface
+ 
+ 
+ def set_close_exec(fd):
+diff -ur a/tornado/platform/select.py b/tornado/platform/select.py
+--- a/tornado/platform/select.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/platform/select.py	2016-01-06 10:02:39.596568241 -0600
+@@ -21,7 +21,7 @@
+ 
+ import select
+ 
+-from tornado.ioloop import IOLoop, PollIOLoop
++from tornado_salt.ioloop import IOLoop, PollIOLoop
+ 
+ 
+ class _Select(object):
+diff -ur a/tornado/platform/twisted.py b/tornado/platform/twisted.py
+--- a/tornado/platform/twisted.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/platform/twisted.py	2016-01-06 10:02:39.613235037 -0600
+@@ -31,15 +31,15 @@
+ the Tornado IOLoop.  To use it, simply call `install` at the beginning
+ of the application::
+ 
+-    import tornado.platform.twisted
+-    tornado.platform.twisted.install()
++    import tornado_salt.platform.twisted
++    tornado_salt.platform.twisted.install()
+     from twisted.internet import reactor
+ 
+ When the app is ready to start, call `IOLoop.current().start()`
+ instead of `reactor.run()`.
+ 
+ It is also possible to create a non-global reactor by calling
+-`tornado.platform.twisted.TornadoReactor(io_loop)`.  However, if
++`tornado_salt.platform.twisted.TornadoReactor(io_loop)`.  However, if
+ the `IOLoop` and reactor are to be short-lived (such as those used in
+ unit tests), additional cleanup may be required.  Specifically, it is
+ recommended to call::
+@@ -55,7 +55,7 @@
+ `TwistedIOLoop` implements the Tornado IOLoop interface on top of the Twisted
+ reactor.  Recommended usage::
+ 
+-    from tornado.platform.twisted import TwistedIOLoop
++    from tornado_salt.platform.twisted import TwistedIOLoop
+     from twisted.internet import reactor
+     TwistedIOLoop().install()
+     # Set up your tornado application as usual using `IOLoop.instance`
+@@ -86,15 +86,15 @@
+ 
+ from zope.interface import implementer
+ 
+-from tornado.concurrent import Future
+-from tornado.escape import utf8
+-from tornado import gen
+-import tornado.ioloop
+-from tornado.log import app_log
+-from tornado.netutil import Resolver
+-from tornado.stack_context import NullContext, wrap
+-from tornado.ioloop import IOLoop
+-from tornado.util import timedelta_to_seconds
++from tornado_salt.concurrent import Future
++from tornado_salt.escape import utf8
++from tornado_salt import gen
++import tornado_salt.ioloop
++from tornado_salt.log import app_log
++from tornado_salt.netutil import Resolver
++from tornado_salt.stack_context import NullContext, wrap
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.util import timedelta_to_seconds
+ 
+ 
+ @implementer(IDelayedCall)
+@@ -156,7 +156,7 @@
+     """
+     def __init__(self, io_loop=None):
+         if not io_loop:
+-            io_loop = tornado.ioloop.IOLoop.current()
++            io_loop = tornado_salt.ioloop.IOLoop.current()
+         self._io_loop = io_loop
+         self._readers = {}  # map of reader objects to fd
+         self._writers = {}  # map of writer objects to fd
+@@ -368,7 +368,7 @@
+        The ``io_loop`` argument is deprecated.
+     """
+     if not io_loop:
+-        io_loop = tornado.ioloop.IOLoop.current()
++        io_loop = tornado_salt.ioloop.IOLoop.current()
+     reactor = TornadoReactor(io_loop)
+     from twisted.internet.main import installReactor
+     installReactor(reactor)
+@@ -390,29 +390,29 @@
+ 
+     def doRead(self):
+         if not self.lost:
+-            self.handler(self.fileobj, tornado.ioloop.IOLoop.READ)
++            self.handler(self.fileobj, tornado_salt.ioloop.IOLoop.READ)
+ 
+     def doWrite(self):
+         if not self.lost:
+-            self.handler(self.fileobj, tornado.ioloop.IOLoop.WRITE)
++            self.handler(self.fileobj, tornado_salt.ioloop.IOLoop.WRITE)
+ 
+     def connectionLost(self, reason):
+         if not self.lost:
+-            self.handler(self.fileobj, tornado.ioloop.IOLoop.ERROR)
++            self.handler(self.fileobj, tornado_salt.ioloop.IOLoop.ERROR)
+             self.lost = True
+ 
+     def logPrefix(self):
+         return ''
+ 
+ 
+-class TwistedIOLoop(tornado.ioloop.IOLoop):
++class TwistedIOLoop(tornado_salt.ioloop.IOLoop):
+     """IOLoop implementation that runs on Twisted.
+ 
+     Uses the global Twisted reactor by default.  To create multiple
+     `TwistedIOLoops` in the same process, you must pass a unique reactor
+     when constructing each one.
+ 
+-    Not compatible with `tornado.process.Subprocess.set_exit_callback`
++    Not compatible with `tornado_salt.process.Subprocess.set_exit_callback`
+     because the ``SIGCHLD`` handlers used by Tornado and Twisted conflict
+     with each other.
+     """
+@@ -439,16 +439,16 @@
+             raise ValueError('fd %s added twice' % fd)
+         fd, fileobj = self.split_fd(fd)
+         self.fds[fd] = _FD(fd, fileobj, wrap(handler))
+-        if events & tornado.ioloop.IOLoop.READ:
++        if events & tornado_salt.ioloop.IOLoop.READ:
+             self.fds[fd].reading = True
+             self.reactor.addReader(self.fds[fd])
+-        if events & tornado.ioloop.IOLoop.WRITE:
++        if events & tornado_salt.ioloop.IOLoop.WRITE:
+             self.fds[fd].writing = True
+             self.reactor.addWriter(self.fds[fd])
+ 
+     def update_handler(self, fd, events):
+         fd, fileobj = self.split_fd(fd)
+-        if events & tornado.ioloop.IOLoop.READ:
++        if events & tornado_salt.ioloop.IOLoop.READ:
+             if not self.fds[fd].reading:
+                 self.fds[fd].reading = True
+                 self.reactor.addReader(self.fds[fd])
+@@ -456,7 +456,7 @@
+             if self.fds[fd].reading:
+                 self.fds[fd].reading = False
+                 self.reactor.removeReader(self.fds[fd])
+-        if events & tornado.ioloop.IOLoop.WRITE:
++        if events & tornado_salt.ioloop.IOLoop.WRITE:
+             if not self.fds[fd].writing:
+                 self.fds[fd].writing = True
+                 self.reactor.addWriter(self.fds[fd])
+@@ -516,8 +516,8 @@
+     This is a non-blocking and non-threaded resolver.  It is
+     recommended only when threads cannot be used, since it has
+     limitations compared to the standard ``getaddrinfo``-based
+-    `~tornado.netutil.Resolver` and
+-    `~tornado.netutil.ThreadedResolver`.  Specifically, it returns at
++    `~tornado_salt.netutil.Resolver` and
++    `~tornado_salt.netutil.ThreadedResolver`.  Specifically, it returns at
+     most one result, and arguments other than ``host`` and ``family``
+     are ignored.  It may fail to resolve when ``family`` is not
+     ``socket.AF_UNSPEC``.
+@@ -531,7 +531,7 @@
+         self.io_loop = io_loop or IOLoop.current()
+         # partial copy of twisted.names.client.createResolver, which doesn't
+         # allow for a reactor to be passed in.
+-        self.reactor = tornado.platform.twisted.TornadoReactor(io_loop)
++        self.reactor = tornado_salt.platform.twisted.TornadoReactor(io_loop)
+ 
+         host_resolver = twisted.names.hosts.Resolver('/etc/hosts')
+         cache_resolver = twisted.names.cache.CacheResolver(reactor=self.reactor)
+diff -ur a/tornado/process.py b/tornado/process.py
+--- a/tornado/process.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/process.py	2016-01-06 10:02:39.763236208 -0600
+@@ -29,13 +29,13 @@
+ 
+ from binascii import hexlify
+ 
+-from tornado.concurrent import Future
+-from tornado import ioloop
+-from tornado.iostream import PipeIOStream
+-from tornado.log import gen_log
+-from tornado.platform.auto import set_close_exec
+-from tornado import stack_context
+-from tornado.util import errno_from_exception
++from tornado_salt.concurrent import Future
++from tornado_salt import ioloop
++from tornado_salt.iostream import PipeIOStream
++from tornado_salt.log import gen_log
++from tornado_salt.platform.auto import set_close_exec
++from tornado_salt import stack_context
++from tornado_salt.util import errno_from_exception
+ 
+ try:
+     import multiprocessing
+@@ -105,7 +105,7 @@
+     between any server code.
+ 
+     Note that multiple processes are not compatible with the autoreload
+-    module (or the ``autoreload=True`` option to `tornado.web.Application`
++    module (or the ``autoreload=True`` option to `tornado_salt.web.Application`
+     which defaults to True when ``debug=True``).
+     When using multiple processes, no IOLoops can be created or
+     referenced until after the call to ``fork_processes``.
+@@ -193,7 +193,7 @@
+     additions:
+ 
+     * ``stdin``, ``stdout``, and ``stderr`` may have the value
+-      ``tornado.process.Subprocess.STREAM``, which will make the corresponding
++      ``tornado_salt.process.Subprocess.STREAM``, which will make the corresponding
+       attribute of the resulting Subprocess a `.PipeIOStream`.
+     * A new keyword argument ``io_loop`` may be used to pass in an IOLoop.
+ 
+diff -ur a/tornado/queues.py b/tornado/queues.py
+--- a/tornado/queues.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/queues.py	2016-01-06 10:02:39.773236285 -0600
+@@ -19,9 +19,9 @@
+ import collections
+ import heapq
+ 
+-from tornado import gen, ioloop
+-from tornado.concurrent import Future
+-from tornado.locks import Event
++from tornado_salt import gen, ioloop
++from tornado_salt.concurrent import Future
++from tornado_salt.locks import Event
+ 
+ 
+ class QueueEmpty(Exception):
+@@ -128,7 +128,7 @@
+     def put(self, item, timeout=None):
+         """Put an item into the queue, perhaps waiting until there is room.
+ 
+-        Returns a Future, which raises `tornado.gen.TimeoutError` after a
++        Returns a Future, which raises `tornado_salt.gen.TimeoutError` after a
+         timeout.
+         """
+         try:
+@@ -161,7 +161,7 @@
+         """Remove and return an item from the queue.
+ 
+         Returns a Future which resolves once an item is available, or raises
+-        `tornado.gen.TimeoutError` after a timeout.
++        `tornado_salt.gen.TimeoutError` after a timeout.
+         """
+         future = Future()
+         try:
+@@ -210,7 +210,7 @@
+     def join(self, timeout=None):
+         """Block until all items in the queue are processed.
+ 
+-        Returns a Future, which raises `tornado.gen.TimeoutError` after a
++        Returns a Future, which raises `tornado_salt.gen.TimeoutError` after a
+         timeout.
+         """
+         return self._finished.wait(timeout)
+diff -ur a/tornado/simple_httpclient.py b/tornado/simple_httpclient.py
+--- a/tornado/simple_httpclient.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/simple_httpclient.py	2016-01-06 10:02:39.789903083 -0600
+@@ -1,16 +1,16 @@
+ #!/usr/bin/env python
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+-from tornado.concurrent import is_future
+-from tornado.escape import utf8, _unicode
+-from tornado.httpclient import HTTPResponse, HTTPError, AsyncHTTPClient, main, _RequestProxy
+-from tornado import httputil
+-from tornado.http1connection import HTTP1Connection, HTTP1ConnectionParameters
+-from tornado.iostream import StreamClosedError
+-from tornado.netutil import Resolver, OverrideResolver, _client_ssl_defaults
+-from tornado.log import gen_log
+-from tornado import stack_context
+-from tornado.tcpclient import TCPClient
++from tornado_salt.concurrent import is_future
++from tornado_salt.escape import utf8, _unicode
++from tornado_salt.httpclient import HTTPResponse, HTTPError, AsyncHTTPClient, main, _RequestProxy
++from tornado_salt import httputil
++from tornado_salt.http1connection import HTTP1Connection, HTTP1ConnectionParameters
++from tornado_salt.iostream import StreamClosedError
++from tornado_salt.netutil import Resolver, OverrideResolver, _client_ssl_defaults
++from tornado_salt.log import gen_log
++from tornado_salt import stack_context
++from tornado_salt.tcpclient import TCPClient
+ 
+ import base64
+ import collections
+diff -ur a/tornado/speedups.c b/tornado/speedups.c
+--- a/tornado/speedups.c	2014-07-02 22:21:54.000000000 -0500
++++ b/tornado/speedups.c	2016-01-06 10:02:39.766569567 -0600
+@@ -47,6 +47,6 @@
+ #else  // Python 2.x
+ PyMODINIT_FUNC
+ initspeedups() {
+-    Py_InitModule("tornado.speedups", methods);
++    Py_InitModule("tornado_salt.speedups", methods);
+ }
+ #endif
+diff -ur a/tornado/stack_context.py b/tornado/stack_context.py
+--- a/tornado/stack_context.py	2015-02-08 18:06:30.000000000 -0600
++++ b/tornado/stack_context.py	2016-01-06 10:02:39.769902927 -0600
+@@ -18,7 +18,7 @@
+ that follows execution as it moves to other execution contexts.
+ 
+ The motivating examples are to eliminate the need for explicit
+-``async_callback`` wrappers (as in `tornado.web.RequestHandler`), and to
++``async_callback`` wrappers (as in `tornado_salt.web.RequestHandler`), and to
+ allow some additional context to be kept for logging.
+ 
+ This is slightly magic, but it's an extension of the idea that an
+@@ -51,7 +51,7 @@
+ Here are a few rules of thumb for when it's necessary:
+ 
+ * If you're writing an asynchronous library that doesn't rely on a
+-  stack_context-aware library like `tornado.ioloop` or `tornado.iostream`
++  stack_context-aware library like `tornado_salt.ioloop` or `tornado_salt.iostream`
+   (for example, if you're writing a thread pool), use
+   `.stack_context.wrap()` before any asynchronous operations to capture the
+   stack context from where the operation was started.
+@@ -72,7 +72,7 @@
+ import sys
+ import threading
+ 
+-from tornado.util import raise_exc_info
++from tornado_salt.util import raise_exc_info
+ 
+ 
+ class StackContextInconsistentError(Exception):
+diff -ur a/tornado/tcpclient.py b/tornado/tcpclient.py
+--- a/tornado/tcpclient.py	2015-02-08 13:33:13.000000000 -0600
++++ b/tornado/tcpclient.py	2016-01-06 10:02:39.756569489 -0600
+@@ -21,11 +21,11 @@
+ import functools
+ import socket
+ 
+-from tornado.concurrent import Future
+-from tornado.ioloop import IOLoop
+-from tornado.iostream import IOStream
+-from tornado import gen
+-from tornado.netutil import Resolver
++from tornado_salt.concurrent import Future
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.iostream import IOStream
++from tornado_salt import gen
++from tornado_salt.netutil import Resolver
+ 
+ _INITIAL_CONNECT_TIMEOUT = 0.3
+ 
+diff -ur a/tornado/tcpserver.py b/tornado/tcpserver.py
+--- a/tornado/tcpserver.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/tcpserver.py	2016-01-06 10:02:39.776569645 -0600
+@@ -21,12 +21,12 @@
+ import os
+ import socket
+ 
+-from tornado.log import app_log
+-from tornado.ioloop import IOLoop
+-from tornado.iostream import IOStream, SSLIOStream
+-from tornado.netutil import bind_sockets, add_accept_handler, ssl_wrap_socket
+-from tornado import process
+-from tornado.util import errno_from_exception
++from tornado_salt.log import app_log
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.iostream import IOStream, SSLIOStream
++from tornado_salt.netutil import bind_sockets, add_accept_handler, ssl_wrap_socket
++from tornado_salt import process
++from tornado_salt.util import errno_from_exception
+ 
+ try:
+     import ssl
+@@ -73,17 +73,17 @@
+     3. `add_sockets`: advanced multi-process::
+ 
+             sockets = bind_sockets(8888)
+-            tornado.process.fork_processes(0)
++            tornado_salt.process.fork_processes(0)
+             server = TCPServer()
+             server.add_sockets(sockets)
+             IOLoop.current().start()
+ 
+        The `add_sockets` interface is more complicated, but it can be
+-       used with `tornado.process.fork_processes` to give you more
++       used with `tornado_salt.process.fork_processes` to give you more
+        flexibility in when the fork happens.  `add_sockets` can
+        also be used in single-process servers if you want to create
+        your listening sockets in some way other than
+-       `~tornado.netutil.bind_sockets`.
++       `~tornado_salt.netutil.bind_sockets`.
+ 
+     .. versionadded:: 3.1
+        The ``max_buffer_size`` argument.
+@@ -130,9 +130,9 @@
+         """Makes this server start accepting connections on the given sockets.
+ 
+         The ``sockets`` parameter is a list of socket objects such as
+-        those returned by `~tornado.netutil.bind_sockets`.
++        those returned by `~tornado_salt.netutil.bind_sockets`.
+         `add_sockets` is typically used in combination with that
+-        method and `tornado.process.fork_processes` to provide greater
++        method and `tornado_salt.process.fork_processes` to provide greater
+         control over the initialization of a multi-process server.
+         """
+         if self.io_loop is None:
+@@ -189,7 +189,7 @@
+         between any server code.
+ 
+         Note that multiple processes are not compatible with the autoreload
+-        module (or the ``autoreload=True`` option to `tornado.web.Application`
++        module (or the ``autoreload=True`` option to `tornado_salt.web.Application`
+         which defaults to True when ``debug=True``).
+         When using multiple processes, no IOLoops can be created or
+         referenced until after the call to ``TCPServer.start(n)``.
+diff -ur a/tornado/template.py b/tornado/template.py
+--- a/tornado/template.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/template.py	2016-01-06 10:02:39.743236051 -0600
+@@ -82,7 +82,7 @@
+ Typical applications do not create `Template` or `Loader` instances by
+ hand, but instead use the `~.RequestHandler.render` and
+ `~.RequestHandler.render_string` methods of
+-`tornado.web.RequestHandler`, which load templates automatically based
++`tornado_salt.web.RequestHandler`, which load templates automatically based
+ on the ``template_path`` `.Application` setting.
+ 
+ Variable names beginning with ``_tt_`` are reserved by the template
+@@ -165,12 +165,12 @@
+     to include another template with an isolated namespace.
+ 
+ ``{% module *expr* %}``
+-    Renders a `~tornado.web.UIModule`.  The output of the ``UIModule`` is
++    Renders a `~tornado_salt.web.UIModule`.  The output of the ``UIModule`` is
+     not escaped::
+ 
+         {% module Template("foo.html", arg=42) %}
+ 
+-    ``UIModules`` are a feature of the `tornado.web.RequestHandler`
++    ``UIModules`` are a feature of the `tornado_salt.web.RequestHandler`
+     class (and specifically its ``render`` method) and will not work
+     when the template system is used on its own in other contexts.
+ 
+@@ -197,9 +197,9 @@
+ import re
+ import threading
+ 
+-from tornado import escape
+-from tornado.log import app_log
+-from tornado.util import ObjectDict, exec_in, unicode_type
++from tornado_salt import escape
++from tornado_salt.log import app_log
++from tornado_salt.util import ObjectDict, exec_in, unicode_type
+ 
+ try:
+     from cStringIO import StringIO  # py2
+diff -ur a/tornado/test/asyncio_test.py b/tornado/test/asyncio_test.py
+--- a/tornado/test/asyncio_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/asyncio_test.py	2016-01-06 10:02:39.643235271 -0600
+@@ -15,12 +15,12 @@
+ import sys
+ import textwrap
+ 
+-from tornado import gen
+-from tornado.testing import AsyncTestCase, gen_test
+-from tornado.test.util import unittest
++from tornado_salt import gen
++from tornado_salt.testing import AsyncTestCase, gen_test
++from tornado_salt.test.util import unittest
+ 
+ try:
+-    from tornado.platform.asyncio import asyncio, AsyncIOLoop
++    from tornado_salt.platform.asyncio import asyncio, AsyncIOLoop
+ except ImportError:
+     asyncio = None
+ 
+diff -ur a/tornado/test/auth_test.py b/tornado/test/auth_test.py
+--- a/tornado/test/auth_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/auth_test.py	2016-01-06 10:02:39.723235895 -0600
+@@ -5,14 +5,14 @@
+ 
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.auth import OpenIdMixin, OAuthMixin, OAuth2Mixin, TwitterMixin, AuthError
+-from tornado.concurrent import Future
+-from tornado.escape import json_decode
+-from tornado import gen
+-from tornado.log import gen_log
+-from tornado.testing import AsyncHTTPTestCase, ExpectLog
+-from tornado.util import u
+-from tornado.web import RequestHandler, Application, asynchronous, HTTPError
++from tornado_salt.auth import OpenIdMixin, OAuthMixin, OAuth2Mixin, TwitterMixin, AuthError
++from tornado_salt.concurrent import Future
++from tornado_salt.escape import json_decode
++from tornado_salt import gen
++from tornado_salt.log import gen_log
++from tornado_salt.testing import AsyncHTTPTestCase, ExpectLog
++from tornado_salt.util import u
++from tornado_salt.web import RequestHandler, Application, asynchronous, HTTPError
+ 
+ 
+ class OpenIdClientLoginHandler(RequestHandler, OpenIdMixin):
+diff -ur a/tornado/test/concurrent_test.py b/tornado/test/concurrent_test.py
+--- a/tornado/test/concurrent_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/concurrent_test.py	2016-01-06 10:02:39.683235584 -0600
+@@ -21,14 +21,14 @@
+ import sys
+ import traceback
+ 
+-from tornado.concurrent import Future, return_future, ReturnValueIgnoredError, run_on_executor
+-from tornado.escape import utf8, to_unicode
+-from tornado import gen
+-from tornado.iostream import IOStream
+-from tornado import stack_context
+-from tornado.tcpserver import TCPServer
+-from tornado.testing import AsyncTestCase, LogTrapTestCase, bind_unused_port, gen_test
+-from tornado.test.util import unittest
++from tornado_salt.concurrent import Future, return_future, ReturnValueIgnoredError, run_on_executor
++from tornado_salt.escape import utf8, to_unicode
++from tornado_salt import gen
++from tornado_salt.iostream import IOStream
++from tornado_salt import stack_context
++from tornado_salt.tcpserver import TCPServer
++from tornado_salt.testing import AsyncTestCase, LogTrapTestCase, bind_unused_port, gen_test
++from tornado_salt.test.util import unittest
+ 
+ 
+ try:
+diff -ur a/tornado/test/curl_httpclient_test.py b/tornado/test/curl_httpclient_test.py
+--- a/tornado/test/curl_httpclient_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/curl_httpclient_test.py	2016-01-06 10:02:39.726569255 -0600
+@@ -2,13 +2,13 @@
+ 
+ from hashlib import md5
+ 
+-from tornado.escape import utf8
+-from tornado.httpclient import HTTPRequest
+-from tornado.stack_context import ExceptionStackContext
+-from tornado.testing import AsyncHTTPTestCase
+-from tornado.test import httpclient_test
+-from tornado.test.util import unittest
+-from tornado.web import Application, RequestHandler
++from tornado_salt.escape import utf8
++from tornado_salt.httpclient import HTTPRequest
++from tornado_salt.stack_context import ExceptionStackContext
++from tornado_salt.testing import AsyncHTTPTestCase
++from tornado_salt.test import httpclient_test
++from tornado_salt.test.util import unittest
++from tornado_salt.web import Application, RequestHandler
+ 
+ 
+ try:
+@@ -17,7 +17,7 @@
+     pycurl = None
+ 
+ if pycurl is not None:
+-    from tornado.curl_httpclient import CurlAsyncHTTPClient
++    from tornado_salt.curl_httpclient import CurlAsyncHTTPClient
+ 
+ 
+ @unittest.skipIf(pycurl is None, "pycurl module not present")
+diff -ur a/tornado/test/escape_test.py b/tornado/test/escape_test.py
+--- a/tornado/test/escape_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/escape_test.py	2016-01-06 10:02:39.699902380 -0600
+@@ -2,11 +2,11 @@
+ 
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+-import tornado.escape
++import tornado_salt.escape
+ 
+-from tornado.escape import utf8, xhtml_escape, xhtml_unescape, url_escape, url_unescape, to_unicode, json_decode, json_encode, squeeze, recursive_unicode
+-from tornado.util import u, unicode_type
+-from tornado.test.util import unittest
++from tornado_salt.escape import utf8, xhtml_escape, xhtml_unescape, url_escape, url_unescape, to_unicode, json_decode, json_encode, squeeze, recursive_unicode
++from tornado_salt.util import u, unicode_type
++from tornado_salt.test.util import unittest
+ 
+ linkify_tests = [
+     # (input, linkify_kwargs, expected_output)
+@@ -135,7 +135,7 @@
+ class EscapeTestCase(unittest.TestCase):
+     def test_linkify(self):
+         for text, kwargs, html in linkify_tests:
+-            linked = tornado.escape.linkify(text, **kwargs)
++            linked = tornado_salt.escape.linkify(text, **kwargs)
+             self.assertEqual(linked, html)
+ 
+     def test_xhtml_escape(self):
+diff -ur a/tornado/test/gen_test.py b/tornado/test/gen_test.py
+--- a/tornado/test/gen_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/gen_test.py	2016-01-06 10:02:39.713235818 -0600
+@@ -9,17 +9,17 @@
+ import platform
+ import weakref
+ 
+-from tornado.concurrent import return_future, Future
+-from tornado.escape import url_escape
+-from tornado.httpclient import AsyncHTTPClient
+-from tornado.ioloop import IOLoop
+-from tornado.log import app_log
+-from tornado import stack_context
+-from tornado.testing import AsyncHTTPTestCase, AsyncTestCase, ExpectLog, gen_test
+-from tornado.test.util import unittest, skipOnTravis
+-from tornado.web import Application, RequestHandler, asynchronous, HTTPError
++from tornado_salt.concurrent import return_future, Future
++from tornado_salt.escape import url_escape
++from tornado_salt.httpclient import AsyncHTTPClient
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.log import app_log
++from tornado_salt import stack_context
++from tornado_salt.testing import AsyncHTTPTestCase, AsyncTestCase, ExpectLog, gen_test
++from tornado_salt.test.util import unittest, skipOnTravis
++from tornado_salt.web import Application, RequestHandler, asynchronous, HTTPError
+ 
+-from tornado import gen
++from tornado_salt import gen
+ 
+ try:
+     from concurrent import futures
+diff -ur a/tornado/test/httpclient_test.py b/tornado/test/httpclient_test.py
+--- a/tornado/test/httpclient_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/httpclient_test.py	2016-01-06 10:02:39.626568475 -0600
+@@ -11,20 +11,20 @@
+ import datetime
+ from io import BytesIO
+ 
+-from tornado.escape import utf8
+-from tornado import gen
+-from tornado.httpclient import HTTPRequest, HTTPResponse, _RequestProxy, HTTPError, HTTPClient
+-from tornado.httpserver import HTTPServer
+-from tornado.ioloop import IOLoop
+-from tornado.iostream import IOStream
+-from tornado.log import gen_log
+-from tornado import netutil
+-from tornado.stack_context import ExceptionStackContext, NullContext
+-from tornado.testing import AsyncHTTPTestCase, bind_unused_port, gen_test, ExpectLog
+-from tornado.test.util import unittest, skipOnTravis
+-from tornado.util import u
+-from tornado.web import Application, RequestHandler, url
+-from tornado.httputil import format_timestamp, HTTPHeaders
++from tornado_salt.escape import utf8
++from tornado_salt import gen
++from tornado_salt.httpclient import HTTPRequest, HTTPResponse, _RequestProxy, HTTPError, HTTPClient
++from tornado_salt.httpserver import HTTPServer
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.iostream import IOStream
++from tornado_salt.log import gen_log
++from tornado_salt import netutil
++from tornado_salt.stack_context import ExceptionStackContext, NullContext
++from tornado_salt.testing import AsyncHTTPTestCase, bind_unused_port, gen_test, ExpectLog
++from tornado_salt.test.util import unittest, skipOnTravis
++from tornado_salt.util import u
++from tornado_salt.web import Application, RequestHandler, url
++from tornado_salt.httputil import format_timestamp, HTTPHeaders
+ 
+ 
+ class HelloWorldHandler(RequestHandler):
+diff -ur a/tornado/test/httpserver_test.py b/tornado/test/httpserver_test.py
+--- a/tornado/test/httpserver_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/httpserver_test.py	2016-01-06 10:02:39.703235740 -0600
+@@ -2,20 +2,20 @@
+ 
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado import netutil
+-from tornado.escape import json_decode, json_encode, utf8, _unicode, recursive_unicode, native_str
+-from tornado import gen
+-from tornado.http1connection import HTTP1Connection
+-from tornado.httpserver import HTTPServer
+-from tornado.httputil import HTTPHeaders, HTTPMessageDelegate, HTTPServerConnectionDelegate, ResponseStartLine
+-from tornado.iostream import IOStream
+-from tornado.log import gen_log
+-from tornado.netutil import ssl_options_to_context
+-from tornado.simple_httpclient import SimpleAsyncHTTPClient
+-from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, ExpectLog, gen_test
+-from tornado.test.util import unittest, skipOnTravis
+-from tornado.util import u
+-from tornado.web import Application, RequestHandler, asynchronous, stream_request_body
++from tornado_salt import netutil
++from tornado_salt.escape import json_decode, json_encode, utf8, _unicode, recursive_unicode, native_str
++from tornado_salt import gen
++from tornado_salt.http1connection import HTTP1Connection
++from tornado_salt.httpserver import HTTPServer
++from tornado_salt.httputil import HTTPHeaders, HTTPMessageDelegate, HTTPServerConnectionDelegate, ResponseStartLine
++from tornado_salt.iostream import IOStream
++from tornado_salt.log import gen_log
++from tornado_salt.netutil import ssl_options_to_context
++from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient
++from tornado_salt.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, ExpectLog, gen_test
++from tornado_salt.test.util import unittest, skipOnTravis
++from tornado_salt.util import u
++from tornado_salt.web import Application, RequestHandler, asynchronous, stream_request_body
+ from contextlib import closing
+ import datetime
+ import gzip
+@@ -353,7 +353,7 @@
+         self.assertEqual(data, {})
+ 
+     def test_double_slash(self):
+-        # urlparse.urlsplit (which tornado.httpserver used to use
++        # urlparse.urlsplit (which tornado_salt.httpserver used to use
+         # incorrectly) would parse paths beginning with "//" as
+         # protocol-relative urls.
+         response = self.fetch("//doubleslash")
+diff -ur a/tornado/test/httputil_test.py b/tornado/test/httputil_test.py
+--- a/tornado/test/httputil_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/httputil_test.py	2016-01-06 10:02:39.696569021 -0600
+@@ -2,12 +2,12 @@
+ 
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.httputil import url_concat, parse_multipart_form_data, HTTPHeaders, format_timestamp, HTTPServerRequest, parse_request_start_line
+-from tornado.escape import utf8, native_str
+-from tornado.log import gen_log
+-from tornado.testing import ExpectLog
+-from tornado.test.util import unittest
+-from tornado.util import u
++from tornado_salt.httputil import url_concat, parse_multipart_form_data, HTTPHeaders, format_timestamp, HTTPServerRequest, parse_request_start_line
++from tornado_salt.escape import utf8, native_str
++from tornado_salt.log import gen_log
++from tornado_salt.testing import ExpectLog
++from tornado_salt.test.util import unittest
++from tornado_salt.util import u
+ 
+ import copy
+ import datetime
+diff -ur a/tornado/test/import_test.py b/tornado/test/import_test.py
+--- a/tornado/test/import_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/import_test.py	2016-01-06 10:02:39.719902537 -0600
+@@ -1,6 +1,6 @@
+ # flake8: noqa
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.test.util import unittest
++from tornado_salt.test.util import unittest
+ 
+ 
+ class ImportTest(unittest.TestCase):
+@@ -8,32 +8,32 @@
+         # Some of our modules are not otherwise tested.  Import them
+         # all (unless they have external dependencies) here to at
+         # least ensure that there are no syntax errors.
+-        import tornado.auth
+-        import tornado.autoreload
+-        import tornado.concurrent
+-        # import tornado.curl_httpclient  # depends on pycurl
+-        import tornado.escape
+-        import tornado.gen
+-        import tornado.http1connection
+-        import tornado.httpclient
+-        import tornado.httpserver
+-        import tornado.httputil
+-        import tornado.ioloop
+-        import tornado.iostream
+-        import tornado.locale
+-        import tornado.log
+-        import tornado.netutil
+-        import tornado.options
+-        import tornado.process
+-        import tornado.simple_httpclient
+-        import tornado.stack_context
+-        import tornado.tcpserver
+-        import tornado.template
+-        import tornado.testing
+-        import tornado.util
+-        import tornado.web
+-        import tornado.websocket
+-        import tornado.wsgi
++        import tornado_salt.auth
++        import tornado_salt.autoreload
++        import tornado_salt.concurrent
++        # import tornado_salt.curl_httpclient  # depends on pycurl
++        import tornado_salt.escape
++        import tornado_salt.gen
++        import tornado_salt.http1connection
++        import tornado_salt.httpclient
++        import tornado_salt.httpserver
++        import tornado_salt.httputil
++        import tornado_salt.ioloop
++        import tornado_salt.iostream
++        import tornado_salt.locale
++        import tornado_salt.log
++        import tornado_salt.netutil
++        import tornado_salt.options
++        import tornado_salt.process
++        import tornado_salt.simple_httpclient
++        import tornado_salt.stack_context
++        import tornado_salt.tcpserver
++        import tornado_salt.template
++        import tornado_salt.testing
++        import tornado_salt.util
++        import tornado_salt.web
++        import tornado_salt.websocket
++        import tornado_salt.wsgi
+ 
+     # for modules with dependencies, if those dependencies can be loaded,
+     # load them too.
+@@ -44,4 +44,4 @@
+         except ImportError:
+             pass
+         else:
+-            import tornado.curl_httpclient
++            import tornado_salt.curl_httpclient
+diff -ur a/tornado/test/ioloop_test.py b/tornado/test/ioloop_test.py
+--- a/tornado/test/ioloop_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/ioloop_test.py	2016-01-06 10:02:39.653235350 -0600
+@@ -10,13 +10,13 @@
+ import threading
+ import time
+ 
+-from tornado import gen
+-from tornado.ioloop import IOLoop, TimeoutError, PollIOLoop, PeriodicCallback
+-from tornado.log import app_log
+-from tornado.platform.select import _Select
+-from tornado.stack_context import ExceptionStackContext, StackContext, wrap, NullContext
+-from tornado.testing import AsyncTestCase, bind_unused_port, ExpectLog
+-from tornado.test.util import unittest, skipIfNonUnix, skipOnTravis
++from tornado_salt import gen
++from tornado_salt.ioloop import IOLoop, TimeoutError, PollIOLoop, PeriodicCallback
++from tornado_salt.log import app_log
++from tornado_salt.platform.select import _Select
++from tornado_salt.stack_context import ExceptionStackContext, StackContext, wrap, NullContext
++from tornado_salt.testing import AsyncTestCase, bind_unused_port, ExpectLog
++from tornado_salt.test.util import unittest, skipIfNonUnix, skipOnTravis
+ 
+ try:
+     from concurrent import futures
+diff -ur a/tornado/test/iostream_test.py b/tornado/test/iostream_test.py
+--- a/tornado/test/iostream_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/iostream_test.py	2016-01-06 10:02:39.693235661 -0600
+@@ -1,16 +1,16 @@
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.concurrent import Future
+-from tornado import gen
+-from tornado import netutil
+-from tornado.iostream import IOStream, SSLIOStream, PipeIOStream, StreamClosedError
+-from tornado.httputil import HTTPHeaders
+-from tornado.log import gen_log, app_log
+-from tornado.netutil import ssl_wrap_socket
+-from tornado.stack_context import NullContext
+-from tornado.tcpserver import TCPServer
+-from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, bind_unused_port, ExpectLog, gen_test
+-from tornado.test.util import unittest, skipIfNonUnix, refusing_port
+-from tornado.web import RequestHandler, Application
++from tornado_salt.concurrent import Future
++from tornado_salt import gen
++from tornado_salt import netutil
++from tornado_salt.iostream import IOStream, SSLIOStream, PipeIOStream, StreamClosedError
++from tornado_salt.httputil import HTTPHeaders
++from tornado_salt.log import gen_log, app_log
++from tornado_salt.netutil import ssl_wrap_socket
++from tornado_salt.stack_context import NullContext
++from tornado_salt.tcpserver import TCPServer
++from tornado_salt.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, bind_unused_port, ExpectLog, gen_test
++from tornado_salt.test.util import unittest, skipIfNonUnix, refusing_port
++from tornado_salt.web import RequestHandler, Application
+ import errno
+ import logging
+ import os
+diff -ur a/tornado/test/locale_test.py b/tornado/test/locale_test.py
+--- a/tornado/test/locale_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/locale_test.py	2016-01-06 10:02:39.629901835 -0600
+@@ -2,10 +2,10 @@
+ 
+ import datetime
+ import os
+-import tornado.locale
+-from tornado.escape import utf8
+-from tornado.test.util import unittest
+-from tornado.util import u, unicode_type
++import tornado_salt.locale
++from tornado_salt.escape import utf8
++from tornado_salt.test.util import unittest
++from tornado_salt.util import u, unicode_type
+ 
+ 
+ class TranslationLoaderTest(unittest.TestCase):
+@@ -13,33 +13,33 @@
+     SAVE_VARS = ['_translations', '_supported_locales', '_use_gettext']
+ 
+     def clear_locale_cache(self):
+-        if hasattr(tornado.locale.Locale, '_cache'):
+-            del tornado.locale.Locale._cache
++        if hasattr(tornado_salt.locale.Locale, '_cache'):
++            del tornado_salt.locale.Locale._cache
+ 
+     def setUp(self):
+         self.saved = {}
+         for var in TranslationLoaderTest.SAVE_VARS:
+-            self.saved[var] = getattr(tornado.locale, var)
++            self.saved[var] = getattr(tornado_salt.locale, var)
+         self.clear_locale_cache()
+ 
+     def tearDown(self):
+         for k, v in self.saved.items():
+-            setattr(tornado.locale, k, v)
++            setattr(tornado_salt.locale, k, v)
+         self.clear_locale_cache()
+ 
+     def test_csv(self):
+-        tornado.locale.load_translations(
++        tornado_salt.locale.load_translations(
+             os.path.join(os.path.dirname(__file__), 'csv_translations'))
+-        locale = tornado.locale.get("fr_FR")
+-        self.assertTrue(isinstance(locale, tornado.locale.CSVLocale))
++        locale = tornado_salt.locale.get("fr_FR")
++        self.assertTrue(isinstance(locale, tornado_salt.locale.CSVLocale))
+         self.assertEqual(locale.translate("school"), u("\u00e9cole"))
+ 
+     def test_gettext(self):
+-        tornado.locale.load_gettext_translations(
++        tornado_salt.locale.load_gettext_translations(
+             os.path.join(os.path.dirname(__file__), 'gettext_translations'),
+             "tornado_test")
+-        locale = tornado.locale.get("fr_FR")
+-        self.assertTrue(isinstance(locale, tornado.locale.GettextLocale))
++        locale = tornado_salt.locale.get("fr_FR")
++        self.assertTrue(isinstance(locale, tornado_salt.locale.GettextLocale))
+         self.assertEqual(locale.translate("school"), u("\u00e9cole"))
+         self.assertEqual(locale.pgettext("law", "right"), u("le droit"))
+         self.assertEqual(locale.pgettext("good", "right"), u("le bien"))
+@@ -51,7 +51,7 @@
+ 
+ class LocaleDataTest(unittest.TestCase):
+     def test_non_ascii_name(self):
+-        name = tornado.locale.LOCALE_NAMES['es_LA']['name']
++        name = tornado_salt.locale.LOCALE_NAMES['es_LA']['name']
+         self.assertTrue(isinstance(name, unicode_type))
+         self.assertEqual(name, u('Espa\u00f1ol'))
+         self.assertEqual(utf8(name), b'Espa\xc3\xb1ol')
+@@ -59,7 +59,7 @@
+ 
+ class EnglishTest(unittest.TestCase):
+     def test_format_date(self):
+-        locale = tornado.locale.get('en_US')
++        locale = tornado_salt.locale.get('en_US')
+         date = datetime.datetime(2013, 4, 28, 18, 35)
+         self.assertEqual(locale.format_date(date, full_format=True),
+                          'April 28, 2013 at 6:35 pm')
+@@ -88,18 +88,18 @@
+                          '%s %d, %d' % (locale._months[date.month - 1], date.day, date.year))
+ 
+     def test_friendly_number(self):
+-        locale = tornado.locale.get('en_US')
++        locale = tornado_salt.locale.get('en_US')
+         self.assertEqual(locale.friendly_number(1000000), '1,000,000')
+ 
+     def test_list(self):
+-        locale = tornado.locale.get('en_US')
++        locale = tornado_salt.locale.get('en_US')
+         self.assertEqual(locale.list([]), '')
+         self.assertEqual(locale.list(['A']), 'A')
+         self.assertEqual(locale.list(['A', 'B']), 'A and B')
+         self.assertEqual(locale.list(['A', 'B', 'C']), 'A, B and C')
+ 
+     def test_format_day(self):
+-        locale = tornado.locale.get('en_US')
++        locale = tornado_salt.locale.get('en_US')
+         date = datetime.datetime(2013, 4, 28, 18, 35)
+         self.assertEqual(locale.format_day(date=date, dow=True), 'Sunday, April 28')
+         self.assertEqual(locale.format_day(date=date, dow=False), 'April 28')
+diff -ur a/tornado/test/locks_test.py b/tornado/test/locks_test.py
+--- a/tornado/test/locks_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/locks_test.py	2016-01-06 10:02:39.656568709 -0600
+@@ -12,10 +12,10 @@
+ 
+ from datetime import timedelta
+ 
+-from tornado import gen, locks
+-from tornado.gen import TimeoutError
+-from tornado.testing import gen_test, AsyncTestCase
+-from tornado.test.util import unittest
++from tornado_salt import gen, locks
++from tornado_salt.gen import TimeoutError
++from tornado_salt.testing import gen_test, AsyncTestCase
++from tornado_salt.test.util import unittest
+ 
+ 
+ class ConditionTest(AsyncTestCase):
+diff -ur a/tornado/test/log_test.py b/tornado/test/log_test.py
+--- a/tornado/test/log_test.py	2015-02-08 13:33:20.000000000 -0600
++++ b/tornado/test/log_test.py	2016-01-06 10:02:39.709902459 -0600
+@@ -25,11 +25,11 @@
+ import tempfile
+ import warnings
+ 
+-from tornado.escape import utf8
+-from tornado.log import LogFormatter, define_logging_options, enable_pretty_logging
+-from tornado.options import OptionParser
+-from tornado.test.util import unittest
+-from tornado.util import u, basestring_type
++from tornado_salt.escape import utf8
++from tornado_salt.log import LogFormatter, define_logging_options, enable_pretty_logging
++from tornado_salt.options import OptionParser
++from tornado_salt.test.util import unittest
++from tornado_salt.util import u, basestring_type
+ 
+ 
+ @contextlib.contextmanager
+@@ -137,7 +137,7 @@
+         super(EnablePrettyLoggingTest, self).setUp()
+         self.options = OptionParser()
+         define_logging_options(self.options)
+-        self.logger = logging.Logger('tornado.test.log_test.EnablePrettyLoggingTest')
++        self.logger = logging.Logger('tornado_salt.test.log_test.EnablePrettyLoggingTest')
+         self.logger.propagate = False
+ 
+     def test_log_file(self):
+@@ -169,7 +169,7 @@
+         # logging module by default, but Tornado turns it on by default
+         # so it is the easiest way to tell whether tornado's logging hooks
+         # ran.
+-        IMPORT = 'from tornado.options import options, parse_command_line'
++        IMPORT = 'from tornado_salt.options import options, parse_command_line'
+         LOG_INFO = 'import logging; logging.info("hello")'
+         program = ';'.join([IMPORT, statement, LOG_INFO])
+         proc = subprocess.Popen(
+diff -ur a/tornado/test/__main__.py b/tornado/test/__main__.py
+--- a/tornado/test/__main__.py	2015-02-08 13:33:15.000000000 -0600
++++ b/tornado/test/__main__.py	2016-01-06 10:02:39.623235116 -0600
+@@ -1,12 +1,12 @@
+-"""Shim to allow python -m tornado.test.
++"""Shim to allow python -m tornado_salt.test.
+ 
+ This only works in python 2.7+.
+ """
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+-from tornado.test.runtests import all, main
++from tornado_salt.test.runtests import all, main
+ 
+-# tornado.testing.main autodiscovery relies on 'all' being present in
++# tornado_salt.testing.main autodiscovery relies on 'all' being present in
+ # the main module, so import it here even though it is not used directly.
+ # The following line prevents a pyflakes warning.
+ all = all
+diff -ur a/tornado/test/netutil_test.py b/tornado/test/netutil_test.py
+--- a/tornado/test/netutil_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/netutil_test.py	2016-01-06 10:02:39.726569255 -0600
+@@ -7,10 +7,10 @@
+ import sys
+ import time
+ 
+-from tornado.netutil import BlockingResolver, ThreadedResolver, is_valid_ip, bind_sockets
+-from tornado.stack_context import ExceptionStackContext
+-from tornado.testing import AsyncTestCase, gen_test
+-from tornado.test.util import unittest, skipIfNoNetwork
++from tornado_salt.netutil import BlockingResolver, ThreadedResolver, is_valid_ip, bind_sockets
++from tornado_salt.stack_context import ExceptionStackContext
++from tornado_salt.testing import AsyncTestCase, gen_test
++from tornado_salt.test.util import unittest, skipIfNoNetwork
+ 
+ try:
+     from concurrent import futures
+@@ -22,7 +22,7 @@
+ except ImportError:
+     pycares = None
+ else:
+-    from tornado.platform.caresresolver import CaresResolver
++    from tornado_salt.platform.caresresolver import CaresResolver
+ 
+ try:
+     import twisted
+@@ -30,7 +30,7 @@
+ except ImportError:
+     twisted = None
+ else:
+-    from tornado.platform.twisted import TwistedResolver
++    from tornado_salt.platform.twisted import TwistedResolver
+ 
+ 
+ class _ResolverTestMixin(object):
+@@ -132,7 +132,7 @@
+         command = [
+             sys.executable,
+             '-c',
+-            'import tornado.test.resolve_test_helper']
++            'import tornado_salt.test.resolve_test_helper']
+ 
+         start = time.time()
+         popen = Popen(command, preexec_fn=lambda: signal.alarm(TIMEOUT))
+diff -ur a/tornado/test/options_test.py b/tornado/test/options_test.py
+--- a/tornado/test/options_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/options_test.py	2016-01-06 10:02:39.679902224 -0600
+@@ -5,9 +5,9 @@
+ import os
+ import sys
+ 
+-from tornado.options import OptionParser, Error
+-from tornado.util import basestring_type
+-from tornado.test.util import unittest
++from tornado_salt.options import OptionParser, Error
++from tornado_salt.util import basestring_type
++from tornado_salt.test.util import unittest
+ 
+ try:
+     from cStringIO import StringIO  # python 2
+diff -ur a/tornado/test/process_test.py b/tornado/test/process_test.py
+--- a/tornado/test/process_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/process_test.py	2016-01-06 10:02:39.686568943 -0600
+@@ -7,15 +7,15 @@
+ import signal
+ import subprocess
+ import sys
+-from tornado.httpclient import HTTPClient, HTTPError
+-from tornado.httpserver import HTTPServer
+-from tornado.ioloop import IOLoop
+-from tornado.log import gen_log
+-from tornado.process import fork_processes, task_id, Subprocess
+-from tornado.simple_httpclient import SimpleAsyncHTTPClient
+-from tornado.testing import bind_unused_port, ExpectLog, AsyncTestCase, gen_test
+-from tornado.test.util import unittest, skipIfNonUnix
+-from tornado.web import RequestHandler, Application
++from tornado_salt.httpclient import HTTPClient, HTTPError
++from tornado_salt.httpserver import HTTPServer
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.log import gen_log
++from tornado_salt.process import fork_processes, task_id, Subprocess
++from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient
++from tornado_salt.testing import bind_unused_port, ExpectLog, AsyncTestCase, gen_test
++from tornado_salt.test.util import unittest, skipIfNonUnix
++from tornado_salt.web import RequestHandler, Application
+ 
+ 
+ def skip_if_twisted():
+diff -ur a/tornado/test/queues_test.py b/tornado/test/queues_test.py
+--- a/tornado/test/queues_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/queues_test.py	2016-01-06 10:02:39.683235584 -0600
+@@ -13,10 +13,10 @@
+ from datetime import timedelta
+ from random import random
+ 
+-from tornado import gen, queues
+-from tornado.gen import TimeoutError
+-from tornado.testing import gen_test, AsyncTestCase
+-from tornado.test.util import unittest
++from tornado_salt import gen, queues
++from tornado_salt.gen import TimeoutError
++from tornado_salt.testing import gen_test, AsyncTestCase
++from tornado_salt.test.util import unittest
+ 
+ 
+ class QueueBasicTest(AsyncTestCase):
+diff -ur a/tornado/test/resolve_test_helper.py b/tornado/test/resolve_test_helper.py
+--- a/tornado/test/resolve_test_helper.py	2015-02-08 13:33:19.000000000 -0600
++++ b/tornado/test/resolve_test_helper.py	2016-01-06 10:02:39.633235194 -0600
+@@ -1,7 +1,7 @@
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.ioloop import IOLoop
+-from tornado.netutil import ThreadedResolver
+-from tornado.util import u
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.netutil import ThreadedResolver
++from tornado_salt.util import u
+ 
+ # When this module is imported, it runs getaddrinfo on a thread. Since
+ # the hostname is unicode, getaddrinfo attempts to import encodings.idna
+diff -ur a/tornado/test/runtests.py b/tornado/test/runtests.py
+--- a/tornado/test/runtests.py	2015-06-06 13:01:05.000000000 -0500
++++ b/tornado/test/runtests.py	2016-01-06 10:02:39.636568552 -0600
+@@ -2,17 +2,17 @@
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+ import gc
+-import locale  # system locale module, not tornado.locale
++import locale  # system locale module, not tornado_salt.locale
+ import logging
+ import operator
+ import textwrap
+ import sys
+-from tornado.httpclient import AsyncHTTPClient
+-from tornado.httpserver import HTTPServer
+-from tornado.ioloop import IOLoop
+-from tornado.netutil import Resolver
+-from tornado.options import define, options, add_parse_callback
+-from tornado.test.util import unittest
++from tornado_salt.httpclient import AsyncHTTPClient
++from tornado_salt.httpserver import HTTPServer
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.netutil import Resolver
++from tornado_salt.options import define, options, add_parse_callback
++from tornado_salt.test.util import unittest
+ 
+ try:
+     reduce  # py2
+@@ -20,39 +20,39 @@
+     from functools import reduce  # py3
+ 
+ TEST_MODULES = [
+-    'tornado.httputil.doctests',
+-    'tornado.iostream.doctests',
+-    'tornado.util.doctests',
+-    'tornado.test.asyncio_test',
+-    'tornado.test.auth_test',
+-    'tornado.test.concurrent_test',
+-    'tornado.test.curl_httpclient_test',
+-    'tornado.test.escape_test',
+-    'tornado.test.gen_test',
+-    'tornado.test.httpclient_test',
+-    'tornado.test.httpserver_test',
+-    'tornado.test.httputil_test',
+-    'tornado.test.import_test',
+-    'tornado.test.ioloop_test',
+-    'tornado.test.iostream_test',
+-    'tornado.test.locale_test',
+-    'tornado.test.locks_test',
+-    'tornado.test.netutil_test',
+-    'tornado.test.log_test',
+-    'tornado.test.options_test',
+-    'tornado.test.process_test',
+-    'tornado.test.queues_test',
+-    'tornado.test.simple_httpclient_test',
+-    'tornado.test.stack_context_test',
+-    'tornado.test.tcpclient_test',
+-    'tornado.test.tcpserver_test',
+-    'tornado.test.template_test',
+-    'tornado.test.testing_test',
+-    'tornado.test.twisted_test',
+-    'tornado.test.util_test',
+-    'tornado.test.web_test',
+-    'tornado.test.websocket_test',
+-    'tornado.test.wsgi_test',
++    'tornado_salt.httputil.doctests',
++    'tornado_salt.iostream.doctests',
++    'tornado_salt.util.doctests',
++    'tornado_salt.test.asyncio_test',
++    'tornado_salt.test.auth_test',
++    'tornado_salt.test.concurrent_test',
++    'tornado_salt.test.curl_httpclient_test',
++    'tornado_salt.test.escape_test',
++    'tornado_salt.test.gen_test',
++    'tornado_salt.test.httpclient_test',
++    'tornado_salt.test.httpserver_test',
++    'tornado_salt.test.httputil_test',
++    'tornado_salt.test.import_test',
++    'tornado_salt.test.ioloop_test',
++    'tornado_salt.test.iostream_test',
++    'tornado_salt.test.locale_test',
++    'tornado_salt.test.locks_test',
++    'tornado_salt.test.netutil_test',
++    'tornado_salt.test.log_test',
++    'tornado_salt.test.options_test',
++    'tornado_salt.test.process_test',
++    'tornado_salt.test.queues_test',
++    'tornado_salt.test.simple_httpclient_test',
++    'tornado_salt.test.stack_context_test',
++    'tornado_salt.test.tcpclient_test',
++    'tornado_salt.test.tcpserver_test',
++    'tornado_salt.test.template_test',
++    'tornado_salt.test.testing_test',
++    'tornado_salt.test.twisted_test',
++    'tornado_salt.test.util_test',
++    'tornado_salt.test.web_test',
++    'tornado_salt.test.websocket_test',
++    'tornado_salt.test.wsgi_test',
+ ]
+ 
+ 
+@@ -103,10 +103,10 @@
+     # our dependencies do (last match wins).
+     warnings.filterwarnings("ignore", category=DeprecationWarning)
+     warnings.filterwarnings("error", category=DeprecationWarning,
+-                            module=r"tornado\..*")
++                            module=r"tornado_salt\..*")
+     warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
+     warnings.filterwarnings("error", category=PendingDeprecationWarning,
+-                            module=r"tornado\..*")
++                            module=r"tornado_salt\..*")
+     # The unittest module is aggressive about deprecating redundant methods,
+     # leaving some without non-deprecated spellings that work on both
+     # 2.7 and 3.2
+@@ -120,7 +120,7 @@
+     warnings.filterwarnings("ignore", category=BytesWarning,
+                             module=r"twisted\..*")
+ 
+-    logging.getLogger("tornado.access").setLevel(logging.CRITICAL)
++    logging.getLogger("tornado_salt.access").setLevel(logging.CRITICAL)
+ 
+     define('httpclient', type=str, default=None,
+            callback=lambda s: AsyncHTTPClient.configure(
+@@ -142,7 +142,7 @@
+     def configure_ioloop():
+         kwargs = {}
+         if options.ioloop_time_monotonic:
+-            from tornado.platform.auto import monotonic_time
++            from tornado_salt.platform.auto import monotonic_time
+             if monotonic_time is None:
+                 raise RuntimeError("monotonic clock not found")
+             kwargs['time_func'] = monotonic_time
+@@ -154,7 +154,7 @@
+     add_parse_callback(
+         lambda: logging.getLogger().handlers[0].addFilter(log_counter))
+ 
+-    import tornado.testing
++    import tornado_salt.testing
+     kwargs = {}
+     if sys.version_info >= (3, 2):
+         # HACK:  unittest.main will make its own changes to the warning
+@@ -165,7 +165,7 @@
+         kwargs['warnings'] = False
+     kwargs['testRunner'] = TornadoTextTestRunner
+     try:
+-        tornado.testing.main(**kwargs)
++        tornado_salt.testing.main(**kwargs)
+     finally:
+         # The tests should run clean; consider it a failure if they logged
+         # any warnings or errors. We'd like to ban info logs too, but
+diff -ur a/tornado/test/simple_httpclient_test.py b/tornado/test/simple_httpclient_test.py
+--- a/tornado/test/simple_httpclient_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/simple_httpclient_test.py	2016-01-06 10:02:39.676568865 -0600
+@@ -11,18 +11,18 @@
+ import ssl
+ import sys
+ 
+-from tornado import gen
+-from tornado.httpclient import AsyncHTTPClient
+-from tornado.httputil import HTTPHeaders, ResponseStartLine
+-from tornado.ioloop import IOLoop
+-from tornado.log import gen_log
+-from tornado.netutil import Resolver, bind_sockets
+-from tornado.simple_httpclient import SimpleAsyncHTTPClient, _default_ca_certs
+-from tornado.test.httpclient_test import ChunkHandler, CountdownHandler, HelloWorldHandler
+-from tornado.test import httpclient_test
+-from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, ExpectLog
+-from tornado.test.util import skipOnTravis, skipIfNoIPv6, refusing_port, unittest
+-from tornado.web import RequestHandler, Application, asynchronous, url, stream_request_body
++from tornado_salt import gen
++from tornado_salt.httpclient import AsyncHTTPClient
++from tornado_salt.httputil import HTTPHeaders, ResponseStartLine
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.log import gen_log
++from tornado_salt.netutil import Resolver, bind_sockets
++from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient, _default_ca_certs
++from tornado_salt.test.httpclient_test import ChunkHandler, CountdownHandler, HelloWorldHandler
++from tornado_salt.test import httpclient_test
++from tornado_salt.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase, AsyncTestCase, ExpectLog
++from tornado_salt.test.util import skipOnTravis, skipIfNoIPv6, refusing_port, unittest
++from tornado_salt.web import RequestHandler, Application, asynchronous, url, stream_request_body
+ 
+ 
+ class SimpleHTTPClientCommonTestCase(httpclient_test.HTTPClientCommonTestCase):
+diff -ur a/tornado/test/stack_context_test.py b/tornado/test/stack_context_test.py
+--- a/tornado/test/stack_context_test.py	2015-02-08 13:33:13.000000000 -0600
++++ b/tornado/test/stack_context_test.py	2016-01-06 10:02:39.689902303 -0600
+@@ -1,13 +1,13 @@
+ #!/usr/bin/env python
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+-from tornado import gen
+-from tornado.log import app_log
+-from tornado.stack_context import (StackContext, wrap, NullContext, StackContextInconsistentError,
++from tornado_salt import gen
++from tornado_salt.log import app_log
++from tornado_salt.stack_context import (StackContext, wrap, NullContext, StackContextInconsistentError,
+                                    ExceptionStackContext, run_with_stack_context, _state)
+-from tornado.testing import AsyncHTTPTestCase, AsyncTestCase, ExpectLog, gen_test
+-from tornado.test.util import unittest
+-from tornado.web import asynchronous, Application, RequestHandler
++from tornado_salt.testing import AsyncHTTPTestCase, AsyncTestCase, ExpectLog, gen_test
++from tornado_salt.test.util import unittest
++from tornado_salt.web import asynchronous, Application, RequestHandler
+ import contextlib
+ import functools
+ import logging
+diff -ur a/tornado/test/tcpclient_test.py b/tornado/test/tcpclient_test.py
+--- a/tornado/test/tcpclient_test.py	2015-02-08 13:33:20.000000000 -0600
++++ b/tornado/test/tcpclient_test.py	2016-01-06 10:02:39.716569177 -0600
+@@ -20,12 +20,12 @@
+ import os
+ import socket
+ 
+-from tornado.concurrent import Future
+-from tornado.netutil import bind_sockets, Resolver
+-from tornado.tcpclient import TCPClient, _Connector
+-from tornado.tcpserver import TCPServer
+-from tornado.testing import AsyncTestCase, gen_test
+-from tornado.test.util import skipIfNoIPv6, unittest, refusing_port
++from tornado_salt.concurrent import Future
++from tornado_salt.netutil import bind_sockets, Resolver
++from tornado_salt.tcpclient import TCPClient, _Connector
++from tornado_salt.tcpserver import TCPServer
++from tornado_salt.testing import AsyncTestCase, gen_test
++from tornado_salt.test.util import skipIfNoIPv6, unittest, refusing_port
+ 
+ # Fake address families for testing.  Used in place of AF_INET
+ # and AF_INET6 because some installations do not have AF_INET6.
+diff -ur a/tornado/test/tcpserver_test.py b/tornado/test/tcpserver_test.py
+--- a/tornado/test/tcpserver_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/tcpserver_test.py	2016-01-06 10:02:39.669902146 -0600
+@@ -1,11 +1,11 @@
+ import socket
+ 
+-from tornado import gen
+-from tornado.iostream import IOStream
+-from tornado.log import app_log
+-from tornado.stack_context import NullContext
+-from tornado.tcpserver import TCPServer
+-from tornado.testing import AsyncTestCase, ExpectLog, bind_unused_port, gen_test
++from tornado_salt import gen
++from tornado_salt.iostream import IOStream
++from tornado_salt.log import app_log
++from tornado_salt.stack_context import NullContext
++from tornado_salt.tcpserver import TCPServer
++from tornado_salt.testing import AsyncTestCase, ExpectLog, bind_unused_port, gen_test
+ 
+ 
+ class TCPServerTest(AsyncTestCase):
+diff -ur a/tornado/test/template_test.py b/tornado/test/template_test.py
+--- a/tornado/test/template_test.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/test/template_test.py	2016-01-06 10:02:39.719902537 -0600
+@@ -4,10 +4,10 @@
+ import sys
+ import traceback
+ 
+-from tornado.escape import utf8, native_str, to_unicode
+-from tornado.template import Template, DictLoader, ParseError, Loader
+-from tornado.test.util import unittest
+-from tornado.util import u, ObjectDict, unicode_type
++from tornado_salt.escape import utf8, native_str, to_unicode
++from tornado_salt.template import Template, DictLoader, ParseError, Loader
++from tornado_salt.test.util import unittest
++from tornado_salt.util import u, ObjectDict, unicode_type
+ 
+ 
+ class TemplateTest(unittest.TestCase):
+diff -ur a/tornado/test/testing_test.py b/tornado/test/testing_test.py
+--- a/tornado/test/testing_test.py	2015-02-08 13:33:19.000000000 -0600
++++ b/tornado/test/testing_test.py	2016-01-06 10:02:39.646568631 -0600
+@@ -2,10 +2,10 @@
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+-from tornado import gen, ioloop
+-from tornado.log import app_log
+-from tornado.testing import AsyncTestCase, gen_test, ExpectLog
+-from tornado.test.util import unittest
++from tornado_salt import gen, ioloop
++from tornado_salt.log import app_log
++from tornado_salt.testing import AsyncTestCase, gen_test, ExpectLog
++from tornado_salt.test.util import unittest
+ 
+ import contextlib
+ import os
+diff -ur a/tornado/test/twisted_test.py b/tornado/test/twisted_test.py
+--- a/tornado/test/twisted_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/twisted_test.py	2016-01-06 10:02:39.696569021 -0600
+@@ -34,7 +34,7 @@
+     from twisted.internet.interfaces import IReadDescriptor, IWriteDescriptor
+     from twisted.internet.protocol import Protocol
+     from twisted.python import log
+-    from tornado.platform.twisted import TornadoReactor, TwistedIOLoop
++    from tornado_salt.platform.twisted import TornadoReactor, TwistedIOLoop
+     from zope.interface import implementer
+     have_twisted = True
+ except ImportError:
+@@ -57,17 +57,17 @@
+ except ImportError:
+     import _thread as thread  # py3
+ 
+-from tornado.escape import utf8
+-from tornado import gen
+-from tornado.httpclient import AsyncHTTPClient
+-from tornado.httpserver import HTTPServer
+-from tornado.ioloop import IOLoop
+-from tornado.platform.auto import set_close_exec
+-from tornado.platform.select import SelectIOLoop
+-from tornado.testing import bind_unused_port
+-from tornado.test.util import unittest
+-from tornado.util import import_object
+-from tornado.web import RequestHandler, Application
++from tornado_salt.escape import utf8
++from tornado_salt import gen
++from tornado_salt.httpclient import AsyncHTTPClient
++from tornado_salt.httpserver import HTTPServer
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.platform.auto import set_close_exec
++from tornado_salt.platform.select import SelectIOLoop
++from tornado_salt.testing import bind_unused_port
++from tornado_salt.test.util import unittest
++from tornado_salt.util import import_object
++from tornado_salt.web import RequestHandler, Application
+ 
+ skipIfNoTwisted = unittest.skipUnless(have_twisted,
+                                       "twisted module not present")
+@@ -614,7 +614,7 @@
+ 
+         def make_test_subclass(test_class):
+             class TornadoTest(test_class):
+-                _reactors = ["tornado.platform.twisted._TestReactor"]
++                _reactors = ["tornado_salt.platform.twisted._TestReactor"]
+ 
+                 def setUp(self):
+                     # Twisted's tests expect to be run from a temporary
+@@ -688,7 +688,7 @@
+             # One of twisted's tests fails if I don't delay crash()
+             # until the reactor has started, but if I move this to
+             # TwistedIOLoop then the tests fail when I'm *not* running
+-            # tornado-on-twisted-on-tornado.  I'm clearly missing something
++            # tornado-on-twisted-on-tornado_salt.  I'm clearly missing something
+             # about the startup/crash semantics, but since stop and crash
+             # are really only used in tests it doesn't really matter.
+             self.reactor.callWhenRunning(self.reactor.crash)
+diff -ur a/tornado/test/util.py b/tornado/test/util.py
+--- a/tornado/test/util.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/util.py	2016-01-06 10:02:39.639901912 -0600
+@@ -4,17 +4,17 @@
+ import socket
+ import sys
+ 
+-from tornado.testing import bind_unused_port
++from tornado_salt.testing import bind_unused_port
+ 
+ # Encapsulate the choice of unittest or unittest2 here.
+-# To be used as 'from tornado.test.util import unittest'.
++# To be used as 'from tornado_salt.test.util import unittest'.
+ if sys.version_info < (2, 7):
+     # In py26, we must always use unittest2.
+     import unittest2 as unittest
+ else:
+     # Otherwise, use whichever version of unittest was imported in
+-    # tornado.testing.
+-    from tornado.testing import unittest
++    # tornado_salt.testing.
++    from tornado_salt.testing import unittest
+ 
+ skipIfNonUnix = unittest.skipIf(os.name != 'posix' or sys.platform == 'cygwin',
+                                 "non-unix platform")
+diff -ur a/tornado/test/util_test.py b/tornado/test/util_test.py
+--- a/tornado/test/util_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/util_test.py	2016-01-06 10:02:39.713235818 -0600
+@@ -3,10 +3,10 @@
+ import sys
+ import datetime
+ 
+-import tornado.escape
+-from tornado.escape import utf8
+-from tornado.util import raise_exc_info, Configurable, u, exec_in, ArgReplacer, timedelta_to_seconds, import_object
+-from tornado.test.util import unittest
++import tornado_salt.escape
++from tornado_salt.escape import utf8
++from tornado_salt.util import raise_exc_info, Configurable, u, exec_in, ArgReplacer, timedelta_to_seconds, import_object
++from tornado_salt.test.util import unittest
+ 
+ try:
+     from cStringIO import StringIO  # py2
+@@ -186,16 +186,16 @@
+ 
+ class ImportObjectTest(unittest.TestCase):
+     def test_import_member(self):
+-        self.assertIs(import_object('tornado.escape.utf8'), utf8)
++        self.assertIs(import_object('tornado_salt.escape.utf8'), utf8)
+ 
+     def test_import_member_unicode(self):
+-        self.assertIs(import_object(u('tornado.escape.utf8')), utf8)
++        self.assertIs(import_object(u('tornado_salt.escape.utf8')), utf8)
+ 
+     def test_import_module(self):
+-        self.assertIs(import_object('tornado.escape'), tornado.escape)
++        self.assertIs(import_object('tornado_salt.escape'), tornado_salt.escape)
+ 
+     def test_import_module_unicode(self):
+         # The internal implementation of __import__ differs depending on
+         # whether the thing being imported is a module or not.
+         # This variant requires a byte string in python 2.
+-        self.assertIs(import_object(u('tornado.escape')), tornado.escape)
++        self.assertIs(import_object(u('tornado_salt.escape')), tornado_salt.escape)
+diff -ur a/tornado/test/websocket_test.py b/tornado/test/websocket_test.py
+--- a/tornado/test/websocket_test.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/test/websocket_test.py	2016-01-06 10:02:39.626568475 -0600
+@@ -2,18 +2,18 @@
+ 
+ import traceback
+ 
+-from tornado.concurrent import Future
+-from tornado import gen
+-from tornado.httpclient import HTTPError, HTTPRequest
+-from tornado.log import gen_log, app_log
+-from tornado.testing import AsyncHTTPTestCase, gen_test, bind_unused_port, ExpectLog
+-from tornado.test.util import unittest
+-from tornado.web import Application, RequestHandler
+-from tornado.util import u
++from tornado_salt.concurrent import Future
++from tornado_salt import gen
++from tornado_salt.httpclient import HTTPError, HTTPRequest
++from tornado_salt.log import gen_log, app_log
++from tornado_salt.testing import AsyncHTTPTestCase, gen_test, bind_unused_port, ExpectLog
++from tornado_salt.test.util import unittest
++from tornado_salt.web import Application, RequestHandler
++from tornado_salt.util import u
+ 
+ try:
+-    import tornado.websocket  # noqa
+-    from tornado.util import _websocket_mask_python
++    import tornado_salt.websocket  # noqa
++    from tornado_salt.util import _websocket_mask_python
+ except ImportError:
+     # The unittest module presents misleading errors on ImportError
+     # (it acts as if websocket_test could not be found, hiding the underlying
+@@ -22,10 +22,10 @@
+     traceback.print_exc()
+     raise
+ 
+-from tornado.websocket import WebSocketHandler, websocket_connect, WebSocketError
++from tornado_salt.websocket import WebSocketHandler, websocket_connect, WebSocketError
+ 
+ try:
+-    from tornado import speedups
++    from tornado_salt import speedups
+ except ImportError:
+     speedups = None
+ 
+@@ -413,7 +413,7 @@
+         return _websocket_mask_python(mask, data)
+ 
+ 
+-@unittest.skipIf(speedups is None, "tornado.speedups module not present")
++@unittest.skipIf(speedups is None, "tornado_salt.speedups module not present")
+ class CythonMaskFunctionTest(MaskFunctionMixin, unittest.TestCase):
+     def mask(self, mask, data):
+         return speedups.websocket_mask(mask, data)
+diff -ur a/tornado/test/web_test.py b/tornado/test/web_test.py
+--- a/tornado/test/web_test.py	2015-07-17 10:36:47.000000000 -0500
++++ b/tornado/test/web_test.py	2016-01-06 10:02:39.663235427 -0600
+@@ -1,17 +1,17 @@
+ from __future__ import absolute_import, division, print_function, with_statement
+-from tornado.concurrent import Future
+-from tornado import gen
+-from tornado.escape import json_decode, utf8, to_unicode, recursive_unicode, native_str, to_basestring
+-from tornado.httputil import format_timestamp
+-from tornado.iostream import IOStream
+-from tornado import locale
+-from tornado.log import app_log, gen_log
+-from tornado.simple_httpclient import SimpleAsyncHTTPClient
+-from tornado.template import DictLoader
+-from tornado.testing import AsyncHTTPTestCase, ExpectLog, gen_test
+-from tornado.test.util import unittest
+-from tornado.util import u, ObjectDict, unicode_type, timedelta_to_seconds
+-from tornado.web import RequestHandler, authenticated, Application, asynchronous, url, HTTPError, StaticFileHandler, _create_signature_v1, create_signed_value, decode_signed_value, ErrorHandler, UIModule, MissingArgumentError, stream_request_body, Finish, removeslash, addslash, RedirectHandler as WebRedirectHandler, get_signature_key_version
++from tornado_salt.concurrent import Future
++from tornado_salt import gen
++from tornado_salt.escape import json_decode, utf8, to_unicode, recursive_unicode, native_str, to_basestring
++from tornado_salt.httputil import format_timestamp
++from tornado_salt.iostream import IOStream
++from tornado_salt import locale
++from tornado_salt.log import app_log, gen_log
++from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient
++from tornado_salt.template import DictLoader
++from tornado_salt.testing import AsyncHTTPTestCase, ExpectLog, gen_test
++from tornado_salt.test.util import unittest
++from tornado_salt.util import u, ObjectDict, unicode_type, timedelta_to_seconds
++from tornado_salt.web import RequestHandler, authenticated, Application, asynchronous, url, HTTPError, StaticFileHandler, _create_signature_v1, create_signed_value, decode_signed_value, ErrorHandler, UIModule, MissingArgumentError, stream_request_body, Finish, removeslash, addslash, RedirectHandler as WebRedirectHandler, get_signature_key_version
+ 
+ import binascii
+ import contextlib
+@@ -1686,7 +1686,7 @@
+ 
+         @asynchronous
+         def get(self):
+-            from tornado.ioloop import IOLoop
++            from tornado_salt.ioloop import IOLoop
+             IOLoop.current().add_callback(lambda: 1 / 0)
+             IOLoop.current().add_callback(lambda: 1 / 0)
+ 
+@@ -1959,8 +1959,8 @@
+     def get_handlers(self):
+         # All three are equivalent.
+         return [('/hello1', HelloHandler),
+-                ('/hello2', 'tornado.test.web_test.HelloHandler'),
+-                url('/hello3', 'tornado.test.web_test.HelloHandler'),
++                ('/hello2', 'tornado_salt.test.web_test.HelloHandler'),
++                url('/hello3', 'tornado_salt.test.web_test.HelloHandler'),
+                 ]
+ 
+     def test_handler_by_name(self):
+@@ -2066,7 +2066,7 @@
+ 
+ class StreamingRequestFlowControlTest(WebTestCase):
+     def get_handlers(self):
+-        from tornado.ioloop import IOLoop
++        from tornado_salt.ioloop import IOLoop
+ 
+         # Each method in this handler returns a Future and yields to the
+         # IOLoop so the future is not immediately ready.  Ensure that the
+diff -ur a/tornado/test/wsgi_test.py b/tornado/test/wsgi_test.py
+--- a/tornado/test/wsgi_test.py	2015-02-08 13:33:22.000000000 -0600
++++ b/tornado/test/wsgi_test.py	2016-01-06 10:02:39.646568631 -0600
+@@ -1,12 +1,12 @@
+ from __future__ import absolute_import, division, print_function, with_statement
+ from wsgiref.validate import validator
+ 
+-from tornado.escape import json_decode
+-from tornado.test.httpserver_test import TypeCheckHandler
+-from tornado.testing import AsyncHTTPTestCase
+-from tornado.util import u
+-from tornado.web import RequestHandler, Application
+-from tornado.wsgi import WSGIApplication, WSGIContainer, WSGIAdapter
++from tornado_salt.escape import json_decode
++from tornado_salt.test.httpserver_test import TypeCheckHandler
++from tornado_salt.testing import AsyncHTTPTestCase
++from tornado_salt.util import u
++from tornado_salt.web import RequestHandler, Application
++from tornado_salt.wsgi import WSGIApplication, WSGIContainer, WSGIAdapter
+ 
+ 
+ class WSGIContainerTest(AsyncHTTPTestCase):
+@@ -65,8 +65,8 @@
+ # This is kind of hacky, but run some of the HTTPServer tests through
+ # WSGIContainer and WSGIApplication to make sure everything survives
+ # repeated disassembly and reassembly.
+-from tornado.test import httpserver_test
+-from tornado.test import web_test
++from tornado_salt.test import httpserver_test
++from tornado_salt.test import web_test
+ 
+ 
+ class WSGIConnectionTest(httpserver_test.HTTPConnectionTest):
+diff -ur a/tornado/testing.py b/tornado/testing.py
+--- a/tornado/testing.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/testing.py	2016-01-06 10:02:39.749902770 -0600
+@@ -7,19 +7,19 @@
+ * `ExpectLog` and `LogTrapTestCase`: Make test logs less spammy.
+ 
+ * `main()`: A simple test runner (wrapper around unittest.main()) with support
+-  for the tornado.autoreload module to rerun the tests when code changes.
++  for the tornado_salt.autoreload module to rerun the tests when code changes.
+ """
+ 
+ from __future__ import absolute_import, division, print_function, with_statement
+ 
+ try:
+-    from tornado import gen
+-    from tornado.httpclient import AsyncHTTPClient
+-    from tornado.httpserver import HTTPServer
+-    from tornado.simple_httpclient import SimpleAsyncHTTPClient
+-    from tornado.ioloop import IOLoop, TimeoutError
+-    from tornado import netutil
+-    from tornado.process import Subprocess
++    from tornado_salt import gen
++    from tornado_salt.httpclient import AsyncHTTPClient
++    from tornado_salt.httpserver import HTTPServer
++    from tornado_salt.simple_httpclient import SimpleAsyncHTTPClient
++    from tornado_salt.ioloop import IOLoop, TimeoutError
++    from tornado_salt import netutil
++    from tornado_salt.process import Subprocess
+ except ImportError:
+     # These modules are not importable on app engine.  Parts of this module
+     # won't work, but e.g. LogTrapTestCase and main() will.
+@@ -30,9 +30,9 @@
+     netutil = None
+     SimpleAsyncHTTPClient = None
+     Subprocess = None
+-from tornado.log import gen_log, app_log
+-from tornado.stack_context import ExceptionStackContext
+-from tornado.util import raise_exc_info, basestring_type
++from tornado_salt.log import gen_log, app_log
++from tornado_salt.stack_context import ExceptionStackContext
++from tornado_salt.util import raise_exc_info, basestring_type
+ import functools
+ import logging
+ import os
+@@ -48,8 +48,8 @@
+     from io import StringIO  # py3
+ 
+ # Tornado's own test suite requires the updated unittest module
+-# (either py27+ or unittest2) so tornado.test.util enforces
+-# this requirement, but for other users of tornado.testing we want
++# (either py27+ or unittest2) so tornado_salt.test.util enforces
++# this requirement, but for other users of tornado_salt.testing we want
+ # to allow the older version if unitest2 is not available.
+ if sys.version_info >= (3,):
+     # On python 3, mixing unittest2 and unittest (including doctest)
+@@ -120,7 +120,7 @@
+         result = self.orig_method(*args, **kwargs)
+         if isinstance(result, types.GeneratorType):
+             raise TypeError("Generator test methods should be decorated with "
+-                            "tornado.testing.gen_test")
++                            "tornado_salt.testing.gen_test")
+         elif result is not None:
+             raise ValueError("Return value from test method ignored: %r" %
+                              result)
+@@ -142,9 +142,9 @@
+     complete by the time the test method returns.  This means that
+     asynchronous code cannot be used in quite the same way as usual.
+     To write test functions that use the same ``yield``-based patterns
+-    used with the `tornado.gen` module, decorate your test methods
+-    with `tornado.testing.gen_test` instead of
+-    `tornado.gen.coroutine`.  This class also provides the `stop()`
++    used with the `tornado_salt.gen` module, decorate your test methods
++    with `tornado_salt.testing.gen_test` instead of
++    `tornado_salt.gen.coroutine`.  This class also provides the `stop()`
+     and `wait()` methods for a more manual style of testing.  The test
+     method itself must call ``self.wait()``, and asynchronous
+     callbacks should call ``self.stop()`` to signal completion.
+@@ -164,7 +164,7 @@
+ 
+         # This test uses coroutine style.
+         class MyTestCase(AsyncTestCase):
+-            @tornado.testing.gen_test
++            @tornado_salt.testing.gen_test
+             def test_http_fetch(self):
+                 client = AsyncHTTPClient(self.io_loop)
+                 response = yield client.fetch("http://www.tornadoweb.org")
+@@ -327,7 +327,7 @@
+     """A test case that starts up an HTTP server.
+ 
+     Subclasses must override `get_app()`, which returns the
+-    `tornado.web.Application` (or other `.HTTPServer` callback) to be tested.
++    `tornado_salt.web.Application` (or other `.HTTPServer` callback) to be tested.
+     Tests will typically use the provided ``self.http_client`` to fetch
+     URLs from this server.
+ 
+@@ -365,7 +365,7 @@
+ 
+     def get_app(self):
+         """Should be overridden by subclasses to return a
+-        `tornado.web.Application` or other `.HTTPServer` callback.
++        `tornado_salt.web.Application` or other `.HTTPServer` callback.
+         """
+         raise NotImplementedError()
+ 
+@@ -539,7 +539,7 @@
+     This class assumes that only one log handler is configured and
+     that it is a `~logging.StreamHandler`.  This is true for both
+     `logging.basicConfig` and the "pretty logging" configured by
+-    `tornado.options`.  It is not compatible with other log buffering
++    `tornado_salt.options`.  It is not compatible with other log buffering
+     mechanisms, such as those provided by some test runners.
+ 
+     .. deprecated:: 4.1
+@@ -577,7 +577,7 @@
+ 
+     Usage::
+ 
+-        with ExpectLog('tornado.application', "Uncaught exception"):
++        with ExpectLog('tornado_salt.application', "Uncaught exception"):
+             error_response = self.fetch("/some_page")
+     """
+     def __init__(self, logger, regex, required=True):
+@@ -622,7 +622,7 @@
+ 
+     The easiest way to run a test is via the command line::
+ 
+-        python -m tornado.testing tornado.test.stack_context_test
++        python -m tornado_salt.testing tornado_salt.test.stack_context_test
+ 
+     See the standard library unittest module for ways in which tests can
+     be specified.
+@@ -630,22 +630,22 @@
+     Projects with many tests may wish to define a test script like
+     ``tornado/test/runtests.py``.  This script should define a method
+     ``all()`` which returns a test suite and then call
+-    `tornado.testing.main()`.  Note that even when a test script is
++    `tornado_salt.testing.main()`.  Note that even when a test script is
+     used, the ``all()`` test suite may be overridden by naming a
+     single test on the command line::
+ 
+         # Runs all tests
+-        python -m tornado.test.runtests
++        python -m tornado_salt.test.runtests
+         # Runs one test
+-        python -m tornado.test.runtests tornado.test.stack_context_test
++        python -m tornado_salt.test.runtests tornado_salt.test.stack_context_test
+ 
+     Additional keyword arguments passed through to ``unittest.main()``.
+-    For example, use ``tornado.testing.main(verbosity=2)``
++    For example, use ``tornado_salt.testing.main(verbosity=2)``
+     to show many test details as they are run.
+     See http://docs.python.org/library/unittest.html#unittest.main
+     for full argument list.
+     """
+-    from tornado.options import define, options, parse_command_line
++    from tornado_salt.options import define, options, parse_command_line
+ 
+     define('exception_on_interrupt', type=bool, default=True,
+            help=("If true (default), ctrl-c raises a KeyboardInterrupt "
+diff -ur a/tornado/util.py b/tornado/util.py
+--- a/tornado/util.py	2015-07-17 10:31:29.000000000 -0500
++++ b/tornado/util.py	2016-01-06 10:02:39.586568162 -0600
+@@ -103,14 +103,14 @@
+     import_object('x') is equivalent to 'import x'.
+     import_object('x.y.z') is equivalent to 'from x.y import z'.
+ 
+-    >>> import tornado.escape
+-    >>> import_object('tornado.escape') is tornado.escape
++    >>> import tornado_salt.escape
++    >>> import_object('tornado_salt.escape') is tornado_salt.escape
+     True
+-    >>> import_object('tornado.escape.utf8') is tornado.escape.utf8
++    >>> import_object('tornado_salt.escape.utf8') is tornado_salt.escape.utf8
+     True
+-    >>> import_object('tornado') is tornado
++    >>> import_object('tornado_salt') is tornado_salt
+     True
+-    >>> import_object('tornado.missing_module')
++    >>> import_object('tornado_salt.missing_module')
+     Traceback (most recent call last):
+         ...
+     ImportError: No module named missing_module
+@@ -354,7 +354,7 @@
+     _websocket_mask = _websocket_mask_python
+ else:
+     try:
+-        from tornado.speedups import websocket_mask as _websocket_mask
++        from tornado_salt.speedups import websocket_mask as _websocket_mask
+     except ImportError:
+         if os.environ.get('TORNADO_EXTENSION') == '1':
+             raise
+diff -ur a/tornado/web.py b/tornado/web.py
+--- a/tornado/web.py	2015-07-17 10:31:34.000000000 -0500
++++ b/tornado/web.py	2016-01-06 10:02:39.619901756 -0600
+@@ -14,7 +14,7 @@
+ # License for the specific language governing permissions and limitations
+ # under the License.
+ 
+-"""``tornado.web`` provides a simple web framework with asynchronous
++"""``tornado_salt.web`` provides a simple web framework with asynchronous
+ features that allow it to scale to large numbers of open connections,
+ making it ideal for `long polling
+ <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_.
+@@ -23,19 +23,19 @@
+ 
+ .. testcode::
+ 
+-    import tornado.ioloop
+-    import tornado.web
++    import tornado_salt.ioloop
++    import tornado_salt.web
+ 
+-    class MainHandler(tornado.web.RequestHandler):
++    class MainHandler(tornado_salt.web.RequestHandler):
+         def get(self):
+             self.write("Hello, world")
+ 
+     if __name__ == "__main__":
+-        application = tornado.web.Application([
++        application = tornado_salt.web.Application([
+             (r"/", MainHandler),
+         ])
+         application.listen(8888)
+-        tornado.ioloop.IOLoop.current().start()
++        tornado_salt.ioloop.IOLoop.current().start()
+ 
+ .. testoutput::
+    :hide:
+@@ -76,24 +76,24 @@
+ import sys
+ import threading
+ import time
+-import tornado
++import tornado_salt
+ import traceback
+ import types
+ from io import BytesIO
+ 
+-from tornado.concurrent import Future, is_future
+-from tornado import escape
+-from tornado import gen
+-from tornado import httputil
+-from tornado import iostream
+-from tornado import locale
+-from tornado.log import access_log, app_log, gen_log
+-from tornado import stack_context
+-from tornado import template
+-from tornado.escape import utf8, _unicode
+-from tornado.util import (import_object, ObjectDict, raise_exc_info,
++from tornado_salt.concurrent import Future, is_future
++from tornado_salt import escape
++from tornado_salt import gen
++from tornado_salt import httputil
++from tornado_salt import iostream
++from tornado_salt import locale
++from tornado_salt.log import access_log, app_log, gen_log
++from tornado_salt import stack_context
++from tornado_salt import template
++from tornado_salt.escape import utf8, _unicode
++from tornado_salt.util import (import_object, ObjectDict, raise_exc_info,
+                           unicode_type, _websocket_mask)
+-from tornado.httputil import split_host_and_port
++from tornado_salt.httputil import split_host_and_port
+ 
+ 
+ try:
+@@ -280,7 +280,7 @@
+     def clear(self):
+         """Resets all headers and content for this response."""
+         self._headers = httputil.HTTPHeaders({
+-            "Server": "TornadoServer/%s" % tornado.version,
++            "Server": "TornadoServer/%s" % tornado_salt.version,
+             "Content-Type": "text/html; charset=UTF-8",
+             "Date": httputil.format_timestamp(time.time()),
+         })
+@@ -691,7 +691,7 @@
+         if not isinstance(chunk, (bytes, unicode_type, dict)):
+             message = "write() only accepts bytes, unicode, and dict objects"
+             if isinstance(chunk, list):
+-                message += ". Lists not accepted for security reasons; see http://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.write"
++                message += ". Lists not accepted for security reasons; see http://www.tornadoweb.org/en/stable/web.html#tornado_salt.web.RequestHandler.write"
+             raise TypeError(message)
+         if isinstance(chunk, dict):
+             chunk = escape.json_encode(chunk)
+@@ -816,7 +816,7 @@
+         May be overridden by subclasses to add or modify values.
+ 
+         The results of this method will be combined with additional
+-        defaults in the `tornado.template` module and keyword arguments
++        defaults in the `tornado_salt.template` module and keyword arguments
+         to `render` or `render_string`.
+         """
+         namespace = dict(
+@@ -1032,8 +1032,8 @@
+ 
+         If None is returned, we fall back to `get_browser_locale()`.
+ 
+-        This method should return a `tornado.locale.Locale` object,
+-        most likely obtained via a call like ``tornado.locale.get("en")``
++        This method should return a `tornado_salt.locale.Locale` object,
++        most likely obtained via a call like ``tornado_salt.locale.get("en")``
+         """
+         return None
+ 
+@@ -1089,7 +1089,7 @@
+ 
+         By default, we use the ``login_url`` application setting.
+         """
+-        self.require_setting("login_url", "@tornado.web.authenticated")
++        self.require_setting("login_url", "@tornado_salt.web.authenticated")
+         return self.application.settings["login_url"]
+ 
+     def get_template_path(self):
+@@ -1479,9 +1479,9 @@
+         """Override to customize logging of uncaught exceptions.
+ 
+         By default logs instances of `HTTPError` as warnings without
+-        stack traces (on the ``tornado.general`` logger), and all
++        stack traces (on the ``tornado_salt.general`` logger), and all
+         other exceptions as errors with stack traces (on the
+-        ``tornado.application`` logger).
++        ``tornado_salt.application`` logger).
+ 
+         .. versionadded:: 3.1
+         """
+@@ -1562,7 +1562,7 @@
+ 
+     """
+     # Delay the IOLoop import because it's not available on app engine.
+-    from tornado.ioloop import IOLoop
++    from tornado_salt.ioloop import IOLoop
+ 
+     @functools.wraps(method)
+     def wrapper(self, *args, **kwargs):
+@@ -1764,7 +1764,7 @@
+ 
+         # Automatically reload modified modules
+         if self.settings.get('autoreload'):
+-            from tornado import autoreload
++            from tornado_salt import autoreload
+             autoreload.start()
+ 
+     def listen(self, port, address="", **kwargs):
+@@ -1783,7 +1783,7 @@
+         """
+         # import is here rather than top level because HTTPServer
+         # is not importable on appengine
+-        from tornado.httpserver import HTTPServer
++        from tornado_salt.httpserver import HTTPServer
+         server = HTTPServer(self, **kwargs)
+         server.listen(port, address)
+ 
+@@ -2594,13 +2594,13 @@
+ 
+     The fallback is a callable object that accepts an
+     `~.httputil.HTTPServerRequest`, such as an `Application` or
+-    `tornado.wsgi.WSGIContainer`.  This is most useful to use both
++    `tornado_salt.wsgi.WSGIContainer`.  This is most useful to use both
+     Tornado ``RequestHandlers`` and WSGI in the same server.  Typical
+     usage::
+ 
+-        wsgi_app = tornado.wsgi.WSGIContainer(
++        wsgi_app = tornado_salt.wsgi.WSGIContainer(
+             django.core.handlers.wsgi.WSGIHandler())
+-        application = tornado.web.Application([
++        application = tornado_salt.web.Application([
+             (r"/foo", FooHandler),
+             (r".*", FallbackHandler, dict(fallback=wsgi_app),
+         ])
+diff -ur a/tornado/websocket.py b/tornado/websocket.py
+--- a/tornado/websocket.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/websocket.py	2016-01-06 10:02:39.759902848 -0600
+@@ -25,19 +25,19 @@
+ import hashlib
+ import os
+ import struct
+-import tornado.escape
+-import tornado.web
++import tornado_salt.escape
++import tornado_salt.web
+ import zlib
+ 
+-from tornado.concurrent import TracebackFuture
+-from tornado.escape import utf8, native_str, to_unicode
+-from tornado import httpclient, httputil
+-from tornado.ioloop import IOLoop
+-from tornado.iostream import StreamClosedError
+-from tornado.log import gen_log, app_log
+-from tornado import simple_httpclient
+-from tornado.tcpclient import TCPClient
+-from tornado.util import _websocket_mask
++from tornado_salt.concurrent import TracebackFuture
++from tornado_salt.escape import utf8, native_str, to_unicode
++from tornado_salt import httpclient, httputil
++from tornado_salt.ioloop import IOLoop
++from tornado_salt.iostream import StreamClosedError
++from tornado_salt.log import gen_log, app_log
++from tornado_salt import simple_httpclient
++from tornado_salt.tcpclient import TCPClient
++from tornado_salt.util import _websocket_mask
+ 
+ try:
+     from urllib.parse import urlparse  # py2
+@@ -62,7 +62,7 @@
+     pass
+ 
+ 
+-class WebSocketHandler(tornado.web.RequestHandler):
++class WebSocketHandler(tornado_salt.web.RequestHandler):
+     """Subclass this class to create a basic WebSocket handler.
+ 
+     Override `on_message` to handle incoming messages, and use
+@@ -79,7 +79,7 @@
+ 
+     .. testcode::
+ 
+-      class EchoWebSocket(tornado.websocket.WebSocketHandler):
++      class EchoWebSocket(tornado_salt.websocket.WebSocketHandler):
+           def open(self):
+               print("WebSocket opened")
+ 
+@@ -129,7 +129,7 @@
+     to accept it before the websocket connection will succeed.
+     """
+     def __init__(self, application, request, **kwargs):
+-        tornado.web.RequestHandler.__init__(self, application, request,
++        tornado_salt.web.RequestHandler.__init__(self, application, request,
+                                             **kwargs)
+         self.ws_connection = None
+         self.close_code = None
+@@ -137,7 +137,7 @@
+         self.stream = None
+         self._on_close_called = False
+ 
+-    @tornado.web.asynchronous
++    @tornado_salt.web.asynchronous
+     def get(self, *args, **kwargs):
+         self.open_args = args
+         self.open_kwargs = kwargs
+@@ -190,7 +190,7 @@
+             self.ws_connection.accept_connection()
+         else:
+             if not self.stream.closed():
+-                self.stream.write(tornado.escape.utf8(
++                self.stream.write(tornado_salt.escape.utf8(
+                     "HTTP/1.1 426 Upgrade Required\r\n"
+                     "Sec-WebSocket-Version: 7, 8, 13\r\n\r\n"))
+                 self.stream.close()
+@@ -212,7 +212,7 @@
+         if self.ws_connection is None:
+             raise WebSocketClosedError()
+         if isinstance(message, dict):
+-            message = tornado.escape.json_encode(message)
++            message = tornado_salt.escape.json_encode(message)
+         self.ws_connection.write_message(message, binary=binary)
+ 
+     def select_subprotocol(self, subprotocols):
+@@ -244,9 +244,9 @@
+     def open(self, *args, **kwargs):
+         """Invoked when a new WebSocket is opened.
+ 
+-        The arguments to `open` are extracted from the `tornado.web.URLSpec`
++        The arguments to `open` are extracted from the `tornado_salt.web.URLSpec`
+         regular expression, just like the arguments to
+-        `tornado.web.RequestHandler.get`.
++        `tornado_salt.web.RequestHandler.get`.
+         """
+         pass
+ 
+@@ -581,7 +581,7 @@
+         if self.stream.closed():
+             self._abort()
+             return
+-        self.stream.write(tornado.escape.utf8(
++        self.stream.write(tornado_salt.escape.utf8(
+             "HTTP/1.1 101 Switching Protocols\r\n"
+             "Upgrade: websocket\r\n"
+             "Connection: Upgrade\r\n"
+@@ -680,7 +680,7 @@
+             opcode = 0x2
+         else:
+             opcode = 0x1
+-        message = tornado.escape.utf8(message)
++        message = tornado_salt.escape.utf8(message)
+         assert isinstance(message, bytes)
+         self._message_bytes_out += len(message)
+         flags = 0
+diff -ur a/tornado/wsgi.py b/tornado/wsgi.py
+--- a/tornado/wsgi.py	2015-05-26 21:11:42.000000000 -0500
++++ b/tornado/wsgi.py	2016-01-06 10:02:39.729902614 -0600
+@@ -20,7 +20,7 @@
+ between Tornado and other Python web frameworks and servers.  This module
+ provides WSGI support in two ways:
+ 
+-* `WSGIAdapter` converts a `tornado.web.Application` to the WSGI application
++* `WSGIAdapter` converts a `tornado_salt.web.Application` to the WSGI application
+   interface.  This is useful for running a Tornado app on another
+   HTTP server, such as Google App Engine.  See the `WSGIAdapter` class
+   documentation for limitations that apply.
+@@ -33,15 +33,15 @@
+ 
+ import sys
+ from io import BytesIO
+-import tornado
++import tornado_salt
+ 
+-from tornado.concurrent import Future
+-from tornado import escape
+-from tornado import httputil
+-from tornado.log import access_log
+-from tornado import web
+-from tornado.escape import native_str
+-from tornado.util import unicode_type
++from tornado_salt.concurrent import Future
++from tornado_salt import escape
++from tornado_salt import httputil
++from tornado_salt.log import access_log
++from tornado_salt import web
++from tornado_salt.escape import native_str
++from tornado_salt.util import unicode_type
+ 
+ 
+ try:
+@@ -51,7 +51,7 @@
+ 
+ # PEP 3333 specifies that WSGI on python 3 generally deals with byte strings
+ # that are smuggled inside objects of type unicode (via the latin1 encoding).
+-# These functions are like those in the tornado.escape module, but defined
++# These functions are like those in the tornado_salt.escape module, but defined
+ # here to minimize the temptation to use them in non-wsgi contexts.
+ if str is unicode_type:
+     def to_wsgi_str(s):
+@@ -72,7 +72,7 @@
+ 
+ 
+ class WSGIApplication(web.Application):
+-    """A WSGI equivalent of `tornado.web.Application`.
++    """A WSGI equivalent of `tornado_salt.web.Application`.
+ 
+     .. deprecated:: 4.0
+ 
+@@ -151,23 +151,23 @@
+ 
+ 
+ class WSGIAdapter(object):
+-    """Converts a `tornado.web.Application` instance into a WSGI application.
++    """Converts a `tornado_salt.web.Application` instance into a WSGI application.
+ 
+     Example usage::
+ 
+-        import tornado.web
+-        import tornado.wsgi
++        import tornado_salt.web
++        import tornado_salt.wsgi
+         import wsgiref.simple_server
+ 
+-        class MainHandler(tornado.web.RequestHandler):
++        class MainHandler(tornado_salt.web.RequestHandler):
+             def get(self):
+                 self.write("Hello, world")
+ 
+         if __name__ == "__main__":
+-            application = tornado.web.Application([
++            application = tornado_salt.web.Application([
+                 (r"/", MainHandler),
+             ])
+-            wsgi_app = tornado.wsgi.WSGIAdapter(application)
++            wsgi_app = tornado_salt.wsgi.WSGIAdapter(application)
+             server = wsgiref.simple_server.make_server('', 8888, wsgi_app)
+             server.serve_forever()
+ 
+@@ -178,7 +178,7 @@
+ 
+     In WSGI mode asynchronous methods are not supported.  This means
+     that it is not possible to use `.AsyncHTTPClient`, or the
+-    `tornado.auth` or `tornado.websocket` modules.
++    `tornado_salt.auth` or `tornado_salt.websocket` modules.
+ 
+     .. versionadded:: 4.0
+     """
+@@ -250,15 +250,15 @@
+             start_response(status, response_headers)
+             return ["Hello world!\n"]
+ 
+-        container = tornado.wsgi.WSGIContainer(simple_app)
+-        http_server = tornado.httpserver.HTTPServer(container)
++        container = tornado_salt.wsgi.WSGIContainer(simple_app)
++        http_server = tornado_salt.httpserver.HTTPServer(container)
+         http_server.listen(8888)
+-        tornado.ioloop.IOLoop.current().start()
++        tornado_salt.ioloop.IOLoop.current().start()
+ 
+     This class is intended to let other frameworks (Django, web.py, etc)
+     run on the Tornado HTTP server and I/O loop.
+ 
+-    The `tornado.web.FallbackHandler` class is often useful for mixing
++    The `tornado_salt.web.FallbackHandler` class is often useful for mixing
+     Tornado and WSGI apps in the same server.  See
+     https://github.com/bdarnell/django-tornado-demo for a complete example.
+     """
+@@ -295,7 +295,7 @@
+             if "content-type" not in header_set:
+                 headers.append(("Content-Type", "text/html; charset=UTF-8"))
+         if "server" not in header_set:
+-            headers.append(("Server", "TornadoServer/%s" % tornado.version))
++            headers.append(("Server", "TornadoServer/%s" % tornado_salt.version))
+ 
+         start_line = httputil.ResponseStartLine("HTTP/1.1", status_code, reason)
+         header_obj = httputil.HTTPHeaders()
+@@ -307,7 +307,7 @@
+ 
+     @staticmethod
+     def environ(request):
+-        """Converts a `tornado.httputil.HTTPServerRequest` to a WSGI environment.
++        """Converts a `tornado_salt.httputil.HTTPServerRequest` to a WSGI environment.
+         """
+         hostport = request.host.split(":")
+         if len(hostport) == 2:
+diff -ur a/tornado.egg-info/PKG-INFO b/tornado.egg-info/PKG-INFO
+--- a/tornado.egg-info/PKG-INFO	2015-07-17 10:50:19.000000000 -0500
++++ b/tornado.egg-info/PKG-INFO	2016-01-06 10:02:40.063238555 -0600
+@@ -1,5 +1,5 @@
+ Metadata-Version: 1.1
+-Name: tornado
++Name: tornado_salt
+ Version: 4.2.1
+ Summary: Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
+ Home-page: http://www.tornadoweb.org/
+diff -ur a/tornado.egg-info/SOURCES.txt b/tornado.egg-info/SOURCES.txt
+--- a/tornado.egg-info/SOURCES.txt	2015-07-17 10:50:26.000000000 -0500
++++ b/tornado.egg-info/SOURCES.txt	2016-01-06 10:02:40.056571835 -0600
+@@ -1,6 +1,7 @@
+ MANIFEST.in
+ README.rst
+ runtests.sh
++setup.cfg
+ setup.py
+ demos/appengine/README
+ demos/appengine/app.yaml
+@@ -132,95 +133,100 @@
+ docs/releases/v4.1.0.rst
+ docs/releases/v4.2.0.rst
+ docs/releases/v4.2.1.rst
+-tornado/__init__.py
+-tornado/auth.py
+-tornado/autoreload.py
+-tornado/concurrent.py
+-tornado/curl_httpclient.py
+-tornado/escape.py
+-tornado/gen.py
+-tornado/http1connection.py
+-tornado/httpclient.py
+-tornado/httpserver.py
+-tornado/httputil.py
+-tornado/ioloop.py
+-tornado/iostream.py
+-tornado/locale.py
+-tornado/locks.py
+-tornado/log.py
+-tornado/netutil.py
+-tornado/options.py
+-tornado/process.py
+-tornado/queues.py
+-tornado/simple_httpclient.py
+-tornado/speedups.c
+-tornado/stack_context.py
+-tornado/tcpclient.py
+-tornado/tcpserver.py
+-tornado/template.py
+-tornado/testing.py
+-tornado/util.py
+-tornado/web.py
+-tornado/websocket.py
+-tornado/wsgi.py
+-tornado.egg-info/PKG-INFO
+-tornado.egg-info/SOURCES.txt
+-tornado.egg-info/dependency_links.txt
+-tornado.egg-info/top_level.txt
+-tornado/platform/__init__.py
+-tornado/platform/asyncio.py
+-tornado/platform/auto.py
+-tornado/platform/caresresolver.py
+-tornado/platform/common.py
+-tornado/platform/epoll.py
+-tornado/platform/interface.py
+-tornado/platform/kqueue.py
+-tornado/platform/posix.py
+-tornado/platform/select.py
+-tornado/platform/twisted.py
+-tornado/platform/windows.py
+-tornado/test/__init__.py
+-tornado/test/__main__.py
+-tornado/test/asyncio_test.py
+-tornado/test/auth_test.py
+-tornado/test/concurrent_test.py
+-tornado/test/curl_httpclient_test.py
+-tornado/test/escape_test.py
+-tornado/test/gen_test.py
+-tornado/test/httpclient_test.py
+-tornado/test/httpserver_test.py
+-tornado/test/httputil_test.py
+-tornado/test/import_test.py
+-tornado/test/ioloop_test.py
+-tornado/test/iostream_test.py
+-tornado/test/locale_test.py
+-tornado/test/locks_test.py
+-tornado/test/log_test.py
+-tornado/test/netutil_test.py
+-tornado/test/options_test.cfg
+-tornado/test/options_test.py
+-tornado/test/process_test.py
+-tornado/test/queues_test.py
+-tornado/test/resolve_test_helper.py
+-tornado/test/runtests.py
+-tornado/test/simple_httpclient_test.py
+-tornado/test/stack_context_test.py
+-tornado/test/static_foo.txt
+-tornado/test/tcpclient_test.py
+-tornado/test/tcpserver_test.py
+-tornado/test/template_test.py
+-tornado/test/test.crt
+-tornado/test/test.key
+-tornado/test/testing_test.py
+-tornado/test/twisted_test.py
+-tornado/test/util.py
+-tornado/test/util_test.py
+-tornado/test/web_test.py
+-tornado/test/websocket_test.py
+-tornado/test/wsgi_test.py
+-tornado/test/csv_translations/fr_FR.csv
+-tornado/test/gettext_translations/fr_FR/LC_MESSAGES/tornado_test.mo
+-tornado/test/gettext_translations/fr_FR/LC_MESSAGES/tornado_test.po
+-tornado/test/static/robots.txt
+-tornado/test/static/dir/index.html
+-tornado/test/templates/utf8.html
+\ No newline at end of file
++tornado_salt/__init__.py
++tornado_salt/auth.py
++tornado_salt/autoreload.py
++tornado_salt/concurrent.py
++tornado_salt/curl_httpclient.py
++tornado_salt/escape.py
++tornado_salt/gen.py
++tornado_salt/http1connection.py
++tornado_salt/httpclient.py
++tornado_salt/httpserver.py
++tornado_salt/httputil.py
++tornado_salt/ioloop.py
++tornado_salt/iostream.py
++tornado_salt/locale.py
++tornado_salt/locks.py
++tornado_salt/log.py
++tornado_salt/netutil.py
++tornado_salt/options.py
++tornado_salt/process.py
++tornado_salt/queues.py
++tornado_salt/simple_httpclient.py
++tornado_salt/speedups.c
++tornado_salt/stack_context.py
++tornado_salt/tcpclient.py
++tornado_salt/tcpserver.py
++tornado_salt/template.py
++tornado_salt/testing.py
++tornado_salt/util.py
++tornado_salt/web.py
++tornado_salt/websocket.py
++tornado_salt/wsgi.py
++tornado_salt.egg-info/PKG-INFO
++tornado_salt.egg-info/SOURCES.txt
++tornado_salt.egg-info/dependency_links.txt
++tornado_salt.egg-info/requires.txt
++tornado_salt.egg-info/top_level.txt
++tornado_salt.egg-info/tornado.egg-info/PKG-INFO
++tornado_salt.egg-info/tornado.egg-info/SOURCES.txt
++tornado_salt.egg-info/tornado.egg-info/dependency_links.txt
++tornado_salt.egg-info/tornado.egg-info/top_level.txt
++tornado_salt/platform/__init__.py
++tornado_salt/platform/asyncio.py
++tornado_salt/platform/auto.py
++tornado_salt/platform/caresresolver.py
++tornado_salt/platform/common.py
++tornado_salt/platform/epoll.py
++tornado_salt/platform/interface.py
++tornado_salt/platform/kqueue.py
++tornado_salt/platform/posix.py
++tornado_salt/platform/select.py
++tornado_salt/platform/twisted.py
++tornado_salt/platform/windows.py
++tornado_salt/test/__init__.py
++tornado_salt/test/__main__.py
++tornado_salt/test/asyncio_test.py
++tornado_salt/test/auth_test.py
++tornado_salt/test/concurrent_test.py
++tornado_salt/test/curl_httpclient_test.py
++tornado_salt/test/escape_test.py
++tornado_salt/test/gen_test.py
++tornado_salt/test/httpclient_test.py
++tornado_salt/test/httpserver_test.py
++tornado_salt/test/httputil_test.py
++tornado_salt/test/import_test.py
++tornado_salt/test/ioloop_test.py
++tornado_salt/test/iostream_test.py
++tornado_salt/test/locale_test.py
++tornado_salt/test/locks_test.py
++tornado_salt/test/log_test.py
++tornado_salt/test/netutil_test.py
++tornado_salt/test/options_test.cfg
++tornado_salt/test/options_test.py
++tornado_salt/test/process_test.py
++tornado_salt/test/queues_test.py
++tornado_salt/test/resolve_test_helper.py
++tornado_salt/test/runtests.py
++tornado_salt/test/simple_httpclient_test.py
++tornado_salt/test/stack_context_test.py
++tornado_salt/test/static_foo.txt
++tornado_salt/test/tcpclient_test.py
++tornado_salt/test/tcpserver_test.py
++tornado_salt/test/template_test.py
++tornado_salt/test/test.crt
++tornado_salt/test/test.key
++tornado_salt/test/testing_test.py
++tornado_salt/test/twisted_test.py
++tornado_salt/test/util.py
++tornado_salt/test/util_test.py
++tornado_salt/test/web_test.py
++tornado_salt/test/websocket_test.py
++tornado_salt/test/wsgi_test.py
++tornado_salt/test/csv_translations/fr_FR.csv
++tornado_salt/test/gettext_translations/fr_FR/LC_MESSAGES/tornado_test.mo
++tornado_salt/test/gettext_translations/fr_FR/LC_MESSAGES/tornado_test.po
++tornado_salt/test/static/robots.txt
++tornado_salt/test/static/dir/index.html
++tornado_salt/test/templates/utf8.html
+\ No newline at end of file
+diff -ur a/tornado.egg-info/top_level.txt b/tornado.egg-info/top_level.txt
+--- a/tornado.egg-info/top_level.txt	2015-07-17 10:50:19.000000000 -0500
++++ b/tornado.egg-info/top_level.txt	2016-01-06 10:02:40.059905196 -0600
+@@ -1 +1 @@
+-tornado
++tornado_salt

@@ -19,8 +19,8 @@
 
 %global _srcname tornado
 %global _modname_old tornado
-%global _modname_new tornado42
-%global _pkgname tornado4.2
+%global _modname_new tornado_salt
+%global _pkgname tornado-salt
 
 Name:           python-%{_pkgname}
 Version:        4.2.1
@@ -144,7 +144,7 @@ pushd python2
 %patch0 -p1 -b .cert
 %patch1 -p1 -b .cert
 
-# Rename usage of "tornado" to "tornado42"
+# Rename usage of "tornado" to "tornado_salt"
 %patch2 -p1
 
 # remove shebang from files
@@ -159,7 +159,7 @@ find python3 -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python3}|'
 %build
 %if 0%{?with_python3}
 pushd python3
-    # Rename directory in source to "tornado42"
+    # Rename directory in source to "tornado_salt"
     mv %{_modname_old} %{_modname_new}
     mv %{_modname_old}.egg-info %{_modname_new}.egg-info
     %{__python3} setup.py build
@@ -167,7 +167,7 @@ popd
 %endif # with_python3
 
 pushd python2
-    # Rename directory in source to "tornado42"
+    # Rename directory in source to "tornado_salt"
     mv %{_modname_old} %{_modname_new}
     mv %{_modname_old}.egg-info %{_modname_new}.egg-info
     %{__python2} setup.py build

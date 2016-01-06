@@ -2,7 +2,7 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-tornado42" %}
+{% set sls_name = "python-tornado-salt" %}
 {% set pypi_name = "tornado" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
@@ -36,5 +36,5 @@
       - salt://{{slspath}}/sources/{{pkg_name}}-cert.patch
       - salt://{{slspath}}/sources/{{pkg_name}}-netutil-cert.patch
       - {{ macros.pypi_source(pypi_name, version) }}
-      - salt://{{slspath}}/sources/tornado42_rename.patch
+      - salt://{{slspath}}/sources/tornado_salt_rename.patch
 {% endif %}

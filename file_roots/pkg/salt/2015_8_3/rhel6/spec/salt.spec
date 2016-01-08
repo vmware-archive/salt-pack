@@ -16,7 +16,7 @@
 
 Name: salt
 Version: 2015.8.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -202,7 +202,6 @@ of an agent (salt-minion) service.
 cd %{name}-%{version}
 ## %patch0 -p1
 
-
 %build
 
 
@@ -215,7 +214,11 @@ cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
 install -d -m 0755 %{buildroot}%{_var}/log/salt
 install -d -m 0755 %{buildroot}%{_var}/cache/salt
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/master.d
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/minion.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/master
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/minion
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.conf.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
@@ -304,6 +307,8 @@ rm -rf %{buildroot}
 %{_unitdir}/salt-master.service
 %endif
 %config(noreplace) %{_sysconfdir}/salt/master
+%config(noreplace) %{_sysconfdir}/salt/master.d
+%config(noreplace) %{_sysconfdir}/salt/pki/master
 
 %files minion
 %defattr(-,root,root)
@@ -320,6 +325,8 @@ rm -rf %{buildroot}
 %endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
+%config(noreplace) %{_sysconfdir}/salt/minion.d
+%config(noreplace) %{_sysconfdir}/salt/pki/minion
 
 %files syndic
 %doc %{_mandir}/man1/salt-syndic.1.*
@@ -475,6 +482,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Dec  7 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-2
+- Additional salt configuration directories on install
+
 * Tue Dec  1 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-1
 - Update to bugfix release 2015.8.3
 

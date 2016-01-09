@@ -4,12 +4,12 @@
 {% set name = 'salt' %}
 {% set version = '2015.8.3' %}
 {% set release_nameadd = '+ds' %}
-{% set release_ver = '1' %}
+{% set release_ver = '2' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
-    - results: 
+    - results:
       - {{name}}_{{version}}{{release_nameadd}}.orig.tar.gz
       - {{name}}_{{version}}{{release_nameadd}}-{{release_ver}}.dsc
       - {{name}}_{{version}}{{release_nameadd}}-{{release_ver}}.debian.tar.xz

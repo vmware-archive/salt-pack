@@ -1,11 +1,14 @@
+# Import build branch
+{% import "setup/base_map.jinja" as versioncfg %}
+
 'base':
   'G@os:CentOS':
-    - redhat_pkg
+    - {{versioncfg.redhat_pkg}}
 
   'G@osfullname:Debian':
-    - debian_pkg
+    - {{versioncfg.debian_pkg}}
 
   'G@osfullname:Ubuntu':
-    - ubuntu_pkg
+    - {{versioncfg.ubuntu_pkg}}
 
 

@@ -16,7 +16,7 @@
 
 Name: salt
 Version: 2015.8.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -32,9 +32,13 @@ Source6: %{name}-master.service
 Source7: %{name}-syndic.service
 Source8: %{name}-minion.service
 Source9: %{name}-api.service
-Source10: README.fedora
-Source11: %{name}-common.logrotate
-Source12: salt.bash
+Source10: salt-master.environment
+Source11: salt-syndic.environment
+Source12: salt-minion.environment
+Source13: salt-api.environment
+Source14: README.fedora
+Source15: %{name}-common.logrotate
+Source16: salt.bash
 
 ## Patch0:  salt-%{version}-tests.patch
 
@@ -130,15 +134,15 @@ Requires:      systemd-python
 %endif
 
 %description
-Salt is a distributed remote execution system used to execute commands and 
-query data. It was developed in order to bring the best solutions found in 
-the world of remote execution together and make them better, faster and more 
-malleable. Salt accomplishes this via its ability to handle larger loads of 
-information, and not just dozens, but hundreds or even thousands of individual 
+Salt is a distributed remote execution system used to execute commands and
+query data. It was developed in order to bring the best solutions found in
+the world of remote execution together and make them better, faster and more
+malleable. Salt accomplishes this via its ability to handle larger loads of
+information, and not just dozens, but hundreds or even thousands of individual
 servers, handle them quickly and through a simple and manageable interface.
 
 %package master
-Summary: Management component for salt, a parallel remote execution system 
+Summary: Management component for salt, a parallel remote execution system
 Group:   System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 %if (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
@@ -149,7 +153,7 @@ Requires: systemd-python
 The Salt master is the central server to which all minions connect.
 
 %package minion
-Summary: Client component for Salt, a parallel remote execution system 
+Summary: Client component for Salt, a parallel remote execution system
 Group:   System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 
@@ -158,7 +162,7 @@ The Salt minion is the agent component of Salt. It listens for instructions
 from the master, runs jobs, and returns results back to the master.
 
 %package syndic
-Summary: Master-of-master component for Salt, a parallel remote execution system 
+Summary: Master-of-master component for Salt, a parallel remote execution system
 Group:   System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 
@@ -239,11 +243,18 @@ install -p %{SOURCE3} %{buildroot}%{_initrddir}/
 install -p %{SOURCE4} %{buildroot}%{_initrddir}/
 install -p %{SOURCE5} %{buildroot}%{_initrddir}/
 %else
+# Add the unit files
 mkdir -p %{buildroot}%{_unitdir}
 install -p -m 0644 %{SOURCE6} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE7} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE8} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
+# Add the environment files
+mkdir -p %{buildroot}%{_sysconfdir}/default
+install -p -m 0640 %{SOURCE10} %{buildroot}%{_sysconfdir}/default/salt-master
+install -p -m 0640 %{SOURCE11} %{buildroot}%{_sysconfdir}/default/salt-syndic
+install -p -m 0640 %{SOURCE12} %{buildroot}%{_sysconfdir}/default/salt-minion
+install -p -m 0640 %{SOURCE13} %{buildroot}%{_sysconfdir}/default/salt-api
 %endif
 
 # Force python2.6 on EPEL6
@@ -254,13 +265,13 @@ sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_initrddir}/salt*
 %endif
 
 # Logrotate
-install -p %{SOURCE10} .
+install -p %{SOURCE14} .
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
-install -p -m 0644 %{SOURCE11} %{buildroot}%{_sysconfdir}/logrotate.d/salt
+install -p -m 0644 %{SOURCE15} %{buildroot}%{_sysconfdir}/logrotate.d/salt
 
 # Bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d/
-install -p -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/bash_completion.d/salt.bash
+install -p -m 0644 %{SOURCE16} %{buildroot}%{_sysconfdir}/bash_completion.d/salt.bash
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 %check
@@ -305,6 +316,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-master
 %else
 %{_unitdir}/salt-master.service
+%{_sysconfdir}/default/salt-master
 %endif
 %config(noreplace) %{_sysconfdir}/salt/master
 %config(noreplace) %{_sysconfdir}/salt/master.d
@@ -322,6 +334,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
 %{_unitdir}/salt-minion.service
+%{_sysconfdir}/default/salt-minion
 %endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
@@ -335,6 +348,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-syndic
 %else
 %{_unitdir}/salt-syndic.service
+%{_sysconfdir}/default/salt-syndic
 %endif
 
 %files api
@@ -345,6 +359,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-api
 %else
 %{_unitdir}/salt-api.service
+%{_sysconfdir}/default/salt-api
 %endif
 
 %files cloud
@@ -482,7 +497,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Dec  7 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-2
+* Thu Jan 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-3
+- Add systemd environment files
+
+* Thu Dec  7 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-2
 - Additional salt configuration directories on install
 
 * Tue Dec  1 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-1
@@ -501,7 +519,7 @@ rm -rf %{buildroot}
 - Update include python-uinttest2
 
 * Wed Sep  9 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.0-2
-- Update include testing 
+- Update include testing
 
 * Fri Sep  4 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.0-1
 - Update to feature release 2015.8.0

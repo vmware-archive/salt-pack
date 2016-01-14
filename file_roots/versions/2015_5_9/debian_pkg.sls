@@ -17,6 +17,7 @@ include:
     - pkg.python-requests.2_7_0.debian8
     - pkg.python-sphinx.1_3_1.debian8
     - pkg.python-timelib.0_2_4.debian8
+    - pkg.python-urllib3.1_10_4.debian8
     - pkg.python-yaml.3_11.debian8
     - pkg.salt.2015_5_9.debian8
     - pkg.sphinx_common.1_3_1.debian8

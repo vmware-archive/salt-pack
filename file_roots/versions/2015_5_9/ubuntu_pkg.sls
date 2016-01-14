@@ -27,6 +27,7 @@ include:
     - pkg.python-raet.0_6_3.ubuntu1204
     - pkg.python-requests.2_0_0.ubuntu1204
     - pkg.python-timelib.0_2_4.ubuntu1204
+    - pkg.python-urllib3.1_7_1.ubuntu1204
     - pkg.salt.2015_5_9.ubuntu1204
     - pkg.zeromq.4_0_4.ubuntu1204
 

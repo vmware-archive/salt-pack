@@ -100,13 +100,9 @@
 # set version to build
 {% set build_version = '2015_5_9' %}
 
-{% if build_version == '2015_8_4' %}
+{% if build_version != '' %}
 include:
     - .versions.{{build_version}}.pkgbuild
-
-{% elif build_version == '2015_5_9' %}
-include:
-    - versions.{{build_version}}.pkgbuild
 
 {% else %}
 pkgbuild_registry:

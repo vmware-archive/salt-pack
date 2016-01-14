@@ -112,6 +112,8 @@ pkgbuild_registry:
     python-cherrypy:
       version: 3.2.2-4
       noarch: True
+    python-crypto:
+      version: 2.6.1-1
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -153,6 +155,7 @@ pkgbuild_registry:
       version: 2015.5.9-1
       noarch: True
       build_deps:
+        - python-crypto
         - python-msgpack
         - python-yaml
         - python-requests
@@ -353,6 +356,10 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
+    m2crypto:
+      version: 0.21.1-5
+      results:
+        - M2Crypto
     openpgm:
       version: 5.2.122-2
       results:
@@ -375,6 +382,16 @@ pkgbuild_registry:
         - python26-libs
         - python26-test
         - python26-tools
+    python-backports:
+      name: python26-backports
+      version: 1.0-4
+    python-backports-ssl_match_hostname:
+      name: python26-backports-ssl_match_hostname
+      version: 3.4.0.2-2
+      noarch: True
+      build_deps:
+        - python-backports
+        - python-distribute
     python-chardet:
       name: python26-chardet
       version: 2.0.1-2
@@ -411,6 +428,10 @@ pkgbuild_registry:
         - python-babel
         - python-markupsafe
         - python-distribute
+    python-kitchen:
+      name: python26-kitchen
+      version: 1.1.1-1
+      noarch: True
     python-libcloud:
       name: python26-libcloud
       version: 0.20.0-1
@@ -439,6 +460,10 @@ pkgbuild_registry:
       version: 0.4.5-1
       build_deps:
         - python-distribute
+    python-ordereddict:
+      name: python26-ordereddict
+      version: 1.1-2
+      noarch: True
     python-pip:
       name: python26-pip
       version: 1.5.6-1
@@ -460,6 +485,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-chardet
+        - python-ordereddict
         - python-distribute
         - python-urllib3
     python-six:

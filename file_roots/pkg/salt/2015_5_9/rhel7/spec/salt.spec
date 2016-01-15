@@ -16,7 +16,7 @@
 
 Name: salt
 Version: 2015.5.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -162,7 +162,11 @@ infrastructure.
 Summary: REST API for Salt, a parallel remote execution system
 Group:   System administration tools
 Requires: %{name}-master = %{version}-%{release}
+%if 0%{?with_python26}
+Requires: python26-cherrypy
+%else
 Requires: python-cherrypy
+%endif
 
 %description api
 salt-api provides a REST interface to the Salt master.
@@ -171,7 +175,11 @@ salt-api provides a REST interface to the Salt master.
 Summary: Cloud provisioner for Salt, a parallel remote execution system
 Group:   System administration tools
 Requires: %{name}-master = %{version}-%{release}
+%if 0%{?with_python26}
+Requires: python26-libcloud
+%else
 Requires: python-libcloud
+%endif
 
 %description cloud
 The salt-cloud tool provisions new cloud VMs, installs salt-minion on them, and
@@ -469,6 +477,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Jan 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.5.9-2
+- Updated deps salt-cloud to python26-libcloud and salt-api to python26-cherrypy
+
 * Tue Jan 12 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.5.9-1
 - Update to bugfix release 2015.5.9
 

@@ -61,15 +61,16 @@ include:
     - pkg.babel.0_9_5.rhel5
     - pkg.libffi.3_0_5.rhel5
     - pkg.libyaml.0_1_2.rhel5
-    - pkg.m2crypto.0_21_1.rhel5
     - pkg.python26.2_6_8.rhel5
     - pkg.python-backports.1_0.rhel5
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel5
     - pkg.python-chardet.2_0_1.rhel5
     - pkg.python-cherrypy.3_5_0.rhel5
+    - pkg.python-crypto.2_6_1.rhel5
     - pkg.python-distribute.0_6_10.rhel5
     - pkg.python-ioflo.1_3_8.rhel5
     - pkg.python-jinja2.2_5_5.rhel5
+    - pkg.python-m2crypto.0_21_1.rhel5
     - pkg.python-msgpack.0_4_5.rhel5
     - pkg.python-libcloud.0_20_0.rhel5
     - pkg.python-libnacl.1_4_3.rhel5

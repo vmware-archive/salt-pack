@@ -356,10 +356,6 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
-    m2crypto:
-      version: 0.21.1-5
-      results:
-        - M2Crypto
     openpgm:
       version: 5.2.122-2
       results:
@@ -404,6 +400,9 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-distribute
+    python-crypto:
+      name: python26-crypto
+      version: 2.6.1-2
     python-distribute:
       name: python26-distribute
       version: 0.6.10-4
@@ -426,12 +425,9 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-babel
+        - python-crypto
         - python-markupsafe
         - python-distribute
-    python-kitchen:
-      name: python26-kitchen
-      version: 1.1.1-1
-      noarch: True
     python-libcloud:
       name: python26-libcloud
       version: 0.20.0-1
@@ -444,12 +440,9 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-distribute
-    python-nose:
-      name: python26-nose
-      version: 0.11.1-4
-      noarch: True
-      build_deps:
-        - python-distribute
+    python-m2crypto:
+      name: python26-m2crypto
+      version: 0.21.1-5
     python-markupsafe:
       name: python26-markupsafe
       version: 0.11-3
@@ -460,10 +453,17 @@ pkgbuild_registry:
       version: 0.4.5-1
       build_deps:
         - python-distribute
-    python-ordereddict:
-      name: python26-ordereddict
-      version: 1.1-2
+    python-nose:
+      name: python26-nose
+      version: 0.11.1-4
       noarch: True
+      build_deps:
+        - python-distribute
+    python-ordereddict:
+      version: 1.1-3
+      noarch: True
+      build_deps:
+        - python-distribute
     python-pip:
       name: python26-pip
       version: 1.5.6-1

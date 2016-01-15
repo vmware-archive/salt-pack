@@ -511,7 +511,7 @@ pkgbuild_registry:
         - libyaml
         - python-distribute
     salt:
-      version: 2015.5.9-1
+      version: 2015.5.9-2
       noarch: True
       build_deps:
         - python-msgpack

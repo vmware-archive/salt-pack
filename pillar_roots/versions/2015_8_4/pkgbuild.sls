@@ -97,14 +97,6 @@
 # packages aware of their dependencies and pull in the right build deps, have
 # the right requisites set, etc.
 
-# set version to build
-{% set build_version = '2015_5_9' %}
-
-{% if build_version != '' %}
-include:
-    - .versions.{{build_version}}.pkgbuild
-
-{% else %}
 pkgbuild_registry:
   rhel7:
     libsodium:
@@ -617,5 +609,3 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
-
-{% endif %}

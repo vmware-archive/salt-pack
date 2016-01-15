@@ -97,14 +97,6 @@
 # packages aware of their dependencies and pull in the right build deps, have
 # the right requisites set, etc.
 
-# set version to build
-{% set build_version = '2015_5_9' %}
-
-{% if build_version != '' %}
-include:
-    - .versions.{{build_version}}.pkgbuild
-
-{% else %}
 pkgbuild_registry:
   rhel7:
     libsodium:
@@ -125,14 +117,11 @@ pkgbuild_registry:
     python-enum34:
       version: 1.0-4
       noarch: True
-    python-futures:
-      version: 3.0.3-1
-      noarch: True
     python-ioflo:
       version: 1.3.8-1
       noarch: True
     python-libcloud:
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -156,10 +145,6 @@ pkgbuild_registry:
     python-requests:
       version: 2.6.0-1
       noarch: True
-    python-tornado:
-      version: 4.2.1-1
-    python-tornado-salt:
-      version: 4.2.1-1
     python-timelib:
       version: 0.2.4-1
       noarch: True
@@ -167,7 +152,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2015.8.3-2
+      version: 2015.5.9-1
       noarch: True
       build_deps:
         - python-crypto
@@ -176,8 +161,6 @@ pkgbuild_registry:
         - python-requests
         - python-pyzmq
         - python-markupsafe
-        - python-tornado
-        - python-futures
         - python-libcloud
       results:
         - salt
@@ -224,28 +207,14 @@ pkgbuild_registry:
         - pciutils-devel
         - pciutils-devel-static
         - pciutils-libs
-    python-backports:
-      version: 1.0-5
-    python-backports-ssl_match_hostname:
-      version: 3.4.0.2-2
-      noarch: True
-      build_deps:
-        - python-backports
     python-chardet:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
       version: 3.2.2-4
       noarch: True
-    python-crypto:
-      version: 2.6.1-2
-    python-crypto-salt:
-      version: 2.6.1-4
     python-enum34:
       version: 1.0-4
-      noarch: True
-    python-futures:
-      version: 3.0.3-1
       noarch: True
     python-importlib:
       version: 1.0.2-1
@@ -259,7 +228,7 @@ pkgbuild_registry:
         - python-babel
         - python-markupsafe
     python-libcloud:
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -295,14 +264,6 @@ pkgbuild_registry:
     python-six:
       version: 1.9.0-2
       noarch: True
-    python-tornado:
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-    python-tornado-salt:
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
     python-timelib:
       version: 0.2.4-1
       noarch: True
@@ -315,17 +276,14 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2015.8.3-2
+      version: 2015.5.9-1
       noarch: True
       build_deps:
-        - python-crypto
         - python-msgpack
         - python-yaml
         - python-requests
         - python-pyzmq
         - python-markupsafe
-        - python-tornado
-        - python-futures
         - python-libcloud
       results:
         - salt
@@ -445,9 +403,6 @@ pkgbuild_registry:
     python-crypto:
       name: python26-crypto
       version: 2.6.1-2
-    python-crypto-salt:
-      name: python26-crypto-salt
-      version: 2.6.1-4
     python-distribute:
       name: python26-distribute
       version: 0.6.10-4
@@ -470,11 +425,12 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-babel
+        - python-crypto
         - python-markupsafe
         - python-distribute
     python-libcloud:
       name: python26-libcloud
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
       build_deps:
         - python-distribute
@@ -484,12 +440,9 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-distribute
-    python-nose:
-      name: python26-nose
-      version: 0.11.1-4
-      noarch: True
-      build_deps:
-        - python-distribute
+    python-m2crypto:
+      name: python26-m2crypto
+      version: 0.21.1-5
     python-markupsafe:
       name: python26-markupsafe
       version: 0.11-3
@@ -498,6 +451,17 @@ pkgbuild_registry:
     python-msgpack:
       name: python26-msgpack
       version: 0.4.5-1
+      build_deps:
+        - python-distribute
+    python-nose:
+      name: python26-nose
+      version: 0.11.1-4
+      noarch: True
+      build_deps:
+        - python-distribute
+    python-ordereddict:
+      version: 1.1-3
+      noarch: True
       build_deps:
         - python-distribute
     python-pip:
@@ -521,6 +485,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-chardet
+        - python-ordereddict
         - python-distribute
         - python-urllib3
     python-six:
@@ -529,22 +494,6 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-distribute
-    python-tornado:
-      name: python26-tornado
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-        - python-distribute
-      additonal_deps:
-        - python-pycurl
-    python-tornado-salt:
-      name: python26-tornado-salt
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-        - python-distribute
-      additonal_deps:
-        - python-pycurl
     python-timelib:
       name: python26-timelib
       version: 0.2.4-1
@@ -562,16 +511,14 @@ pkgbuild_registry:
         - libyaml
         - python-distribute
     salt:
-      version: 2015.8.3-2
+      version: 2015.5.9-2
       noarch: True
       build_deps:
-        - python-crypto
         - python-msgpack
         - python-yaml
         - python-requests
         - python-pyzmq
         - python-markupsafe
-        - python-tornado
         - python-libcloud
       results:
         - salt
@@ -617,5 +564,3 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
-
-{% endif %}

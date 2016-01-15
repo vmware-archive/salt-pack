@@ -1,0 +1,34 @@
+{% import "setup/ubuntu/map.jinja" as buildcfg %}
+
+include:
+{% if buildcfg.build_release == 'ubuntu1404' %}
+
+    - pkg.libsodium.1_0_3.ubuntu1404
+    - pkg.python-enum34.1_0_4.ubuntu1404
+    - pkg.python-ioflo.1_3_8.ubuntu1404
+    - pkg.python-libcloud.0_15_1.ubuntu1404    ## - universe then main 12.04.5 - do we need 0.18.0
+    - pkg.python-libnacl.4_1.ubuntu1404
+    - pkg.python-raet.0_6_3.ubuntu1404
+    - pkg.python-timelib.0_2_4.ubuntu1404
+    - pkg.salt.2015_5_9.ubuntu1404
+    - pkg.zeromq.4_0_4.ubuntu1404
+
+{% elif buildcfg.build_release == 'ubuntu1204' %}
+
+    - pkg.libsodium.1_0_3.ubuntu1204
+    - pkg.python-croniter.0_3_4.ubuntu1204
+    - pkg.python-enum34.1_0_4.ubuntu1204
+    - pkg.python-ioflo.1_3_8.ubuntu1204
+##    - pkg.libcloud.0_15_1.ubuntu1204    ## - universe - do we need 0.18.0
+    - pkg.python-libcloud.0_14_1.ubuntu1204
+    - pkg.python-libnacl.4_1.ubuntu1204
+    - pkg.python-msgpack.0_3_0.ubuntu1204        ## - not found on ubuntu1204
+    - pkg.python-pyzmq.14_0_1.ubuntu1204
+    - pkg.python-raet.0_6_3.ubuntu1204
+    - pkg.python-requests.2_0_0.ubuntu1204
+    - pkg.python-timelib.0_2_4.ubuntu1204
+    - pkg.python-urllib3.1_7_1.ubuntu1204
+    - pkg.salt.2015_5_9.ubuntu1204
+    - pkg.zeromq.4_0_4.ubuntu1204
+
+{% endif %}

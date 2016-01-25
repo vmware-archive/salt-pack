@@ -98,7 +98,7 @@
 # the right requisites set, etc.
 
 # set version to build
-{% set build_version = '2015_5_9' %}
+{% set build_version = '' %}
 
 {% if build_version != '' %}
 include:
@@ -127,6 +127,9 @@ pkgbuild_registry:
       noarch: True
     python-futures:
       version: 3.0.3-1
+      noarch: True
+    python-impacket:
+      version: 0.9.14-1
       noarch: True
     python-ioflo:
       version: 1.3.8-1
@@ -246,6 +249,9 @@ pkgbuild_registry:
       noarch: True
     python-futures:
       version: 3.0.3-1
+      noarch: True
+    python-impacket:
+      version: 0.9.14-1
       noarch: True
     python-importlib:
       version: 1.0.2-1

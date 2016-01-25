@@ -9,6 +9,7 @@ include:
     - pkg.python-crypto.2_6_1.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
+    - pkg.python-impacket.0_9_14.rhel7
     - pkg.python-ioflo.1_3_8.rhel7
     - pkg.python-libcloud.0_18_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
@@ -38,6 +39,7 @@ include:
     - pkg.python-futures.3_0_3.rhel6
     - pkg.python-importlib.1_0_2.rhel6
     - pkg.python-ioflo.1_3_8.rhel6
+    - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_2_1.rhel6
     - pkg.python-libcloud.0_18_0.rhel6
     - pkg.python-libnacl.1_4_3.rhel6

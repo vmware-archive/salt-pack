@@ -98,7 +98,7 @@
 # the right requisites set, etc.
 
 # set version to build
-{% set build_version = '' %}
+{% set build_version = '2015_8_4' %}
 
 {% if build_version != '' %}
 include:

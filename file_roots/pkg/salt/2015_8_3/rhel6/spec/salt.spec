@@ -32,9 +32,6 @@ Source6: %{name}-master.service
 Source7: %{name}-syndic.service
 Source8: %{name}-minion.service
 Source9: %{name}-api.service
-Source10: README.fedora
-Source11: %{name}-common.logrotate
-Source12: salt.bash
 Source10: salt-master.environment
 Source11: salt-syndic.environment
 Source12: salt-minion.environment

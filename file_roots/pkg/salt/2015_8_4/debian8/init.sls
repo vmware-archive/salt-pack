@@ -16,7 +16,6 @@
       - {{name}}-api_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-cloud_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-common_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
-      - {{name}}-doc_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-master_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-minion_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-ssh_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb

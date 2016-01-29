@@ -16,7 +16,7 @@
 
 Name: salt
 Version: 2015.8.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -318,7 +318,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-master
 %else
 %{_unitdir}/salt-master.service
-%{_sysconfdir}/default/salt-master
+%config(noreplace) %{_sysconfdir}/default/salt-master
 %endif
 %config(noreplace) %{_sysconfdir}/salt/master
 %config(noreplace) %{_sysconfdir}/salt/master.d
@@ -336,7 +336,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
 %{_unitdir}/salt-minion.service
-%{_sysconfdir}/default/salt-minion
+%config(noreplace) %{_sysconfdir}/default/salt-minion
 %endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
@@ -350,7 +350,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-syndic
 %else
 %{_unitdir}/salt-syndic.service
-%{_sysconfdir}/default/salt-syndic
+%config(noreplace) %{_sysconfdir}/default/salt-syndic
 %endif
 
 %files api
@@ -361,7 +361,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-api
 %else
 %{_unitdir}/salt-api.service
-%{_sysconfdir}/default/salt-api
+%config(noreplace) %{_sysconfdir}/default/salt-api
 %endif
 
 %files cloud
@@ -499,7 +499,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Dec  7 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-3
+* Fri Jan 29 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-4
+- Add noreplace to environment files
+
+* Thu Jan 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-3
 - Add systemd environment files
 
 * Thu Dec  7 2015 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.3-2

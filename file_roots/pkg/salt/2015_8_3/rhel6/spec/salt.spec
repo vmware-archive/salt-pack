@@ -60,8 +60,6 @@ Requires: yum-utils
 %if 0%{?with_python26}
 
 BuildRequires: python26-devel
-BuildRequires: python26-tornado >= 4.2.1
-BuildRequires: python26-six
 Requires: python26-crypto >= 2.6.1
 Requires: python26-jinja2
 Requires: python26-msgpack > 0.3
@@ -74,6 +72,8 @@ Requires: python26-six
 %else
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+BuildRequires: python-tornado >= 4.2.1
+BuildRequires: python-futures >= 2.0
 BuildRequires: python-crypto >= 2.6.1
 BuildRequires: python-jinja2
 BuildRequires: python-msgpack > 0.3
@@ -98,8 +98,6 @@ BuildRequires: python-argparse
 %endif
 
 BuildRequires: python-devel
-BuildRequires: python-tornado >= 4.2.1
-BuildRequires: python-futures >= 2.0
 Requires: python-crypto >= 2.6.1
 Requires: python-jinja2
 Requires: python-msgpack > 0.3

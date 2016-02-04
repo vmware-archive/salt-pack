@@ -18,11 +18,11 @@ include:
     - pkg.python-pyzmq.14_4_0.debian8
     - pkg.python-raet.0_6_3.debian8
     - pkg.python-requests.2_7_0.debian8
-    - pkg.python-sphinx.1_3_1.debian8
+##    - pkg.python-sphinx.1_3_1.debian8
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
     - pkg.python-urllib3.1_10_4.debian8
     - pkg.python-yaml.3_11.debian8
-    - pkg.salt.2015_8_4.debian8
-    - pkg.sphinx_common.1_3_1.debian8
+    - pkg.salt.2015_8_5.debian8
+##    - pkg.sphinx_common.1_3_1.debian8
     - pkg.zeromq.4_0_5.debian8

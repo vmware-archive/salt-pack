@@ -4,16 +4,19 @@
         Pin-Priority: 950
         Package: libjs-sphinxdoc
         Pin: release a=testing
-        Pin-Priority: 940 
+        Pin-Priority: 940
         Package: sphinx-common
         Pin: release a=testing
-        Pin-Priority: 930 
+        Pin-Priority: 930
         Package: python-sphinx
         Pin: release a=testing
         Pin-Priority: 920
         Package: *
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
+        Package: *
+        Pin: release a=os_codename
+        Pin-Priority: 720
         Package: *
         Pin: release a=stable
         Pin-Priority: 700
@@ -41,7 +44,7 @@ build_pbldhooks_file:
         cat > "/etc/apt/preferences" << EOF
         {{prefs_text}}
         EOF
-    
+
 
 build_pbldhooks_perms:
   file.directory:
@@ -69,7 +72,7 @@ build_pbldrc:
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
         OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable  main contrib non-free | deb http://ftp.us.debian.org/debian/ testing main contrib non-free | deb http://ftp.us.debian.org/debian/ unstable main contrib non-free"
-        
+
 
 build_prefs:
   file.append:

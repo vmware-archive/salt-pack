@@ -4,7 +4,7 @@
 {% set name = 'salt' %}
 {% set version = '2015.5.9' %}
 {% set release_nameadd = '+ds' %}
-{% set release_ver = '1' %}
+{% set release_ver = '2' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
@@ -16,7 +16,6 @@
       - {{name}}-api_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-cloud_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-common_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
-      - {{name}}-doc_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-master_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-minion_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb
       - {{name}}-ssh_{{version}}{{release_nameadd}}-{{release_ver}}_all.deb

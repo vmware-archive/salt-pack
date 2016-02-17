@@ -13,9 +13,6 @@ build_pkgs:
       - debhelper
       - python-support
       - python-setuptools
-      - libjs-sphinxdoc
-      - sphinx-common
-      - python-sphinx
       - gnupg
       - dh-systemd
       - pkg-config

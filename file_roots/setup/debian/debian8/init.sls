@@ -1,34 +1,13 @@
 {% set os_codename = 'jessie' %}
-{% set prefs_text = 'Package: python-alabaster
-        Pin: release a=testing
-        Pin-Priority: 950
-        Package: libjs-sphinxdoc
-        Pin: release a=testing
-        Pin-Priority: 940
-        Package: sphinx-common
-        Pin: release a=testing
-        Pin-Priority: 930
-        Package: python-sphinx
-        Pin: release a=testing
-        Pin-Priority: 920
-        Package: *
+{% set prefs_text = 'Package: *
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
         Package: *
-        Pin: release a=os_codename
+        Pin: release a=' ~ os_codename ~ '
         Pin-Priority: 720
         Package: *
         Pin: release a=stable
         Pin-Priority: 700
-        Package: *
-        Pin: release a=testing
-        Pin-Priority: 650
-        Package: *
-        Pin: release a=unstable
-        Pin-Priority: 600
-        Package: *
-        Pin: release a=experimental
-        Pin-Priority: 550
 ' %}
 
 include:
@@ -71,7 +50,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable  main contrib non-free | deb http://ftp.us.debian.org/debian/ testing main contrib non-free | deb http://ftp.us.debian.org/debian/ unstable main contrib non-free"
+        OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable  main contrib "
 
 
 build_prefs:

@@ -1,0 +1,15 @@
+[Unit]
+Description=The Salt Master Server
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/default/salt-master
+LimitNOFILE=16384
+Type=notify
+NotifyAccess=all
+ExecStart=/usr/bin/salt-master
+KillMode=process
+Restart=$RESTART
+
+[Install]
+WantedBy=multi-user.target

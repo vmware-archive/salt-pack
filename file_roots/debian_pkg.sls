@@ -23,6 +23,6 @@ include:
     - pkg.python-tornado.4_2_1.debian8
     - pkg.python-urllib3.1_10_4.debian8
     - pkg.python-yaml.3_11.debian8
-    - pkg.salt.2015_8_5.debian8
+    - pkg.salt.2015_8_7.debian8
 ##    - pkg.sphinx_common.1_3_1.debian8
     - pkg.zeromq.4_0_5.debian8

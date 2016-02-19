@@ -1,5 +1,8 @@
 {% set os_codename = 'jessie' %}
-{% set prefs_text = 'Package: *
+{% set prefs_text = 'Package: python3-*
+        Pin: release a=testing
+        Pin-Priority: 800
+        Package: *
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
         Package: *
@@ -50,7 +53,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable  main contrib "
+        OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
 
 
 build_prefs:

@@ -156,9 +156,12 @@ pkgbuild_registry:
         - python-ioflo
       additonal_deps:
         - python-libnacl
+        - python-simplejson
     python-requests:
       version: 2.6.0-1
       noarch: True
+    python-simplejson:
+      version: 3.3.3-1
     python-tornado:
       version: 4.2.1-1
     python-tornado-salt:

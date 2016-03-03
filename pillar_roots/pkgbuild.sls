@@ -257,7 +257,7 @@ pkgbuild_registry:
       version: 0.9.14-1
       noarch: True
     python-importlib:
-      version: 1.0.2-1
+      version: 1.0.2-2
       noarch: True
     python-ioflo:
       version: 1.3.8-1

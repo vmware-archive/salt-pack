@@ -4,7 +4,7 @@
 
 Name:           python-importlib
 Version:        1.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Backport of importlib.import_module() from Python 2.7
 
 Group:          Development/Languages
@@ -15,7 +15,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel
-Conflicts:      python(abi) = 2.7
+## Conflicts:      python(abi) = 2.7
 
 %description
 This package contains the code from importlib as found in Python 2.7.
@@ -49,5 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar  3 2016 SaltStack Packaging Team <packaging@saltstack.com> 1.0.2-2
+- Removed Conflict to allow for operation on Amazon Linux
+
 * Tue Jun 21 2011 Andrew Colin Kissa <andrew@topdog.za.net> 1.0.2-1
 - Initial package

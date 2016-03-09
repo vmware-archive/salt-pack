@@ -51,6 +51,6 @@ include:
     - pkg.python-urllib3.1_7_1.debian7  # 1.7.1-1~bpo70+1 wheezy-backports/main
     - pkg.python-yaml.3_10.debian7      # 3.10-4+deb7u1
     - pkg.salt.2015_8_7.debian7         #
-    - pkg.zeromq.4_0_5.debian7          #
+    - pkg.zeromq.3_2_3.debian7          #
 
 {% endif %}

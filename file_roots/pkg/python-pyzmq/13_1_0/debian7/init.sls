@@ -12,7 +12,6 @@
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
     - results:
-      - pypy-{{pypi_short_name}}_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb
       - python-{{pypi_short_name}}_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb
       - python-{{pypi_short_name}}-dbg_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb
       - python3-{{pypi_short_name}}_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb

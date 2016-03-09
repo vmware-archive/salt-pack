@@ -16,6 +16,11 @@
 include:
   - setup.debian
 
+build_additional_pkgs:
+  pkg.installed:
+    - pkgs:
+      - dh-systemd
+
 build_pbldhooks_file:
   file.append:
     - name: /root/.pbuilder-hooks/G05apt-preferences

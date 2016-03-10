@@ -31,6 +31,7 @@ include:
 
     - pkg.bsdmainutils.9_0_3.debian7    # 9.0.3
     - pkg.libsodium.1_0_3.debian7       #
+    - pkg.python-backports-ssl_match_hostname.3_4_0_2.debian7
     - pkg.openpgm.5_2_122.debian7       #
     - pkg.python-cherrypy.2_3_0.debian7 # 2.3.0-3
     - pkg.python-croniter.0_3_4.debian7 #

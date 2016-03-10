@@ -14,8 +14,8 @@ build_pkgs:
       - python-support
       - python-setuptools
       - gnupg
-      - dh-systemd
       - pkg-config
+##      - dh-systemd
 
 builder:
   user.present:

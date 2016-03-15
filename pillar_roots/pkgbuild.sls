@@ -98,7 +98,7 @@
 # the right requisites set, etc.
 
 # set version to build
-{% set build_version = '2015_8_7' %}
+{% set build_version = '2015_5_10' %}
 
 {% if build_version != '' %}
 include:
@@ -108,7 +108,7 @@ include:
 pkgbuild_registry:
   rhel7:
     libsodium:
-      version: 1.0.2-1
+      version: 1.0.5-1
       results:
         - libsodium
         - libsodium-devel

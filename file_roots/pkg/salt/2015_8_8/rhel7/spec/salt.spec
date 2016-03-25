@@ -16,7 +16,7 @@
 
 Name: salt
 Version: 2015.8.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -508,6 +508,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Mar 25 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.8-2
+- Patched fixes 32129, 32023, 32117
+
 * Wed Mar 16 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2015.8.8-1
 - Update to bugfix release 2015.8.8
 

@@ -3,8 +3,8 @@
 
 {% set name = 'salt' %}
 {% set version = '2015.8.8' %}
-{% set release_ver = '1' %}
 {% set release_nameadd = '+ds' %}
+{% set release_ver = '2' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:

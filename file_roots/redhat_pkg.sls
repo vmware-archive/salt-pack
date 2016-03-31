@@ -11,7 +11,7 @@ include:
     - pkg.python-futures.3_0_3.rhel7
     - pkg.python-impacket.0_9_14.rhel7
     - pkg.python-ioflo.1_3_8.rhel7
-    - pkg.python-libcloud.0_18_0.rhel7
+    - pkg.python-libcloud.0_20_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
     - pkg.python-msgpack.0_4_6.rhel7
 ##    - pkg.python-ordereddict.1_1.rhel7
@@ -42,14 +42,14 @@ include:
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_2_1.rhel6
-    - pkg.python-libcloud.0_18_0.rhel6
+    - pkg.python-libcloud.0_20_0.rhel6
     - pkg.python-libnacl.1_4_3.rhel6
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6
     - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_3.rhel6
-    - pkg.python-requests.1_1_0.rhel6
+    - pkg.python-requests.2_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
@@ -74,10 +74,11 @@ include:
     - pkg.python-ioflo.1_3_8.rhel5
     - pkg.python-jinja2.2_5_5.rhel5
     - pkg.python-msgpack.0_4_5.rhel5
-    - pkg.python-libcloud.0_18_0.rhel5
+    - pkg.python-libcloud.0_20_0.rhel5
     - pkg.python-libnacl.1_4_3.rhel5
     - pkg.python-markupsafe.0_11.rhel5
     - pkg.python-nose.0_11_1.rhel5
+    - pkg.python-ordereddict.1_1.rhel5
     - pkg.python-pip.1_5_6.rhel5
     - pkg.python-pycurl.7_15_5_1.rhel5
     - pkg.python-pyzmq.14_5_0.rhel5

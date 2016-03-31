@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Wed, 30 Mar 2016 18:58:33 -0600
+Source: raet
+Binary: python-raet
+Architecture: source
+Version: 0.6.5-1
+Distribution: unstable
+Urgency: low
+Maintainer: Samuel M. Smith <info@ioflo.com>
+Changed-By: Samuel M. Smith <info@ioflo.com>
+Description:
+ python-raet - Reliable Asynchronous Event Transport protocol
+Changes:
+ raet (0.6.5-1) unstable; urgency=low
+ .
+   * source package automatically created by stdeb 0.8.5
+Checksums-Sha1:
+ 0a7d0bc8e6f17c84789e388908be892dd5150c3a 813 raet_0.6.5-1.dsc
+ dba8f99371c146721c98d28d9f41ee12be618d7e 139299 raet_0.6.5.orig.tar.gz
+ 9243628920c56b4fbd698ad4dcaa95ca6558992f 944 raet_0.6.5-1.debian.tar.xz
+Checksums-Sha256:
+ 1d057e6a582990ab52c1361d4c723efc9c46f7e8df8c7df4e0df43efc372eef8 813 raet_0.6.5-1.dsc
+ d932aafebd51ce6ea779810e36775d0a698edd24e7a6de1034221f406a55649e 139299 raet_0.6.5.orig.tar.gz
+ f285a9a58bdfb2e796ca810e2ec404c2a2a439108c5d9ddd0fe4027f03979b97 944 raet_0.6.5-1.debian.tar.xz
+Files:
+ 3a7bc55b9c2dbbfb3365a78102b07dbe 813 python optional raet_0.6.5-1.dsc
+ f316a588e19472e43e62a5535f28deea 139299 python optional raet_0.6.5.orig.tar.gz
+ aecc28fd6268ba48be8b49759a68802b 944 python optional raet_0.6.5-1.debian.tar.xz

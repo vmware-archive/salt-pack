@@ -6,7 +6,7 @@
 {% set build_runas = 'root' %}
 
 # Get the release and architecture
-{% set build_release = pillar.get('build_release', 'ubuntu1404') %}
+{% set build_release = pillar.get('build_release', 'ubuntu1604') %}
 {% set build_arch = pillar.get('build_arch', 'amd64') %}
 
 # Set the destination for built packages

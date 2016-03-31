@@ -1,17 +1,5 @@
 {% set os_codename = 'trusty' %}
-{% set prefs_text = 'Package: python-alabaster
-        Pin: release a=main
-        Pin-Priority: 950
-        Package: libjs-sphinxdoc
-        Pin: release a=main
-        Pin-Priority: 940 
-        Package: sphinx-common
-        Pin: release a=main
-        Pin-Priority: 930 
-        Package: python-sphinx
-        Pin: release a=main
-        Pin-Priority: 920
-        Package: *
+{% set prefs_text = 'Package: *
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
         Package: *
@@ -37,6 +25,12 @@
 
 include:
   - setup.ubuntu
+
+
+build_additional_pkgs:
+  pkg.installed:
+    - pkgs:
+      - python-support
 
 
 build_pbldhooks_rm:

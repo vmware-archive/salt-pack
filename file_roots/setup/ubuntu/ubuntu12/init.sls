@@ -37,6 +37,11 @@
 include:
   - setup.ubuntu
 
+build_additional_pkgs:
+  pkg.installed:
+    - pkgs:
+      - python-support
+
 build_pbldhooks_rm:
   file.absent:
     - name: /root/.pbuilder-hooks/G05apt-preferences

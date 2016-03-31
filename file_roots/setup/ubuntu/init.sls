@@ -11,15 +11,12 @@ build_pkgs:
       - gnupg-agent
       - reprepro
       - git
-      - python-support
       - python-setuptools
-      - libjs-sphinxdoc
-      - sphinx-common
-      - python-sphinx
       - gnupg
       - pkg-config
       - ubuntu-dev-tools
       - packaging-dev
+##      - python-support
 
 
 builder:

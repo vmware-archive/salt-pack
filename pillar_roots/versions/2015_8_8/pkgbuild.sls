@@ -295,7 +295,7 @@ pkgbuild_registry:
       additional_deps:
         - python-libnacl
     python-requests:
-      version: 1.1.0-3
+      version: 2.6.0-3
       noarch: True
       build_deps:
         - python-chardet

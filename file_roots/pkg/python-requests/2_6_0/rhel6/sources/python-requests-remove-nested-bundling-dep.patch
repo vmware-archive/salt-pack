@@ -1,0 +1,29 @@
+From 8c2259d4ab03ef982738aaf863068a1015cadf3d Mon Sep 17 00:00:00 2001
+From: Ralph Bean <rbean@redhat.com>
+Date: Wed, 5 Nov 2014 10:23:44 -0500
+Subject: [PATCH] Remove nested bundling dep.
+
+---
+ requests/compat.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/requests/compat.py b/requests/compat.py
+index be5a1ed..70ea4e8 100644
+--- a/requests/compat.py
++++ b/requests/compat.py
+@@ -91,7 +91,11 @@ if is_py2:
+     import cookielib
+     from Cookie import Morsel
+     from StringIO import StringIO
+-    from .packages.urllib3.packages.ordered_dict import OrderedDict
++
++    try:
++        from collections import OrderedDict # py2.7
++    except:
++        from ordereddict import OrderedDict # py2.6 and lower (el6, etc.)
+ 
+     builtin_str = str
+     bytes = str
+-- 
+1.9.3
+

@@ -49,7 +49,7 @@ include:
     - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_3.rhel6
-    - pkg.python-requests.1_1_0.rhel6
+    - pkg.python-requests.2_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6

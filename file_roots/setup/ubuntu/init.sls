@@ -6,18 +6,19 @@ build_pkgs:
     - pkgs:
       - debhelper
       - build-essential
+      - ubuntu-dev-tools
       - devscripts
       - dh-make
       - fakeroot
       - debootstrap
       - pbuilder
-      - gnupg-agent
       - reprepro
       - git
       - python-setuptools
+      - python-gnupg
       - gnupg
+      - gnupg-agent
       - pkg-config
-      - ubuntu-dev-tools
       - packaging-dev
 ##      - python-support
 
@@ -28,28 +29,4 @@ build_pkgs:
       - adm
     - require:
       - pkg: build_pkgs
-
-
-manage_priv_key:
-  file.managed:
-    - name: /{{ubuntu_cfg.build_gpg_keydir}}/{{ pillar['gpg_pkg_priv_keyname'] }}
-    - dir_mode: 700
-    - mode: 600
-    - contents_pillar: gpg_pkg_priv_key
-    - show_diff: false
-    - user: {{ubuntu_cfg.build_runas}}
-    - group: mock
-    - makedirs: True
-
-
-manage_pub_key:
-  file.managed:
-    - name: /{{ubuntu_cfg.build_gpg_keydir}}/{{ pillar['gpg_pkg_pub_keyname'] }}
-    - dir_mode: 700
-    - mode: 644
-    - contents_pillar: gpg_pkg_pub_key
-    - show_diff: false
-    - user: {{ubuntu_cfg.build_runas}}
-    - group: mock
-    - makedirs: True
 

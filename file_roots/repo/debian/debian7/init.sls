@@ -7,6 +7,8 @@
 {% if repo_keyid != 'None' %}
     - keyid: {{repo_keyid}}
     - use_passphrase: True
+    - gnupghome: {{buildcfg.build_gpg_keydir}}
+    - runas: {{buildcfg.build_runas}}
 {% endif %}
     - env:
         OPTIONS : 'ask-passphrase'

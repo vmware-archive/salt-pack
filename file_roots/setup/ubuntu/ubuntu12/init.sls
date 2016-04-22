@@ -36,6 +36,7 @@
 
 include:
   - setup.ubuntu
+  - setup.ubuntu.gpg_agent
 
 build_additional_pkgs:
   pkg.installed:

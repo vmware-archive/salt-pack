@@ -1,5 +1,5 @@
 # state file to setup gpg-agent and config on minion
-{% import "setup/debian/map.jinja" as build_cfg %}
+{% import "setup/ubuntu/map.jinja" as build_cfg %}
 
 {% set pkg_pub_key_file = pillar.get('gpg_pkg_pub_keyname', None) %}
 {% set pkg_priv_key_file = pillar.get('gpg_pkg_priv_keyname', None) %}

@@ -15,5 +15,10 @@
 # Set the mock target
 {% set build_tgt = 'ubuntu-' ~ build_arch -%}
 
-# get the gpg keys directory to use
-{% set build_gpg_keydir = pillar.get('build_gpg_keydir', basecfg.build_gpg_keydir) %}
+# Get the gpg keys directory to use, some tools assume ~/.gnupg
+{% if build_runas == 'root' %}
+{% set build_gpg_keydir = '/' ~ build_runas ~ '/.gnupg' %}
+{% else %}
+{% set build_gpg_keydir = '/home' ~ build_runas ~ '/.gnupg' %}
+{% endif %}
+

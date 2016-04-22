@@ -15,3 +15,10 @@
 # Set the mock target
 {% set build_tgt = 'deb-' ~ build_arch %}
 
+# Get the gpg keys directory to use, some tools assume ~/.gnupg
+{% if build_runas == 'root' %}
+{% set build_gpg_keydir = build_runas ~ '/.gnupg' %}
+{% else %}
+{% set build_gpg_keydir = '/home' ~ build_runas ~ '/.gnupg' %}
+{% endif %}
+

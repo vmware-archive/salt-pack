@@ -6,6 +6,7 @@
   pkgbuild.repo:
 {% if repo_keyid != 'None' %}
     - keyid: {{repo_keyid}}
+    - use_passphrase: True
 {% endif %}
     - env:
         OPTIONS : 'ask-passphrase'

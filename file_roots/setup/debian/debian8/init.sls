@@ -15,6 +15,7 @@
 
 include:
   - setup.debian
+  - setup.debian.gpg_agent
 
 build_additional_pkgs:
   pkg.installed:

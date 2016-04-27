@@ -19,6 +19,6 @@
 {% if build_runas == 'root' %}
 {% set build_gpg_keydir = '/' ~ build_runas ~ '/.gnupg' %}
 {% else %}
-{% set build_gpg_keydir = '/home' ~ build_runas ~ '/.gnupg' %}
+{% set build_gpg_keydir = '/home/' ~ build_runas ~ '/.gnupg' %}
 {% endif %}
 

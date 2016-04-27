@@ -1,3 +1,6 @@
+# Import base config
+{% import "setup/debian/map.jinja" as debian_cfg %}
+
 build_pkgs:
   pkg.installed:
     - pkgs:
@@ -7,19 +10,21 @@ build_pkgs:
       - fakeroot
       - debootstrap
       - pbuilder
-      - gnupg-agent
       - reprepro
       - git
       - debhelper
+      - gnupg
+      - gnupg-agent
       - python-support
       - python-setuptools
-      - gnupg
+      - python-gnupg
       - pkg-config
 ##      - dh-systemd
 
-builder:
+{{debian_cfg.build_runas}}:
   user.present:
     - groups:
       - adm
     - require:
       - pkg: build_pkgs
+

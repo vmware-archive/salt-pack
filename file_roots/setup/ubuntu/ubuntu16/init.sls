@@ -25,6 +25,7 @@
 
 include:
   - setup.ubuntu
+  - setup.ubuntu.gpg_agent
 
 
 build_pbldhooks_rm:

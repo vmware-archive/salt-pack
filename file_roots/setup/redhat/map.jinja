@@ -28,3 +28,18 @@
   {% set build_dist = 'el5' %}
 
 {% endif %}
+
+# Get the home directory to use
+{% if build_runas == 'root' %}
+{% set build_runas_home = '/' ~ build_runas %}
+{% else %}
+{% set build_runas_home = '/home/' ~ build_runas %}
+{% endif %}
+
+# Get the gpg keys directory to use, some tools assume ~/.gnupg
+{% if build_runas == 'root' %}
+{% set build_gpg_keydir = build_runas_home ~ '/.gnupg' %}
+{% else %}
+{% set build_gpg_keydir = build_runas_home ~ '/.gnupg' %}
+{% endif %}
+

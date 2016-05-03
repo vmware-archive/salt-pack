@@ -43,7 +43,8 @@ include:
     - pkg.python-ioflo.1_3_8.ubuntu1204
     - pkg.python-libcloud.0_14_1.ubuntu1204
     - pkg.python-libnacl.4_1.ubuntu1204
-    - pkg.python-msgpack.0_3_0.ubuntu1204        ## - not found on ubuntu1204
+    - pkg.python-msgpack.0_3_0.ubuntu1204   ## - not found on ubuntu1204
+    - pkg.python-mako.0_7_0.ubuntu1204      ## - not found on ubuntu1204
     - pkg.python-pyzmq.14_0_1.ubuntu1204
     - pkg.python-raet.0_6_3.ubuntu1204
     - pkg.python-requests.2_0_0.ubuntu1204

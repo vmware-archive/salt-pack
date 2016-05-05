@@ -2,6 +2,9 @@
 
 {% set repo_keyid = pillar.get('keyid', 'None') %}
 
+include:
+  - repo.redhat
+
 {{buildcfg.build_dest_dir}}:
   pkgbuild.repo:
     - order: last

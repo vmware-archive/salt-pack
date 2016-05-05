@@ -67,6 +67,8 @@ gpg_agent_start:
         gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon
     - user: {{build_cfg.build_runas}}
     - python_shell: True
+    - require:
+      - module: gpg_agent_stop
 
 gpg_load_pub_key:
   module.run:
@@ -74,6 +76,8 @@ gpg_load_pub_key:
     - user: {{build_cfg.build_runas}}
     - filename: {{pkg_pub_key_absfile}}
     - gnupghome: {{gpg_key_dir}}
+    - require:
+      - module: gpg_agent_start
 
 gpg_load_priv_key:
   module.run:
@@ -81,6 +85,8 @@ gpg_load_priv_key:
     - user: {{build_cfg.build_runas}}
     - filename: {{pkg_priv_key_absfile}}
     - gnupghome: {{gpg_key_dir}}
+    - require:
+      - module: gpg_agent_start
 
 {% endif %}
 

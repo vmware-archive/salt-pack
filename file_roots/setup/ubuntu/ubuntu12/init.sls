@@ -4,10 +4,10 @@
         Pin-Priority: 950
         Package: libjs-sphinxdoc
         Pin: release a=main
-        Pin-Priority: 940 
+        Pin-Priority: 940
         Package: sphinx-common
         Pin: release a=main
-        Pin-Priority: 930 
+        Pin-Priority: 930
         Package: python-sphinx
         Pin: release a=main
         Pin-Priority: 920
@@ -42,6 +42,7 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
+      - gnupg2
 
 build_pbldhooks_rm:
   file.absent:
@@ -63,7 +64,7 @@ build_pbldhookskeys_file:
   file.append:
     - name: /root/.pbuilder-hooks/G04importkeys
     - text: |
-        /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv 0E27C0A6 
+        /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv 0E27C0A6
         /usr/bin/gpg --export --armor 0E27C0A6 | apt-key add -
         /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv 1378B444
         /usr/bin/gpg --export --armor 1378B444 | apt-key add -

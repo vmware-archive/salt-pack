@@ -8,7 +8,7 @@ include:
     - pkg.python-libnacl.4_1.ubuntu1604     ## - NONE
     - pkg.python-raet.0_6_5.ubuntu1604      ## - NONE
     - pkg.python-timelib.0_2_4.ubuntu1604   ## - NONE
-    - pkg.salt.2015_8_8.ubuntu1604
+    - pkg.salt.2015_8_9.ubuntu1604
 
 {% elif buildcfg.build_release == 'ubuntu1404' %}
 
@@ -22,7 +22,7 @@ include:
     - pkg.python-raet.0_6_3.ubuntu1404
     - pkg.python-timelib.0_2_4.ubuntu1404
     - pkg.python-tornado.4_2_1.ubuntu1404
-    - pkg.salt.2015_8_8.ubuntu1404
+    - pkg.salt.2015_8_9.ubuntu1404
     - pkg.zeromq.4_0_4.ubuntu1404
 
 {% elif buildcfg.build_release == 'ubuntu1204' %}
@@ -45,7 +45,7 @@ include:
     - pkg.python-timelib.0_2_4.ubuntu1204
     - pkg.python-tornado.4_2_1.ubuntu1204
     - pkg.python-urllib3.1_7_1.ubuntu1204
-    - pkg.salt.2015_8_8.ubuntu1204
+    - pkg.salt.2015_8_9.ubuntu1204
     - pkg.zeromq.4_0_4.ubuntu1204
 
 {% endif %}

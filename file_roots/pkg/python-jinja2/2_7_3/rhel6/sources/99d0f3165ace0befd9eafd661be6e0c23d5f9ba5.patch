@@ -1,0 +1,25 @@
+From 99d0f3165ace0befd9eafd661be6e0c23d5f9ba5 Mon Sep 17 00:00:00 2001
+From: Gabi Davar <grizzly.nyo@gmail.com>
+Date: Fri, 16 Aug 2013 16:18:35 +0300
+Subject: [PATCH] align jinjaext with the rest of the computability cleanups
+
+---
+ docs/jinjaext.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/docs/jinjaext.py b/docs/jinjaext.py
+index 8395a55..3c217f8 100644
+--- a/docs/jinjaext.py
++++ b/docs/jinjaext.py
+@@ -23,7 +23,7 @@
+ from pygments.token import Keyword, Name, Comment, String, Error, \
+      Number, Operator, Generic
+ from jinja2 import Environment, FileSystemLoader
+-from jinja2.utils import next
++from jinja2._compat import next
+ 
+ 
+ def parse_rst(state, content_offset, doc):
+-- 
+1.8.1.6
+

@@ -98,7 +98,7 @@
 # the right requisites set, etc.
 
 # set version to build
-{% set build_version = '2015_8_8' %}
+{% set build_version = '2015_8_9' %}
 
 {% if build_version != '' %}
 include:
@@ -135,7 +135,7 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-libcloud:
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -173,7 +173,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2015.8.8-2
+      version: 2015.8.9-1
       noarch: True
       build_deps:
         - python-crypto
@@ -263,12 +263,13 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-jinja2:
-      version: 2.2.1-2
+      version: 2.7.3-1
+      noarch: True
       build_deps:
         - python-babel
         - python-markupsafe
     python-libcloud:
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -324,7 +325,7 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2015.8.8-2
+      version: 2015.8.9-1
       noarch: True
       build_deps:
         - python-crypto
@@ -479,11 +480,12 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-babel
+        - python-crypto
         - python-markupsafe
         - python-distribute
     python-libcloud:
       name: python26-libcloud
-      version: 0.18.0-1
+      version: 0.20.0-1
       noarch: True
       build_deps:
         - python-distribute
@@ -509,6 +511,11 @@ pkgbuild_registry:
       version: 0.4.5-1
       build_deps:
         - python-distribute
+    python-ordereddict:
+      version: 1.1-3
+      noarch: True
+      build_deps:
+        - python-distribute
     python-pip:
       name: python26-pip
       version: 1.5.6-1
@@ -531,6 +538,7 @@ pkgbuild_registry:
       build_deps:
         - python-chardet
         - python-distribute
+        - python-ordereddict
         - python-urllib3
     python-six:
       name: python26-six
@@ -571,7 +579,7 @@ pkgbuild_registry:
         - libyaml
         - python-distribute
     salt:
-      version: 2015.8.8-2
+      version: 2015.8.9-1
       noarch: True
       build_deps:
         - python-crypto
@@ -626,5 +634,6 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
+
 
 {% endif %}

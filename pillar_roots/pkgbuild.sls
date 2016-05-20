@@ -98,7 +98,7 @@
 # the right requisites set, etc.
 
 # set version to build
-{% set build_version = '2015_8_9' %}
+{% set build_version = '2015_8_10' %}
 
 {% if build_version != '' %}
 include:
@@ -173,7 +173,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2015.8.9-1
+      version: 2015.8.10-1
       noarch: True
       build_deps:
         - python-crypto
@@ -325,7 +325,7 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2015.8.9-1
+      version: 2015.8.10-1
       noarch: True
       build_deps:
         - python-crypto
@@ -579,7 +579,7 @@ pkgbuild_registry:
         - libyaml
         - python-distribute
     salt:
-      version: 2015.8.9-1
+      version: 2015.8.10-1
       noarch: True
       build_deps:
         - python-crypto

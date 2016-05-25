@@ -60,6 +60,8 @@ gpg_agent_stop:
     - name: cmd.run
     - cmd: killall gpg-agent
 
+
+{% if build_cfg.build_release != 'ubuntu1604' %}
 gpg_agent_start:
   module.run:
     - name: cmd.run
@@ -67,9 +69,10 @@ gpg_agent_start:
         gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon
     - user: {{build_cfg.build_runas}}
     - python_shell: True
-##    - use_vt: True
     - require:
       - module: gpg_agent_stop
+{% endif %}
+
 
 gpg_load_pub_key:
   module.run:

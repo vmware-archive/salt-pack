@@ -14,14 +14,13 @@ include:
     - pkg.python-libcloud.0_20_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
     - pkg.python-msgpack.0_4_6.rhel7
-##    - pkg.python-ordereddict.1_1.rhel7
     - pkg.python-pyzmq.14_7_0.rhel7
     - pkg.python-raet.0_6_3.rhel7
     - pkg.python-simplejson.3_3_3.rhel7
     - pkg.python-tornado.4_2_1.rhel7
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-yaml.3_11.rhel7
-    - pkg.salt.2015_8_10.rhel7
+    - pkg.salt.2016_3_0.rhel7
     - pkg.zeromq.4_0_5.rhel7
 
 {% elif buildcfg.build_release == 'rhel6' %}
@@ -55,7 +54,7 @@ include:
     - pkg.python-tornado.4_2_1.rhel6
     - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
-    - pkg.salt.2015_8_10.rhel6
+    - pkg.salt.2016_3_0.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 
@@ -88,7 +87,6 @@ include:
     - pkg.python-tornado.4_2_1.rhel5
     - pkg.python-urllib3.1_5.rhel5
     - pkg.python-yaml.3_08.rhel5
-    - pkg.salt.2015_8_10.rhel5
     - pkg.zeromq.4_0_5.rhel5
 
 {% endif %}

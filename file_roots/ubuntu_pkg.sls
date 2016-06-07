@@ -23,7 +23,7 @@ include:
     - pkg.python-timelib.0_2_4.ubuntu1404
     - pkg.python-tornado.4_2_1.ubuntu1404
     - pkg.salt.2016_3_0.ubuntu1404
-    - pkg.zeromq.4_0_4.ubuntu1404
+    - pkg.zeromq.4_0_5.ubuntu1404
 
 {% elif buildcfg.build_release == 'ubuntu1204' %}
 
@@ -46,6 +46,6 @@ include:
     - pkg.python-tornado.4_2_1.ubuntu1204
     - pkg.python-urllib3.1_7_1.ubuntu1204
     - pkg.salt.2016_3_0.ubuntu1204
-    - pkg.zeromq.4_0_4.ubuntu1204
+    - pkg.zeromq.4_0_5.ubuntu1204
 
 {% endif %}

@@ -1,5 +1,8 @@
 {% set os_codename = 'jessie' %}
-{% set prefs_text = 'Package: python3-*
+{% set prefs_text = 'Package: *
+        Pin: origin ""
+        Pin-Priority: 1001
+        Package: python3-*
         Pin: release a=testing
         Pin-Priority: 800
         Package: *
@@ -13,16 +16,19 @@
         Pin-Priority: 700
 ' %}
 
+
 include:
   - setup.debian
   - setup.debian.gpg_agent
+
 
 build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - dh-systemd
 
-build_pbldhooks_file:
+
+build_pbldhooks_file_G05:
   file.append:
     - name: /root/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
@@ -32,6 +38,19 @@ build_pbldhooks_file:
         cat > "/etc/apt/preferences" << EOF
         {{prefs_text}}
         EOF
+
+
+build_pbldhooks_file_D04:
+  file.append:
+    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - makedirs: True
+    - text: |
+        # path to local repo
+        LOCAL_REPO="/var/cache/pbuilder/result"
+        # Generate a Packages file
+        (cd ${LOCAL_REPO} ; /usr/bin/dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz)
+        # Update to include any new packagers in the local repo
+        apt-get --allow-unauthenticated update
 
 
 build_pbldhooks_perms:
@@ -52,6 +71,9 @@ build_pbldrc:
     - name: /root/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
+        export LOCAL_REPO="/var/cache/pbuilder/result"
+        BINDMOUNTS="${LOCAL_REPO}"
+        EXTRAPACKAGES="apt-utils"
         if [ -n "${DIST}" ]; then
           TMPDIR=/tmp
           BASETGZ="`dirname $BASETGZ`/${DIST}-base.tgz"
@@ -59,7 +81,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:///${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
 
 
 build_prefs:

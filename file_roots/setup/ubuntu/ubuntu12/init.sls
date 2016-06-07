@@ -1,5 +1,8 @@
 {% set os_codename = 'precise' %}
-{% set prefs_text = 'Package: python-alabaster
+{% set prefs_text = 'Package: *
+        Pin: origin ""
+        Pin-Priority: 1001
+        Package: python-alabaster
         Pin: release a=main
         Pin-Priority: 950
         Package: libjs-sphinxdoc
@@ -34,9 +37,11 @@
         Pin-Priority: 550
 ' %}
 
+
 include:
   - setup.ubuntu
   - setup.ubuntu.gpg_agent
+
 
 build_additional_pkgs:
   pkg.installed:
@@ -44,21 +49,31 @@ build_additional_pkgs:
       - python-support
       - gnupg2
 
-build_pbldhooks_rm:
+
+build_pbldhooks_rm_G05:
   file.absent:
     - name: /root/.pbuilder-hooks/G05apt-preferences
+
 
 build_pbldhookskeys_rm:
   file.absent:
     - name: /root/.pbuilder-hooks/G04importkeys
 
+
+build_pbldhooks_rm_D04:
+  file.absent:
+    - name: /root/.pbuilder-hooks/D04update_local_repo
+
+
 build_pbldrc_rm:
   file.absent:
     - name: /root/.pbuilderrc
 
+
 build_prefs_rm:
   file.absent:
     - name: /etc/apt/preferences
+
 
 build_pbldhookskeys_file:
   file.append:
@@ -69,15 +84,31 @@ build_pbldhookskeys_file:
         /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv 1378B444
         /usr/bin/gpg --export --armor 1378B444 | apt-key add -
 
-build_pbldhooks_file:
+
+build_pbldhooks_file_G05:
   file.append:
     - name: /root/.pbuilder-hooks/G05apt-preferences
+    - makedirs: True
     - text: |
         #!/bin/sh
         set -e
         cat > "/etc/apt/preferences" << EOF
         {{prefs_text}}
         EOF
+
+
+build_pbldhooks_file_D04:
+  file.append:
+    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - makedirs: True
+    - text: |
+        # path to local repo
+        LOCAL_REPO="/var/cache/pbuilder/result"
+        # Generate a Packages file
+        (cd ${LOCAL_REPO} ; /usr/bin/dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz)
+        # Update to include any new packagers in the local repo
+        apt-get --allow-unauthenticated update
+
 
 build_pbldhooks_perms:
   file.directory:
@@ -97,6 +128,9 @@ build_pbldrc:
     - name: /root/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
+        export LOCAL_REPO="/var/cache/pbuilder/result"
+        BINDMOUNTS="${LOCAL_REPO}"
+        EXTRAPACKAGES="apt-utils"
         if [ -n "${DIST}" ]; then
           TMPDIR=/tmp
           BASETGZ="`dirname $BASETGZ`/${DIST}-base.tgz"
@@ -104,7 +138,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-backports main restricted universe multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security multiverse | deb http://ppa.launchpad.net/libreoffice/ppa/ubuntu {{os_codename}} main | deb http://ppa.launchpad.net/saltstack/salt/ubuntu/ {{os_codename}} main"
+        OTHERMIRROR="deb [trusted=yes] file:///${LOCAL_REPO} ./ | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-backports main restricted universe multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security multiverse | deb http://ppa.launchpad.net/libreoffice/ppa/ubuntu precise main | deb http://ppa.launchpad.net/saltstack/salt/ubuntu/ precise main"
 
 
 build_prefs:

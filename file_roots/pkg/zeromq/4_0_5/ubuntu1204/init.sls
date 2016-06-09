@@ -1,4 +1,4 @@
-{% import "setup/ubuntu/map.jinja" as buildcfg %}
+{% import "setup/debian/map.jinja" as buildcfg %}
 {% set force = salt['pillar.get']('build_force.all', False) or salt['pillar.get']('build_force.' ~ slspath, False) %}
 
 {% set name = 'zeromq' %}
@@ -6,8 +6,7 @@
 {% set libname = 'libzmq3' %}
 {% set version = '4.0.5' %}
 {% set release_nameadd = '+dfsg' %}
-{% set release_ver = '2' %}
-{% set release_namexadd = '+deb8u1' %}
+{% set release_ver = '3' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
@@ -16,15 +15,14 @@
       - {{libname}}_{{version}}{{release_nameadd}}-{{release_ver}}_{{buildcfg.build_arch}}.deb
       - {{libname}}-dbg_{{version}}{{release_nameadd}}-{{release_ver}}_{{buildcfg.build_arch}}.deb
       - {{libname}}-dev_{{version}}{{release_nameadd}}-{{release_ver}}_{{buildcfg.build_arch}}.deb
-      - {{fullname}}_{{version}}{{release_nameadd}}.orig.tar.gz
+      - {{fullname}}_{{version}}{{release_nameadd}}.orig.tar.bz2
       - {{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}.dsc
-      - {{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}.debian.tar.gz
       - {{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}.debian.tar.xz
     - force: {{force}}
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}{{release_namexadd}}.dsc
+    - spec: salt://{{slspath}}/spec/{{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}.dsc
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
     - sources:
       - salt://{{slspath}}/sources/{{fullname}}_{{version}}{{release_nameadd}}.orig.tar.bz2
-      - salt://{{slspath}}/sources/{{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}{{release_namexadd}}.debian.tar.xz
+      - salt://{{slspath}}/sources/{{fullname}}_{{version}}{{release_nameadd}}-{{release_ver}}.debian.tar.xz

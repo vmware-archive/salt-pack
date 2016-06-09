@@ -1,3 +1,6 @@
+# Import base config
+{% import "setup/ubuntu/map.jinja" as ubuntu_cfg %}
+
 {% set os_codename = 'xenial' %}
 {% set prefs_text = 'Package: *
         Pin: origin ""
@@ -68,10 +71,11 @@ build_pbldhooks_file_D04:
     - name: /root/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
+        #!/bin/sh
         # path to local repo
-        LOCAL_REPO="/var/cache/pbuilder/result"
+        LOCAL_REPO="{{ubuntu_cfg.build_dest_dir}}"
         # Generate a Packages file
-        (cd ${LOCAL_REPO} ; /usr/bin/dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz)
+        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
         # Update to include any new packagers in the local repo
         apt-get --allow-unauthenticated update
 
@@ -94,7 +98,17 @@ build_pbldrc:
     - name: /root/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
-        export LOCAL_REPO="/var/cache/pbuilder/result"
+        LOCAL_REPO="{{ubuntu_cfg.build_dest_dir}}"
+
+        # create local repository if it doesn't exist,
+        # such as during initial 'pbuilder create'
+        if [ ! -d ${LOCAL_REPO} ] ; then
+            mkdir -p ${LOCAL_REPO}
+        fi
+        if [ ! -e ${LOCAL_REPO}/Packages ] ; then
+            touch ${LOCAL_REPO}/Packages
+        fi
+
         BINDMOUNTS="${LOCAL_REPO}"
         EXTRAPACKAGES="apt-utils"
         if [ -n "${DIST}" ]; then
@@ -104,9 +118,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb [trusted=yes] file:///${LOCAL_REPO} ./ | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-backports main restricted universe multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security multiverse"
-
-
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-backports main restricted universe multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security multiverse"
 
 
 build_prefs:

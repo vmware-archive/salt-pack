@@ -1,3 +1,6 @@
+# Import base config
+{% import "setup/debian/map.jinja" as debian_cfg %}
+
 {% set os_codename = 'jessie' %}
 {% set prefs_text = 'Package: *
         Pin: origin ""
@@ -45,10 +48,11 @@ build_pbldhooks_file_D04:
     - name: /root/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
+        #!/bin/sh
         # path to local repo
-        LOCAL_REPO="/var/cache/pbuilder/result"
+        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
         # Generate a Packages file
-        (cd ${LOCAL_REPO} ; /usr/bin/dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz)
+        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
         # Update to include any new packagers in the local repo
         apt-get --allow-unauthenticated update
 
@@ -71,7 +75,17 @@ build_pbldrc:
     - name: /root/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
-        export LOCAL_REPO="/var/cache/pbuilder/result"
+        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+
+        # create local repository if it doesn't exist,
+        # such as during initial 'pbuilder create'
+        if [ ! -d ${LOCAL_REPO} ] ; then
+            mkdir -p ${LOCAL_REPO}
+        fi
+        if [ ! -e ${LOCAL_REPO}/Packages ] ; then
+            touch ${LOCAL_REPO}/Packages
+        fi
+
         BINDMOUNTS="${LOCAL_REPO}"
         EXTRAPACKAGES="apt-utils"
         if [ -n "${DIST}" ]; then
@@ -81,7 +95,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb [trusted=yes] file:///${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
 
 
 build_prefs:

@@ -11,7 +11,7 @@
 epel_repo:
   pkgrepo.managed:
     - humanname: epel
-    - mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+    - mirrorlist: https://mirrors.fedoraproject.org/metalink?repo={{redhat_cfg.build_epel}}&arch=$basearch
 
 
 build_pkgs:
@@ -107,4 +107,6 @@ ensure_pub_gpg_rights:
     - ret: False
     - require:
       - file: ensure_gpg_rights
+
+
 

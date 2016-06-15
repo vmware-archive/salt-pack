@@ -6,21 +6,22 @@
 {% set name3 = 'python3-' ~ pypi_name %}
 {% set version = '4.2.1' %}
 {% set release_ver = '1' %}
+{% set release_nameadd = '~ds+1' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
-    - results: 
-      - {{name}}_{{version}}-{{release_ver}}_{{buildcfg.build_arch}}.deb
-      - {{name3}}_{{version}}-{{release_ver}}_{{buildcfg.build_arch}}.deb
+    - results:
+      - {{name}}_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb
+      - {{name3}}_{{version}}-{{release_ver}}{{release_nameadd}}_{{buildcfg.build_arch}}.deb
       - {{name}}_{{version}}.orig.tar.gz
-      - {{name}}_{{version}}-{{release_ver}}.dsc
-      - {{name}}_{{version}}-{{release_ver}}.debian.tar.xz
+      - {{name}}_{{version}}-{{release_ver}}{{release_nameadd}}.dsc
+      - {{name}}_{{version}}-{{release_ver}}{{release_nameadd}}.debian.tar.xz
     - force: {{force}}
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{name}}_{{version}}-{{release_ver}}.dsc 
+    - spec: salt://{{slspath}}/spec/{{name}}_{{version}}-{{release_ver}}{{release_nameadd}}.dsc
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
     - sources:
       - salt://{{slspath}}/sources/{{name}}_{{version}}.orig.tar.gz
-      - salt://{{slspath}}/sources/{{name}}_{{version}}-{{release_ver}}.debian.tar.xz
+      - salt://{{slspath}}/sources/{{name}}_{{version}}-{{release_ver}}{{release_nameadd}}.debian.tar.xz

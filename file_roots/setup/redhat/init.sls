@@ -22,7 +22,7 @@ build_pkgs:
       - rpmdevtools
       - rpm-sign
       - gnupg2
-      - python-gnupg
+      - python2-gnupg
     - require:
       - pkgrepo: epel_repo
 
@@ -41,7 +41,7 @@ manage_priv_key:
     - dir_mode: 700
     - mode: 600
     - contents_pillar: gpg_pkg_priv_key
-    - show_diff: false
+    - show_changes: false
     - user: {{redhat_cfg.build_runas}}
     - group: mock
     - makedirs: True
@@ -54,7 +54,7 @@ manage_pub_key:
     - dir_mode: 700
     - mode: 644
     - contents_pillar: gpg_pkg_pub_key
-    - show_diff: false
+    - show_changes: false
     - user: {{redhat_cfg.build_runas}}
     - group: mock
     - makedirs: True

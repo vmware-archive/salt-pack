@@ -49,9 +49,7 @@ NT/2000/XP/2003/Vista/7/2008/8/2012 systems from GNU/Linux.
 
 %prep
 cd ../SOURCES
-ls
 tar -xf winexe-1.1.tar.gz
-ls
 chmod +x ./generatetarball
 ./generatetarball
 
@@ -84,4 +82,3 @@ rm -rf %{buildroot}
 * Sun Feb 14 2016 Randy Thompson <randy@heroictek.com> - 1.1-b787d2
 - b787d2a2c4b1abc3653bad10aec943b8efcd7aab from git://git.code.sf.net/p/winexe/winexe-waf
 - a6bda1f2bc85779feb9680bc74821da5ccd401c5 from git://git.samba.org/samba.git
-

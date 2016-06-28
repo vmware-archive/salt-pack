@@ -4,8 +4,8 @@
 'base':
   'G@os:CentOS':
     - {{versioncfg.redhat_pkg}}
-
-  'G@osfullname:Debian':
+  
+  'G@osfullname:Debian or G@osfullname:Raspbian':
     - {{versioncfg.debian_pkg}}
 
   'G@osfullname:Ubuntu':

@@ -22,7 +22,7 @@ manage_priv_key:
     - dir_mode: 700
     - mode: 600
     - contents_pillar: gpg_pkg_priv_key
-    - show_diff: False
+    - show_changes: False
     - user: {{build_cfg.build_runas}}
     - group: adm
     - makedirs: True
@@ -33,7 +33,7 @@ manage_pub_key:
     - dir_mode: 700
     - mode: 644
     - contents_pillar: gpg_pkg_pub_key
-    - show_diff: False
+    - show_changes: False
     - user: {{build_cfg.build_runas}}
     - group: adm
     - makedirs: True
@@ -58,13 +58,13 @@ gpg_conf_file:
 gpg_agent_stop:
   module.run:
     - name: cmd.run
-    - cmd: killall gpg-agent
+    - cmd: /usr/bin/killall gpg-agent
 
 gpg_agent_start:
   module.run:
     - name: cmd.run
     - cmd: |
-        gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon
+        /usr/bin/gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon ; ls
     - user: {{build_cfg.build_runas}}
     - python_shell: True
 ##    - use_vt: True

@@ -31,6 +31,35 @@ build_additional_pkgs:
       - dh-systemd
 
 
+
+build_pbldhookskeys_rm:
+  file.absent:
+    - name: /root/.pbuilder-hooks/G04importkeys
+
+
+build_pbldhooks_rm_G05:
+  file.absent:
+    - name: /root/.pbuilder-hooks/G05apt-preferences
+
+
+build_pbldrc_rm:
+  file.absent:
+    - name: /root/.pbuilderrc
+
+
+build_prefs_rm:
+  file.absent:
+    - name: /etc/apt/preferences
+
+
+build_pbldhookskeys_file:
+  file.append:
+    - name: /root/.pbuilder-hooks/G04importkeys
+    - text: |
+        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
+        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
+
+
 build_pbldhooks_file_G05:
   file.append:
     - name: /root/.pbuilder-hooks/G05apt-preferences
@@ -38,9 +67,9 @@ build_pbldhooks_file_G05:
     - text: |
         #!/bin/sh
         set -e
-        cat > "/etc/apt/preferences" << EOF
+        cat > "/etc/apt/preferences" << @EOF
         {{prefs_text}}
-        EOF
+        @EOF
 
 
 build_pbldhooks_file_D04:
@@ -76,6 +105,8 @@ build_pbldrc:
     - text: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+        ## export CCACHE_DIR='/var/cache/pbuilder/ccache'
+        ## export PATH="/usr/lib/ccache":${PATH}
 
         # create local repository if it doesn't exist,
         # such as during initial 'pbuilder create'
@@ -86,8 +117,10 @@ build_pbldrc:
             touch ${LOCAL_REPO}/Packages
         fi
 
-        BINDMOUNTS="${LOCAL_REPO}"
+        ## EXTRAPACKAGES="apt-utils ccache"
+        ## BINDMOUNTS="${LOCAL_REPO} ${CCACHE_DIR}"
         EXTRAPACKAGES="apt-utils"
+        BINDMOUNTS="${LOCAL_REPO}"
         if [ -n "${DIST}" ]; then
           TMPDIR=/tmp
           BASETGZ="`dirname $BASETGZ`/${DIST}-base.tgz"
@@ -95,7 +128,15 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
+{% if debian_cfg.build_arch == 'armhf' %}
+        DEBOOTSTRAPOPTS=( 
+            '--variant=buildd' 
+            '--keyring' "${HOME}/.gnupg/pubring.gpg"
+        )
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi"
+{% else %}
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
+{% endif %}
 
 
 build_prefs:

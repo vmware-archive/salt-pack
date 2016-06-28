@@ -19,7 +19,11 @@ include:
         LABEL : 'salt_debian8'
         SUITE: 'stable'
         CODENAME : 'jessie'
+{% if buildcfg.build_arch == 'armhf' %}
+        ARCHS : '{{buildcfg.build_arch}} source'
+{% else %}
         ARCHS : 'amd64 i386 source'
+{% endif %}
         COMPONENTS : 'main'
         DESCRIPTION : 'SaltStack Debian 8 package repo'
 

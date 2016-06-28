@@ -19,6 +19,7 @@ build_pkgs:
       - python-setuptools
       - python-gnupg
       - pkg-config
+      - ccache
 ##      - dh-systemd
 
 {{debian_cfg.build_runas}}:

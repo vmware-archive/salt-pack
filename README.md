@@ -32,7 +32,7 @@ where:
 
 | File / Directory | Description                                                                                                                                                     |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| init.sls         | Initialisation SSL file describing what is to be built. Note that this can include files obtained over the Internet.                                            |
+| init.sls         | Initialisation SLS file describing what is to be built. Note that this can include files obtained over the Internet.                                            |
 | spec             | Directory containing file[s] describing the building of the package for this platform OS, e.g. rpm spec file for Redhat, dsc file or tarball for Debian/Ubuntu. |
 | source           | various source files to be used in building the package, for example:  salt-2015.8.5.tar.gz.                                                                    |
 

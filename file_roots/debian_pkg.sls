@@ -3,6 +3,22 @@
 include:
 {% if buildcfg.build_release == 'debian8' %}
 
+{% if buildcfg.build_arch == 'armhf' %}
+
+    - pkg.libsodium.1_0_3.debian8
+    - pkg.openpgm.5_2_122.debian8
+    - pkg.python-future.0_14_3.debian8
+    - pkg.python-futures.3_0_3.debian8
+    - pkg.python-ioflo.1_3_8.debian8
+    - pkg.python-libnacl.4_1.debian8
+    - pkg.python-pyzmq.14_4_0.debian8
+    - pkg.python-raet.0_6_3.debian8
+    - pkg.python-timelib.0_2_4.debian8
+    - pkg.python-tornado.4_2_1.debian8
+    - pkg.salt.2016_3_1.debian8
+    - pkg.zeromq.4_0_5.debian8
+
+{% else %}
     - pkg.bsdmainutils.9_0_6.debian8
     - pkg.libsodium.1_0_3.debian8
     - pkg.openpgm.5_2_122.debian8
@@ -26,6 +42,8 @@ include:
     - pkg.python-yaml.3_11.debian8
     - pkg.salt.2016_3_1.debian8
     - pkg.zeromq.4_0_5.debian8
+
+{% endif %}
 
 {% elif buildcfg.build_release == 'debian7' %}
 

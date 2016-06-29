@@ -10,6 +10,8 @@
 {% set gpg_config_file = gpg_key_dir ~ '/gpg.conf' %}
 {% set gpg_agent_info = gpg_key_dir ~ '/gpg-agent-info-salt' %}
 
+{% set gpg_tty_info = gpg_key_dir ~ '/gpg-tty-info-salt' %}
+
 {# {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %} #}
 
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
@@ -27,6 +29,7 @@ manage_priv_key:
     - group: adm
     - makedirs: True
 
+
 manage_pub_key:
   file.managed:
     - name: {{pkg_pub_key_absfile}}
@@ -38,10 +41,18 @@ manage_pub_key:
     - group: adm
     - makedirs: True
 
+
 gpg_conf_file_exists:
   file.touch:
     - name: {{gpg_config_file}}
     - makedirs: True
+
+
+gpg_tty_file_exists:
+  file.touch:
+    - name: {{gpg_tty_info}}
+    - makedirs: True
+
 
 gpg_conf_file:
   file.replace:
@@ -55,23 +66,35 @@ gpg_conf_file:
     - require:
       - file: gpg_conf_file_exists
 
+
 gpg_agent_stop:
-  module.run:
-    - name: cmd.run
-    - cmd: killall gpg-agent
+  cmd.run:
+    - name: killall gpg-agent
+    - use_vt: True
 
 
-{% if build_cfg.build_release != 'ubuntu1604' %}
+# the superflous echo "" is to force extra return after starting gpg-agent
 gpg_agent_start:
-  module.run:
-    - name: cmd.run
-    - cmd: |
-        gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon ; ls
-    - user: {{build_cfg.build_runas}}
+  cmd.run:
+    - name: |
+{% if build_cfg.build_release != 'ubuntu1604' %}
+        eval $(gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon)
+    - runas: {{build_cfg.build_runas}}
+    - reload_modules: True
     - python_shell: True
     - require:
-      - module: gpg_agent_stop
+      - cmd: gpg_agent_stop
+{% else %}
+        eval $(gpg-agent --homedir {{gpg_key_dir}} --allow-preset-passphrase --max-cache-ttl 180 --daemon)
+        GPG_TTY=$(tty)
+        export GPG_TTY
+        echo "GPG_TTY=${GPG_TTY}" > {{gpg_tty_info}}
+    - runas: {{build_cfg.build_runas}}
+    - reload_modules: True
+    - use_vt: True
 {% endif %}
+    - require:
+      - cmd: gpg_agent_stop
 
 
 gpg_load_pub_key:
@@ -80,6 +103,7 @@ gpg_load_pub_key:
     - user: {{build_cfg.build_runas}}
     - filename: {{pkg_pub_key_absfile}}
     - gnupghome: {{gpg_key_dir}}
+
 
 gpg_load_priv_key:
   module.run:

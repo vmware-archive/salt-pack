@@ -20,7 +20,6 @@ build_pkgs:
       - gnupg-agent
       - pkg-config
       - packaging-dev
-##      - python-support
 
 
 {{ubuntu_cfg.build_runas}}:

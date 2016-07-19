@@ -97,14 +97,6 @@
 # packages aware of their dependencies and pull in the right build deps, have
 # the right requisites set, etc.
 
-# set version to build
-{% set build_version = '2016_3_2' %}
-
-{% if build_version != '' %}
-include:
-    - .versions.{{build_version}}.pkgbuild
-
-{% else %}
 pkgbuild_registry:
   rhel7:
     libsodium:
@@ -117,6 +109,9 @@ pkgbuild_registry:
       results:
         - openpgm
         - openpgm-devel
+    python-chardet:
+      version: 2.2.1-1
+      noarch: True
     python-cherrypy:
       version: 3.2.2-4
       noarch: True
@@ -146,7 +141,7 @@ pkgbuild_registry:
       version: 0.4.6-1
     python-pyzmq:
       name: python-zmq
-      version: 14.7.0-1
+      version: 15.3.0-2
       build_deps:
         - zeromq
     python-raet:
@@ -160,6 +155,10 @@ pkgbuild_registry:
     python-requests:
       version: 2.6.0-1
       noarch: True
+      build_deps:
+        - python-chardet
+        - python-ordereddict
+        - python-urllib3
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
@@ -168,6 +167,9 @@ pkgbuild_registry:
       version: 4.2.1-1
     python-timelib:
       version: 0.2.4-1
+      noarch: True
+    python-urllib3:
+      version: 1.10.2-1
       noarch: True
     python-yaml:
       name: PyYAML
@@ -194,7 +196,7 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     zeromq:
-      version: 4.0.5-4
+      version: 4.1.4-5
       build_deps:
         - openpgm
       results:
@@ -578,6 +580,9 @@ pkgbuild_registry:
       build_deps:
         - libyaml
         - python-distribute
+    rpmdevtools:
+      version: 6.8-1
+      noarch: True
     salt:
       version: 2016.3.1-1
       noarch: True
@@ -634,6 +639,3 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
-
-
-{% endif %}

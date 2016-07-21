@@ -36,6 +36,7 @@ include:
 build_additional_pkgs:
   pkg.installed:
     - pkgs:
+      - dh-systemd
       - pinentry-tty
 
 

@@ -1,0 +1,16 @@
+diff --git a/Lib/test/test_sys.py b/Lib/test/test_sys.py
+index 0dd4258..d9b3267 100644
+--- a/Lib/test/test_sys.py
++++ b/Lib/test/test_sys.py
+@@ -769,6 +769,11 @@ class SizeofTest(unittest.TestCase):
+                   '10P'                 # PySequenceMethods
+                   '6P'                  # PyBufferProcs
+                   '2P')
++
++        # COUNT_ALLOCS adds further fields to the end of a PyTypeObject:
++        if hasattr(sys, 'getcounts'):
++            s += size('P')
++
+         class newstyleclass(object):
+             pass
+         check(newstyleclass, s)

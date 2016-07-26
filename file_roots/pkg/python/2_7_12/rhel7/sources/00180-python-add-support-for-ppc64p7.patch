@@ -1,0 +1,12 @@
+diff -r de35eae9048a config.sub
+--- a/config.sub	Wed Apr 24 23:33:20 2013 +0200
++++ b/config.sub	Thu Apr 25 08:51:00 2013 +0200
+@@ -1008,7 +1008,7 @@
+ 		;;
+ 	ppc64)	basic_machine=powerpc64-unknown
+ 		;;
+-	ppc64-*) basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
++	ppc64-* | ppc64p7-*) basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
+ 		;;
+ 	ppc64le | powerpc64little | ppc64-le | powerpc64-little)
+ 		basic_machine=powerpc64le-unknown

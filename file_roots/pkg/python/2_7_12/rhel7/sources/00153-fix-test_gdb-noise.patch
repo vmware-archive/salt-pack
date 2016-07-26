@@ -1,0 +1,13 @@
+--- Lib/test/test_gdb.py.old	2012-04-11 21:04:01.367073855 -0400
++++ Lib/test/test_gdb.py	2012-04-12 08:52:58.320288761 -0400
+@@ -144,6 +153,10 @@
+             'Missing separate debuginfo for ',
+             'Try: zypper install -C ',
+             )
++        ignore_patterns += ('warning: Unable to open',
++                            'Missing separate debuginfo for',
++                            'Try: yum --disablerepo=',
++                            'Undefined set print command')
+         for line in errlines:
+             if not line.startswith(ignore_patterns):
+                 unexpected_errlines.append(line)

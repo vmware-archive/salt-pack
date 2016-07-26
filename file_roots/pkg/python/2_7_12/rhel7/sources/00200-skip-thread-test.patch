@@ -1,0 +1,11 @@
+diff -up Python-2.7.11/Lib/test/test_gdb.py.old Python-2.7.11/Lib/test/test_gdb.py
+--- Python-2.7.11/Lib/test/test_gdb.py.old	2015-12-24 19:12:46.167487914 +0100
++++ Python-2.7.11/Lib/test/test_gdb.py	2015-12-24 19:13:48.833057910 +0100
+@@ -801,6 +801,7 @@ Traceback \(most recent call first\):
+     foo\(1, 2, 3\)
+ ''')
+
++    @unittest._skipInRpmBuild('this test fail within rpmbuild')
+     @unittest.skipUnless(thread,
+                          "Python was compiled without thread support")
+     def test_threads(self):

@@ -24,13 +24,13 @@
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
 
-{% set gpg_agent_text = '# enable-ssh-support 
+{% set gpg_agent_text = '# enable-ssh-support
         ' ~ write_env_file  ~ '
-        default-cache-ttl 300 
-        default-cache-ttl-ssh 300 
-        max-cache-ttl 300 
-        max-cache-ttl-ssh 300 
-        ## debug-all 
+        default-cache-ttl 300
+        default-cache-ttl-ssh 300
+        max-cache-ttl 300
+        max-cache-ttl-ssh 300
+        ## debug-all
 
         # PIN entry program
         ' ~ pinentry_text

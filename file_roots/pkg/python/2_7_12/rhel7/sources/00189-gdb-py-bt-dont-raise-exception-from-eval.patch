@@ -1,0 +1,11 @@
+--- Python-2.7.5-orig/Tools/gdb/libpython.py	2013-05-12 03:32:54.000000000 +0000
++++ Python-2.7.5-orig/Tools/gdb/libpython.py	2013-09-15 09:56:25.494000000 +0000
+@@ -887,6 +887,8 @@ 
+         newline character'''
+         if self.is_optimized_out():
+             return '(frame information optimized out)'
++        if self.filename() == '<string>':
++            return '(in an eval block)'
+         filename = self.filename()
+         try:
+             f = open(filename, 'r')

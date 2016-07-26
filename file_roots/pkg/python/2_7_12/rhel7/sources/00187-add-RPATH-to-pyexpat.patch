@@ -1,0 +1,25 @@
+diff -r e8b8279ca118 setup.py
+--- a/setup.py	Sun Jul 21 21:57:52 2013 -0400
++++ b/setup.py	Tue Aug 20 09:45:31 2013 +0200
+@@ -1480,12 +1480,21 @@
+                              'expat/xmltok_impl.h'
+                              ]
+ 
++        # Add an explicit RPATH to pyexpat.so pointing at the directory
++        # containing the system expat (which has the extra XML_SetHashSalt
++        # symbol), to avoid an ImportError with a link error if there's an
++        # LD_LIBRARY_PATH containing a "vanilla" build of expat (without the
++        # symbol) (rhbz#833271):
++        EXPAT_RPATH = '/usr/lib64' if sys.maxint == 0x7fffffffffffffff else '/usr/lib'
++
++
+         exts.append(Extension('pyexpat',
+                               define_macros = define_macros,
+                               include_dirs = expat_inc,
+                               libraries = expat_lib,
+                               sources = ['pyexpat.c'] + expat_sources,
+                               depends = expat_depends,
++                              extra_link_args = ['-Wl,-rpath,%s' % EXPAT_RPATH]
+                               ))
+ 
+         # Fredrik Lundh's cElementTree module.  Note that this also

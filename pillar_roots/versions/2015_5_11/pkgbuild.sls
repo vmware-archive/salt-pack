@@ -109,10 +109,6 @@ pkgbuild_registry:
       results:
         - openpgm
         - openpgm-devel
-    python:
-      version: 2.7.12-1
-      build_deps:
-        - python-pip
     python-cherrypy:
       version: 3.2.2-4
       noarch: True
@@ -134,9 +130,6 @@ pkgbuild_registry:
         - libsodium
     python-msgpack:
       version: 0.4.6-1
-    python-pip:
-      version: 7.1.0-1
-      noarch: True
     python-pyzmq:
       name: python-zmq
       version: 14.7.0-1

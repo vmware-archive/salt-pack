@@ -39,7 +39,7 @@ build_cache_result_dir:
   file.directory:
     - name: /var/cache/pbuilder/result
     - user: {{debian_cfg.build_runas}}
-    - group: {{debian_cfg.build_runas}} 
+    - group: {{debian_cfg.build_runas}}
     - dir_mode: 755
     - file_mode: 644
     - recurse:

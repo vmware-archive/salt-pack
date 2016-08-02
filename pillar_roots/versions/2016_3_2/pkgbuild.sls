@@ -175,7 +175,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2016.3.1-1
+      version: 2016.3.2-1
       noarch: True
       build_deps:
         - python-crypto
@@ -195,6 +195,13 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
+    winexe:
+      version: 1.1-b787d2
+      results:
+        - winexe
+        - winexe-debuginfo
+      build_deps:
+        - python-impacket
     zeromq:
       version: 4.1.4-5
       build_deps:
@@ -327,7 +334,7 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2016.3.1-1
+      version: 2016.3.2-1
       noarch: True
       build_deps:
         - python-crypto
@@ -584,7 +591,7 @@ pkgbuild_registry:
       version: 6.8-1
       noarch: True
     salt:
-      version: 2016.3.1-1
+      version: 2016.3.2-1
       noarch: True
       build_deps:
         - python-crypto

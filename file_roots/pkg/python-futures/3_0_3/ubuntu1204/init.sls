@@ -21,6 +21,8 @@
     - spec: salt://{{slspath}}/spec/{{fullname}}_{{version}}-{{release_ver}}.dsc 
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
+    - env:
+        DEB_BUILD_OPTIONS : 'nocheck'
     - sources:
       - salt://{{slspath}}/sources/{{fullname}}_{{version}}.orig.tar.xz
       - salt://{{slspath}}/sources/{{fullname}}_{{version}}-{{release_ver}}.debian.tar.xz

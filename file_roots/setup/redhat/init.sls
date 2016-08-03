@@ -48,6 +48,7 @@ manage_priv_key:
     - require:
       - user: {{redhat_cfg.build_runas}}
 
+
 manage_pub_key:
   file.managed:
     - name: {{redhat_cfg.build_gpg_keydir}}/{{ pillar['gpg_pkg_pub_keyname'] }}

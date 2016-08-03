@@ -127,8 +127,8 @@ include:
 
 {% macro pypi_source(pypi_name, version, compression="gz") -%}
   {% if compression == "zip" -%}
-    https://pypi.python.org/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.{{compression}}
+    https://pypi.io/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.{{compression}}
   {% else -%}
-    https://pypi.python.org/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.tar.{{compression}}
+    https://pypi.io/packages/source/{{pypi_name[0]}}/{{pypi_name}}/{{pypi_name}}-{{version}}.tar.{{compression}}
   {%- endif %}
 {% endmacro %}

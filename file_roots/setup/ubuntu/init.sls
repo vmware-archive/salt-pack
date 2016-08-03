@@ -20,7 +20,6 @@ build_pkgs:
       - gnupg-agent
       - pkg-config
       - packaging-dev
-##      - python-support
 
 
 {{ubuntu_cfg.build_runas}}:
@@ -30,3 +29,22 @@ build_pkgs:
     - require:
       - pkg: build_pkgs
 
+
+build_cache_result_clean:
+  file.absent:
+    - name: /var/cache/pbuilder/result
+
+
+build_cache_result_dir:
+  file.directory:
+    - name: /var/cache/pbuilder/result
+    - user: {{ubuntu_cfg.build_runas}}
+    - group: {{ubuntu_cfg.build_runas}}
+    - dir_mode: 755
+    - file_mode: 644
+    - recurse:
+        - user
+        - group
+        - mode
+    - require:
+      - file: build_cache_result_clean

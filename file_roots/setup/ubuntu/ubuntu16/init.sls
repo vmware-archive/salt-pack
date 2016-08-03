@@ -33,20 +33,26 @@ include:
   - setup.ubuntu
   - setup.ubuntu.gpg_agent
 
+build_additional_pkgs:
+  pkg.installed:
+    - pkgs:
+      - dh-systemd
+      - pinentry-tty
+
 
 build_pbldhooks_rm_G05:
   file.absent:
-    - name: /root/.pbuilder-hooks/G05apt-preferences
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
 
 
 build_pbldhooks_rm_D04:
   file.absent:
-    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
 
 
 build_pbldrc_rm:
   file.absent:
-    - name: /root/.pbuilderrc
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilderrc
 
 
 build_prefs_rm:
@@ -56,7 +62,7 @@ build_prefs_rm:
 
 build_pbldhooks_file_G05:
   file.append:
-    - name: /root/.pbuilder-hooks/G05apt-preferences
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
     - text: |
         #!/bin/sh
@@ -68,7 +74,7 @@ build_pbldhooks_file_G05:
 
 build_pbldhooks_file_D04:
   file.append:
-    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
         #!/bin/sh
@@ -82,9 +88,9 @@ build_pbldhooks_file_D04:
 
 build_pbldhooks_perms:
   file.directory:
-    - name: /root/.pbuilder-hooks/
-    - user: root
-    - group: root
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/
+    - user: {{ubuntu_cfg.build_runas}}
+    - group: {{ubuntu_cfg.build_runas}} 
     - dir_mode: 755
     - file_mode: 755
     - recurse:
@@ -95,7 +101,7 @@ build_pbldhooks_perms:
 
 build_pbldrc:
   file.append:
-    - name: /root/.pbuilderrc
+    - name: {{ubuntu_cfg.build_homedir}}/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{ubuntu_cfg.build_dest_dir}}"

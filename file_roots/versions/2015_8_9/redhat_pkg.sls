@@ -22,6 +22,7 @@ include:
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2015_8_9.rhel7
+    - pkg.winexe.1_1.rhel7
     - pkg.zeromq.4_0_5.rhel7
 
 {% elif buildcfg.build_release == 'rhel6' %}

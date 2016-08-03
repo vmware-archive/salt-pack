@@ -1,0 +1,11 @@
+[Unit]
+Description=The Salt Master Server
+After=network.target
+
+[Service]
+Type=simple
+LimitNOFILE=8192
+ExecStart=/usr/bin/salt-syndic
+
+[Install]
+WantedBy=multi-user.target

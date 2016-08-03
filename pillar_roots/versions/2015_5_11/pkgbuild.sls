@@ -117,6 +117,9 @@ pkgbuild_registry:
     python-enum34:
       version: 1.0-4
       noarch: True
+    python-impacket:
+      version: 0.9.14-1
+      noarch: True
     python-ioflo:
       version: 1.3.8-1
       noarch: True
@@ -132,7 +135,7 @@ pkgbuild_registry:
       version: 0.4.6-1
     python-pyzmq:
       name: python-zmq
-      version: 14.7.0-1
+      version: 15.3.0-2
       build_deps:
         - zeromq
     python-raet:
@@ -170,8 +173,15 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
+    winexe:
+      version: 1.1-b787d2
+      results:
+        - winexe
+        - winexe-debuginfo
+      build_deps:
+        - python-impacket
     zeromq:
-      version: 4.0.5-4
+      version: 4.1.4-5
       build_deps:
         - openpgm
       results:

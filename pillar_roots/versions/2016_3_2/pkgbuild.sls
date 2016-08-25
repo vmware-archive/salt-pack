@@ -646,3 +646,18 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
+
+  fc24:
+    salt:
+      version: 2016.3.2-1
+      noarch: True
+      results:
+        - salt
+        - salt-master
+        - salt-minion
+        - salt-syndic
+        - salt-api
+        - salt-cloud
+        - salt-ssh
+
+

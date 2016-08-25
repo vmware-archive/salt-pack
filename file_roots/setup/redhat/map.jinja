@@ -30,6 +30,12 @@
   {% set build_tgt = build_epel ~ '-' ~ build_arch %}
   {% set build_dist = 'el5' %}
 
+{% elif build_release == 'fc24' %}
+
+  {% set build_epel = 'fedora-24' %}
+  {% set build_tgt = build_epel ~ '-' ~ build_arch %}
+  {% set build_dist = build_release %}
+
 {% endif %}
 
 # Get the home directory to use

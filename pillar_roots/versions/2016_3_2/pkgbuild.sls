@@ -647,4 +647,3 @@ pkgbuild_registry:
         - zeromq
         - zeromq-devel
 
-

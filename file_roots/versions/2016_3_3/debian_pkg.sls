@@ -11,6 +11,7 @@ include:
     - pkg.python-libnacl.4_1.debian8
     - pkg.python-pyzmq.14_4_0.debian8
     - pkg.python-raet.0_6_3.debian8
+    - pkg.python-systemd.231.debian8
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
     - pkg.salt.2016_3_3.debian8

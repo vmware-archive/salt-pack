@@ -175,7 +175,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2016.3.3-1
+      version: 2016.3.3-2
       noarch: True
       build_deps:
         - python-crypto

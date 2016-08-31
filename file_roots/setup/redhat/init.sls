@@ -88,7 +88,7 @@ ensure_gpg_rights:
     - name: {{gpg_key_dir}}
     - user: {{redhat_cfg.build_runas}}
     - group: {{redhat_cfg.build_runas}}
-    - dir_mode: 755
+    - dir_mode: 700
     - file_mode: 600
     - recurse:
         - user

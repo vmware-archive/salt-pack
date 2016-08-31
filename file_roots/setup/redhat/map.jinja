@@ -38,17 +38,13 @@
 
 {% endif %}
 
-# Get the home directory to use
+
+# Get the home and gpg keys directories to use, some tools assume ~/.gnupg
 {% if build_runas == 'root' %}
-{% set build_runas_home = '/' ~ build_runas %}
+{% set build_homedir = '/' ~ build_runas %}
 {% else %}
-{% set build_runas_home = '/home/' ~ build_runas %}
+{% set build_homedir = '/home/' ~ build_runas %}
 {% endif %}
 
-# Get the gpg keys directory to use, some tools assume ~/.gnupg
-{% if build_runas == 'root' %}
-{% set build_gpg_keydir = build_runas_home ~ '/.gnupg' %}
-{% else %}
-{% set build_gpg_keydir = build_runas_home ~ '/.gnupg' %}
-{% endif %}
+{% set build_gpg_keydir = build_homedir ~ '/.gnupg' %}
 

@@ -16,14 +16,14 @@
 
 Name: salt
 Version: 2016.3.3
-Release: 3%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
-Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
-Source1: https://pypi.io/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
+Source0: http://pypi.python.org/packages/source/s/%{name}/%{name}-%{version}.tar.gz
+Source1: https://pypi.python.org/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
 Source2: %{name}-master
 Source3: %{name}-syndic
 Source4: %{name}-minion
@@ -504,11 +504,11 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed Aug 31 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-3
-- WIP Building Salt feature release 2016.3.3 on Fedora 24
-
 * Tue Aug 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-2
 - Fix systemd update of existing installation
+
+* Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-1
+- Update to feature release 2016.3.3
 
 * Fri Jul 29 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.2-1
 - Update to feature release 2016.3.2

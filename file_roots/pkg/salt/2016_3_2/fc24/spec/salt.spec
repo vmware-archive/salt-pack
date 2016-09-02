@@ -15,8 +15,8 @@
 %define _salttesting_ver 2016.8.3
 
 Name: salt
-Version: 2016.3.3
-Release: 2%{?dist}
+Version: 2016.3.2
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -457,29 +457,21 @@ rm -rf %{buildroot}
 
 %post master
 %if 0%{?systemd_post:1}
-  if [ $1 -gt 1 ] ; then
-    /usr/bin/systemctl try-restart salt-master.service >/dev/null 2>&1 || :
-  else
-    %systemd_post salt-master.service
-  fi
+  %systemd_post salt-master.service
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %post minion
 %if 0%{?systemd_post:1}
-  if [ $1 -gt 1 ] ; then
-    /usr/bin/systemctl try-restart salt-minion.service >/dev/null 2>&1 || :
-  else
-    %systemd_post salt-minion.service
-  fi
+  %systemd_post salt-minion.service
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %postun master
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-master.service
+  %systemd_postun salt-master.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-master.service &>/dev/null || :
@@ -487,7 +479,7 @@ rm -rf %{buildroot}
 
 %postun syndic
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-syndic.service
+  %systemd_postun salt-syndic.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-syndic.service &>/dev/null || :
@@ -495,7 +487,7 @@ rm -rf %{buildroot}
 
 %postun minion
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-minion.service
+  %systemd_postun salt-minion.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-minion.service &>/dev/null || :
@@ -504,11 +496,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Aug 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-2
-- Fix systemd update of existing installation
-
-* Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-1
-- Update to feature release 2016.3.3
+* Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.2-2
+- WIP Building Salt feature release 2016.3.2 on Fedora 24
 
 * Fri Jul 29 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.2-1
 - Update to feature release 2016.3.2

@@ -10,7 +10,7 @@
 {% set gpg_config_file = gpg_key_dir ~ '/gpg.conf' %}
 {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %}
 
-{% set pinentry_text = 'pinentry-program /usr/bin/pinentry-gtk' %}
+{% set pinentry_text = 'pinentry-program /usr/bin/pinentry-curses' %}
 
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
@@ -21,6 +21,7 @@
         max-cache-ttl 300
         max-cache-ttl-ssh 300
         ## debug-all
+        allow-loopback-pinentry
 
         # PIN entry program
         ' ~ pinentry_text
@@ -61,6 +62,27 @@ gpg_agent_conf_file:
       - file: gpg_agent_conf_file_rm
 
 
+ensure_gpg_conf_rights:
+  module.run:
+    - name: file.check_perms
+    - m_name: {{gpg_config_file}}
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - mode: 644
+    - ret: False
+    - require:
+      - file: gpg_agent_conf_file
+
+ensure_gpg_agent_conf_rights:
+  module.run:
+    - name: file.check_perms
+    - m_name: {{gpg_agent_config_file}}
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - mode: 644
+    - ret: False
+
+
 gpg_agent_stop:
   cmd.run:
     - name: killall gpg-agent
@@ -71,7 +93,7 @@ gpg_agent_stop:
 gpg_agent_start:
   cmd.run:
     - name: |
-        eval $(gpg-agent --homedir {{gpg_key_dir}} --allow-preset-passphrase --max-cache-ttl 300 --daemon)
+        eval $(gpg-agent --homedir {{gpg_key_dir}} --allow-preset-passphrase --allow-loopback-pinentry --max-cache-ttl 300 --daemon)
         GPG_TTY=$(tty)
         export GPG_TTY
 #    - python_shell: True

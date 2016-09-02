@@ -21,7 +21,6 @@
         max-cache-ttl 300
         max-cache-ttl-ssh 300
         ## debug-all
-        allow-loopback-pinentry
 
         # PIN entry program
         ' ~ pinentry_text
@@ -73,7 +72,8 @@ ensure_gpg_conf_rights:
     - require:
       - file: gpg_agent_conf_file
 
-ensure_gpg_agent_conf_rights:
+e
+nsure_gpg_agent_conf_rights:
   module.run:
     - name: file.check_perms
     - m_name: {{gpg_agent_config_file}}
@@ -93,7 +93,7 @@ gpg_agent_stop:
 gpg_agent_start:
   cmd.run:
     - name: |
-        eval $(gpg-agent --homedir {{gpg_key_dir}} --allow-preset-passphrase --allow-loopback-pinentry --max-cache-ttl 300 --daemon)
+        eval $(gpg-agent --homedir {{gpg_key_dir}} --allow-preset-passphrase --max-cache-ttl 300 --daemon)
         GPG_TTY=$(tty)
         export GPG_TTY
 #    - python_shell: True

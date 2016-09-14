@@ -292,6 +292,9 @@ pkgbuild_registry:
     python-ordereddict:
       version: 1.1-2
       noarch: True
+    python-pip:
+      version: 7.1.0-1
+      noarch: True
     python-pyzmq:
       name: python-zmq
       version: 14.5.0-2

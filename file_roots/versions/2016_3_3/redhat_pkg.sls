@@ -50,6 +50,7 @@ include:
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6
     - pkg.python-ordereddict.1_1.rhel6
+    - pkg.python-pip.7_1_0.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_3.rhel6
     - pkg.python-requests.2_6_0.rhel6
@@ -94,5 +95,9 @@ include:
     - pkg.rpmdevtools.6_8.rhel5
     - pkg.salt.2016_3_3.rhel5
     - pkg.zeromq.4_0_5.rhel5
+
+{% elif buildcfg.build_release == 'fc24' %}
+
+    - pkg.salt.2016_3_3.fc24
 
 {% endif %}

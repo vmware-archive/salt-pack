@@ -96,4 +96,8 @@ include:
     - pkg.salt.2016_3_3.rhel5
     - pkg.zeromq.4_0_5.rhel5
 
+{% elif buildcfg.build_release == 'fc24' %}
+
+    - pkg.salt.2016_3_3.fc24
+
 {% endif %}

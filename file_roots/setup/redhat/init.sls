@@ -8,9 +8,9 @@
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
 
-epel_repo:
+os_pkgs_repo:
   pkgrepo.managed:
-    - humanname: epel
+    - humanname: os_packages_repo_epel
     - mirrorlist: https://mirrors.fedoraproject.org/metalink?repo={{redhat_cfg.build_epel}}&arch=$basearch
 
 
@@ -24,7 +24,7 @@ build_pkgs:
       - gnupg2
       - python2-gnupg
     - require:
-      - pkgrepo: epel_repo
+      - pkgrepo: os_pkgs_repo
 
 
 {{redhat_cfg.build_runas}}:
@@ -88,7 +88,7 @@ ensure_gpg_rights:
     - name: {{gpg_key_dir}}
     - user: {{redhat_cfg.build_runas}}
     - group: {{redhat_cfg.build_runas}}
-    - dir_mode: 755
+    - dir_mode: 700
     - file_mode: 600
     - recurse:
         - user

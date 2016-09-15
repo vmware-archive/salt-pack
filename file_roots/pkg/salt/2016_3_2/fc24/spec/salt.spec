@@ -12,17 +12,17 @@
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
 %define _salttesting SaltTesting
-%define _salttesting_ver 2016.9.7
+%define _salttesting_ver 2016.8.3
 
 Name: salt
-Version: 2016.3.3
-Release: 3%{?dist}
+Version: 2016.3.2
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
-Source0: https://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
+Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
 Source1: https://pypi.io/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
 Source2: %{name}-master
 Source3: %{name}-syndic
@@ -36,7 +36,7 @@ Source10: README.fedora
 Source11: %{name}-common.logrotate
 Source12: salt.bash
 
-## Patch0:  salt-%%{version}-tests.patch
+## Patch0:  salt-%{version}-tests.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -167,7 +167,7 @@ infrastructure.
 
 %package api
 Summary: REST API for Salt, a parallel remote execution system
-Group:   Applications/System
+Group:   System administration tools
 Requires: %{name}-master = %{version}-%{release}
 %if 0%{?with_python26}
 Requires: python26-cherrypy
@@ -181,7 +181,7 @@ salt-api provides a REST interface to the Salt master.
 
 %package cloud
 Summary: Cloud provisioner for Salt, a parallel remote execution system
-Group:   Applications/System
+Group:   System administration tools
 Requires: %{name}-master = %{version}-%{release}
 %if 0%{?with_python26}
 Requires: python26-libcloud
@@ -195,7 +195,7 @@ adds them to the master's collection of controllable minions.
 
 %package ssh
 Summary: Agentless SSH-based version of Salt, a parallel remote execution system
-Group:   Applications/System
+Group:   System administration tools
 Requires: %{name} = %{version}-%{release}
 
 %description ssh
@@ -203,11 +203,11 @@ The salt-ssh tool can run remote execution functions and states without the use
 of an agent (salt-minion) service.
 
 %prep
-%setup -q -c
-%setup -q -T -D -a 1
+%setup -c
+%setup -T -D -a 1
 
 cd %{name}-%{version}
-## %%patch0 -p1
+## %patch0 -p1
 
 %build
 
@@ -287,7 +287,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
 %{python_sitelib}/%{name}/*
-#%%{python_sitelib}/%%{name}-%%{version}-py?.?.egg-info
+#%{python_sitelib}/%{name}-%{version}-py?.?.egg-info
 %{python_sitelib}/%{name}-*-py?.?.egg-info
 %{_sysconfdir}/logrotate.d/salt
 %{_sysconfdir}/bash_completion.d/salt.bash
@@ -410,7 +410,7 @@ rm -rf %{buildroot}
       /sbin/service salt-master condrestart >/dev/null 2>&1 || :
   fi
 
-#%%postun syndic
+#%postun syndic
 #  if [ "$1" -ge "1" ] ; then
 #      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
 #  fi
@@ -457,29 +457,21 @@ rm -rf %{buildroot}
 
 %post master
 %if 0%{?systemd_post:1}
-  if [ $1 -gt 1 ] ; then
-    /usr/bin/systemctl try-restart salt-master.service >/dev/null 2>&1 || :
-  else
-    %systemd_post salt-master.service
-  fi
+  %systemd_post salt-master.service
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %post minion
 %if 0%{?systemd_post:1}
-  if [ $1 -gt 1 ] ; then
-    /usr/bin/systemctl try-restart salt-minion.service >/dev/null 2>&1 || :
-  else
-    %systemd_post salt-minion.service
-  fi
+  %systemd_post salt-minion.service
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %postun master
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-master.service
+  %systemd_postun salt-master.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-master.service &>/dev/null || :
@@ -487,7 +479,7 @@ rm -rf %{buildroot}
 
 %postun syndic
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-syndic.service
+  %systemd_postun salt-syndic.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-syndic.service &>/dev/null || :
@@ -495,7 +487,7 @@ rm -rf %{buildroot}
 
 %postun minion
 %if 0%{?systemd_post:1}
-  %systemd_postun_with_restart salt-minion.service
+  %systemd_postun salt-minion.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-minion.service &>/dev/null || :
@@ -504,14 +496,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Mon Sep 12 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-3
-- Adjust spec file for Fedora 24 support
-
-* Tue Aug 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-2
-- Fix systemd update of existing installation
-
-* Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-1
-- Update to feature release 2016.3.3
+* Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.2-2
+- WIP Building Salt feature release 2016.3.2 on Fedora 24
 
 * Fri Jul 29 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.2-1
 - Update to feature release 2016.3.2

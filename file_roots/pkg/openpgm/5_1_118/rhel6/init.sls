@@ -35,5 +35,5 @@
       # Can't use the Google Code link because the URL causes Salt to cache the
       # file with a non-matching filename. TODO: Fix this.
       #- https://code.google.com/p/{{pkg_name}}/downloads/detail?name=libpgm-{{version}}.tar.gz
-      - salt://{{slspath}}/sources/libpgm-5.2.122~dfsg.tar.gz
+      - salt://{{slspath}}/sources/libpgm-5.1.118~dfsg.tar.gz
 {% endif %}

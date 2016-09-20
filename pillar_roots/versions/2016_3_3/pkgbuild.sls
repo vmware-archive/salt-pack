@@ -227,7 +227,7 @@ pkgbuild_registry:
         - libyaml-debuginfo
         - libyaml-devel
     openpgm:
-      version: 5.2.122-2
+      version: 5.1.118-3
       results:
         - openpgm
         - openpgm-devel
@@ -649,17 +649,3 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
-
-  fc24:
-    salt:
-      version: 2016.3.3-3
-      noarch: True
-      results:
-        - salt
-        - salt-master
-        - salt-minion
-        - salt-syndic
-        - salt-api
-        - salt-cloud
-        - salt-ssh
-

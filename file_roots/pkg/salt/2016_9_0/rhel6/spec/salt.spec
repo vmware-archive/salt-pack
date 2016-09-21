@@ -5,6 +5,9 @@
 %define __python %{_bindir}/python%{?pybasever}
 %endif
 
+# Release Candidate
+%define __rc_ver rc1
+
 %global include_tests 0
 
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
@@ -16,13 +19,13 @@
 
 Name: salt
 Version: 2016.9.0
-Release: 0.rc1%{?dist}
+Release: 0%{?__rc_ver}%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
-Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
+Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}%{?__rc_ver}.tar.gz
 Source1: https://pypi.io/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
 Source2: %{name}-master
 Source3: %{name}-syndic
@@ -206,7 +209,7 @@ of an agent (salt-minion) service.
 %setup -c
 %setup -T -D -a 1
 
-cd %{name}-%{version}
+cd %{name}-%{version}%{?__rc_ver}
 ## %patch0 -p1
 
 %build
@@ -214,7 +217,7 @@ cd %{name}-%{version}
 
 %install
 rm -rf %{buildroot}
-cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
+cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}
 %{__python} setup.py install -O1 --root %{buildroot}
 
 # Add some directories
@@ -275,7 +278,7 @@ install -p -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/bash_completion.d/salt
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 %check
-cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
+cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}
 mkdir %{_tmppath}/salt-test-cache
 PYTHONPATH=%{pythonpath}:$RPM_BUILD_DIR/%{name}-%{version}/%{_salttesting}-%{_salttesting_ver} %{__python} setup.py test --runtests-opts=-u
 %endif
@@ -285,7 +288,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
+%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}/LICENSE
 %{python_sitelib}/%{name}/*
 #%{python_sitelib}/%{name}-%{version}-py?.?.egg-info
 %{python_sitelib}/%{name}-*-py?.?.egg-info
@@ -293,7 +296,7 @@ rm -rf %{buildroot}
 %{_sysconfdir}/bash_completion.d/salt.bash
 %{_var}/cache/salt
 %{_var}/log/salt
-%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/README.fedora
+%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}/README.fedora
 %{_bindir}/spm
 %doc %{_mandir}/man1/spm.1.*
 %config(noreplace) %{_sysconfdir}/salt/
@@ -302,6 +305,7 @@ rm -rf %{buildroot}
 %files master
 %defattr(-,root,root)
 %doc %{_mandir}/man7/salt.7.*
+%doc %{_mandir}/man1/salt.1.*
 %doc %{_mandir}/man1/salt-cp.1.*
 %doc %{_mandir}/man1/salt-key.1.*
 %doc %{_mandir}/man1/salt-master.1.*

@@ -2,10 +2,10 @@
 {% set force = salt['pillar.get']('build_force.all', False) or salt['pillar.get']('build_force.' ~ slspath, False) %}
 
 {% set name = 'salt' %}
-{% set version = '2016.9.0' %}
-{% set release_nameadd = '+ds' %}
 {% set release_rc_ver = 'rc1' %}
-{% set release_ver = '0' ~ '.' ~ release_rc_ver  %}
+{% set version = '2016.9.0' ~ release_rc_ver %}
+{% set release_nameadd = '+ds' %}
+{% set release_ver = '0' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
@@ -27,5 +27,5 @@
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
     - sources:
-      - salt://{{slspath}}/sources/{{name}}-{{version}}{{release_rc_ver}}.tar.gz
+      - salt://{{slspath}}/sources/{{name}}-{{version}}.tar.gz
 

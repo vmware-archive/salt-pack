@@ -98,3 +98,10 @@ build_prefs:
     - text: |
         {{prefs_text}}
 
+#36569 work-around reboot Wheezy setting HOME to '/'
+home_env:
+  environ.setenv:
+    - name: HOME
+    - value: /root
+    - update_minion: True
+

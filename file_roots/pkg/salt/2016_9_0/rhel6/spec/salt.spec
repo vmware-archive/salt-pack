@@ -38,8 +38,17 @@ Source9: %{name}-api.service
 Source10: README.fedora
 Source11: %{name}-common.logrotate
 Source12: salt.bash
+Source13: salt.fish
+Source14: salt_common.fish
+Source15: salt-call.fish
+Source16: salt-cp.fish
+Source17: salt-key.fish
+Source18: salt-master.fish
+Source19: salt-minion.fish
+Source20: salt-run.fish
+Source21: salt-syndic.fish
 
-## Patch0:  salt-%{version}-tests.patch
+## Patch0:  salt-%%{version}-tests.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -210,7 +219,7 @@ of an agent (salt-minion) service.
 %setup -T -D -a 1
 
 cd %{name}-%{version}%{?__rc_ver}
-## %patch0 -p1
+## %%patch0 -p1
 
 %build
 
@@ -277,6 +286,18 @@ install -p -m 0644 %{SOURCE11} %{buildroot}%{_sysconfdir}/logrotate.d/salt
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d/
 install -p -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/bash_completion.d/salt.bash
 
+# Fish completion (TBD remove -v)
+mkdir -p %{buildroot}%{_datadir}/fish/vendor_functions.d/
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt_common.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-call.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-cp.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-key.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-master.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-minion.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-run.fish
+install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-syndic.fish
+
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 %check
 cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}
@@ -291,7 +312,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}/LICENSE
 %{python_sitelib}/%{name}/*
-#%{python_sitelib}/%{name}-%{version}-py?.?.egg-info
+#%%{python_sitelib}/%%{name}-%%{version}-py?.?.egg-info
 %{python_sitelib}/%{name}-*-py?.?.egg-info
 %{_sysconfdir}/logrotate.d/salt
 %{_sysconfdir}/bash_completion.d/salt.bash
@@ -302,6 +323,7 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man1/spm.1.*
 %config(noreplace) %{_sysconfdir}/salt/
 %config(noreplace) %{_sysconfdir}/salt/pki
+%config(noreplace) %{_datadir}/fish/vendor_functions.d/salt*.fish
 
 %files master
 %defattr(-,root,root)
@@ -416,7 +438,7 @@ rm -rf %{buildroot}
       /sbin/service salt-master condrestart >/dev/null 2>&1 || :
   fi
 
-#%postun syndic
+#%%postun syndic
 #  if [ "$1" -ge "1" ] ; then
 #      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
 #  fi
@@ -510,7 +532,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Sep 20 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.9.0-0.rc1
+* Thu Sep 29 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.9.0-0.rc1
 - Update to feature release 2016.9.0 Release Candidate 1
 
 * Tue Aug 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-2

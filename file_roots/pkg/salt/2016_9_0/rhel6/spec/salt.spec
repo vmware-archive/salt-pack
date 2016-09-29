@@ -236,6 +236,7 @@ install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/proxy.d
 
 # Add the config files
 install -p -m 0640 conf/minion %{buildroot}%{_sysconfdir}/salt/minion
@@ -344,6 +345,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/proxy
 %config(noreplace) %{_sysconfdir}/salt/minion.d
 %config(noreplace) %{_sysconfdir}/salt/pki/minion
+%config(noreplace) %{_sysconfdir}/salt/proxy.d
 %config(noreplace) %{_var}/log/salt/minion
 
 %files syndic

@@ -18,14 +18,14 @@
 %define _salttesting_ver 2016.9.7
 
 Name: salt
-Version: 2016.11.0
-Release: 0%{?__rc_ver}%{?dist}
+Version: 2016.11.0%{?__rc_ver}
+Release: 0%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
-Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}%{?__rc_ver}.tar.gz
+Source0: http://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
 Source1: https://pypi.io/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
 Source2: %{name}-master
 Source3: %{name}-syndic
@@ -218,7 +218,7 @@ of an agent (salt-minion) service.
 %setup -c
 %setup -T -D -a 1
 
-cd %{name}-%{version}%{?__rc_ver}
+cd %{name}-%{version}
 ## %%patch0 -p1
 
 %build
@@ -226,7 +226,7 @@ cd %{name}-%{version}%{?__rc_ver}
 
 %install
 rm -rf %{buildroot}
-cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}
+cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
 %{__python} setup.py install -O1 --root %{buildroot}
 
 # Add some directories
@@ -300,7 +300,7 @@ install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 %check
-cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}
+cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
 mkdir %{_tmppath}/salt-test-cache
 PYTHONPATH=%{pythonpath}:$RPM_BUILD_DIR/%{name}-%{version}/%{_salttesting}-%{_salttesting_ver} %{__python} setup.py test --runtests-opts=-u
 %endif
@@ -310,7 +310,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}/LICENSE
+%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
 %{python_sitelib}/%{name}/*
 #%%{python_sitelib}/%%{name}-%%{version}-py?.?.egg-info
 %{python_sitelib}/%{name}-*-py?.?.egg-info
@@ -318,7 +318,7 @@ rm -rf %{buildroot}
 %{_sysconfdir}/bash_completion.d/salt.bash
 %{_var}/cache/salt
 %{_var}/log/salt
-%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}%{?__rc_ver}/README.fedora
+%doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/README.fedora
 %{_bindir}/spm
 %doc %{_mandir}/man1/spm.1.*
 %config(noreplace) %{_sysconfdir}/salt/

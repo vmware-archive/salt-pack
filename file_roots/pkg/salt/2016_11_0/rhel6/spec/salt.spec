@@ -15,7 +15,7 @@
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
 %define _salttesting SaltTesting
-%define _salttesting_ver 2016.8.3
+%define _salttesting_ver 2016.9.7
 
 Name: salt
 Version: 2016.11.0

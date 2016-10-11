@@ -649,3 +649,89 @@ pkgbuild_registry:
       results:
         - zeromq
         - zeromq-devel
+
+  amzn:
+    libsodium:
+      version: 1.0.5-1
+      results:
+        - libsodium
+        - libsodium-devel
+    openpgm:
+      version: 5.1.118-3
+      results:
+        - openpgm
+        - openpgm-devel
+    python-cherrypy:
+      version: 3.2.2-4
+      noarch: True
+    python-enum34:
+      version: 1.0-4
+      noarch: True
+    python-impacket:
+      version: 0.9.14-1
+      noarch: True
+    python-importlib:
+      version: 1.0.2-2
+      noarch: True
+    python-ioflo:
+      version: 1.3.8-1
+      noarch: True
+    python-libcloud:
+      version: 0.20.0-1
+      noarch: True
+    python-libnacl:
+      version: 1.4.3-1
+      noarch: True
+      build_deps:
+        - libsodium
+    python-msgpack:
+      version: 0.4.6-1
+    python-ordereddict:
+      version: 1.1-2
+      noarch: True
+    python-pyzmq:
+      name: python-zmq
+      version: 14.5.0-2
+      build_deps:
+        - zeromq
+    python-raet:
+      version: 0.6.3-2
+      noarch: True
+      build_deps:
+        - python-ioflo
+      additional_deps:
+        - python-libnacl
+    python-six:
+      version: 1.9.0-2
+      noarch: True
+    python-tornado:
+      version: 4.2.1-1
+    python-timelib:
+      version: 0.2.4-1
+      noarch: True
+    salt:
+      version: 2016.3.3-1
+      noarch: True
+      build_deps:
+        - python-crypto
+        - python-msgpack
+        - python-pyzmq
+        - python-tornado
+        - python-libcloud
+      results:
+        - salt
+        - salt-master
+        - salt-minion
+        - salt-syndic
+        - salt-api
+        - salt-cloud
+        - salt-ssh
+    zeromq:
+      version: 4.0.5-4
+      build_deps:
+        - openpgm
+      results:
+        - zeromq
+        - zeromq-devel
+
+

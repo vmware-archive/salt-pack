@@ -1,3 +1,24 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+%{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
+
+%global __bindir /usr/local/bin
+%global __mandir /usr/local/share/man
+
+%else
+
 %if ! (0%{?rhel} >= 6 || 0%{?fedora} > 12)
 %global with_python26 1
 %define pybasever 2.6
@@ -5,25 +26,30 @@
 %define __python %{_bindir}/python%{?pybasever}
 %endif
 
-%global include_tests 0
-
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
+%global __bindir %{_bindir}
+%global __mandir %{_mandir}
+
+%endif
+
+%global include_tests 0
+
 %define _salttesting SaltTesting
-%define _salttesting_ver 2016.8.3
+%define _salttesting_ver 2016.9.7
 
 Name: salt
 Version: 2016.3.3
-Release: 1%{?dist}
+Release: 4%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
-Source0: http://pypi.python.org/packages/source/s/%{name}/%{name}-%{version}.tar.gz
-Source1: https://pypi.python.org/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
+Source0: https://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
+Source1: https://pypi.io/packages/source/S/%{_salttesting}/%{_salttesting}-%{_salttesting_ver}.tar.gz
 Source2: %{name}-master
 Source3: %{name}-syndic
 Source4: %{name}-minion
@@ -36,7 +62,7 @@ Source10: README.fedora
 Source11: %{name}-common.logrotate
 Source12: salt.bash
 
-## Patch0:  salt-%{version}-tests.patch
+## Patch0:  salt-%%{version}-tests.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -90,17 +116,21 @@ BuildRequires: python-argparse
 
 %endif
 
-BuildRequires: python-devel
-Requires: python-crypto >= 2.6.1
-Requires: python-jinja2
-Requires: python-msgpack > 0.3
+BuildRequires: python%{?__python_ver}-devel
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+Requires: python%{?__python_ver}-jinja2
+Requires: python%{?__python_ver}-msgpack > 0.3
+%if ( "0%{?dist}" == "0.amzn1" )
+Requires: python27-PyYAML
+%else
 Requires: PyYAML
-Requires: python-requests >= 1.0.0
-Requires: python-zmq
-Requires: python-markupsafe
-Requires: python-tornado >= 4.2.1
-Requires: python-futures >= 2.0
-Requires: python-six
+%endif
+Requires: python%{?__python_ver}-requests >= 1.0.0
+Requires: python%{?__python_ver}-zmq
+Requires: python%{?__python_ver}-markupsafe
+Requires: python%{?__python_ver}-tornado >= 4.2.1
+Requires: python%{?__python_ver}-futures >= 2.0
+Requires: python%{?__python_ver}-six
 
 
 %endif
@@ -167,12 +197,12 @@ infrastructure.
 
 %package api
 Summary: REST API for Salt, a parallel remote execution system
-Group:   System administration tools
+Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
 %if 0%{?with_python26}
 Requires: python26-cherrypy
 %else
-Requires: python-cherrypy
+Requires: python%{?__python_ver}-cherrypy
 %endif
 
 
@@ -181,12 +211,12 @@ salt-api provides a REST interface to the Salt master.
 
 %package cloud
 Summary: Cloud provisioner for Salt, a parallel remote execution system
-Group:   System administration tools
+Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
 %if 0%{?with_python26}
 Requires: python26-libcloud
 %else
-Requires: python-libcloud
+Requires: python%{?__python_ver}-libcloud
 %endif
 
 %description cloud
@@ -195,7 +225,7 @@ adds them to the master's collection of controllable minions.
 
 %package ssh
 Summary: Agentless SSH-based version of Salt, a parallel remote execution system
-Group:   System administration tools
+Group:   Applications/System
 Requires: %{name} = %{version}-%{release}
 
 %description ssh
@@ -203,11 +233,11 @@ The salt-ssh tool can run remote execution functions and states without the use
 of an agent (salt-minion) service.
 
 %prep
-%setup -c
-%setup -T -D -a 1
+%setup -q -c
+%setup -q -T -D -a 1
 
 cd %{name}-%{version}
-## %patch0 -p1
+## %%patch0 -p1
 
 %build
 
@@ -259,8 +289,8 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 # Force python2.6 on EPEL6
 # https://github.com/saltstack/salt/issues/22003
 %if 0%{?rhel} == 6
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/spm
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/salt*
+sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{__bindir}/spm
+sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{__bindir}/salt*
 sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_initrddir}/salt*
 %endif
 
@@ -286,33 +316,39 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
-%{python_sitelib}/%{name}/*
-#%{python_sitelib}/%{name}-%{version}-py?.?.egg-info
-%{python_sitelib}/%{name}-*-py?.?.egg-info
+%{python2_sitelib}/%{name}/*
+#%%{python2_sitelib}/%%{name}-%%{version}-py?.?.egg-info
+
+%if ( "0%{?dist}" == "0.amzn1" )
+%{python2_sitelib}/%{name}-%{version}.egg-info
+%else
+%{python2_sitelib}/%{name}-*-py?.?.egg-info
+%endif
+
 %{_sysconfdir}/logrotate.d/salt
 %{_sysconfdir}/bash_completion.d/salt.bash
 %{_var}/cache/salt
 %{_var}/log/salt
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/README.fedora
-%{_bindir}/spm
-%doc %{_mandir}/man1/spm.1.*
+%{__bindir}/spm
+%doc %{__mandir}/man1/spm.1*
 %config(noreplace) %{_sysconfdir}/salt/
 %config(noreplace) %{_sysconfdir}/salt/pki
 
 %files master
 %defattr(-,root,root)
-%doc %{_mandir}/man7/salt.7.*
-%doc %{_mandir}/man1/salt-cp.1.*
-%doc %{_mandir}/man1/salt-key.1.*
-%doc %{_mandir}/man1/salt-master.1.*
-%doc %{_mandir}/man1/salt-run.1.*
-%doc %{_mandir}/man1/salt-unity.1.*
-%{_bindir}/salt
-%{_bindir}/salt-cp
-%{_bindir}/salt-key
-%{_bindir}/salt-master
-%{_bindir}/salt-run
-%{_bindir}/salt-unity
+%doc %{__mandir}/man7/salt.7*
+%doc %{__mandir}/man1/salt-cp.1*
+%doc %{__mandir}/man1/salt-key.1*
+%doc %{__mandir}/man1/salt-master.1*
+%doc %{__mandir}/man1/salt-run.1*
+%doc %{__mandir}/man1/salt-unity.1*
+%{__bindir}/salt
+%{__bindir}/salt-cp
+%{__bindir}/salt-key
+%{__bindir}/salt-master
+%{__bindir}/salt-run
+%{__bindir}/salt-unity
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-master
 %else
@@ -325,12 +361,12 @@ rm -rf %{buildroot}
 
 %files minion
 %defattr(-,root,root)
-%doc %{_mandir}/man1/salt-call.1.*
-%doc %{_mandir}/man1/salt-minion.1.*
-%doc %{_mandir}/man1/salt-proxy.1.*
-%{_bindir}/salt-minion
-%{_bindir}/salt-call
-%{_bindir}/salt-proxy
+%doc %{__mandir}/man1/salt-call.1*
+%doc %{__mandir}/man1/salt-minion.1*
+%doc %{__mandir}/man1/salt-proxy.1*
+%{__bindir}/salt-minion
+%{__bindir}/salt-call
+%{__bindir}/salt-proxy
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
@@ -343,8 +379,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_var}/log/salt/minion
 
 %files syndic
-%doc %{_mandir}/man1/salt-syndic.1.*
-%{_bindir}/salt-syndic
+%doc %{__mandir}/man1/salt-syndic.1*
+%{__bindir}/salt-syndic
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-syndic
 %else
@@ -353,8 +389,8 @@ rm -rf %{buildroot}
 
 %files api
 %defattr(-,root,root)
-%doc %{_mandir}/man1/salt-api.1.*
-%{_bindir}/salt-api
+%doc %{__mandir}/man1/salt-api.1*
+%{__bindir}/salt-api
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-api
 %else
@@ -362,8 +398,8 @@ rm -rf %{buildroot}
 %endif
 
 %files cloud
-%doc %{_mandir}/man1/salt-cloud.1.*
-%{_bindir}/salt-cloud
+%doc %{__mandir}/man1/salt-cloud.1*
+%{__bindir}/salt-cloud
 %{_sysconfdir}/salt/cloud.conf.d
 %{_sysconfdir}/salt/cloud.deploy.d
 %{_sysconfdir}/salt/cloud.maps.d
@@ -372,8 +408,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/cloud
 
 %files ssh
-%doc %{_mandir}/man1/salt-ssh.1.*
-%{_bindir}/salt-ssh
+%doc %{__mandir}/man1/salt-ssh.1*
+%{__bindir}/salt-ssh
 %config(noreplace) %{_sysconfdir}/salt/roster
 
 
@@ -410,7 +446,7 @@ rm -rf %{buildroot}
       /sbin/service salt-master condrestart >/dev/null 2>&1 || :
   fi
 
-#%postun syndic
+#%%postun syndic
 #  if [ "$1" -ge "1" ] ; then
 #      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
 #  fi
@@ -457,21 +493,29 @@ rm -rf %{buildroot}
 
 %post master
 %if 0%{?systemd_post:1}
-  %systemd_post salt-master.service
+  if [ $1 -gt 1 ] ; then
+    /usr/bin/systemctl try-restart salt-master.service >/dev/null 2>&1 || :
+  else
+    %systemd_post salt-master.service
+  fi
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %post minion
 %if 0%{?systemd_post:1}
-  %systemd_post salt-minion.service
+  if [ $1 -gt 1 ] ; then
+    /usr/bin/systemctl try-restart salt-minion.service >/dev/null 2>&1 || :
+  else
+    %systemd_post salt-minion.service
+  fi
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
 %postun master
 %if 0%{?systemd_post:1}
-  %systemd_postun salt-master.service
+  %systemd_postun_with_restart salt-master.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-master.service &>/dev/null || :
@@ -479,7 +523,7 @@ rm -rf %{buildroot}
 
 %postun syndic
 %if 0%{?systemd_post:1}
-  %systemd_postun salt-syndic.service
+  %systemd_postun_with_restart salt-syndic.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-syndic.service &>/dev/null || :
@@ -487,7 +531,7 @@ rm -rf %{buildroot}
 
 %postun minion
 %if 0%{?systemd_post:1}
-  %systemd_postun salt-minion.service
+  %systemd_postun_with_restart salt-minion.service
 %else
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-minion.service &>/dev/null || :
@@ -496,6 +540,15 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-4
+- Ported to build on Amazon Linux 2016.09 natively
+
+* Mon Sep 12 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-3
+- Adjust spec file for Fedora 24 support
+
+* Tue Aug 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-2
+- Fix systemd update of existing installation
+
 * Fri Aug 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-1
 - Update to feature release 2016.3.3
 

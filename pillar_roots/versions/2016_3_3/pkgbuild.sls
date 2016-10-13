@@ -652,68 +652,68 @@ pkgbuild_registry:
 
   amzn:
     libsodium:
-      version: 1.0.5-1
+      version: 0.4.5-3
       results:
         - libsodium
         - libsodium-devel
     openpgm:
-      version: 5.1.118-3
+      version: 5.1.118-4
       results:
         - openpgm
         - openpgm-devel
     python-cherrypy:
-      version: 3.2.2-4
+      name: python27-cherrypy
+      version: 3.2.2-5
       noarch: True
     python-enum34:
+      name: python27-enum34
       version: 1.0-4
       noarch: True
     python-impacket:
+      name: python27-impacket
       version: 0.9.14-1
       noarch: True
-    python-importlib:
-      version: 1.0.2-2
-      noarch: True
     python-ioflo:
+      name: python27-ioflo
       version: 1.3.8-1
       noarch: True
     python-libcloud:
-      version: 0.20.0-1
+      name: python27-libcloud
+      version: 0.20.0-2
       noarch: True
     python-libnacl:
+      name: python27-libnacl
       version: 1.4.3-1
       noarch: True
       build_deps:
         - libsodium
     python-msgpack:
-      version: 0.4.6-1
-    python-ordereddict:
-      version: 1.1-2
-      noarch: True
+      name: python27-msgpack
+      version: 0.4.6-2
     python-pyzmq:
-      name: python-zmq
-      version: 14.5.0-2
+      name: python27-zmq
+      version: 14.5.0-3
       build_deps:
         - zeromq
     python-raet:
+      name: python27-raet
       version: 0.6.3-2
       noarch: True
       build_deps:
         - python-ioflo
       additional_deps:
         - python-libnacl
-    python-six:
-      version: 1.9.0-2
-      noarch: True
     python-tornado:
-      version: 4.2.1-1
+      name: python27-tornado
+      version: 4.2.1-2
     python-timelib:
+      name: python27-timelib
       version: 0.2.4-1
       noarch: True
     salt:
-      version: 2016.3.3-1
+      version: 2016.3.3-4
       noarch: True
       build_deps:
-        - python-crypto
         - python-msgpack
         - python-pyzmq
         - python-tornado

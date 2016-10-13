@@ -4,10 +4,26 @@
 
 # Fix lack of rhel macro on COPR
 # (https://bugzilla.redhat.com/show_bug.cgi?id=1213482)
-%if 0%{?rhel} == 5 || (0%{?rhel} == 0 && 0%{?fedora} == 0)
+%if 0%{?rhel} == 5 || (0%{?rhel} == 0 && 0%{?fedora} == 0 && "0%{?dist}" != "0.amzn1" )
 %global rhel5 1
 %endif
 
+
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+%else
 # el5 has python-2.4, but 2.5 is minimum, so build with python2.6:
 # http://lists.zeromq.org/pipermail/zeromq-dev/2010-November/007597.html
 %if 0%{?rhel5}
@@ -15,11 +31,15 @@
 %global __python_ver 26
 %global __python %{_bindir}/python%{?pybasever}
 %global python python26
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%else
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
+%endif
+
+
+%if ! ( 0%{?rhel5} )
 %{?filter_setup:
-%filter_provides_in %{python_sitearch}/.*\.so$
+%filter_provides_in %{python2_sitearch}/.*\.so$
 %if 0%{?fedora} > 12 || 0%{?rhel} > 6
 %filter_provides_in %{python3_sitearch}/.*\.so$
 %endif
@@ -33,9 +53,9 @@
 
 %global run_tests 0
 
-Name:           python-zmq
+Name:           python%{?__python_ver}-zmq
 Version:        14.5.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Software library for fast, message-based applications
 
 Group:          Development/Libraries
@@ -54,8 +74,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  python26-devel
 BuildRequires:  python26-distribute
 %else
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 %endif
 
 BuildRequires:  zeromq-devel >= 4.0.5
@@ -64,7 +84,7 @@ BuildRequires:  zeromq-devel >= 4.0.5
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 # needed for 2to3
-BuildRequires:  python-tools
+BuildRequires:  python%{?__python_ver}-tools
 %endif
 
 
@@ -215,7 +235,7 @@ popd
 %check
 %if 0%{?run_tests}
     rm zmq/__*
-    PYTHONPATH=%{buildroot}%{python_sitearch} \
+    PYTHONPATH=%{buildroot}%{python2_sitearch} \
         %{__python} setup.py test
 
     %if 0%{?with_python3}
@@ -236,9 +256,9 @@ popd
 %endif
 %defattr(-,root,root,-)
 %doc COPYING.LESSER examples/
-%{python_sitearch}/%{srcname}-*.egg-info
-%{python_sitearch}/zmq
-%exclude %{python_sitearch}/zmq/tests
+%{python2_sitearch}/%{srcname}-*.egg-info
+%{python2_sitearch}/zmq
+%exclude %{python2_sitearch}/zmq/tests
 
 %if 0%{?rhel5}
 %files -n python26-zmq-tests
@@ -246,7 +266,7 @@ popd
 %files tests
 %endif
 %defattr(-,root,root,-)
-%{python_sitearch}/zmq/tests
+%{python2_sitearch}/zmq/tests
 
 %if 0%{?with_python3}
 %files -n python3-zmq
@@ -264,6 +284,9 @@ popd
 
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 14.5.0-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Fri Apr 10 2015 Erik Johnson <erik@saltstack.com> - 14.5.0-1
 - Updated for version 14.5.0
 

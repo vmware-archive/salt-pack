@@ -1,6 +1,10 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%endif
+
 Name:          openpgm
 Version:       5.1.118
-Release:       3%{?dist}
+Release:       4%{?dist}
 Summary:       An implementation of the PGM reliable multicast protocol
 
 Group:         System Environment/Libraries
@@ -11,8 +15,11 @@ Source0:       http://openpgm.googlecode.com/files/libpgm-%{version}~dfsg.tar.gz
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+%if 0%{?with_explicit_python27}
+BuildRequires: python27
+%else
 BuildRequires: python
-
+%endif
 
 %description
 OpenPGM is an open source implementation of the Pragmatic General
@@ -63,7 +70,10 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Fri Dec 21 2012 Jose Pedro Oliveira <jpo at di.uminho.pt> - 5.1.118-3
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 5.1.118-4
+- Ported to build on Amazon Linux 2016.09 natively
+
+* Fri Dec 21 2012 Jose Pedro Oliveira <jpo at di.uminho.pt> - 
 - Build requires python (no longer available by default in F18+ buildroots)
 
 * Fri Dec 21 2012 Jose Pedro Oliveira <jpo at di.uminho.pt> - 5.1.118-2

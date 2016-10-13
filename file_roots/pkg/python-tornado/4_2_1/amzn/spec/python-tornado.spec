@@ -1,27 +1,30 @@
-%if 0%{?fedora} > 12
+%if 0%{?fedora}
 %global with_python3 1
 %endif
 
-%if 0%{?rhel} > 6 || 0%{?fedora} > 12
-%global __python2 /usr/bin/python
-%else
-%global __python2 /usr/bin/python2.6
-%endif
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%define pybasever 2.7
+%define __python_ver 27
+%define __python %{_bindir}/python%{?pybasever}
+%define __python2 %{_bindir}/python%{?pybasever}
+%global __python2 /usr/bin/python%{?pybasever}
 
-# Fix lack of rhel macro on COPR
-# (https://bugzilla.redhat.com/show_bug.cgi?id=1213482)
-%if 0%{?rhel} == 0 && 0%{?fedora} == 0
-%global rhel5 1
-%endif
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
-%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+
+%endif
 
 %global pkgname tornado
 
-Name:           python-%{pkgname}
+Name:           python%{?__python_ver}-%{pkgname}
 Version:        4.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Scalable, non-blocking web server and tools
 
 Group:          Development/Libraries
@@ -32,31 +35,17 @@ Source0:        https://pypi.python.org/packages/source/t/tornado/tornado-%{vers
 Patch0:         python-tornado-cert.patch
 Patch1:         python-tornado-netutil-cert.patch
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
-%if 0%{?rhel5}
-
-BuildRequires:  python26-devel
-BuildRequires:  python26-distribute
-BuildRequires:  python26-backports-ssl_match_hostname
-Requires:       python26-backports-ssl_match_hostname
-Requires:       python26-pycurl
-
+%if 0%{?with_explicit_python27}
+BuildRequires:  python27-devel
 %else
-
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-BuildRequires:  python-backports-ssl_match_hostname
-BuildRequires:  python-unittest2
-Requires:       python-backports-ssl_match_hostname
-Requires:       python-pycurl
-
-%if 0%{?with_python3}
 BuildRequires:  python2-devel
+%endif
+BuildRequires:  python%{?__python_ver}-backports-ssl_match_hostname
+Requires:       python%{?__python_ver}-backports-ssl_match_hostname
+Requires:       python%{?__python_ver}-pycurl
+%if 0%{?with_python3}
 BuildRequires:  python3-setuptools
 BuildRequires:  python3-devel
-%endif
-
 %endif
 
 %description
@@ -72,45 +61,15 @@ ideal for real-time web services.
 %package doc
 Summary:        Examples for python-tornado
 Group:          Documentation
-Requires:       python-tornado = %{version}-%{release}
+Requires:       python%{?__python_ver}-tornado = %{version}-%{release}
 
 %description doc
 Tornado is an open source version of the scalable, non-blocking web
 server and and tools. This package contains some example applications.
 
-%if 0%{?rhel5}
-%package -n python26-tornado
-Summary:        Scalable, non-blocking web server and tools
-Group:          Development/Libraries
-Requires:       python26-backports-ssl_match_hostname
-Requires:       python26-pycurl
-
-%description -n python26-tornado
-Tornado is an open source version of the scalable, non-blocking web
-server and tools.
-
-The framework is distinct from most mainstream web server frameworks
-(and certainly most Python frameworks) because it is non-blocking and
-reasonably fast. Because it is non-blocking and uses epoll, it can
-handle thousands of simultaneous standing connections, which means it is
-ideal for real-time web services.
-
-%package -n python26-tornado-doc
-Summary:        Examples for python-tornado
-Group:          Documentation
-Requires:       python26-tornado = %{version}-%{release}
-
-%description -n python26-tornado-doc
-Tornado is an open source version of the scalable, non-blocking web
-server and and tools. This package contains some example applications.
-
-%endif # rhel5
-
-
 %if 0%{?with_python3}
 %package -n python3-tornado
 Summary:        Scalable, non-blocking web server and tools
-Group:          Development/Libraries
 %description -n python3-tornado
 Tornado is an open source version of the scalable, non-blocking web
 server and tools.
@@ -131,7 +90,6 @@ Tornado is an open source version of the scalable, non-blocking web
 server and and tools. This package contains some example applications.
 
 %endif # with_python3
-
 
 %prep 
 %setup -qc 
@@ -175,7 +133,7 @@ popd
 
 
 %check
-%if ! 0%{?rhel5} || 0%{?rhel} > 6 || 0%{?fedora} > 12
+%if ! ("%{dist}" == ".el6" || "%{dist}" != ".amzn1")
     %if 0%{?with_python3}
     pushd python3
         PYTHONPATH=%{python3_sitearch} \
@@ -188,29 +146,18 @@ popd
     popd
 %endif
 
-%if 0%{?rhel5}
-
-%files -n python26-tornado
-%doc python2/README.rst python2/PKG-INFO
-
-%{python2_sitearch}/%{pkgname}/
-%{python2_sitearch}/%{pkgname}-%{version}-*.egg-info
-
-%files -n python26-tornado-doc
-%doc python2/demos
-
-%else
-
 %files
 %doc python2/README.rst python2/PKG-INFO
 
 %{python2_sitearch}/%{pkgname}/
+%if "%{dist}" == ".amzn1"
+%{python2_sitearch}/%{pkgname}-%{version}*.egg-info
+%else
 %{python2_sitearch}/%{pkgname}-%{version}-*.egg-info
+%endif
 
 %files doc
 %doc python2/demos
-
-%endif
 
 %if 0%{?with_python3}
 %files -n python3-tornado
@@ -225,14 +172,14 @@ popd
 
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Thu Aug 20 2015 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-1
 - Picking up security fix for 4.2.1-1
 
-* Mon Apr 20 2015 Erik Johnson <erik@saltstack.com> - 4.1-3
-- Fix broken COPR for EL5
-
-* Mon Apr 20 2015 Erik Johnson <erik@saltstack.com> - 4.1-2
-- Extend rawhide spec to cover RHEL 5 through 7
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
 * Sun Mar 1 2015 Orion Poplawski <orion@cora.nwra.com> - 4.1-1
 - Update to 4.1

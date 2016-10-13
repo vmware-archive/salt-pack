@@ -1,10 +1,30 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%define pybasever 2.7
+%define __python_ver 27
+%define __python %{_bindir}/python%{?pybasever}
+%define __python2 %{_bindir}/python%{?pybasever}
+%global __python2 /usr/bin/python%{?pybasever}
+
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+
+%else
+
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
+%endif
 
 %global tarball_name apache-libcloud
 
-Name:           python-libcloud
+Name:           python%{?__python_ver}-libcloud
 Version:        0.20.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Python library to address multiple cloud provider APIs
 
 Group:          Development/Languages
@@ -15,9 +35,13 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python27-setuptools
+BuildRequires:  python27-devel
+%else
 BuildRequires:  python-setuptools
-
 BuildRequires:  python2-devel
+%endif
 
 %description
 libcloud is a client library for interacting with many of the popular cloud 
@@ -43,10 +67,12 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc LICENSE README.rst
-%{python_sitelib}/*
-
+%{python2_sitelib}/*
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Thu Jan 07 2016 Daniel Bruno dbruno@fedoraproject.org - 0.20.0-1
 - Release 0.20.0 with new features and improvements
 

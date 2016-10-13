@@ -4,24 +4,50 @@
 %global with_python3 1
 %endif
 
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%define pybasever 2.7
+%define __python_ver 27
+%define __python %{_bindir}/python%{?pybasever}
+%define __python2 %{_bindir}/python%{?pybasever}
+%global __python2 /usr/bin/python%{?pybasever}
+
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+
+%else
+
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %{!?__python2: %global __python2 /usr/bin/python2}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
-Name:           python-%{srcname}
+%endif
+
+Name:           python%{?__python_ver}-%{srcname}
 Version:        0.4.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Python MessagePack (de)serializer
 
 License:        ASL 2.0
 URL:            http://pypi.python.org/pypi/msgpack-python/
 Source0:        http://pypi.python.org/packages/source/m/%{srcname}-python/%{srcname}-python-%{version}.tar.gz
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python27-devel
+BuildRequires:  python27-setuptools
+BuildRequires:  python27-pytest
+%else
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  pytest
+%endif
 
 # We don't want to provide private python extension libs
 %{?filter_setup:
@@ -104,6 +130,9 @@ popd
 %endif
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Fri Mar 13 2015 Ken Dreyer <ktdreyer@ktdreyer.com> - 0.4.6-1
 - Update to latest upstream version 0.4.6 (RHBZ #1201568)
 

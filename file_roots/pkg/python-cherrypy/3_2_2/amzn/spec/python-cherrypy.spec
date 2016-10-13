@@ -1,10 +1,31 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%define pybasever 2.7
+%define __python_ver 27
+%define __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+
+%define __bindir /usr/local/bin
+
+## %{!?__python2: %global __python2 /usr/bin/python2}
+## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
+%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
+%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+
+%else
 %if !(0%{?fedora} > 12 || 0%{?rhel} > 5)
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
+%define __bindir %{_bindir}
+%endif
 %endif
 
-Name:           python-cherrypy
+Name:           python%{?__python_ver}-cherrypy
 Version:        3.2.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Pythonic, object-oriented web development framework
 Group:          Development/Libraries
 License:        BSD
@@ -19,9 +40,15 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python27-devel
+BuildRequires:  python27-setuptools
+BuildRequires:  python27-nose
+%else
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python-nose
+%endif
 
 %description
 CherryPy allows developers to build web applications in much the same way 
@@ -46,8 +73,14 @@ rm -rf $RPM_BUILD_ROOT
 cd cherrypy/test
 # These two tests hang in the buildsystem so we have to disable them.
 # The third fails in cherrypy 3.2.2.
+%if ( "0%{?dist}" == "0.amzn1" )
+PYTHONPATH='../../' nosetests -s ./ -e 'test_SIGTERM' -e \
+  'test_SIGHUP_tty' -e 'test_file_stream' -e 'test_no_content_length' \
+  -e 'assertStatus'
+%else
 PYTHONPATH='../../' nosetests -s ./ -e 'test_SIGTERM' -e \
   'test_SIGHUP_tty' -e 'test_file_stream'
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -56,10 +89,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc README.txt
 %doc cherrypy/tutorial
-%{_bindir}/cherryd
-%{python_sitelib}/*
+%{__bindir}/cherryd
+%{python2_sitelib}/*
 
 %changelog
+* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 3.2.2-5
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.2.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 

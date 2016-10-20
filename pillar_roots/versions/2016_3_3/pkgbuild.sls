@@ -652,7 +652,7 @@ pkgbuild_registry:
 
   amzn:
     libsodium:
-      version: 0.4.5-3
+      version: 1.0.5-1
       results:
         - libsodium
         - libsodium-devel
@@ -667,7 +667,11 @@ pkgbuild_registry:
       noarch: True
     python-enum34:
       name: python27-enum34
-      version: 1.0-4
+      version: 1.0-5
+      noarch: True
+    python-gnupg:
+      name: python27-gnupg
+      version: 0.3.8-4
       noarch: True
     python-impacket:
       name: python27-impacket

@@ -5,36 +5,19 @@
 {% set build_runas = pillar.get('build_runas', basecfg.build_runas) %}
 
 # Get the release and architecture
-{% set build_release = pillar.get('build_release', 'rhel7') %}
+{% set build_release = pillar.get('build_release', 'amzn') %}
 {% set build_arch = pillar.get('build_arch', 'x86_64') %}
 
 # Set the destination for built packages
 {% set build_dest_dir = basecfg.build_dest ~ '/' ~ build_release ~ '/' ~ build_arch %}
 
 # Set the mock target
-{% if build_release == 'rhel7' %}
+{% if build_release == 'amzn' %}
 
-  {% set build_epel = 'epel-7' %}
-  {% set build_tgt = build_epel ~ '-' ~ build_arch %}
-  {% set build_dist = 'el7' %}
-
-{% elif build_release == 'rhel6' %}
-
-  {% set build_epel = 'epel-6' %}
-  {% set build_tgt = build_epel ~ '-' ~ build_arch %}
-  {% set build_dist = 'el6' %}
-
-{% elif build_release == 'rhel5' %}
-
-  {% set build_epel = 'epel-5' %}
-  {% set build_tgt = build_epel ~ '-' ~ build_arch %}
-  {% set build_dist = 'el5' %}
-
-{% elif build_release == 'fc24' %}
-
-  {% set build_epel = 'fedora-24' %}
-  {% set build_tgt = build_epel ~ '-' ~ build_arch %}
-  {% set build_dist = build_release %}
+  {% set build_epel = 'amzn1' %}
+{#  {% set build_tgt = build_epel ~ '-' ~ build_arch %} #}
+  {% set build_tgt = build_release ~ '-dgm-' ~ build_arch %}
+  {% set build_dist = build_epel %}
 
 {% endif %}
 

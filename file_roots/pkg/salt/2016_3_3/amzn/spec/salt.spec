@@ -5,17 +5,15 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 
-## %{!?__python2: %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
 # work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
-%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+## %global python2_sitelib  /usr/lib/python2.7/site-packages 
+## %global python2_sitearch  /usr/lib64/python2.7/site-packages 
+%global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
-%global __bindir /usr/local/bin
-%global __mandir /usr/local/share/man
+%global __inst_layout --install-layout=unix
 
 %else
 
@@ -29,9 +27,6 @@
 %{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
-
-%global __bindir %{_bindir}
-%global __mandir %{_mandir}
 
 %endif
 
@@ -245,7 +240,7 @@ cd %{name}-%{version}
 %install
 rm -rf %{buildroot}
 cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
-%{__python} setup.py install -O1 --root %{buildroot}
+%{__python} setup.py install -O1 %{?__inst_layout } --root %{buildroot}
 
 # Add some directories
 install -d -m 0755 %{buildroot}%{_var}/log/salt
@@ -289,8 +284,8 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 # Force python2.6 on EPEL6
 # https://github.com/saltstack/salt/issues/22003
 %if 0%{?rhel} == 6
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{__bindir}/spm
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{__bindir}/salt*
+sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/spm
+sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/salt*
 sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_initrddir}/salt*
 %endif
 
@@ -330,25 +325,25 @@ rm -rf %{buildroot}
 %{_var}/cache/salt
 %{_var}/log/salt
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/README.fedora
-%{__bindir}/spm
-%doc %{__mandir}/man1/spm.1*
+%{_bindir}/spm
+%doc %{_mandir}/man1/spm.1*
 %config(noreplace) %{_sysconfdir}/salt/
 %config(noreplace) %{_sysconfdir}/salt/pki
 
 %files master
 %defattr(-,root,root)
-%doc %{__mandir}/man7/salt.7*
-%doc %{__mandir}/man1/salt-cp.1*
-%doc %{__mandir}/man1/salt-key.1*
-%doc %{__mandir}/man1/salt-master.1*
-%doc %{__mandir}/man1/salt-run.1*
-%doc %{__mandir}/man1/salt-unity.1*
-%{__bindir}/salt
-%{__bindir}/salt-cp
-%{__bindir}/salt-key
-%{__bindir}/salt-master
-%{__bindir}/salt-run
-%{__bindir}/salt-unity
+%doc %{_mandir}/man7/salt.7*
+%doc %{_mandir}/man1/salt-cp.1*
+%doc %{_mandir}/man1/salt-key.1*
+%doc %{_mandir}/man1/salt-master.1*
+%doc %{_mandir}/man1/salt-run.1*
+%doc %{_mandir}/man1/salt-unity.1*
+%{_bindir}/salt
+%{_bindir}/salt-cp
+%{_bindir}/salt-key
+%{_bindir}/salt-master
+%{_bindir}/salt-run
+%{_bindir}/salt-unity
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-master
 %else
@@ -361,12 +356,12 @@ rm -rf %{buildroot}
 
 %files minion
 %defattr(-,root,root)
-%doc %{__mandir}/man1/salt-call.1*
-%doc %{__mandir}/man1/salt-minion.1*
-%doc %{__mandir}/man1/salt-proxy.1*
-%{__bindir}/salt-minion
-%{__bindir}/salt-call
-%{__bindir}/salt-proxy
+%doc %{_mandir}/man1/salt-call.1*
+%doc %{_mandir}/man1/salt-minion.1*
+%doc %{_mandir}/man1/salt-proxy.1*
+%{_bindir}/salt-minion
+%{_bindir}/salt-call
+%{_bindir}/salt-proxy
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
@@ -379,8 +374,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_var}/log/salt/minion
 
 %files syndic
-%doc %{__mandir}/man1/salt-syndic.1*
-%{__bindir}/salt-syndic
+%doc %{_mandir}/man1/salt-syndic.1*
+%{_bindir}/salt-syndic
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-syndic
 %else
@@ -389,8 +384,8 @@ rm -rf %{buildroot}
 
 %files api
 %defattr(-,root,root)
-%doc %{__mandir}/man1/salt-api.1*
-%{__bindir}/salt-api
+%doc %{_mandir}/man1/salt-api.1*
+%{_bindir}/salt-api
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 %attr(0755, root, root) %{_initrddir}/salt-api
 %else
@@ -398,8 +393,8 @@ rm -rf %{buildroot}
 %endif
 
 %files cloud
-%doc %{__mandir}/man1/salt-cloud.1*
-%{__bindir}/salt-cloud
+%doc %{_mandir}/man1/salt-cloud.1*
+%{_bindir}/salt-cloud
 %{_sysconfdir}/salt/cloud.conf.d
 %{_sysconfdir}/salt/cloud.deploy.d
 %{_sysconfdir}/salt/cloud.maps.d
@@ -408,8 +403,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/cloud
 
 %files ssh
-%doc %{__mandir}/man1/salt-ssh.1*
-%{__bindir}/salt-ssh
+%doc %{_mandir}/man1/salt-ssh.1*
+%{_bindir}/salt-ssh
 %config(noreplace) %{_sysconfdir}/salt/roster
 
 
@@ -540,7 +535,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-4
+* Fri Oct 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-4
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Mon Sep 12 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.3-3

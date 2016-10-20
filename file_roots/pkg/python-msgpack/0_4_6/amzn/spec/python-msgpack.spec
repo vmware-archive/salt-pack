@@ -6,31 +6,28 @@
 
 %if ( "0%{?dist}" == "0.amzn1" )
 %global with_explicit_python27 1
-%define pybasever 2.7
-%define __python_ver 27
-%define __python %{_bindir}/python%{?pybasever}
-%define __python2 %{_bindir}/python%{?pybasever}
-%global __python2 /usr/bin/python%{?pybasever}
-
-## %{!?__python2: %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
 
 # work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
-%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+## %global python2_sitelib  %{_libdir}/python2.7/site-packages 
+## %global python2_sitearch  /usr/lib64/python2.7/site-packages 
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+
+%global __inst_layout --install-layout=unix
 
 %else
-
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %{!?__python2: %global __python2 /usr/bin/python2}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
-
 %endif
 
-Name:           python%{?__python_ver}-%{srcname}
+Name:           python-%{srcname}
 Version:        0.4.6
 Release:        2%{?dist}
 Summary:        A Python MessagePack (de)serializer
@@ -62,6 +59,18 @@ BuildRequires:  pytest
 MessagePack is a binary-based efficient data interchange format that is
 focused on high performance. It is like JSON, but very fast and small.
 This is a Python (de)serializer for MessagePack.
+
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{srcname}
+Summary:        A Python MessagePack (de)serializer
+
+%description  -n python%{?__python_ver}-%{srcname}
+MessagePack is a binary-based efficient data interchange format that is
+focused on high performance. It is like JSON, but very fast and small.
+This is a Python (de)serializer for MessagePack.
+
+This package is meant to be used with Python 2.7.
+%endif
 
 %if 0%{?with_python3}
 %package -n python3-%{srcname}
@@ -97,7 +106,7 @@ popd
 
 
 %install
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build %{?__inst_layout } --root %{buildroot}
 
 %if 0%{?with_python3}
 pushd %{py3dir}
@@ -117,7 +126,7 @@ popd
 %endif # with_python3
 
 
-%files
+%files -n python%{?__python_ver}-%{srcname}
 %doc COPYING README.rst
 %{python2_sitearch}/%{srcname}/
 %{python2_sitearch}/%{srcname}*.egg-info
@@ -130,7 +139,7 @@ popd
 %endif
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-2
+* Wed Oct 19 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-2
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Fri Mar 13 2015 Ken Dreyer <ktdreyer@ktdreyer.com> - 0.4.6-1

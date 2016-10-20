@@ -1,4 +1,4 @@
-{% import "setup/redhat/map.jinja" as buildcfg %}
+{% import "setup/amazon/map.jinja" as buildcfg %}
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
@@ -34,7 +34,7 @@
 
     - sources:
       - {{ macros.pypi_source(pypi_name, version) }}
-      - {{ macros.pypi_source("SaltTesting", "2016.8.3") }}
+      - {{ macros.pypi_source("SaltTesting", "2016.9.7") }}
       - salt://{{slspath}}/sources/{{pkg_name}}-common.logrotate
       - salt://{{slspath}}/sources/README.fedora
       - salt://{{slspath}}/sources/{{pkg_name}}-api

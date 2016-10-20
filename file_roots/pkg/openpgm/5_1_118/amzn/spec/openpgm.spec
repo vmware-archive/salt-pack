@@ -70,7 +70,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 5.1.118-4
+* Fri Oct 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 5.1.118-4
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Fri Dec 21 2012 Jose Pedro Oliveira <jpo at di.uminho.pt> - 

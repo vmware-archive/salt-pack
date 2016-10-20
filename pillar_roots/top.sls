@@ -1,4 +1,4 @@
 base:
   '*':
-    - gpg_keys_do_not_commit
+    - gpg_test_keys
     - pkgbuild

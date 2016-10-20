@@ -1,7 +1,21 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global __inst_layout --install-layout=unix
+
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+%else
+
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %{!?__python2: %global __python2 /usr/bin/python2}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
 %endif
 
 %if 0%{?fedora} > 12 || 0%{?rhel} > 7
@@ -12,7 +26,7 @@
 
 Name:           python-enum34
 Version:        1.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Group:          Development/Libraries
 Summary:        Backport of Python 3.4 Enum
 License:        BSD
@@ -20,12 +34,18 @@ BuildArch:      noarch
 URL:            https://pypi.python.org/pypi/enum34
 Source0:        https://pypi.python.org/packages/source/e/enum34/enum34-%{version}.tar.gz
 
+
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+%else
 BuildRequires:  python2-devel python-setuptools
+%endif
 %if 0%{?with_python3}
 BuildRequires:  python3-devel python3-setuptools
 %endif # if with_python3
 
-%description
+%description 
 Python 3.4 introduced official support for enumerations.  This is a
 backport of that feature to Python 3.3, 3.2, 3.1, 2.7, 2.5, 2.5, and 2.4.
 
@@ -37,6 +57,27 @@ This module defines two enumeration classes that can be used to define
 unique sets of names and values: Enum and IntEnum. It also defines one
 decorator, unique, that ensures only unique member names are present
 in an enumeration.
+
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-enum34
+Summary:        Backport of Python 3.4 Enum
+Group:          Development/Libraries
+
+%description  -n python%{?__python_ver}-enum34
+Python 3.4 introduced official support for enumerations.  This is a
+backport of that feature to Python 3.3, 3.2, 3.1, 2.7, 2.5, 2.5, and 2.4.
+
+An enumeration is a set of symbolic names (members) bound to unique,
+constant values. Within an enumeration, the members can be compared by
+identity, and the enumeration itself can be iterated over.
+
+This module defines two enumeration classes that can be used to define
+unique sets of names and values: Enum and IntEnum. It also defines one
+decorator, unique, that ensures only unique member names are present
+in an enumeration.
+
+This package is meant to be used with Python 2.7.
+%endif
 
 %if 0%{?with_python3}
 %package -n python3-enum34
@@ -93,11 +134,11 @@ pushd %{py3dir}
 rm -rf %{buildroot}%{python3_sitelib}/enum/{LICENSE,README,doc}
 popd
 %endif # with_python3
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build %{?__inst_layout} --root %{buildroot}
 # remove docs from sitelib, we'll put them in doc dir instead
 rm -rf %{buildroot}%{python2_sitelib}/enum/{LICENSE,README,doc}
 
-%files
+%files -n python%{?__python_ver}-enum34
 %doc PKG-INFO enum/LICENSE enum/README enum/doc/enum.rst
 %{python2_sitelib}/*
 
@@ -108,6 +149,9 @@ rm -rf %{buildroot}%{python2_sitelib}/enum/{LICENSE,README,doc}
 %endif # with_python3
 
 %changelog
+ * Wed Oct 19 2016 SaltStack Packaging Team <packaging@saltstack.com> - 1.0-5
+ - Ported to build on Amazon Linux 2016.09 natively
+
 * Mon Jul 21 2014 Matěj Cepl <mcepl@redhat.com> - 1.0-4
 - No, we don’t have python3 in RHEL-7 :'(
 

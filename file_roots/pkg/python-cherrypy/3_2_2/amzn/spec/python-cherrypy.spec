@@ -1,29 +1,24 @@
 %if ( "0%{?dist}" == "0.amzn1" )
 %global with_explicit_python27 1
-%define pybasever 2.7
-%define __python_ver 27
-%define __python %{_bindir}/python%{?pybasever}
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 
-%define __bindir /usr/local/bin
-
-## %{!?__python2: %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
 # work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
-%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+## %global python2_sitelib  /usr/lib/python2.7/site-packages 
+
+%global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+
+%global __inst_layout --install-layout=unix
 
 %else
 %if !(0%{?fedora} > 12 || 0%{?rhel} > 5)
 %{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-
-%define __bindir %{_bindir}
 %endif
 %endif
 
-Name:           python%{?__python_ver}-cherrypy
+Name:           python-cherrypy
 Version:        3.2.2
 Release:        5%{?dist}
 Summary:        Pythonic, object-oriented web development framework
@@ -55,6 +50,19 @@ CherryPy allows developers to build web applications in much the same way
 they would build any other object-oriented Python program. This usually 
 results in smaller source code developed in less time.
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-cherrypy
+Summary:        Pythonic, object-oriented web development framework
+Group:          Development/Libraries
+
+%description  -n python%{?__python_ver}-cherrypy
+CherryPy allows developers to build web applications in much the same way 
+they would build any other object-oriented Python program. This usually 
+results in smaller source code developed in less time.
+
+This package is meant to be used with Python 2.7.
+%endif
+
 %prep
 %setup -q -n CherryPy-%{version}
 %patch0 -p1
@@ -67,7 +75,7 @@ results in smaller source code developed in less time.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%{__python} setup.py install --skip-build %{?__inst_layout } --root $RPM_BUILD_ROOT
 
 %check
 cd cherrypy/test
@@ -85,15 +93,15 @@ PYTHONPATH='../../' nosetests -s ./ -e 'test_SIGTERM' -e \
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -n python%{?__python_ver}-cherrypy
 %defattr(-,root,root,-)
 %doc README.txt
 %doc cherrypy/tutorial
-%{__bindir}/cherryd
+%{_bindir}/cherryd
 %{python2_sitelib}/*
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 3.2.2-5
+* Tue Oct 18 2016 SaltStack Packaging Team <packaging@saltstack.com> - 3.2.2-5
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.2.2-4

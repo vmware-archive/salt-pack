@@ -16,13 +16,14 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 
-## %{!?__python2: %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
 # work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
-%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
+## %global python2_sitelib  %{_libdir}/lib/python2.7/site-packages 
+## %global python2_sitearch  /usr/lib64/python2.7/site-packages 
+%global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+
+%global __inst_layout --install-layout=unix
+
 %else
 # el5 has python-2.4, but 2.5 is minimum, so build with python2.6:
 # http://lists.zeromq.org/pipermail/zeromq-dev/2010-November/007597.html
@@ -53,7 +54,7 @@
 
 %global run_tests 0
 
-Name:           python%{?__python_ver}-zmq
+Name:           python-zmq
 Version:        14.5.0
 Release:        3%{?dist}
 Summary:        Software library for fast, message-based applications
@@ -115,21 +116,39 @@ multiple transport protocols and more.
 This package contains the python bindings for python26.
 %endif
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-zmq
+Summary:        Software library for fast, message-based applications
+Group:          Development/Libraries
+License:        LGPLv3+
+
+%description -n python%{?__python_ver}-zmq
+The 0MQ lightweight messaging kernel is a library which extends the
+standard socket interfaces with features traditionally provided by
+specialized messaging middle-ware products. 0MQ sockets provide an
+abstraction of asynchronous message queues, multiple messaging
+patterns, message filtering (subscriptions), seamless access to
+multiple transport protocols and more.
+
+This package is meant to be used with Python 2.7.
+%endif
+
 
 %if 0%{?rhel5}
 %package -n python26-zmq-tests
 %else
-%package tests
+%package -n python%{?__python_ver}-zmq-tests
 %endif
 Summary:        Software library for fast, message-based applications
 Group:          Development/Libraries
 License:        LGPLv3+
+
 %if 0%{?rhel5}
 Requires:       python26-zmq = %{version}-%{release}
 %description -n python26-zmq-tests
 %else
-Requires:       python-zmq = %{version}-%{release}
-%description tests
+Requires:       python%{?__python_ver}-zmq = %{version}-%{release}
+%description -n python%{?__python_ver}-zmq-tests
 %endif
 The 0MQ lightweight messaging kernel is a library which extends the
 standard socket interfaces with features traditionally provided by
@@ -226,7 +245,7 @@ popd
 %endif # with_python3
 
 
-%{__python} setupegg.py install -O1 --skip-build --root %{buildroot}
+%{__python} setupegg.py install -O1 --skip-build %{?__inst_layout } --root %{buildroot}
 
 # remove tests doesn't work here, do that after running the tests
 
@@ -252,7 +271,7 @@ popd
 %if 0%{?rhel5}
 %files -n python26-zmq
 %else
-%files
+%files -n python%{?__python_ver}-zmq
 %endif
 %defattr(-,root,root,-)
 %doc COPYING.LESSER examples/
@@ -263,7 +282,7 @@ popd
 %if 0%{?rhel5}
 %files -n python26-zmq-tests
 %else
-%files tests
+%files -n python%{?__python_ver}-zmq-tests
 %endif
 %defattr(-,root,root,-)
 %{python2_sitearch}/zmq/tests
@@ -284,7 +303,7 @@ popd
 
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 14.5.0-2
+* Thu Oct 20 2016 SaltStack Packaging Team <packaging@saltstack.com> - 14.5.0-2
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Fri Apr 10 2015 Erik Johnson <erik@saltstack.com> - 14.5.0-1

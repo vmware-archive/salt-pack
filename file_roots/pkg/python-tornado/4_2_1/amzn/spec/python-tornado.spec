@@ -4,25 +4,20 @@
 
 %if ( "0%{?dist}" == "0.amzn1" )
 %global with_explicit_python27 1
-%define pybasever 2.7
-%define __python_ver 27
-%define __python %{_bindir}/python%{?pybasever}
-%define __python2 %{_bindir}/python%{?pybasever}
-%global __python2 /usr/bin/python%{?pybasever}
-
-## %{!?__python2: %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
 
 # work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-%global python2_sitelib  /usr/local/lib/python2.7/site-packages 
-%global python2_sitearch  /usr/local/lib64/python2.7/site-packages 
-
+%global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+%global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")
+%global __inst_layout --install-layout=unix
 %endif
 
 %global pkgname tornado
 
-Name:           python%{?__python_ver}-%{pkgname}
+Name:           python-%{pkgname}
 Version:        4.2.1
 Release:        2%{?dist}
 Summary:        Scalable, non-blocking web server and tools
@@ -66,6 +61,34 @@ Requires:       python%{?__python_ver}-tornado = %{version}-%{release}
 %description doc
 Tornado is an open source version of the scalable, non-blocking web
 server and and tools. This package contains some example applications.
+
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-tornado
+Summary:        Scalable, non-blocking web server and tools
+
+%description -n python%{?__python_ver}-tornado
+Tornado is an open source version of the scalable, non-blocking web
+server and tools.
+
+The framework is distinct from most mainstream web server frameworks
+(and certainly most Python frameworks) because it is non-blocking and
+reasonably fast. Because it is non-blocking and uses epoll, it can
+handle thousands of simultaneous standing connections, which means it is
+ideal for real-time web services.
+
+This package is meant to be used with Python 2.7.
+
+%package -n python%{?__python_ver}-tornado-doc
+Summary:        Examples for python-tornado
+Group:          Documentation
+Requires:       python%{?__python_ver}-tornado = %{version}-%{release}
+
+%description -n python%{?__python_ver}-tornado-doc
+Tornado is an open source version of the scalable, non-blocking web
+server and and tools. This package contains some example applications.
+
+This package is meant to be used with Python 2.7.
+%endif
 
 %if 0%{?with_python3}
 %package -n python3-tornado
@@ -128,7 +151,7 @@ popd
 
 pushd python2
     PATH=$PATH:%{buildroot}%{python2_sitearch}/%{pkgname}
-    %{__python2} setup.py install --root=%{buildroot}
+    %{__python2} setup.py install %{?__inst_layout } --root=%{buildroot}
 popd
 
 
@@ -146,18 +169,25 @@ popd
     popd
 %endif
 
+%if "%{dist}" == ".amzn1"
+%files -n python%{?__python_ver}-tornado
+%doc python2/README.rst python2/PKG-INFO
+
+%{python2_sitearch}/%{pkgname}/
+%{python2_sitearch}/%{pkgname}-%{version}*.egg-info
+
+%files  -n python%{?__python_ver}-tornado-doc
+%doc python2/demos
+%else
 %files
 %doc python2/README.rst python2/PKG-INFO
 
 %{python2_sitearch}/%{pkgname}/
-%if "%{dist}" == ".amzn1"
-%{python2_sitearch}/%{pkgname}-%{version}*.egg-info
-%else
 %{python2_sitearch}/%{pkgname}-%{version}-*.egg-info
-%endif
 
 %files doc
 %doc python2/demos
+%endif
 
 %if 0%{?with_python3}
 %files -n python3-tornado
@@ -172,7 +202,7 @@ popd
 
 
 %changelog
-* Thu Oct 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-2
+* Wed Oct 19 2016 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-2
 - Ported to build on Amazon Linux 2016.09 natively
 
 * Thu Aug 20 2015 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-1

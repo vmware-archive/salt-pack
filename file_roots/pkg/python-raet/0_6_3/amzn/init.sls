@@ -1,4 +1,4 @@
-{% import "setup/redhat/map.jinja" as buildcfg %}
+{% import "setup/amazon/map.jinja" as buildcfg %}
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
@@ -25,7 +25,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{pkg_name}}.spec
+    - spec: salt://{{slspath}}/spec/{{sls_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 

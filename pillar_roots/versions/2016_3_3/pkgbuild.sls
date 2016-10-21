@@ -675,11 +675,11 @@ pkgbuild_registry:
       noarch: True
     python-impacket:
       name: python27-impacket
-      version: 0.9.14-1
+      version: 0.9.14-2
       noarch: True
     python-ioflo:
       name: python27-ioflo
-      version: 1.3.8-1
+      version: 1.3.8-2
       noarch: True
     python-libcloud:
       name: python27-libcloud
@@ -687,7 +687,7 @@ pkgbuild_registry:
       noarch: True
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-1
+      version: 1.4.3-2
       noarch: True
       build_deps:
         - libsodium
@@ -701,7 +701,7 @@ pkgbuild_registry:
         - zeromq
     python-raet:
       name: python27-raet
-      version: 0.6.3-2
+      version: 0.6.3-3
       noarch: True
       build_deps:
         - python-ioflo
@@ -712,7 +712,7 @@ pkgbuild_registry:
       version: 4.2.1-2
     python-timelib:
       name: python27-timelib
-      version: 0.2.4-1
+      version: 0.2.4-2
       noarch: True
     salt:
       version: 2016.3.3-4
@@ -722,6 +722,7 @@ pkgbuild_registry:
         - python-pyzmq
         - python-tornado
         - python-libcloud
+        - python-gnupg
       results:
         - salt
         - salt-master

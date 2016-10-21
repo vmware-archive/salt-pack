@@ -1,3 +1,15 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python2 %{_bindir}/python%{?pybasever}
+%global __inst_layout --install-layout=unix
+
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")
+
+%else
 %if 0%{?fedora} > 12 
 %global with_python3 1
 %endif
@@ -9,12 +21,13 @@
 %{!?__python2: %global __python2 /usr/bin/python%{?pybasever}}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
 %global srcname libnacl
 
 Name:           python-%{srcname}
 Version:        1.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python bindings for libsodium/tweetnacl based on ctypes
 
 Group:          Development/Libraries
@@ -84,6 +97,26 @@ placed directly in any project to give a single file binding to all of nacl.
 This is the Python 2 build of the module.
 %endif
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{srcname}
+Summary:        Python bindings for libsodium/tweetnacl based on ctypes
+Group:          Development/Libraries
+BuildRequires:  python%{?__python_ver}
+BuildRequires:  libsodium
+BuildRequires:  python%{?__python_ver}-devel
+Requires:       python%{?__python_ver}
+Requires:       libsodium
+
+%description -n python%{?__python_ver}-%{srcname}
+This library is used to gain direct access to the functions exposed by Daniel
+J. Bernstein's nacl library via libsodium or tweetnacl. It has been constructed
+to maintain extensive documentation on how to use nacl as well as being
+completely portable. The file in libnacl/__init__.py can be pulled out and
+placed directly in any project to give a single file binding to all of nacl.
+
+This package is meant to be used with Python 2.7.
+%endif
+
 %prep
 %setup -q -n %{srcname}-%{version}
 
@@ -103,7 +136,7 @@ popd
 
 %install
 rm -rf %{buildroot}
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build %{?__inst_layout} --root %{buildroot}
 
 %if 0%{?with_python3}
 pushd %{py3dir}
@@ -119,7 +152,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{python2_sitelib}/*
 %else
-%files
+%files -n python%{?__python_ver}-%{srcname}
 %defattr(-,root,root,-)
 %{python2_sitelib}/*
 %doc LICENSE
@@ -133,6 +166,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Oct 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 1.4.3-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Thu Aug  6 2015 Packaging <pqackaging@saltstack.com> - 1.4.3-1
 - Updated to 1.4.3, altered license to doc
 

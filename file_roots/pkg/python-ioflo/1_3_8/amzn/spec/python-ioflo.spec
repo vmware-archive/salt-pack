@@ -1,3 +1,16 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python2 %{_bindir}/python%{?pybasever}
+
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __inst_layout --install-layout=unix
+
+%else
+
 %if 0%{?fedora} > 12 || 0%{?rhel} > 8
 %global with_python3 1
 %else
@@ -11,12 +24,13 @@
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 
 %endif
+%endif
 
 %global srcname ioflo
 
 Name:           python-%{srcname}
 Version:        1.3.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Flow-based programming interface
 
 Group:          Development/Libraries
@@ -41,8 +55,8 @@ BuildRequires:  python-importlib
 Requires:       python-importlib
 %endif
 
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 %endif
 
 %if 0%{?with_python3}
@@ -78,6 +92,20 @@ operation system, written in Python.
 %endif
 
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{srcname}
+Summary:  Flow-based programming interface
+Group:    Development/Libraries
+Requires: python%{?__python_ver}
+
+%description -n python%{?__python_ver}-%{srcname}
+Ioflo is a flow-based programming automated reasoning engine and automation
+operation system, written in Python.
+
+This package is meant to be used with Python 2.7.
+%endif
+
+
 %prep
 %setup -q -n %{srcname}-%{version}
 
@@ -106,7 +134,7 @@ sed -i -e '1d' %{buildroot}%{python3_sitelib}/%{srcname}/app/test/testStart.py
 popd
 %endif
 
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build %{?__inst_layout} --root %{buildroot}
 ## sed -i -e '1d' %{buildroot}%{python2_sitelib}/%{srcname}/app/test/example.py
 ## sed -i -e '1d' %{buildroot}%{python2_sitelib}/%{srcname}/app/test/testStart.py
 
@@ -130,7 +158,7 @@ rm -rf %{buildroot}
 %{_bindir}/%{srcname}
 %{_bindir}/%{srcname}2
 %else
-%files
+%files -n python%{?__python_ver}-%{srcname}
 %defattr(-,root,root,-)
 %{python2_sitelib}/*
 %{_bindir}/%{srcname}
@@ -138,6 +166,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Oct 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 1.3.8-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Wed Aug  5 2015 Packaging <packaging@saltstack.com> - 1.3.8-1
 - Build 1.3.8 for Salt implementation
 

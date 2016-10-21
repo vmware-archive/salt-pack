@@ -1,3 +1,16 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python2 %{_bindir}/python%{?pybasever}
+
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __inst_layout --install_layout=unix
+ 
+%else
+
 %if 0%{?fedora} > 12 || 0%{?rhel} > 8
 %global with_python3 1
 %else
@@ -11,6 +24,7 @@
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 
 %endif
+%endif
 
 %define debug_package %{nil}
 
@@ -18,7 +32,7 @@
 
 Name:           python-%{pypi_name}
 Version:        0.9.14
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network protocols Constructors and Dissectors
 
 License:        Apache modified
@@ -26,8 +40,8 @@ URL:            https://github.com/CoreSecurity/impacket
 Source0:        https://pypi.python.org/packages/source/i/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
  
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
  
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
@@ -48,6 +62,19 @@ Summary:        Network protocols Constructors and Dissectors
 Impacket is a collection of Python classes focused on providing access to
 network packets. Impacket allows Python developers to craft and decode network
 packets in simple and consistent manner.
+%endif
+
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{pypi_name}
+Summary:        Network protocols Constructors and Dissectors
+%{?python_provide:%python_provide python%{?__python_ver}-%{pypi_name}}
+
+%description -n python%{?__python_ver}-%{pypi_name}
+Impacket is a collection of Python classes focused on providing access to
+network packets. Impacket allows Python developers to craft and decode network
+packets in simple and consistent manner.
+
+This package is meant to be used with Python 2.7.
 %endif
 
 %prep
@@ -85,7 +112,7 @@ rm -rf %{buildroot}
 %{python3_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
 %endif
 
-%files -n python-%{pypi_name} 
+%files -n python%{?__python_ver}-%{pypi_name} 
 %defattr(-,root,root)
 %docdir /usr/share/doc/%{pypi_name} 
 /usr/share/doc/%{pypi_name} 
@@ -130,5 +157,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Thu Jan 14 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-1
 - Initial package.

@@ -1,3 +1,16 @@
+%if ( "0%{?dist}" == "0.amzn1" )
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python2 %{_bindir}/python%{?pybasever}
+%global __inst_layout --install-layout=unix
+
+%{!?__python2: %global __python2 /usr/bin/python%{?pybasever}}
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
+%else
 %if 0%{?fedora} > 12
 %global with_python3 1
 %else
@@ -9,6 +22,7 @@
 %{!?__python2: %global __python2 /usr/bin/python%{?pybasever}}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
 %endif
 
@@ -18,7 +32,7 @@
 
 Name:           python-%{srcname}
 Version:        0.2.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Parse English textual date descriptions
 
 Group:          Development/Languages
@@ -38,8 +52,8 @@ BuildRequires:  python26-devel
 Requires:       python26
 %else
 
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 %endif
 
 %if 0%{?with_python3}
@@ -94,6 +108,24 @@ timelib.strtotime
 %endif
 
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{srcname}
+Summary:  Parse English textual date descriptions
+Group:    Development/Languages
+Requires: python%{?__python_ver}
+Requires: python%{?__python_ver}-importlib
+
+%description -n python%{?__python_ver}-%{srcname}
+timelib is a short wrapper around php's internal timelib modules
+It currently only provides a few functions:
+
+This package is meant to be used with Python 2.7.
+
+timelib.strtodatetime
+timelib.strtotime
+%endif
+
+
 %prep
 %setup -q -n %{srcname}-%{version}
 
@@ -120,7 +152,7 @@ pushd %{py3dir}
 popd
 %endif
 
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%{__python2} setup.py install --skip-build %{?__inst_layout} --root %{buildroot}
 
 
 %clean
@@ -140,13 +172,16 @@ rm -rf %{buildroot}
 %{python2_sitearch}/%{srcname}*.so
 %{python2_sitearch}/%{srcname}*.egg-info
 %else
-%files
+%files -n python%{?__python_ver}-%{srcname}
 %defattr(-,root,root,-)
 %{python2_sitearch}/%{srcname}*.so
 %{python2_sitearch}/%{srcname}*.egg-info
 %endif
 
 %changelog
+* Fri Oct 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.2.4-2
+- Ported to build on Amazon Linux 2016.09 natively
+
 * Fri Aug  7 2015 Packaging <packaging@saltstack.com> - 0.2.4-1
 - Initial build 0.2.4 for Salt implementation
 

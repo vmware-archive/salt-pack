@@ -3,18 +3,13 @@
 %global with_explicit_python27 1
 %global pybasever 2.7
 %global __python_ver 27
-%global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
-%global __inst_layout --install-layout=unix
 
-# work-around Amazon Linux get_python_lib returning  /usr/lib64/python2.7/dist-packages
-## %global python2_sitelib   /usr/lib/python2.7/site-packages 
-## %global python2_sitearch  /usr/lib64/python2.7/site-packages 
-%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
 
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
-%{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
+%{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --install-layout=unix --root %{buildroot}}}
 
 %else
 
@@ -103,7 +98,6 @@ GnuPG bindings for python. This uses the gpg command.
 %endif # with_python3
 
 %install
-## %py2_install %{?__inst_layout}
 %py2_install 
 %if 0%{?with_python3}
 %py3_install

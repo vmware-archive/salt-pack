@@ -8,16 +8,52 @@
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
 
-## os_pkgs_repo:
-##   pkgrepo.managed:
-##     - humanname: os_packages_repo_amzn_
-##     - mirrorlist: 
-##         - http://repo.us-west-2.amazonaws.com/latest/main/mirror.list
-##         - http://repo.us-west-2.amazonaws.com/latest/updates/mirror.list
-##         - http://repo.lambda-linux.io/latest/epll/{{build_cfg.build_arch}}/os/mirror.list
-##         - http://repo.lambda-linux.io/latest/epll/{{build_cfg.build_arch}}/Debuginfo/mirror.list
-##         - http://repo.saltstack.com/yum/amazon/latest
-## 
+
+lambda-epll-key:
+  file.managed:
+    - name: /etc/pki/rpm-gpg/RPM-GPG-KEY-lambda-epll
+    - source: https://lambda-linux.io/RPM-GPG-KEY-lambda-epll
+    - source_hash: md5=10d8290871678922ce61438d3daa3da7
+    - dir_mode: 755
+    - mode: 644
+    - makedirs: True
+
+
+lambda-epll:
+  pkgrepo.managed:
+    - humanname: lambda-epll
+    - comments:
+      - '## Lambda Linux support for Amazon Linux'
+    - mirrorlist: http://repo.lambda-linux.io/latest/epll/{{build_cfg.build_arch}}/os/mirror.list
+    - gpgcheck: 1
+    - gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-lambda-epll
+    - require:
+      - file: lambda-epll-key
+
+
+salt-repo-key:
+  file.managed:
+    - name: /etc/pki/rpm-gpg/SALTSTACK-GPG-KEY.pub
+    - source: http://repo.saltstack.com/dev/yum/amazon/2016.09/x86_64/latest/SALTSTACK-GPG-KEY.pub
+    - source_hash: md5=9e0d77c16ba1fe57dfd7f1c5c2130438
+    - dir_mode: 755
+    - mode: 644
+    - makedirs: True
+
+
+salt-repo:
+  pkgrepo.managed:
+    - humanname: salt-repo
+    - comments:
+      - '## SaltStack support for Amazon Linux'
+    - baseurl: http://repo.saltstack.com/dev/yum/amazon/2016.09/x86_64/latest
+    - gpgcheck: 1
+    - gpgkey: file:///etc/pki/rpm-gpg/SALTSTACK-GPG-KEY.pub
+    - priority: 10
+    - failovermethod: priority
+    - require:
+      - file: salt-repo-key
+
 
 build_pkgs:
   pkg.installed:
@@ -29,8 +65,8 @@ build_pkgs:
       - gnupg
       - gnupg2
       - python27-gnupg
-##     - require:
-##       - pkgrepo: os_pkgs_repo
+    - require:
+      - pkgrepo: lambda-epll
 
 
 {{build_cfg.build_runas}}:

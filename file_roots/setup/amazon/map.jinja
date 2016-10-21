@@ -16,7 +16,7 @@
 
   {% set build_epel = 'amzn1' %}
 {#  {% set build_tgt = build_epel ~ '-' ~ build_arch %} #}
-  {% set build_tgt = build_release ~ '-dgm-' ~ build_arch %}
+  {% set build_tgt = build_release ~ '-salt' ~ build_arch %}
   {% set build_dist = build_epel %}
 
 {% endif %}

@@ -27,7 +27,7 @@ include:
   {% set build_deps = pkg_info.get(pkg_version, {}).get("build_deps", []) or pkg_info.get("build_deps", []) -%}
   {% set additional_deps = pkg_info.get(pkg_version, {}).get("additional_deps", []) or pkg_info.get("additional_deps", []) -%}
   {% if build_deps or additional_deps -%}
-    {% for dep_name in build_deps + additional_deps -%}
+    {% for dep_name in additional_deps + build_deps -%}
       {% set current_dep = pkg_data.get(dep_name, {}) -%}
       {% if "version" in current_dep -%}
         {% set dep_version, dep_release = current_dep["version"].split("-", 1) -%}

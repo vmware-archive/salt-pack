@@ -101,3 +101,4 @@ include:
     - pkg.salt.2016_3_3.fc24
 
 {% endif %}
+

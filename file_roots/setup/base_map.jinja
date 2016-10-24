@@ -5,10 +5,12 @@
 {% set build_version = pillar.get('build_version', '') %}
 
 {% if build_version == '' %}
+{% set amazon_pkg = 'amazon_pkg' %}
 {% set redhat_pkg = 'redhat_pkg' %}
 {% set debian_pkg = 'debian_pkg' %}
 {% set ubuntu_pkg = 'ubuntu_pkg' %}
 {% else %}
+{% set amazon_pkg = 'versions.' ~ build_version ~ '.amazon_pkg' %}
 {% set redhat_pkg = 'versions.' ~ build_version ~ '.redhat_pkg' %}
 {% set debian_pkg = 'versions.' ~ build_version ~ '.debian_pkg' %}
 {% set ubuntu_pkg = 'versions.' ~ build_version ~ '.ubuntu_pkg' %}

@@ -1,0 +1,32 @@
+Index: CherryPy-3.2.1/setup.py
+===================================================================
+--- CherryPy-3.2.1.orig/setup.py
++++ CherryPy-3.2.1/setup.py
+@@ -59,7 +59,6 @@ url="http://www.cherrypy.org"
+ cp_license="BSD"
+ packages=[
+     "cherrypy", "cherrypy.lib",
+-    "cherrypy.tutorial", "cherrypy.test",
+     "cherrypy.process",
+     "cherrypy.scaffold",
+     "cherrypy.wsgiserver",
+@@ -76,19 +75,6 @@ data_files=[
+                            ]),
+     ('cherrypy/scaffold/static', ['cherrypy/scaffold/static/made_with_cherrypy_small.png',
+                                   ]),
+-    ('cherrypy/test', ['cherrypy/test/style.css',
+-                       'cherrypy/test/test.pem',
+-                       ]),
+-    ('cherrypy/test/static', ['cherrypy/test/static/index.html',
+-                              'cherrypy/test/static/dirback.jpg',]),
+-    ('cherrypy/tutorial',
+-        [
+-            'cherrypy/tutorial/tutorial.conf',
+-            'cherrypy/tutorial/README.txt',
+-            'cherrypy/tutorial/pdf_file.pdf',
+-            'cherrypy/tutorial/custom_error.html',
+-        ]
+-    ),
+ ]
+ scripts = ["cherrypy/cherryd"]
+ 

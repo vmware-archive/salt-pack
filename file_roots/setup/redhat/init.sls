@@ -10,9 +10,13 @@
 
 os_pkgs_repo:
   pkgrepo.managed:
+{% if redhat_cfg.build_release == 'amzn' %}
+    - humanname: os_packages_repo_amzn_
+    - mirrorlist: http://repo.$awsregion.$awsdomain/latest/main/mirror.list
+{% else %}
     - humanname: os_packages_repo_epel
     - mirrorlist: https://mirrors.fedoraproject.org/metalink?repo={{redhat_cfg.build_epel}}&arch=$basearch
-
+{% endif %}
 
 build_pkgs:
   pkg.installed:

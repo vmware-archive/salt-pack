@@ -1,0 +1,33 @@
+# Import base config
+{% import "setup/base_map.jinja" as basecfg %}
+
+# Get the user under which to build
+{% set build_runas = pillar.get('build_runas', basecfg.build_runas) %}
+
+# Get the release and architecture
+{% set build_release = pillar.get('build_release', 'amzn') %}
+{% set build_arch = pillar.get('build_arch', 'x86_64') %}
+
+# Set the destination for built packages
+{% set build_dest_dir = basecfg.build_dest ~ '/' ~ build_release ~ '/' ~ build_arch %}
+
+# Set the mock target
+{% if build_release == 'amzn' %}
+
+  {% set build_epel = 'amzn1' %}
+{#  {% set build_tgt = build_epel ~ '-' ~ build_arch %} #}
+  {% set build_tgt = build_release ~ '-salt-' ~ build_arch %}
+  {% set build_dist = build_epel %}
+
+{% endif %}
+
+
+# Get the home and gpg keys directories to use, some tools assume ~/.gnupg
+{% if build_runas == 'root' %}
+{% set build_homedir = '/' ~ build_runas %}
+{% else %}
+{% set build_homedir = '/home/' ~ build_runas %}
+{% endif %}
+
+{% set build_gpg_keydir = build_homedir ~ '/.gnupg' %}
+

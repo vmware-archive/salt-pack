@@ -1,4 +1,4 @@
 base:
   '*':
-    - gpg_test_keys
+    - gpg_keys
     - pkgbuild

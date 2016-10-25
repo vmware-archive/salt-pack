@@ -175,7 +175,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2016.3.3-2
+      version: 2016.3.3-3
       noarch: True
       build_deps:
         - python-crypto
@@ -669,6 +669,10 @@ pkgbuild_registry:
       name: python27-enum34
       version: 1.0-5
       noarch: True
+    python-futures:
+      name: python27-futures
+      version: 3.0.3-2
+      noarch: True
     python-gnupg:
       name: python27-gnupg
       version: 0.3.8-4
@@ -723,6 +727,7 @@ pkgbuild_registry:
         - python-tornado
         - python-libcloud
         - python-gnupg
+        - python-futures
       results:
         - salt
         - salt-master

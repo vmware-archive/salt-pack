@@ -23,7 +23,7 @@ include:
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-urllib3.1_10_2.rhel7
     - pkg.python-yaml.3_11.rhel7
-    - pkg.salt.2016_9_0.rhel7
+    - pkg.salt.2016_11_0.rhel7
     - pkg.winexe.1_1.rhel7
     - pkg.zeromq.4_1_4.rhel7
 
@@ -59,7 +59,7 @@ include:
     - pkg.python-tornado.4_2_1.rhel6
     - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
-    - pkg.salt.2016_9_0.rhel6
+    - pkg.salt.2016_11_0.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 
@@ -93,11 +93,11 @@ include:
     - pkg.python-urllib3.1_5.rhel5
     - pkg.python-yaml.3_08.rhel5
     - pkg.rpmdevtools.6_8.rhel5
-    - pkg.salt.2016_9_0.rhel5
+    - pkg.salt.2016_11_0.rhel5
     - pkg.zeromq.4_0_5.rhel5
 
 {% elif buildcfg.build_release == 'fc24' %}
 
-    - pkg.salt.2016_9_0.fc24
+    - pkg.salt.2016_11_0.fc24
 
 {% endif %}

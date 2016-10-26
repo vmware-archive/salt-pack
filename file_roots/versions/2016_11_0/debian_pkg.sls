@@ -14,7 +14,7 @@ include:
     - pkg.python-systemd.231.debian8
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
-    - pkg.salt.2016_9_0.debian8
+    - pkg.salt.2016_11_0.debian8
     - pkg.zeromq.4_0_5.debian8
 
 {% else %}
@@ -40,7 +40,7 @@ include:
     - pkg.python-tornado.4_2_1.debian8
     - pkg.python-urllib3.1_10_4.debian8
     - pkg.python-yaml.3_11.debian8
-    - pkg.salt.2016_9_0.debian8
+    - pkg.salt.2016_11_0.debian8
     - pkg.zeromq.4_0_5.debian8
 
 {% endif %}

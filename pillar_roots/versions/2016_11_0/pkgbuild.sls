@@ -357,6 +357,11 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
+    winexe:
+      version: 1.1-b787d2
+      results:
+        - winexe
+        - winexe-debuginfo
     yum-utils:
       version: 1.1.30-30
       noarch: True
@@ -736,6 +741,11 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
+    winexe:
+      version: 1.1-b787d2
+      results:
+        - winexe
+        - winexe-debuginfo
     zeromq:
       version: 4.0.5-4
       build_deps:

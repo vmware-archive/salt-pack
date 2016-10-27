@@ -17,5 +17,5 @@ include:
     - pkg.salt.2016_11_0.amzn
     - pkg.python-timelib.0_2_4.amzn
     - pkg.python-tornado.4_2_1.amzn
-##    - pkg.winexe.1_1.amzn
+    - pkg.winexe.1_1.amzn
     - pkg.zeromq.4_0_5.amzn

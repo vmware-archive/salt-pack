@@ -60,6 +60,7 @@ include:
     - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2016_11_0.rhel6
+    - pkg.winexe.1_1.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 

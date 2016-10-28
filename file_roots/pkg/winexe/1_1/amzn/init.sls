@@ -33,5 +33,7 @@
 
     - sources:
       - salt://{{slspath}}/sources/winexe-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/winexe-{{version}}-gcrypt.patch
+
 {% endif %}
 

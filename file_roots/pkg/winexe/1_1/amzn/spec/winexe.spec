@@ -15,7 +15,7 @@
 
 Name: winexe
 Version: 1.1
-Release: b787d2%{?dist}
+Release: b787d2.1%{?dist}
 Summary: Remote Windows command executor.
 
 
@@ -23,6 +23,7 @@ Group: Applications/System
 License: GPLv3
 URL: http://sourceforge.net/projects/winexe/
 Source0: %{name}-%{version}.tar.gz
+Patch0:  %{name}-%{version}-gcrypt.patch
 
 AutoReqProv: no
 BuildRequires: gcc
@@ -89,6 +90,7 @@ chmod +x ./generatetarball
 
 
 %setup -q
+%patch0 -p1
 
 
 %build

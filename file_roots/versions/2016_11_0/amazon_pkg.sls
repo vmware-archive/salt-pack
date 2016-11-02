@@ -1,7 +1,7 @@
 {% import "setup/amazon/map.jinja" as buildcfg %}
 
 include:
-    - pkg.libsodium.1_0_5.amzn
+    - pkg.libsodium.0_4_5.amzn
     - pkg.openpgm.5_1_118.amzn
     - pkg.python-cherrypy.3_2_2.amzn
     - pkg.python-enum34.1_0.amzn

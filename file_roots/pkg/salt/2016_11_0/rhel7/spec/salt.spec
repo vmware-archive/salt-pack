@@ -6,7 +6,7 @@
 %endif
 
 # Release Candidate
-%define __rc_ver rc1
+%define __rc_ver rc2
 
 %global include_tests 0
 
@@ -15,7 +15,7 @@
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
 %define _salttesting SaltTesting
-%define _salttesting_ver 2016.9.7
+%define _salttesting_ver 2016.10.26
 
 Name: salt
 Version: 2016.11.0%{?__rc_ver}
@@ -532,6 +532,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Nov  2 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-0.rc2
+- Update to feature release 2016.11.0 Release Candidate 2
+
 * Fri Oct  7 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-0.rc1
 - Update to feature release 2016.11.0 Release Candidate 1
 

@@ -32,7 +32,7 @@ include:
     - pkg.babel.0_9_4.rhel6
     - pkg.libsodium.0_4_5.rhel6
     - pkg.libyaml.0_1_3.rhel6
-    - pkg.openpgm.5_2_122.rhel6
+    - pkg.openpgm.5_1_118.rhel6
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
@@ -101,3 +101,4 @@ include:
     - pkg.salt.2016_3_3.fc24
 
 {% endif %}
+

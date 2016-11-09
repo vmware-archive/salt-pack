@@ -1,0 +1,37 @@
+--- ./tornado/netutil.py	2015-04-26 19:32:20.000000000 -0600
++++ ./tornado/netutil.py	2015-06-29 14:30:02.270676957 -0600
+@@ -35,14 +35,8 @@
+     # ssl is not available on Google App Engine
+     ssl = None
+ 
+-try:
+-    import certifi
+-except ImportError:
+-    # certifi is optional as long as we have ssl.create_default_context.
+-    if ssl is None or hasattr(ssl, 'create_default_context'):
+-        certifi = None
+-    else:
+-        raise
++def _get_certs():
++    return '/etc/pki/tls/cert.pem'
+ 
+ try:
+     xrange  # py2
+@@ -72,7 +66,7 @@
+         # Python 3.2-3.3
+         _client_ssl_defaults = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+         _client_ssl_defaults.verify_mode = ssl.CERT_REQUIRED
+-        _client_ssl_defaults.load_verify_locations(certifi.where())
++        _client_ssl_defaults.load_verify_locations(_get_certs())
+         _server_ssl_defaults = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+         if hasattr(ssl, 'OP_NO_COMPRESSION'):
+             # Disable TLS compression to avoid CRIME and related attacks.
+@@ -83,7 +77,7 @@
+ elif ssl:
+     # Python 2.6-2.7.8
+     _client_ssl_defaults = dict(cert_reqs=ssl.CERT_REQUIRED,
+-                                ca_certs=certifi.where())
++                                ca_certs=_get_certs())
+     _server_ssl_defaults = {}
+ else:
+     # Google App Engine

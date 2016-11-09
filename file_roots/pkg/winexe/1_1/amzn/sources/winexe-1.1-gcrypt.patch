@@ -1,0 +1,10 @@
+diff -ur a/source/wscript_build b/source/wscript_build
+--- a/source/wscript_build	2016-10-28 13:16:38.233000000 -0400
++++ b/source/wscript_build	2016-10-28 13:17:41.780000000 -0400
+@@ -51,5 +51,5 @@
+         linkflags='-pthread',
+         stlibpath=bld.srcnode.abspath() + '/smb_static/build',
+         stlib='smb_static bsd z resolv rt',
+-        lib='dl gnutls'
++        lib='dl gnutls gcrypt'
+         )

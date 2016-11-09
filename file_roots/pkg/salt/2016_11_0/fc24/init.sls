@@ -33,8 +33,9 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - {{ macros.pypi_source(pypi_name, version) }}
-      - {{ macros.pypi_source("SaltTesting", "2016.9.7") }}
+      - salt://{{slspath}}/sources/{{pkg_name}}-{{version}}.tar.gz
+##      - {{ macros.pypi_source(pypi_name, version) }}
+      - {{ macros.pypi_source("SaltTesting", "2016.10.26") }}
       - salt://{{slspath}}/sources/{{pkg_name}}-common.logrotate
       - salt://{{slspath}}/sources/README.fedora
       - salt://{{slspath}}/sources/{{pkg_name}}-api
@@ -46,5 +47,14 @@
       - salt://{{slspath}}/sources/{{pkg_name}}-syndic
       - salt://{{slspath}}/sources/{{pkg_name}}-syndic.service
       - salt://{{slspath}}/sources/{{pkg_name}}.bash
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}_common.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-call.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-cp.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-key.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-master.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-minion.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-run.fish
+      - salt://{{slspath}}/sources/fish-completions/{{pkg_name}}-syndic.fish
 
 {% endif %}

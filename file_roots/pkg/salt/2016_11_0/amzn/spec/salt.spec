@@ -27,17 +27,14 @@
 
 %endif
 
-# Release Candidate
-%define __rc_ver rc2
-
 %global include_tests 0
 
 %define _salttesting SaltTesting
 %define _salttesting_ver 2016.10.26
 
 Name: salt
-Version: 2016.11.0%{?__rc_ver}
-Release: 0%{?dist}
+Version: 2016.11.0
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -558,6 +555,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Nov 22 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-1
+- Update to feature release 2016.11.0
+
 * Wed Nov  2 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-0.rc2
 - Update to feature release 2016.11.0 Release Candidate 2
 

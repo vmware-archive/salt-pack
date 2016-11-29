@@ -33,8 +33,7 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{pkg_name}}-{{version}}.tar.gz
-##      - {{ macros.pypi_source(pypi_name, version) }}
+      - {{ macros.pypi_source(pypi_name, version) }}
       - {{ macros.pypi_source("SaltTesting", "2016.10.26") }}
       - salt://{{slspath}}/sources/{{pkg_name}}-common.logrotate
       - salt://{{slspath}}/sources/README.fedora

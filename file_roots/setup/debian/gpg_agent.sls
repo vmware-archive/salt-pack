@@ -74,18 +74,20 @@ gpg_agent_start:
 gpg_load_pub_key:
   module.run:
     - name: gpg.import_key
-    - user: {{build_cfg.build_runas}}
-    - filename: {{pkg_pub_key_absfile}}
-    - gnupghome: {{gpg_key_dir}}
+    - kwargs:
+        user: {{build_cfg.build_runas}}
+        filename: {{pkg_pub_key_absfile}}
+        gnupghome: {{gpg_key_dir}}
     - require:
       - module: gpg_agent_start
 
 gpg_load_priv_key:
   module.run:
     - name: gpg.import_key
-    - user: {{build_cfg.build_runas}}
-    - filename: {{pkg_priv_key_absfile}}
-    - gnupghome: {{gpg_key_dir}}
+    - kwargs:
+        user: {{build_cfg.build_runas}}
+        filename: {{pkg_priv_key_absfile}}
+        gnupghome: {{gpg_key_dir}}
     - require:
       - module: gpg_agent_start
 

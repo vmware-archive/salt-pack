@@ -107,12 +107,11 @@ ensure_gpg_rights:
 ensure_pub_gpg_rights:
   module.run:
     - name: file.check_perms
-    - kwargs:
-        m_name: {{gpg_key_dir}}/gpg_pkg_key.pub
-        user: {{redhat_cfg.build_runas}}
-        group: {{redhat_cfg.build_runas}}
-        mode: 644
-        ret: False
+    - m_name: {{gpg_key_dir}}/gpg_pkg_key.pub
+    - user: {{redhat_cfg.build_runas}}
+    - group: {{redhat_cfg.build_runas}}
+    - mode: 644
+    - ret: False
     - require:
       - file: ensure_gpg_rights
 

@@ -175,7 +175,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2016.11.0-1
+      version: 2016.11.0-2
       noarch: True
       build_deps:
         - python-crypto
@@ -337,7 +337,7 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2016.11.0-1
+      version: 2016.11.0-2
       noarch: True
       build_deps:
         - python-crypto
@@ -599,7 +599,7 @@ pkgbuild_registry:
       version: 6.8-1
       noarch: True
     salt:
-      version: 2016.11.0-1
+      version: 2016.11.0-2
       noarch: True
       build_deps:
         - python-crypto
@@ -725,7 +725,7 @@ pkgbuild_registry:
       version: 0.2.4-2
       noarch: True
     salt:
-      version: 2016.11.0-1
+      version: 2016.11.0-2
       noarch: True
       build_deps:
         - python-msgpack

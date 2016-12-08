@@ -1,5 +1,5 @@
 # Import base config
-{% import "setup/ubuntu/map.jinja" as ubuntu_cfg %}
+{% import "setup/ubuntu/map.jinja" as build_cfg %}
 
 build_pkgs:
   pkg.installed:
@@ -22,7 +22,7 @@ build_pkgs:
       - packaging-dev
 
 
-{{ubuntu_cfg.build_runas}}:
+{{build_cfg.build_runas}}:
   user.present:
     - groups:
       - adm
@@ -38,8 +38,8 @@ build_cache_result_clean:
 build_cache_result_dir:
   file.directory:
     - name: /var/cache/pbuilder/result
-    - user: {{ubuntu_cfg.build_runas}}
-    - group: {{ubuntu_cfg.build_runas}}
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - dir_mode: 755
     - file_mode: 644
     - recurse:

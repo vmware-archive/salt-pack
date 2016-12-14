@@ -558,7 +558,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Dec  6 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.1-1
+* Tue Dec 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.1-1
 - Update to feature release 2016.11.1
 
 * Wed Nov 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-2

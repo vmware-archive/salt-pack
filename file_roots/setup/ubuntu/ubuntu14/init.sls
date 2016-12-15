@@ -1,5 +1,5 @@
 # Import base config
-{% import "setup/ubuntu/map.jinja" as ubuntu_cfg %}
+{% import "setup/ubuntu/map.jinja" as build_cfg %}
 
 {% set os_codename = 'trusty' %}
 {% set prefs_text = 'Package: *
@@ -42,17 +42,17 @@ build_additional_pkgs:
 
 build_pbldhooks_rm_G05:
   file.absent:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
 
 
 build_pbldhooks_rm_D04:
   file.absent:
-    - name: {{ubuntu_cfg.build_homedir}}t/.pbuilder-hooks/D04update_local_repo
+    - name: {{build_cfg.build_homedir}}t/.pbuilder-hooks/D04update_local_repo
 
 
 build_pbldrc_rm:
   file.absent:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilderrc
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
 
 
 build_prefs_rm:
@@ -62,7 +62,7 @@ build_prefs_rm:
 
 build_pbldhooks_file_G05:
   file.append:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
     - text: |
         #!/bin/sh
@@ -74,12 +74,12 @@ build_pbldhooks_file_G05:
 
 build_pbldhooks_file_D04:
   file.append:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
         #!/bin/sh
         # path to local repo
-        LOCAL_REPO="{{ubuntu_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         # Generate a Packages file
         ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
         # Update to include any new packagers in the local repo
@@ -88,9 +88,9 @@ build_pbldhooks_file_D04:
 
 build_pbldhooks_perms:
   file.directory:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilder-hooks/
-    - user: {{ubuntu_cfg.build_runas}} 
-    - group: {{ubuntu_cfg.build_runas}} 
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - dir_mode: 755
     - file_mode: 755
     - recurse:
@@ -101,10 +101,10 @@ build_pbldhooks_perms:
 
 build_pbldrc:
   file.append:
-    - name: {{ubuntu_cfg.build_homedir}}/.pbuilderrc
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
-        LOCAL_REPO="{{ubuntu_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
 
         # create local repository if it doesn't exist,
         # such as during initial 'pbuilder create'

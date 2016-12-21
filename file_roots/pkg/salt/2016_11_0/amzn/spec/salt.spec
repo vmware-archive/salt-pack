@@ -29,12 +29,14 @@
 
 %global include_tests 0
 
+%define fish_dir %{_datadir}/fish/vendor_functions.d
+
 %define _salttesting SaltTesting
 %define _salttesting_ver 2016.10.26
 
 Name: salt
 Version: 2016.11.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -264,6 +266,7 @@ install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
+install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/proxy.d
 
 # Add the config files
 install -p -m 0640 conf/minion %{buildroot}%{_sysconfdir}/salt/minion
@@ -305,16 +308,16 @@ mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d/
 install -p -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/bash_completion.d/salt.bash
 
 # Fish completion (TBD remove -v)
-mkdir -p %{buildroot}%{_datadir}/fish/vendor_functions.d/
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt_common.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-call.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-cp.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-key.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-master.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-minion.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-run.fish
-install -p -m 0644  %{SOURCE13} %{buildroot}%{_datadir}/fish/vendor_functions.d/salt-syndic.fish
+mkdir -p %{buildroot}%{fish_dir}
+install -p -m 0644  %{SOURCE13} %{buildroot}%{fish_dir}/salt.fish
+install -p -m 0644  %{SOURCE14} %{buildroot}%{fish_dir}/salt_common.fish
+install -p -m 0644  %{SOURCE15} %{buildroot}%{fish_dir}/salt-call.fish
+install -p -m 0644  %{SOURCE16} %{buildroot}%{fish_dir}/salt-cp.fish
+install -p -m 0644  %{SOURCE17} %{buildroot}%{fish_dir}/salt-key.fish
+install -p -m 0644  %{SOURCE18} %{buildroot}%{fish_dir}/salt-master.fish
+install -p -m 0644  %{SOURCE19} %{buildroot}%{fish_dir}/salt-minion.fish
+install -p -m 0644  %{SOURCE20} %{buildroot}%{fish_dir}/salt-run.fish
+install -p -m 0644  %{SOURCE21} %{buildroot}%{fish_dir}/salt-syndic.fish
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 %check
@@ -347,7 +350,7 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man1/spm.1*
 %config(noreplace) %{_sysconfdir}/salt/
 %config(noreplace) %{_sysconfdir}/salt/pki
-%config(noreplace) %{_datadir}/fish/vendor_functions.d/salt*.fish
+%config(noreplace) %{fish_dir}/salt*.fish
 
 %files master
 %defattr(-,root,root)
@@ -555,6 +558,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Nov 30 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-2
+- Adjust for single spec for Redhat family and fish-completions
+
 * Tue Nov 22 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0-1
 - Update to feature release 2016.11.0
 

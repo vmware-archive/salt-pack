@@ -1,5 +1,5 @@
 # Import base config
-{% import "setup/debian/map.jinja" as debian_cfg %}
+{% import "setup/debian/map.jinja" as build_cfg %}
 
 {% set os_codename = 'wheezy' %}
 {% set prefs_text = 'Package: *
@@ -25,9 +25,29 @@ include:
   - setup.debian.gpg_agent
 
 
+build_pbldhooks_rm_G05:
+  file.absent:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+
+
+build_pbldhooks_rm_D04:
+  file.absent:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
+
+
+build_pbldrc_rm:
+  file.absent:
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
+
+
+build_prefs_rm:
+  file.absent:
+    - name: /etc/apt/preferences
+
+
 build_pbldhooks_file_G05:
   file.append:
-    - name: /root/.pbuilder-hooks/G05apt-preferences
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
     - text: |
         #!/bin/sh
@@ -39,12 +59,12 @@ build_pbldhooks_file_G05:
 
 build_pbldhooks_file_D04:
   file.append:
-    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
         #!/bin/sh
         # path to local repo
-        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         # Generate a Packages file
         ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
         # Update to include any new packagers in the local repo
@@ -53,7 +73,7 @@ build_pbldhooks_file_D04:
 
 build_pbldhooks_perms:
   file.directory:
-    - name: /root/.pbuilder-hooks/
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
     - user: root
     - group: root
     - dir_mode: 755
@@ -66,10 +86,10 @@ build_pbldhooks_perms:
 
 build_pbldrc:
   file.append:
-    - name: /root/.pbuilderrc
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
-        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
 
         # create local repository if it doesn't exist,
         # such as during initial 'pbuilder create'
@@ -102,6 +122,6 @@ build_prefs:
 home_env:
   environ.setenv:
     - name: HOME
-    - value: /root
+    - value: {{build_cfg.build_homedir}}
     - update_minion: True
 

@@ -1,5 +1,5 @@
 # Import base config
-{% import "setup/debian/map.jinja" as debian_cfg %}
+{% import "setup/debian/map.jinja" as build_cfg %}
 
 {% set os_codename = 'jessie' %}
 {% set prefs_text = 'Package: *
@@ -31,20 +31,24 @@ build_additional_pkgs:
       - dh-systemd
 
 
+build_pbldhooks_rm_G05:
+  file.absent:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+
 
 build_pbldhookskeys_rm:
   file.absent:
-    - name: /root/.pbuilder-hooks/G04importkeys
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
 
 
-build_pbldhooks_rm_G05:
+build_pbldhooks_rm_D04:
   file.absent:
-    - name: /root/.pbuilder-hooks/G05apt-preferences
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
 
 
 build_pbldrc_rm:
   file.absent:
-    - name: /root/.pbuilderrc
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
 
 
 build_prefs_rm:
@@ -54,7 +58,7 @@ build_prefs_rm:
 
 build_pbldhookskeys_file:
   file.append:
-    - name: /root/.pbuilder-hooks/G04importkeys
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
     - text: |
         /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
@@ -62,7 +66,7 @@ build_pbldhookskeys_file:
 
 build_pbldhooks_file_G05:
   file.append:
-    - name: /root/.pbuilder-hooks/G05apt-preferences
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
     - text: |
         #!/bin/sh
@@ -74,12 +78,12 @@ build_pbldhooks_file_G05:
 
 build_pbldhooks_file_D04:
   file.append:
-    - name: /root/.pbuilder-hooks/D04update_local_repo
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
     - text: |
         #!/bin/sh
         # path to local repo
-        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         # Generate a Packages file
         ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
         # Update to include any new packagers in the local repo
@@ -88,7 +92,7 @@ build_pbldhooks_file_D04:
 
 build_pbldhooks_perms:
   file.directory:
-    - name: /root/.pbuilder-hooks/
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
     - user: root
     - group: root
     - dir_mode: 755
@@ -101,10 +105,10 @@ build_pbldhooks_perms:
 
 build_pbldrc:
   file.append:
-    - name: /root/.pbuilderrc
+    - name: {{build_cfg.build_homedir}}/.pbuilderrc
     - text: |
         DIST="{{os_codename}}"
-        LOCAL_REPO="{{debian_cfg.build_dest_dir}}"
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         ## export CCACHE_DIR='/var/cache/pbuilder/ccache'
         ## export PATH="/usr/lib/ccache":${PATH}
 
@@ -128,7 +132,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-{% if debian_cfg.build_arch == 'armhf' %}
+{% if build_cfg.build_arch == 'armhf' %}
         DEBOOTSTRAPOPTS=( 
             '--variant=buildd' 
             '--keyring' "${HOME}/.gnupg/pubring.gpg"

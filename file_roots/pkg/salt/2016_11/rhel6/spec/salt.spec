@@ -29,14 +29,17 @@
 
 %global include_tests 0
 
+# Release Candidate
+%define __rc_ver tobereplaced_date
+
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 %define _salttesting SaltTesting
 %define _salttesting_ver 2016.10.26
 
 Name: salt
-Version: 2016.11.1
-Release: 1%{?dist}
+Version: 2016.11.0%{?__rc_ver}
+Release: 0%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -558,6 +561,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Dec 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
+- Update to feature release 2016.11.0 nightly build %{?__rc_ver}
+
 * Tue Dec 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.1-1
 - Update to feature release 2016.11.1
 

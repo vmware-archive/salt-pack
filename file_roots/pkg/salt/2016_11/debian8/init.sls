@@ -2,9 +2,10 @@
 {% set force = salt['pillar.get']('build_force.all', False) or salt['pillar.get']('build_force.' ~ slspath, False) %}
 
 {% set name = 'salt' %}
-{% set version = '2016.11.1' %}
+{% set release_rc_ver = 'tobereplaced_date' %}
+{% set version = 'tobereplaced_ver' ~ release_rc_ver %}
 {% set release_nameadd = '+ds' %}
-{% set release_ver = '1' %}
+{% set release_ver = '0' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:

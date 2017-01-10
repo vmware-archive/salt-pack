@@ -14,7 +14,7 @@ include:
     - pkg.python-msgpack.0_4_6.amzn
     - pkg.python-pyzmq.14_5_0.amzn
     - pkg.python-raet.0_6_3.amzn
-    - pkg.salt.2016_11_0.amzn
+    - pkg.salt.2016_11.amzn
     - pkg.python-timelib.0_2_4.amzn
     - pkg.python-tornado.4_2_1.amzn
     - pkg.winexe.1_1.amzn

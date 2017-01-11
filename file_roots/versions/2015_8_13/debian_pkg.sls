@@ -13,7 +13,7 @@ include:
     - pkg.python-future.0_14_3.debian8
     - pkg.python-futures.3_0_3.debian8
     - pkg.python-ioflo.1_3_8.debian8
-    - pkg.python-jinja2.2_8_1.debian8
+    - pkg.python-jinja2.2_9_4.debian8
     - pkg.python-libcloud.0_20_0.debian8
     - pkg.python-libnacl.4_1.debian8
     - pkg.python-msgpack.0_4_2.debian8

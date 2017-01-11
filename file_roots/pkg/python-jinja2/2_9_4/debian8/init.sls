@@ -4,14 +4,14 @@
 {% set pypi_name = 'jinja2' %}
 {% set name = 'python-' ~ pypi_name %}
 {% set name3 = 'python3-' ~ pypi_name %}
-{% set version = '2.8.1' %}
-{% set release_nameadd = '-bpo8+1' %}
+{% set version = '2.9.4' %}
+{% set release_nameadd = '-bpo8+ds1' %}
 {% set release_ver = '1' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
-    - results: 
+    - results:
       - {{name}}_{{version}}-{{release_ver}}{{release_nameadd}}_all.deb
       - {{name}}-doc_{{version}}-{{release_ver}}{{release_nameadd}}_all.deb
       - {{name3}}_{{version}}-{{release_ver}}{{release_nameadd}}_all.deb

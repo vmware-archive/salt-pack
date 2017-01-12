@@ -2,7 +2,7 @@
 {% set force = salt['pillar.get']('build_force.all', False) or salt['pillar.get']('build_force.' ~ slspath, False) %}
 
 {% set name = 'salt' %}
-{% set version = '2015.8.12' %}
+{% set version = '2015.8.13' %}
 {% set release_nameadd = '+ds' %}
 {% set release_ver = '1' %}
 

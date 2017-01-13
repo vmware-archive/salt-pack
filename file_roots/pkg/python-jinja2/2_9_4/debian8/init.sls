@@ -5,7 +5,8 @@
 {% set name = 'python-' ~ pypi_name %}
 {% set name3 = 'python3-' ~ pypi_name %}
 {% set version = '2.9.4' %}
-{% set release_nameadd = '-bpo8+ds1' %}
+{% set release_nameadd = '' %}
+
 {% set release_ver = '1' %}
 
 {{name}}-{{version.replace('.', '_')}}:

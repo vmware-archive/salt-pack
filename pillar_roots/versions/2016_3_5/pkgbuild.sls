@@ -97,15 +97,6 @@
 # packages aware of their dependencies and pull in the right build deps, have
 # the right requisites set, etc.
 
-# set version to build
-{% set build_version = '2016_3_5' %}
-
-{% if build_version != '' %}
-include:
-    - .versions.{{build_version}}.pkgbuild
-
-{% else %}
-
 pkgbuild_registry:
   rhel7:
     libsodium:
@@ -113,11 +104,6 @@ pkgbuild_registry:
       results:
         - libsodium
         - libsodium-devel
-    openpgm:
-      version: 5.2.122-2
-      results:
-        - openpgm
-        - openpgm-devel
     python-chardet:
       version: 2.2.1-1
       noarch: True
@@ -184,7 +170,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2016.3.2-1
+      version: 2016.3.5-1
       noarch: True
       build_deps:
         - python-crypto
@@ -213,8 +199,6 @@ pkgbuild_registry:
         - python-impacket
     zeromq:
       version: 4.1.4-5
-      build_deps:
-        - openpgm
       results:
         - zeromq
         - zeromq-devel
@@ -235,11 +219,6 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
-    openpgm:
-      version: 5.2.122-2
-      results:
-        - openpgm
-        - openpgm-devel
     pciutils:
       version: 3.1.10-4
       results:
@@ -281,7 +260,7 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-jinja2:
-      version: 2.7.3-1
+      version: 2.8.1-1
       noarch: True
       build_deps:
         - python-babel
@@ -300,6 +279,9 @@ pkgbuild_registry:
       version: 0.4.6-1
     python-ordereddict:
       version: 1.1-2
+      noarch: True
+    python-pip:
+      version: 7.1.0-1
       noarch: True
     python-pyzmq:
       name: python-zmq
@@ -343,7 +325,7 @@ pkgbuild_registry:
       build_deps:
         - libyaml
     salt:
-      version: 2016.3.2-1
+      version: 2016.3.5-1
       noarch: True
       build_deps:
         - python-crypto
@@ -396,8 +378,6 @@ pkgbuild_registry:
         - yum-updateonboot
     zeromq:
       version: 4.0.5-4
-      build_deps:
-        - openpgm
       results:
         - zeromq
         - zeromq-devel
@@ -426,11 +406,6 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
-    openpgm:
-      version: 5.2.122-2
-      results:
-        - openpgm
-        - openpgm-devel
     pciutils:
       version: 3.1.10-4
       results:
@@ -494,7 +469,7 @@ pkgbuild_registry:
         - python-distribute
     python-jinja2:
       name: python26-jinja2
-      version: 2.5.5-6
+      version: 2.8.1-1
       noarch: True
       build_deps:
         - python-babel
@@ -600,7 +575,7 @@ pkgbuild_registry:
       version: 6.8-1
       noarch: True
     salt:
-      version: 2016.3.2-1
+      version: 2016.3.5-1
       noarch: True
       build_deps:
         - python-crypto
@@ -656,4 +631,87 @@ pkgbuild_registry:
         - zeromq
         - zeromq-devel
 
-{% endif %}
+  amzn:
+    libsodium:
+      version: 1.0.5-1
+      results:
+        - libsodium
+        - libsodium-devel
+    python-cherrypy:
+      name: python27-cherrypy
+      version: 3.2.2-5
+      noarch: True
+    python-enum34:
+      name: python27-enum34
+      version: 1.0-5
+      noarch: True
+    python-gnupg:
+      name: python27-gnupg
+      version: 0.3.8-4
+      noarch: True
+    python-impacket:
+      name: python27-impacket
+      version: 0.9.14-2
+      noarch: True
+    python-ioflo:
+      name: python27-ioflo
+      version: 1.3.8-2
+      noarch: True
+    python-libcloud:
+      name: python27-libcloud
+      version: 0.20.0-2
+      noarch: True
+    python-libnacl:
+      name: python27-libnacl
+      version: 1.4.3-2
+      noarch: True
+      build_deps:
+        - libsodium
+    python-msgpack:
+      name: python27-msgpack
+      version: 0.4.6-2
+    python-pyzmq:
+      name: python27-zmq
+      version: 14.5.0-3
+      build_deps:
+        - zeromq
+    python-raet:
+      name: python27-raet
+      version: 0.6.3-3
+      noarch: True
+      build_deps:
+        - python-ioflo
+      additional_deps:
+        - python-libnacl
+    python-tornado:
+      name: python27-tornado
+      version: 4.2.1-2
+    python-timelib:
+      name: python27-timelib
+      version: 0.2.4-2
+      noarch: True
+    salt:
+      version: 2016.3.5-1
+      noarch: True
+      build_deps:
+        - python-msgpack
+        - python-pyzmq
+        - python-tornado
+        - python-libcloud
+        - python-gnupg
+        - python-futures
+      results:
+        - salt
+        - salt-master
+        - salt-minion
+        - salt-syndic
+        - salt-api
+        - salt-cloud
+        - salt-ssh
+    zeromq:
+      version: 4.0.5-4
+      results:
+        - zeromq
+        - zeromq-devel
+
+

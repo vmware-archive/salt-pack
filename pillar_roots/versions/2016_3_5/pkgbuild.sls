@@ -289,7 +289,7 @@ pkgbuild_registry:
       build_deps:
         - zeromq
     python-raet:
-      version: 0.6.3-2
+      version: 0.6.6-1
       noarch: True
       build_deps:
         - python-ioflo

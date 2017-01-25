@@ -4,7 +4,7 @@ include:
 {% if buildcfg.build_release == 'rhel7' %}
 
     - pkg.libsodium.1_0_5.rhel7
-##    - pkg.openpgm.5_2_122.rhel7
+    - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.3_2_2.rhel7
     - pkg.python-crypto.2_6_1.rhel7

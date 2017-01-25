@@ -104,6 +104,11 @@ pkgbuild_registry:
       results:
         - libsodium
         - libsodium-devel
+    openpgm:
+      version: 5.2.122-2
+      results:
+        - openpgm
+        - openpgm-devel
     python-chardet:
       version: 2.2.1-1
       noarch: True
@@ -199,6 +204,8 @@ pkgbuild_registry:
         - python-impacket
     zeromq:
       version: 4.1.4-5
+      build_deps:
+        - openpgm
       results:
         - zeromq
         - zeromq-devel

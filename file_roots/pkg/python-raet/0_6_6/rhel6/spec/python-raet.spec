@@ -32,8 +32,10 @@ BuildArch: noarch
 %if "%{?pybasever}" == "2.6"
 BuildRequires:  python-importlib
 Requires:       python-importlib
-Patch0:         raet-%{version}.patch
 %endif
+
+Patch0:         raet-0.6.6.patch
+
 
 # We don't want to provide private python extension libs
 %{?filter_setup:
@@ -46,10 +48,7 @@ A high level, stack based communication protocol for network and IPC communicati
 
 %prep
 %setup -q -n %{srcname}-%{version}
-
-%if "%{?pybasever}" == "2.6"
 %patch0 -p1
-%endif
 
 %install
 %{__python} setup.py install --root %{buildroot}

@@ -1,6 +1,6 @@
-diff -ur a/flo/test/test_behaving.py b/flo/test/test_behaving.py
---- a/flo/test/test_behaving.py	2017-01-17 16:19:36.052477648 -0700
-+++ b/flo/test/test_behaving.py	2017-01-17 16:22:23.704174404 -0700
+diff -ur a/raet/flo/test/test_behaving.py b/raet/flo/test/test_behaving.py
+--- a/raet/flo/test/test_behaving.py	2017-01-24 17:17:16.185498604 -0700
++++ b/raet/flo/test/test_behaving.py	2017-01-24 17:17:19.157494266 -0700
 @@ -16,9 +16,7 @@
  console = getConsole()
  
@@ -11,9 +11,9 @@ diff -ur a/flo/test/test_behaving.py b/flo/test/test_behaving.py
  
  def setUpModule():
      console.reinit(verbosity=console.Wordage.concise)
-diff -ur a/lane/paging.py b/lane/paging.py
---- a/lane/paging.py	2017-01-17 16:19:36.052477648 -0700
-+++ b/lane/paging.py	2017-01-17 16:21:11.044326027 -0700
+diff -ur a/raet/lane/paging.py b/raet/lane/paging.py
+--- a/raet/lane/paging.py	2017-01-24 17:17:16.185498604 -0700
++++ b/raet/lane/paging.py	2017-01-24 17:17:19.157494266 -0700
 @@ -111,7 +111,7 @@
          self.page.body.packed = back
  
@@ -32,18 +32,18 @@ diff -ur a/lane/paging.py b/lane/paging.py
                                         object_pairs_hook=odict)
          elif pk == PackKind.pack:
              if self.packed:
-diff -ur a/nacling.py b/nacling.py
---- a/nacling.py	2017-01-17 16:19:36.048477655 -0700
-+++ b/nacling.py	2017-01-17 16:20:50.076359495 -0700
+diff -ur a/raet/nacling.py b/raet/nacling.py
+--- a/raet/nacling.py	2017-01-24 17:17:16.181498610 -0700
++++ b/raet/nacling.py	2017-01-24 17:17:19.157494266 -0700
 @@ -573,4 +573,4 @@
          front = ns2b("{0:0x}".format(int(time.time() * 1000000)))  # microseconds
      extra = size - len(front)
      back = binascii.hexlify(libnacl.randombytes(extra // 2 + extra % 2))
 -    return ((front + back)[:size]).decode(encoding='ISO-8859-1')
 +    return ((front + back)[:size]).decode('ISO-8859-1')
-diff -ur a/road/packeting.py b/road/packeting.py
---- a/road/packeting.py	2017-01-17 16:19:36.052477648 -0700
-+++ b/road/packeting.py	2017-01-17 16:21:55.164234253 -0700
+diff -ur a/raet/road/packeting.py b/raet/road/packeting.py
+--- a/raet/road/packeting.py	2017-01-24 17:17:16.189498598 -0700
++++ b/raet/road/packeting.py	2017-01-24 17:17:19.157494266 -0700
 @@ -177,7 +177,7 @@
              front, sep, back = packed.partition(raeting.HEAD_END)
              self.packed = front + sep
@@ -71,9 +71,9 @@ diff -ur a/road/packeting.py b/road/packeting.py
                                   object_pairs_hook=odict,
                                   encoding='utf-8')
                  if not isinstance(kit, Mapping):
-diff -ur a/road/test/test_packeting.py b/road/test/test_packeting.py
---- a/road/test/test_packeting.py	2017-01-17 16:19:36.052477648 -0700
-+++ b/road/test/test_packeting.py	2017-01-17 16:21:22.260304152 -0700
+diff -ur a/raet/road/test/test_packeting.py b/raet/road/test/test_packeting.py
+--- a/raet/road/test/test_packeting.py	2017-01-24 17:17:16.197498586 -0700
++++ b/raet/road/test/test_packeting.py	2017-01-24 17:17:19.157494266 -0700
 @@ -542,7 +542,7 @@
          self.assertEqual( tray1.body, self.stuff)
  

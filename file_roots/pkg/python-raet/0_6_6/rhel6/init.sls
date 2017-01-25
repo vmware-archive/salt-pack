@@ -34,4 +34,7 @@
 
     - sources:
       - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/raet-0.6.6.patch
+##      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.patch
+
 {% endif %}

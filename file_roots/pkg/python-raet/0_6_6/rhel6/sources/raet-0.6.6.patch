@@ -1,0 +1,85 @@
+diff -ur a/raet/flo/test/test_behaving.py b/raet/flo/test/test_behaving.py
+--- a/raet/flo/test/test_behaving.py	2017-01-24 17:17:16.185498604 -0700
++++ b/raet/flo/test/test_behaving.py	2017-01-24 17:17:19.157494266 -0700
+@@ -16,9 +16,7 @@
+ console = getConsole()
+ 
+ # Import raet libs
+-from raet.abiding import *  # import globals
+ from raet.road import stacking
+-from raet.flo import behaving
+ 
+ def setUpModule():
+     console.reinit(verbosity=console.Wordage.concise)
+diff -ur a/raet/lane/paging.py b/raet/lane/paging.py
+--- a/raet/lane/paging.py	2017-01-24 17:17:16.185498604 -0700
++++ b/raet/lane/paging.py	2017-01-24 17:17:19.157494266 -0700
+@@ -111,7 +111,7 @@
+         self.page.body.packed = back
+ 
+         kit = odict()
+-        lines = str(front.decode(encoding='ISO-8859-1')).split('\n')
++        lines = str(front.decode('ISO-8859-1')).split('\n')
+         for line in lines:
+             key, val = line.split(' ')
+             if key not in raeting.PAGE_FIELDS:
+@@ -192,7 +192,7 @@
+ 
+         if pk == PackKind.json:
+             if self.packed:
+-                self.data = json.loads(self.packed.decode(encoding='utf-8'),
++                self.data = json.loads(self.packed.decode('utf-8'),
+                                        object_pairs_hook=odict)
+         elif pk == PackKind.pack:
+             if self.packed:
+diff -ur a/raet/nacling.py b/raet/nacling.py
+--- a/raet/nacling.py	2017-01-24 17:17:16.181498610 -0700
++++ b/raet/nacling.py	2017-01-24 17:17:19.157494266 -0700
+@@ -573,4 +573,4 @@
+         front = ns2b("{0:0x}".format(int(time.time() * 1000000)))  # microseconds
+     extra = size - len(front)
+     back = binascii.hexlify(libnacl.randombytes(extra // 2 + extra % 2))
+-    return ((front + back)[:size]).decode(encoding='ISO-8859-1')
++    return ((front + back)[:size]).decode('ISO-8859-1')
+diff -ur a/raet/road/packeting.py b/raet/road/packeting.py
+--- a/raet/road/packeting.py	2017-01-24 17:17:16.189498598 -0700
++++ b/raet/road/packeting.py	2017-01-24 17:17:19.157494266 -0700
+@@ -177,7 +177,7 @@
+             front, sep, back = packed.partition(raeting.HEAD_END)
+             self.packed = front + sep
+             kit = odict()
+-            lines = str(front.decode(encoding='ISO-8859-1')).split('\n')
++            lines = str(front.decode('ISO-8859-1')).split('\n')
+             for line in lines:
+                 key, val = line.split(' ')
+                 if key not in raeting.PACKET_HEAD_FIELDS:
+@@ -214,7 +214,7 @@
+             hk = HeadKind.json.value
+             front, sep, back = packed.partition(raeting.JSON_END)
+             self.packed = front + sep
+-            kit = json.loads(front.decode(encoding='ascii'),
++            kit = json.loads(front.decode('ascii'),
+                              object_pairs_hook=odict)
+             data.update(kit)
+             if 'fg' in data:
+@@ -307,7 +307,7 @@
+ 
+         if bk == BodyKind.json:
+             if self.packed:
+-                kit = json.loads(self.packed.decode(encoding='utf-8'),
++                kit = json.loads(self.packed.decode('utf-8'),
+                                  object_pairs_hook=odict,
+                                  encoding='utf-8')
+                 if not isinstance(kit, Mapping):
+diff -ur a/raet/road/test/test_packeting.py b/raet/road/test/test_packeting.py
+--- a/raet/road/test/test_packeting.py	2017-01-24 17:17:16.197498586 -0700
++++ b/raet/road/test/test_packeting.py	2017-01-24 17:17:19.157494266 -0700
+@@ -542,7 +542,7 @@
+         self.assertEqual( tray1.body, self.stuff)
+ 
+         # Json body
+-        body = odict(stuff=str(self.stuff.decode(encoding='ISO-8859-1')))
++        body = odict(stuff=str(self.stuff.decode('ISO-8859-1')))
+         self.data.update(se=2, de=3, bk=raeting.BodyKind.json.value, fk=raeting.FootKind.nacl.value)
+         tray0 = packeting.TxTray(stack=self.main, data=self.data, body=body)
+         tray0.pack()

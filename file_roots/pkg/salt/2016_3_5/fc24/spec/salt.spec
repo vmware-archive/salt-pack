@@ -15,7 +15,7 @@
 %define _salttesting_ver 2016.10.26
 
 Name: salt
-Version: 2016.3.4
+Version: 2016.3.5
 Release: 1%{?dist}
 Summary: A parallel remote execution system
 
@@ -504,6 +504,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Jan 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.5-1
+- Update to feature release 2016.3.5
+
 * Mon Oct 31 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.3.4-1
 - Update to feature release 2016.3.4
 

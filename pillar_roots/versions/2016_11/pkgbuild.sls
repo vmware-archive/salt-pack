@@ -116,7 +116,7 @@ pkgbuild_registry:
       version: 3.2.2-4
       noarch: True
     python-crypto:
-      version: 2.6.1-1
+      version: 2.6.1-2
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -162,8 +162,6 @@ pkgbuild_registry:
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
-      version: 4.2.1-1
-    python-tornado-salt:
       version: 4.2.1-1
     python-timelib:
       version: 0.2.4-1
@@ -226,11 +224,6 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
-    openpgm:
-      version: 5.1.118-3
-      results:
-        - openpgm
-        - openpgm-devel
     pciutils:
       version: 3.1.10-4
       results:
@@ -253,9 +246,7 @@ pkgbuild_registry:
       version: 3.2.2-4
       noarch: True
     python-crypto:
-      version: 2.6.1-2
-    python-crypto-salt:
-      version: 2.6.1-4
+      version: 2.6.1-3
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -272,7 +263,7 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-jinja2:
-      version: 2.7.3-1
+      version: 2.8.1-1
       noarch: True
       build_deps:
         - python-babel
@@ -301,7 +292,7 @@ pkgbuild_registry:
       build_deps:
         - zeromq
     python-raet:
-      version: 0.6.5-1
+      version: 0.6.6-1
       noarch: True
       build_deps:
         - python-ioflo
@@ -318,10 +309,6 @@ pkgbuild_registry:
       version: 1.9.0-2
       noarch: True
     python-tornado:
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-    python-tornado-salt:
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname
@@ -395,8 +382,6 @@ pkgbuild_registry:
         - yum-updateonboot
     zeromq:
       version: 4.0.5-4
-      build_deps:
-        - openpgm
       results:
         - zeromq
         - zeromq-devel
@@ -425,11 +410,6 @@ pkgbuild_registry:
         - libyaml
         - libyaml-debuginfo
         - libyaml-devel
-    openpgm:
-      version: 5.2.122-2
-      results:
-        - openpgm
-        - openpgm-devel
     pciutils:
       version: 3.1.10-4
       results:
@@ -472,9 +452,6 @@ pkgbuild_registry:
     python-crypto:
       name: python26-crypto
       version: 2.6.1-2
-    python-crypto-salt:
-      name: python26-crypto-salt
-      version: 2.6.1-4
     python-distribute:
       name: python26-distribute
       version: 0.6.10-4
@@ -493,7 +470,7 @@ pkgbuild_registry:
         - python-distribute
     python-jinja2:
       name: python26-jinja2
-      version: 2.5.5-6
+      version: 2.8.1-1
       noarch: True
       build_deps:
         - python-babel
@@ -565,14 +542,6 @@ pkgbuild_registry:
         - python-distribute
     python-tornado:
       name: python26-tornado
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-        - python-distribute
-      additonal_deps:
-        - python-pycurl
-    python-tornado-salt:
-      name: python26-tornado-salt
       version: 4.2.1-1
       build_deps:
         - python-backports-ssl_match_hostname
@@ -662,11 +631,6 @@ pkgbuild_registry:
         - libsodium
         - libsodium-debuginfo
         - libsodium-devel
-    openpgm:
-      version: 5.1.118-4
-      results:
-        - openpgm
-        - openpgm-devel
     python-cherrypy:
       name: python27-cherrypy
       version: 3.2.2-5
@@ -674,10 +638,6 @@ pkgbuild_registry:
     python-enum34:
       name: python27-enum34
       version: 1.0-5
-      noarch: True
-    python-futures:
-      name: python27-futures
-      version: 3.0.3-2
       noarch: True
     python-gnupg:
       name: python27-gnupg
@@ -749,8 +709,6 @@ pkgbuild_registry:
         - winexe-debuginfo
     zeromq:
       version: 4.0.5-4
-      build_deps:
-        - openpgm
       results:
         - zeromq
         - zeromq-devel

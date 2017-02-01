@@ -6,7 +6,6 @@ include:
 {% if buildcfg.build_arch == 'armhf' %}
 
     - pkg.libsodium.1_0_3.debian8
-    - pkg.openpgm.5_2_122.debian8
     - pkg.python-future.0_14_3.debian8
     - pkg.python-futures.3_0_3.debian8
     - pkg.python-ioflo.1_3_8.debian8
@@ -22,7 +21,6 @@ include:
 {% else %}
     - pkg.bsdmainutils.9_0_6.debian8
     - pkg.libsodium.1_0_3.debian8
-    - pkg.openpgm.5_2_122.debian8
     - pkg.python-cherrypy.2_3_0.debian8
     - pkg.python-croniter.0_3_4.debian8
     - pkg.python-crypto.2_6_1.debian8
@@ -30,7 +28,7 @@ include:
     - pkg.python-future.0_14_3.debian8
     - pkg.python-futures.3_0_3.debian8
     - pkg.python-ioflo.1_3_8.debian8
-    - pkg.python-jinja2.2_7_3.debian8
+    - pkg.python-jinja2.2_9_4.debian8
     - pkg.python-libcloud.0_20_0.debian8
     - pkg.python-libnacl.4_1.debian8
     - pkg.python-msgpack.0_4_2.debian8
@@ -52,7 +50,6 @@ include:
     - pkg.bsdmainutils.9_0_3.debian7    # 9.0.3
     - pkg.libsodium.1_0_3.debian7       #
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.debian7
-    - pkg.openpgm.5_2_122.debian7       #
     - pkg.python-cherrypy.2_3_0.debian7 # 2.3.0-3
     - pkg.python-croniter.0_3_4.debian7 #
     - pkg.python-crypto.2_6_1.debian7   # 2.6-4+deb7u3 - going to use 2_6_1-5

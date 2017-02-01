@@ -32,7 +32,6 @@ include:
     - pkg.babel.0_9_4.rhel6
     - pkg.libsodium.0_4_5.rhel6
     - pkg.libyaml.0_1_3.rhel6
-    - pkg.openpgm.5_1_118.rhel6
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
@@ -44,7 +43,7 @@ include:
     - pkg.python-importlib.1_0_2.rhel6
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-impacket.0_9_14.rhel6
-    - pkg.python-jinja2.2_7_3.rhel6
+    - pkg.python-jinja2.2_8_1.rhel6
     - pkg.python-libcloud.0_20_0.rhel6
     - pkg.python-libnacl.1_4_3.rhel6
     - pkg.python-markupsafe.0_11.rhel6
@@ -52,7 +51,7 @@ include:
     - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pip.7_1_0.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
-    - pkg.python-raet.0_6_5.rhel6
+    - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
@@ -77,7 +76,7 @@ include:
     - pkg.python-crypto.2_6_1.rhel5
     - pkg.python-distribute.0_6_10.rhel5
     - pkg.python-ioflo.1_3_8.rhel5
-    - pkg.python-jinja2.2_5_5.rhel5
+    - pkg.python-jinja2.2_8_1.rhel5
     - pkg.python-msgpack.0_4_5.rhel5
     - pkg.python-libcloud.0_20_0.rhel5
     - pkg.python-libnacl.1_4_3.rhel5

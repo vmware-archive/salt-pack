@@ -2,10 +2,8 @@
 
 include:
     - pkg.libsodium.0_4_5.amzn
-    - pkg.openpgm.5_1_118.amzn
     - pkg.python-cherrypy.3_2_2.amzn
     - pkg.python-enum34.1_0.amzn
-    - pkg.python-futures.3_0_3.amzn
     - pkg.python-gnupg.0_3_8.amzn
     - pkg.python-impacket.0_9_14.amzn
     - pkg.python-ioflo.1_3_8.amzn

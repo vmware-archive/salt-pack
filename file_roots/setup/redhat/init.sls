@@ -32,7 +32,7 @@ os_pkgs_repo:
     - comments:
       - '## Fedora Project support for epel-release {{redhat_cfg.build_epel}}'
     - gpgcheck: 1
-    - gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{redhat_cfg.build_epel|upper}}'
+    - gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-{{redhat_cfg.build_epel|upper}}
     - require:
       - file: os_pkgs_repo_key
 

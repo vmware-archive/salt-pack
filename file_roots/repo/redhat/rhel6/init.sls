@@ -13,6 +13,7 @@ include:
     - use_passphrase: True
     - gnupghome: {{buildcfg.build_gpg_keydir}}
     - runas: {{buildcfg.build_runas}}
+    - timeout: 100.0
     - env:
         ORIGIN : 'SaltStack'
 {% endif %}

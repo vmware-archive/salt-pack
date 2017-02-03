@@ -12,7 +12,7 @@ include:
     - use_passphrase: True
     - gnupghome: {{buildcfg.build_gpg_keydir}}
     - runas: {{buildcfg.build_runas}}
-    - timeout: 100.0
+    - timeout: {{buildcfg.repo_sign_timeout}}
 {% endif %}
     - env:
         OPTIONS : 'ask-passphrase'

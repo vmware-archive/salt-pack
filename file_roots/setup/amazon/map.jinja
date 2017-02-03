@@ -4,6 +4,9 @@
 # Get the user under which to build
 {% set build_runas = pillar.get('build_runas', basecfg.build_runas) %}
 
+# Get the repo signing timeout
+{% repo_sign_timeout = basecfg.repo_sign_timeout %}
+
 # Get the release and architecture
 {% set build_release = pillar.get('build_release', 'amzn') %}
 {% set build_arch = pillar.get('build_arch', 'x86_64') %}

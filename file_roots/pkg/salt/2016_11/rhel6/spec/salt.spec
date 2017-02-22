@@ -378,7 +378,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/master
 %config(noreplace) %{_sysconfdir}/salt/master.d
 %config(noreplace) %{_sysconfdir}/salt/pki/master
-%config(noreplace) %{_var}/log/salt/master
 
 %files minion
 %defattr(-,root,root)
@@ -397,7 +396,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/proxy
 %config(noreplace) %{_sysconfdir}/salt/minion.d
 %config(noreplace) %{_sysconfdir}/salt/pki/minion
-%config(noreplace) %{_var}/log/salt/minion
 
 %files syndic
 %doc %{_mandir}/man1/salt-syndic.1*

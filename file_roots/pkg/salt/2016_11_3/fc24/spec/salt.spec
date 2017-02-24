@@ -29,16 +29,13 @@
 
 %global include_tests 0
 
-# Release Candidate
-%define __rc_ver
-
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 %define _salttesting SaltTesting
 %define _salttesting_ver 2016.10.26
 
 Name: salt
-Version: 2016.11.3%{?__rc_ver}
+Version: 2016.11.3
 Release: 1%{?dist}
 Summary: A parallel remote execution system
 
@@ -561,6 +558,9 @@ rm -rf %{buildroot}
 %changelog
 * Wed Feb 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-1
 - Update to feature release 2016.11.3
+
+* Tue Jan 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.2-1
+- Update to feature release 2016.11.2
 
 * Tue Dec 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.1-1
 - Update to feature release 2016.11.1

@@ -35,5 +35,6 @@
     - sources:
       - salt://{{slspath}}/sources/{{pkg_name}}-2.4-fix-pubkey-size-divisions.patch
       - salt://{{slspath}}/sources/{{pkg_name}}-2.4-optflags.patch
+      - salt://{{slspath}}/sources/CVE-2013-7459.patch
       - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

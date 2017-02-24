@@ -4,7 +4,7 @@ include:
 {% if buildcfg.build_release == 'rhel7' %}
 
     - pkg.libsodium.1_0_5.rhel7
-##    - pkg.openpgm.5_2_122.rhel7
+    - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.3_2_2.rhel7
     - pkg.python-crypto.2_6_1.rhel7
@@ -32,7 +32,6 @@ include:
     - pkg.babel.0_9_4.rhel6
     - pkg.libsodium.0_4_5.rhel6
     - pkg.libyaml.0_1_3.rhel6
-##    - pkg.openpgm.5_1_118.rhel6
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6

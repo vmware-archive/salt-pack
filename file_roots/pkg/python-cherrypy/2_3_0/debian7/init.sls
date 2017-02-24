@@ -4,19 +4,19 @@
 {% set pypi_name = 'cherrypy' %}
 {% set name = 'python-' ~ pypi_name %}
 {% set version = '2.3.0' %}
-{% set release_ver = '3' %}
+{% set release_ver = '4' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
-    - results:
+    - results: 
       - {{name}}_{{version}}-{{release_ver}}_all.deb
       - {{name}}_{{version}}.orig.tar.gz
       - {{name}}_{{version}}-{{release_ver}}.dsc
       - {{name}}_{{version}}-{{release_ver}}.diff.gz
     - force: {{force}}
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{name}}_{{version}}-{{release_ver}}.dsc
+    - spec: salt://{{slspath}}/spec/{{name}}_{{version}}-{{release_ver}}.dsc 
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
     - sources:

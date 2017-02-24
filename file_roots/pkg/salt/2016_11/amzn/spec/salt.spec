@@ -559,8 +559,14 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed Dec 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
+* Fri Feb 24 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
 - Update to feature release 2016.11.0 nightly build %{?__rc_ver}
+
+* Wed Feb 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-1
+- Update to feature release 2016.11.3
+
+* Tue Jan 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.2-1
+- Update to feature release 2016.11.2
 
 * Tue Dec 13 2016 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.1-1
 - Update to feature release 2016.11.1

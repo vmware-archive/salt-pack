@@ -36,7 +36,7 @@
 
 Name: salt
 Version: 2016.11.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -65,7 +65,7 @@ Source19: salt-minion.fish
 Source20: salt-run.fish
 Source21: salt-syndic.fish
 
-## Patch0:  salt-%%{version}-tests.patch
+Patch0:  salt-%{version}-output.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -240,7 +240,7 @@ of an agent (salt-minion) service.
 %setup -q -T -D -a 1
 
 cd %{name}-%{version}
-## %%patch0 -p1
+%patch0 -p1
 
 %build
 
@@ -556,6 +556,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Feb 24 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-2
+- Patch to correct use of OrderedDict on Redhat 5
+
 * Wed Feb 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-1
 - Update to feature release 2016.11.3
 

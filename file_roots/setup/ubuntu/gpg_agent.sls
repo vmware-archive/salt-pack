@@ -31,10 +31,25 @@
         max-cache-ttl 300
         max-cache-ttl-ssh 300
         ## debug-all
+        ## debug-pinentry
+        ## log-file /root/gpg-agent.log
+        ## verbose
 
         # PIN entry program
         ' ~ pinentry_text
 %}
+
+
+gpg_agent_stop:
+  cmd.run:
+    - name: killall gpg-agent
+    - use_vt: True
+    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
+
+
+gpg_dir_rm:
+  file.absent:
+    - name: {{gpg_key_dir}}
 
 
 manage_priv_key:
@@ -86,26 +101,12 @@ gpg_conf_file:
       - file: gpg_conf_file_exists
 
 
-gpg_agent_conf_file_rm:
-  file.absent:
-    - name: {{gpg_agent_config_file}}
-
-
 gpg_agent_conf_file:
   file.append:
     - name: {{gpg_agent_config_file}}
     - makedirs: True
     - text: |
         {{gpg_agent_text}}
-    - require:
-      - file: gpg_agent_conf_file_rm
-
-
-gpg_agent_stop:
-  cmd.run:
-    - name: killall gpg-agent
-    - use_vt: True
-    - onlyif: ps -ef | grep  gpg-agent | grep -v 'grep'
 
 
 gpg_agent_start:

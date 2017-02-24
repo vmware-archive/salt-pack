@@ -7,7 +7,7 @@
 Summary:	Cryptography library for Python
 Name:		python-crypto
 Version:	2.6.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
 License:	Public Domain and Python
 Group:		Development/Libraries
@@ -15,6 +15,7 @@ URL:		http://www.pycrypto.org/
 Source0:	http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-%{version}.tar.gz
 Patch0:		python-crypto-2.4-optflags.patch
 Patch1:		python-crypto-2.4-fix-pubkey-size-divisions.patch
+Patch2:		CVE-2013-7459.patch
 Provides:	pycrypto = %{version}-%{release}
 BuildRequires:	python2-devel >= 2.2, gmp-devel >= 4.1
 %if %{with_python3}
@@ -54,6 +55,9 @@ This is the Python 3 build of the package.
 
 # Fix divisions within benchmarking suite:
 %patch1 -p1
+
+# Fix CVE 2013-7459
+%patch2 -p1
 
 # Prepare python3 build (setup.py doesn't run 2to3 on pct-speedtest.py)
 %if %{with_python3}
@@ -123,6 +127,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Feb  1 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.1-2
+- Update to 2.6.1
+  - Raise warning when IV is used with ECB or CTR and ignored IV in that case (CVE-2013-7459)
+
 * Fri Oct 18 2013 Paul Howarth <paul@city-fan.org> - 2.6.1-1
 - Update to 2.6.1
   - Fix PRNG not correctly reseeded in some situations (CVE-2013-1445)

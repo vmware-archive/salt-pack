@@ -116,7 +116,7 @@ pkgbuild_registry:
       version: 3.2.2-4
       noarch: True
     python-crypto:
-      version: 2.6.1-1
+      version: 2.6.1-2
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -248,7 +248,7 @@ pkgbuild_registry:
       version: 3.2.2-4
       noarch: True
     python-crypto:
-      version: 2.6.1-2
+      version: 2.6.1-3
     python-crypto-salt:
       version: 2.6.1-4
     python-enum34:

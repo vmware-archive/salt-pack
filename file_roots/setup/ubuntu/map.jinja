@@ -5,6 +5,9 @@
 {# {% set build_runas = pillar.get('build_runas', basecfg.build_runas) %} #}
 {% set build_runas = 'root' %}
 
+# Get the repo signing timeout
+{% set repo_sign_timeout = basecfg.repo_sign_timeout %}
+
 # Get the release and architecture
 {% set build_release = pillar.get('build_release', 'ubuntu1604') %}
 {% set build_arch = pillar.get('build_arch', 'amd64') %}

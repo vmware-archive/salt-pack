@@ -439,40 +439,61 @@ rm -rf %{buildroot}
 %preun master
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-master stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-master
   fi
 
 %preun syndic
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-syndic stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-syndic
   fi
 
 %preun minion
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-minion stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-minion
+  fi
+
+%preun api
+  if [ $1 -eq 0 ] ; then
+      /sbin/service salt-api stop >/dev/null 2>&1
   fi
 
 %post master
-  /sbin/chkconfig --add salt-master
+  if [ "$1" -ge "2" ] ; then
+      /sbin/service salt-master condrestart >/dev/null 2>&1 || :
+  fi
+
+%post syndic
+  if [ "$1" -ge "2" ] ; then
+      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
+  fi
 
 %post minion
-  /sbin/chkconfig --add salt-minion
+  if [ "$1" -ge "2" ] ; then
+      /sbin/service salt-minion condrestart >/dev/null 2>&1 || :
+  fi
+
+%post api
+  if [ "$1" -ge "2" ] ; then
+      /sbin/service salt-api condrestart >/dev/null 2>&1 || :
+  fi
 
 %postun master
   if [ "$1" -ge "1" ] ; then
       /sbin/service salt-master condrestart >/dev/null 2>&1 || :
   fi
 
-#%%postun syndic
-#  if [ "$1" -ge "1" ] ; then
-#      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
-#  fi
+%postun syndic
+  if [ "$1" -ge "1" ] ; then
+      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
+  fi
 
 %postun minion
   if [ "$1" -ge "1" ] ; then
       /sbin/service salt-minion condrestart >/dev/null 2>&1 || :
+  fi
+
+%postun api
+  if [ "$1" -ge "1" ] ; then
+      /sbin/service salt-api condrestart >/dev/null 2>&1 || :
   fi
 
 %else
@@ -510,6 +531,17 @@ rm -rf %{buildroot}
   fi
 %endif
 
+%preun api
+%if 0%{?systemd_preun:1}
+  %systemd_preun salt-api.service
+%else
+  if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /bin/systemctl --no-reload disable salt-api.service > /dev/null 2>&1 || :
+    /bin/systemctl stop salt-api.service > /dev/null 2>&1 || :
+  fi
+%endif
+
 %post master
 %if 0%{?systemd_post:1}
   if [ $1 -gt 1 ] ; then
@@ -521,12 +553,34 @@ rm -rf %{buildroot}
   /bin/systemctl daemon-reload &>/dev/null || :
 %endif
 
+%post syndic
+%if 0%{?systemd_post:1}
+  if [ $1 -gt 1 ] ; then
+    /usr/bin/systemctl try-restart salt-syndic.service >/dev/null 2>&1 || :
+  else
+    %systemd_post salt-syndic.service
+  fi
+%else
+  /bin/systemctl daemon-reload &>/dev/null || :
+%endif
+
 %post minion
 %if 0%{?systemd_post:1}
   if [ $1 -gt 1 ] ; then
     /usr/bin/systemctl try-restart salt-minion.service >/dev/null 2>&1 || :
   else
     %systemd_post salt-minion.service
+  fi
+%else
+  /bin/systemctl daemon-reload &>/dev/null || :
+%endif
+
+%post api
+%if 0%{?systemd_post:1}
+  if [ $1 -gt 1 ] ; then
+    /usr/bin/systemctl try-restart salt-api.service >/dev/null 2>&1 || :
+  else
+    %systemd_post salt-api.service
   fi
 %else
   /bin/systemctl daemon-reload &>/dev/null || :
@@ -556,11 +610,22 @@ rm -rf %{buildroot}
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-minion.service &>/dev/null || :
 %endif
 
+%postun api
+%if 0%{?systemd_post:1}
+  %systemd_postun_with_restart salt-api.service
+%else
+  /bin/systemctl daemon-reload &>/dev/null
+  [ $1 -gt 0 ] && /bin/systemctl try-restart salt-api.service &>/dev/null || :
+%endif
 %endif
 
 %changelog
-* Fri Feb 24 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
+* Wed Mar 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
 - Update to feature release 2016.11.0 nightly build %{?__rc_ver}
+
+* Wed Mar 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-2
+- Updated to allow for pre and post processing for salt-syndic and salt-api
+- Removed auto-enable for install of salt-minion and salt-master
 
 * Wed Feb 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-1
 - Update to feature release 2016.11.3

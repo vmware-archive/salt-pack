@@ -99,7 +99,7 @@ stop() {
             RETVAL=1
         fi
     else
-        killproc $PROCESS
+        killproc -d 10 $PROCESS
         RETVAL=$?
         echo
         [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$SERVICE

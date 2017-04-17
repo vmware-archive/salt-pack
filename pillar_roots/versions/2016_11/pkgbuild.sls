@@ -113,8 +113,10 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 3.2.2-4
+      version: 5.6.0-1
       noarch: True
+      build_deps:
+        - python-mock
     python-crypto:
       version: 2.6.1-2
     python-enum34:
@@ -139,6 +141,11 @@ pkgbuild_registry:
         - libsodium
     python-msgpack:
       version: 0.4.6-1
+    python-mock:
+      version: 1.0.1-9
+      noarch: True
+      results:
+        - python2-mock
     python-pyzmq:
       name: python-zmq
       version: 15.3.0-2
@@ -243,8 +250,10 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 3.2.2-4
+      version: 5.6.0-1
       noarch: True
+      build_deps:
+        - python-mock
     python-crypto:
       version: 2.6.1-3
     python-enum34:
@@ -280,6 +289,11 @@ pkgbuild_registry:
       version: 0.11-10
     python-msgpack:
       version: 0.4.6-1
+    python-mock:
+      version: 1.0.1-10
+      noarch: True
+      results:
+        - python2-mock
     python-ordereddict:
       version: 1.1-2
       noarch: True

@@ -1,0 +1,31 @@
+diff -ur a/setup.py b/setup.py
+--- a/setup.py	2017-04-17 11:28:14.606388942 -0600
++++ b/setup.py	2017-04-17 11:29:08.541762653 -0600
+@@ -75,7 +75,6 @@
+ cp_license = "BSD"
+ packages = [
+     "cherrypy", "cherrypy.lib",
+-    "cherrypy.tutorial", "cherrypy.test",
+     "cherrypy.process",
+     "cherrypy.scaffold",
+     "cherrypy.wsgiserver",
+@@ -91,19 +90,6 @@
+                            ]),
+     ('cherrypy/scaffold/static', [
+         'cherrypy/scaffold/static/made_with_cherrypy_small.png']),
+-    ('cherrypy/test', ['cherrypy/test/style.css',
+-                       'cherrypy/test/test.pem',
+-                       ]),
+-    ('cherrypy/test/static', ['cherrypy/test/static/index.html',
+-                              'cherrypy/test/static/dirback.jpg', ]),
+-    ('cherrypy/tutorial',
+-        [
+-            'cherrypy/tutorial/tutorial.conf',
+-            'cherrypy/tutorial/README.txt',
+-            'cherrypy/tutorial/pdf_file.pdf',
+-            'cherrypy/tutorial/custom_error.html',
+-        ]
+-     ),
+ ]
+ scripts = ["cherrypy/cherryd"]
+ 

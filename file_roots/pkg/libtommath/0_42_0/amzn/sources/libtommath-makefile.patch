@@ -1,0 +1,37 @@
+--- libtommath-0.41.orig/makefile.shared	2007-03-10 16:45:11.000000000 -0700
++++ libtommath-0.41/makefile.shared	2007-06-27 22:07:28.000000000 -0600
+@@ -10,13 +10,15 @@
+ ifndef IGNORE_SPEED
+ 
+ #for speed 
+-CFLAGS += -O3 -funroll-loops
++# commented out for building in Fedora
++#CFLAGS += -O3 -funroll-loops
+ 
+ #for size 
+ #CFLAGS += -Os
+ 
+ #x86 optimizations [should be valid for any GCC install though]
+-CFLAGS  += -fomit-frame-pointer
++# commented out for rpm building in Fedora
++#CFLAGS  += -fomit-frame-pointer
+ 
+ endif
+ 
+@@ -48,8 +50,14 @@
+ #INCPATH-The directory to install the header files for libtommath.
+ #DATAPATH-The directory to install the pdf docs.
+ DESTDIR=
+-LIBPATH=/usr/lib
+-INCPATH=/usr/include
++
++ifndef LIBPATH
++   LIBPATH=/usr/lib
++endif
++
++ifndef INCPATH
++   INCPATH=/usr/include
++endif
+ DATAPATH=/usr/share/doc/libtommath/pdf
+ 
+ OBJECTS=bncore.o bn_mp_init.o bn_mp_clear.o bn_mp_exch.o bn_mp_grow.o bn_mp_shrink.o \

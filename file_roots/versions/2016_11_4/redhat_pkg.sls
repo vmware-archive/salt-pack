@@ -4,10 +4,13 @@ include:
 {% if buildcfg.build_release == 'rhel7' %}
 
     - pkg.libsodium.1_0_5.rhel7
+    - pkg.libtomcrypt.1_17.rhel7
+    - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
     - pkg.python-crypto.2_6_1.rhel7
+    - pkg.python-pycryptodome.3_4_3.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
     - pkg.python-impacket.0_9_14.rhel7
@@ -32,6 +35,8 @@ include:
 
     - pkg.babel.0_9_4.rhel6
     - pkg.libsodium.0_4_5.rhel6
+    - pkg.libtomcrypt.1_17.rhel6
+    - pkg.libtommath.0_42_0.rhel6
     - pkg.libyaml.0_1_3.rhel6
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
@@ -39,9 +44,10 @@ include:
     - pkg.python-chardet.2_2_1.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
     - pkg.python-crypto.2_6_1.rhel6
+    - pkg.python-pycryptodome.3_4_3.rhel6
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
-    - pkg.python-importlib.1_0_2.rhel6
+    - pkg.python-importlib.1_0_2.6
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_8_1.rhel6

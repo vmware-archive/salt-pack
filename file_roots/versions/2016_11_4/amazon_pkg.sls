@@ -2,7 +2,10 @@
 
 include:
     - pkg.libsodium.0_4_5.amzn
+    - pkg.libtomcrypt.1_17.amzn
+    - pkg.libtommath.0_42_0.amzn
     - pkg.python-cherrypy.3_2_2.amzn
+    - pkg.python-pycryptodome.3_4_3.amzn
     - pkg.python-enum34.1_0.amzn
     - pkg.python-gnupg.0_3_8.amzn
     - pkg.python-impacket.0_9_14.amzn

@@ -104,6 +104,16 @@ pkgbuild_registry:
       results:
         - libsodium
         - libsodium-devel
+    libtomcrypt:
+      version: 1.17-23
+      results:
+        - libtomcrypt
+        - libtomcrypt-devel
+    libtommath:
+      version: 0.42.0-4
+      results:
+        - libtommath
+        - libtommath-devel
     openpgm:
       version: 5.2.122-2
       results:
@@ -119,6 +129,15 @@ pkgbuild_registry:
         - python-mock
     python-crypto:
       version: 2.6.1-2
+    python-pycryptodome:
+      version: 3.4.3-1
+      results:
+        - python2-pycryptodomex
+        - python3-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -183,7 +202,7 @@ pkgbuild_registry:
       version: 2016.11.4-1
       noarch: True
       build_deps:
-        - python-crypto
+        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests
@@ -225,6 +244,16 @@ pkgbuild_registry:
         - libsodium
         - libsodium-debuginfo
         - libsodium-devel
+    libtomcrypt:
+      version: 1.17-23
+      results:
+        - libtomcrypt
+        - libtomcrypt-devel
+    libtommath:
+      version: 0.42.0-4
+      results:
+        - libtommath
+        - libtommath-devel
     libyaml:
       version: 0.1.3-4
       results:
@@ -256,6 +285,15 @@ pkgbuild_registry:
         - python-mock
     python-crypto:
       version: 2.6.1-3
+    python-pycryptodome:
+      version: 3.4.3-1
+      results:
+        - python2-pycryptodomex
+        - python3-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -341,7 +379,7 @@ pkgbuild_registry:
       version: 2016.11.4-1
       noarch: True
       build_deps:
-        - python-crypto
+        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests
@@ -639,6 +677,16 @@ pkgbuild_registry:
         - zeromq-devel
 
   amzn:
+    libtomcrypt:
+      version: 1.17-23
+      results:
+        - libtomcrypt
+        - libtomcrypt-devel
+    libtommath:
+      version: 0.42.0-4
+      results:
+        - libtommath
+        - libtommath-devel
     libsodium:
       version: 0.4.5-3
       results:
@@ -649,6 +697,15 @@ pkgbuild_registry:
       name: python27-cherrypy
       version: 3.2.2-5
       noarch: True
+    python-pycryptodome:
+      version: 3.4.3-1
+      results:
+        - python27-pycryptodomex
+        - python3-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-enum34:
       name: python27-enum34
       version: 1.0-5
@@ -702,6 +759,7 @@ pkgbuild_registry:
       version: 2016.11.4-1
       noarch: True
       build_deps:
+        - python-pycryptodome
         - python-msgpack
         - python-pyzmq
         - python-tornado

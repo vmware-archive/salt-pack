@@ -1,0 +1,34 @@
+--- libtomcrypt-1.17.orig/makefile.shared
++++ libtomcrypt-1.17/makefile.shared
+@@ -248,15 +248,16 @@
+ 
+ objs: $(OBJECTS)
+ 
+-$(LIBNAME): $(OBJECTS) testprof/$(LIBTEST)
++$(LIBNAME): $(OBJECTS)
+ 	libtool --silent --mode=link gcc $(CFLAGS) `find . -type f | grep "[.]lo" | grep "src/" | xargs` $(EXTRALIBS) -o $(LIBNAME) -rpath $(LIBPATH) -version-info $(VERSION)
+ 
+ install: $(LIBNAME)
+ 	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(LIBPATH)
+-	cd testprof ; CFLAGS="$(CFLAGS)" GROUP=$(GROUP) USER=$(USER) VERSION=$(VERSION) LIBPATH=$(LIBPATH) LIBTEST=$(LIBTEST) LIBTEST_S=$(LIBTEST_S) DESTDIR=$(DESTDIR) make -f makefile.shared install
+ 	libtool --silent --mode=install install -c libtomcrypt.la $(DESTDIR)$(LIBPATH)/libtomcrypt.la
+ 	install -d -g $(GROUP) -o $(USER) $(DESTDIR)$(INCPATH)
+ 	install -g $(GROUP) -o $(USER) $(HEADERS) $(DESTDIR)$(INCPATH)
++	install -d $(DESTDIR)$(LIBPATH)/pkgconfig
++	install -m 0644 -g $(GROUP) -o $(USER) libtomcrypt.pc $(DESTDIR)$(LIBPATH)/pkgconfig/libtomcrypt.pc
+ 
+ #This rule makes the hash program included with libtomcrypt
+ hashsum: library
+--- libtomcrypt-1.17.orig/libtomcrypt.pc
++++ libtomcrypt-1.17/libtomcrypt.pc
+@@ -0,0 +1,10 @@
++prefix=/usr
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib
++includedir=${prefix}/include
++
++Name: LibTomCrypt
++Description: public domain open source cryptographic toolkit
++Version: 1.17
++Libs: -L${libdir} -ltomcrypt
++Cflags: -I${includedir}

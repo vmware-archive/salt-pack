@@ -39,7 +39,7 @@
 
 Name: salt
 Version: 2016.11.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -99,7 +99,7 @@ Requires: python26-six
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python-tornado >= 4.2.1
 BuildRequires: python-futures >= 2.0
-BuildRequires: python2-pycryptodomex >= 3.4.3
+BuildRequires: python-crypto >= 2.6.1
 BuildRequires: python-jinja2
 BuildRequires: python-msgpack > 0.3
 BuildRequires: python-pip
@@ -123,7 +123,7 @@ BuildRequires: python-argparse
 %endif
 
 BuildRequires: python%{?__python_ver}-devel
-Requires: python2-pycryptodomex >= 3.4.3
+Requires: python%{?__python_ver}-crypto >= 2.6.1
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack > 0.3
 %if ( "0%{?dist}" == "0.amzn1" )
@@ -612,6 +612,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Apr 20 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-2
+- Use python-crypto on fedora platforms till pycryptodomex becomes available
+
 * Wed Apr 19 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-1
 - Update to feature release 2016.11.4 and use of pycryptodomex
 

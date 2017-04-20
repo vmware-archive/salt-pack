@@ -1,0 +1,53 @@
+From 445dfa67a64dcd30067dab823f6bae31d1019c1e Mon Sep 17 00:00:00 2001
+From: Paul Howarth <paul@city-fan.org>
+Date: Tue, 15 Apr 2014 11:25:18 +0100
+Subject: [PATCH] des.c: Add support for two-key Triple-DES
+
+Add two-key 3DES support, needed by pycrypto.
+
+This commit is based on the one for the bundled libtomcrypt 1.16
+code in pycrypto:
+
+https://github.com/dlitz/pycrypto/commit/65085f16
+---
+ src/ciphers/des.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/src/ciphers/des.c b/src/ciphers/des.c
+index af3a4d0..0034c80 100644
+--- a/src/ciphers/des.c
++++ b/src/ciphers/des.c
+@@ -1562,17 +1562,27 @@ int des3_setup(const unsigned char *key, int keylen, int num_rounds, symmetric_k
+         return CRYPT_INVALID_ROUNDS;
+     }
+ 
+-    if (keylen != 24) {
++    if (keylen != 24 && keylen != 16) {
+         return CRYPT_INVALID_KEYSIZE;
+     }
+ 
+     deskey(key,    EN0, skey->des3.ek[0]);
+     deskey(key+8,  DE1, skey->des3.ek[1]);
+-    deskey(key+16, EN0, skey->des3.ek[2]);
++    if (keylen == 24) {
++        deskey(key+16, EN0, skey->des3.ek[2]);
++    } else {
++        /* two-key 3DES: K3=K1 */
++        deskey(key, EN0, skey->des3.ek[2]);
++    }
+ 
+     deskey(key,    DE1, skey->des3.dk[2]);
+     deskey(key+8,  EN0, skey->des3.dk[1]);
+-    deskey(key+16, DE1, skey->des3.dk[0]);
++    if (keylen == 24) {
++        deskey(key+16, DE1, skey->des3.dk[0]);
++    } else {
++        /* two-key 3DES: K3=K1 */
++        deskey(key, DE1, skey->des3.dk[0]);
++    }
+ 
+     return CRYPT_OK;
+ }
+-- 
+1.9.0
+

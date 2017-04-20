@@ -19,7 +19,7 @@ include:
     - pkg.zeromq.4_0_5.debian8
 
 {% else %}
-    - pkg.bsdmainutils.9_0_6.debian8
+##    - pkg.bsdmainutils.9_0_6.debian8
     - pkg.libsodium.1_0_3.debian8
     - pkg.python-cherrypy.2_3_0.debian8
     - pkg.python-croniter.0_3_4.debian8

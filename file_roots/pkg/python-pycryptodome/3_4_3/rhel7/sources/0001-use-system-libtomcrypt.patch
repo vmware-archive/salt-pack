@@ -1,0 +1,62 @@
+From 74286dbffb29a6f5fbaef52c3a044daa807a5979 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Sun, 28 Aug 2016 09:23:34 +0200
+Subject: [PATCH] use system libtomcrypt
+
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+---
+ setup.py      | 6 ++++--
+ src/DES.c     | 2 +-
+ src/Salsa20.c | 4 +---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index a0077a3..0e3d65a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -551,10 +551,12 @@ setup(
+             include_dirs=['src/'],
+             sources=["src/CAST.c"]),
+         Extension("Crypto.Cipher._raw_des",
+-            include_dirs=['src/', 'src/libtom/'],
++            include_dirs=['src/'],
++            libraries=['tomcrypt'],
+             sources=["src/DES.c"]),
+         Extension("Crypto.Cipher._raw_des3",
+-            include_dirs=['src/', 'src/libtom/'],
++            include_dirs=['src/'],
++            libraries=['tomcrypt'],
+             sources=["src/DES3.c"]),
+         Extension("Crypto.Util._galois",
+             include_dirs=['src/'],
+diff --git a/src/DES.c b/src/DES.c
+index d55b3b1..e1d20f1 100644
+--- a/src/DES.c
++++ b/src/DES.c
+@@ -39,7 +39,7 @@ FAKE_INIT(raw_des3)
+ 
+ /* Include the actial DES implementation */
+ #define LTC_NO_PROTOTYPES
+-#include "libtom/tomcrypt_des.c"
++#include <tomcrypt.h>
+ 
+ typedef struct {
+     symmetric_key sk;
+diff --git a/src/Salsa20.c b/src/Salsa20.c
+index 42e4cc9..ea2d133 100644
+--- a/src/Salsa20.c
++++ b/src/Salsa20.c
+@@ -29,9 +29,7 @@
+ 
+ FAKE_INIT(Salsa20)
+ 
+-#include "libtom/tomcrypt_cfg.h"
+-#include "libtom/tomcrypt_custom.h"
+-#include "libtom/tomcrypt_macros.h"
++#include <tomcrypt.h>
+ 
+ #define ROUNDS 20
+ #define MAX_KEY_SIZE 32
+-- 
+2.9.3
+

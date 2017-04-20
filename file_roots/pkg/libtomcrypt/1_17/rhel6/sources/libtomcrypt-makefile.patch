@@ -1,0 +1,17 @@
+--- libtomcrypt-1.17.orig/makefile.shared	2007-05-12 08:46:25.000000000 -0600
++++ libtomcrypt-1.17/makefile.shared	2007-06-27 21:56:29.000000000 -0600
+@@ -29,10 +29,12 @@
+ ifndef IGNORE_SPEED
+ 
+ # optimize for SPEED
+-CFLAGS += -O3 -funroll-loops
++#   removed for building in Fedora
++#CFLAGS += -O3 -funroll-loops
+ 
+ # add -fomit-frame-pointer.  hinders debugging!
+-CFLAGS += -fomit-frame-pointer
++#   removed for building in Fedora
++#CFLAGS += -fomit-frame-pointer
+ 
+ # optimize for SIZE
+ #CFLAGS += -Os -DLTC_SMALL_CODE

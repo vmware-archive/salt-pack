@@ -612,8 +612,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Fri Apr 14 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-1
-- Update to feature release 2016.11.1
+* Wed Apr 19 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-1
+- Update to feature release 2016.11.4 for Amazon
 
 * Mon Mar 20 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-2
 - Updated to allow for pre and post processing for salt-syndic and salt-api

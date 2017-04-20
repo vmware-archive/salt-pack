@@ -34,7 +34,7 @@ lambda-epll:
 salt-repo-key:
   file.managed:
     - name: /etc/pki/rpm-gpg/SALTSTACK-GPG-KEY.pub
-    - source: http://repo.saltstack.com/dev/yum/amazon/2016.09/x86_64/latest/SALTSTACK-GPG-KEY.pub
+    - source: http://repo.saltstack.com/yum/amazon/2016.09/x86_64/latest/SALTSTACK-GPG-KEY.pub
     - source_hash: md5=9e0d77c16ba1fe57dfd7f1c5c2130438
     - dir_mode: 755
     - mode: 644
@@ -46,7 +46,7 @@ salt-repo:
     - humanname: salt-repo
     - comments:
       - '## SaltStack support for Amazon Linux'
-    - baseurl: http://repo.saltstack.com/dev/yum/amazon/2016.09/x86_64/latest
+    - baseurl: http://repo.saltstack.com/yum/amazon/2016.09/x86_64/latest
     - gpgcheck: 1
     - gpgkey: file:///etc/pki/rpm-gpg/SALTSTACK-GPG-KEY.pub
     - priority: 10

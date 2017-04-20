@@ -9,7 +9,7 @@ include:
     - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
-    - pkg.python-crypto.2_6_1.rhel7
+##    - pkg.python-crypto.2_6_1.rhel7
     - pkg.python-pycryptodome.3_4_3.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
@@ -43,11 +43,11 @@ include:
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
     - pkg.python-chardet.2_2_1.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
-    - pkg.python-crypto.2_6_1.rhel6
+##    - pkg.python-crypto.2_6_1.rhel6
     - pkg.python-pycryptodome.3_4_3.rhel6
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
-    - pkg.python-importlib.1_0_2.6
+    - pkg.python-importlib.1_0_2.rhel6
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_8_1.rhel6
@@ -67,7 +67,7 @@ include:
     - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2016_11_4.rhel6
-    - pkg.winexe.1_1.rhel6
+##    - pkg.winexe.1_1.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 

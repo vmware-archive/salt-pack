@@ -677,16 +677,6 @@ pkgbuild_registry:
         - zeromq-devel
 
   amzn:
-    libtomcrypt:
-      version: 1.17-23
-      results:
-        - libtomcrypt
-        - libtomcrypt-devel
-    libtommath:
-      version: 0.42.0-4
-      results:
-        - libtommath
-        - libtommath-devel
     libsodium:
       version: 0.4.5-3
       results:
@@ -697,15 +687,6 @@ pkgbuild_registry:
       name: python27-cherrypy
       version: 3.2.2-5
       noarch: True
-    python-pycryptodome:
-      version: 3.4.3-1
-      results:
-        - python27-pycryptodomex
-        - python3-pycryptodomex
-      build_deps:
-        - libtommath
-        - libtomcrypt
-        - libtomcrypt-devel
     python-enum34:
       name: python27-enum34
       version: 1.0-5
@@ -759,7 +740,6 @@ pkgbuild_registry:
       version: 2016.11.4-1
       noarch: True
       build_deps:
-        - python-pycryptodome
         - python-msgpack
         - python-pyzmq
         - python-tornado

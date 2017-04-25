@@ -137,7 +137,7 @@ build_pbldrc:
             '--variant=buildd' 
             '--keyring' "${HOME}/.gnupg/pubring.gpg"
         )
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi"
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ jessie main contrib non-free rpi"
 {% else %}
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
 {% endif %}

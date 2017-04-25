@@ -104,6 +104,16 @@ pkgbuild_registry:
       results:
         - libsodium
         - libsodium-devel
+    libtomcrypt:
+      version: 1.17-23
+      results:
+        - libtomcrypt
+        - libtomcrypt-devel
+    libtommath:
+      version: 0.42.0-4
+      results:
+        - libtommath
+        - libtommath-devel
     openpgm:
       version: 5.2.122-2
       results:
@@ -113,10 +123,21 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 3.2.2-4
+      version: 5.6.0-1
       noarch: True
+      build_deps:
+        - python-mock
     python-crypto:
       version: 2.6.1-2
+    python-pycryptodome:
+      version: 3.4.3-1
+      results:
+        - python2-pycryptodomex
+        - python3-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -139,6 +160,11 @@ pkgbuild_registry:
         - libsodium
     python-msgpack:
       version: 0.4.6-1
+    python-mock:
+      version: 1.0.1-9
+      noarch: True
+      results:
+        - python2-mock
     python-pyzmq:
       name: python-zmq
       version: 15.3.0-2
@@ -176,7 +202,7 @@ pkgbuild_registry:
       version: 2016.11.0tobereplaced_date-0
       noarch: True
       build_deps:
-        - python-crypto
+        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests
@@ -218,6 +244,16 @@ pkgbuild_registry:
         - libsodium
         - libsodium-debuginfo
         - libsodium-devel
+    libtomcrypt:
+      version: 1.17-23
+      results:
+        - libtomcrypt
+        - libtomcrypt-devel
+    libtommath:
+      version: 0.42.0-4
+      results:
+        - libtommath
+        - libtommath-devel
     libyaml:
       version: 0.1.3-4
       results:
@@ -243,10 +279,21 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 3.2.2-4
+      version: 5.6.0-1
       noarch: True
+      build_deps:
+        - python-mock
     python-crypto:
       version: 2.6.1-3
+    python-pycryptodome:
+      version: 3.4.3-1
+      results:
+        - python2-pycryptodomex
+        - python3-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -280,6 +327,11 @@ pkgbuild_registry:
       version: 0.11-10
     python-msgpack:
       version: 0.4.6-1
+    python-mock:
+      version: 1.0.1-10
+      noarch: True
+      results:
+        - python2-mock
     python-ordereddict:
       version: 1.1-2
       noarch: True
@@ -327,7 +379,7 @@ pkgbuild_registry:
       version: 2016.11.0tobereplaced_date-0
       noarch: True
       build_deps:
-        - python-crypto
+        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests

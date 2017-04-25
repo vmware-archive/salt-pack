@@ -1,0 +1,107 @@
+--- source/async.c
++++ source/async.c
+@@ -13,7 +13,7 @@
+ #include <util/data_blob.h>
+ #include <util/time.h>
+ #include <smb_cliraw.h>
+-#include <util/debug.h>
++#include "debug.h"
+ 
+ #include "async.h"
+ 
+--- /dev/null
++++ source/debug.c
+@@ -0,0 +1,13 @@
++#include <stdio.h>
++#include <stdarg.h>
++
++int lcl_debug_level = 0;
++
++int dbgtext(const char *format, ...) 
++{
++	va_list args;
++	va_start(args,format);
++	vprintf(format,args);
++	va_end(args);
++	return 0;
++};
+--- /dev/null
++++ source/debug.h
+@@ -0,0 +1,35 @@
++#define MAX_DEBUG_LEVEL 1000
++
++#if (__GNUC__ >= 3)
++/* the strange !! is to ensure that __builtin_expect() takes either 0 or 1
++ *    as its first argument */
++#ifndef likely
++#define likely(x)   __builtin_expect(!!(x), 1)
++#endif
++#ifndef unlikely
++#define unlikely(x) __builtin_expect(!!(x), 0)
++#endif
++#else
++#ifndef likely
++#define likely(x) (x)
++#endif
++#ifndef unlikely
++#define unlikely(x) (x)
++#endif
++#endif
++
++extern int lcl_debug_level;
++
++#define CHECK_DEBUGLVL( level ) \
++  ( ((level) <= MAX_DEBUG_LEVEL) && \
++      unlikely(lcl_debug_level >= (level)))
++
++#define DEBUG( level, body ) \
++ (void)( ((level) <= MAX_DEBUG_LEVEL) && \
++ unlikely(lcl_debug_level >= (level))           \
++  && (dbgtext body) )
++
++#define DEBUGLVL( level ) \
++  ( CHECK_DEBUGLVL(level) )
++
++int dbgtext( const char *, ... );
+--- source/svcinstall.c
++++ source/svcinstall.c
+@@ -14,7 +14,7 @@
+ #include <smb_cliraw.h>
+ #include <smb_cli.h>
+ #include <smb_composite.h>
+-#include <util/debug.h>
++#include "debug.h"
+ 
+ #include "winexesvc.h"
+ #include "svcinstall.h"
+--- source/winexe.c
++++ source/winexe.c
+@@ -16,7 +16,7 @@
+ #include <util/memory.h>
+ #include <credentials.h>
+ #include <util/time.h>
+-#include <util/debug.h>
++#include "debug.h"
+ #include <smb_cliraw.h>
+ #include <smb_cli.h>
+ #include <dcerpc.h>
+--- source/wscript_build
++++ source/wscript_build
+@@ -33,7 +33,7 @@ bld(name="bin2c", rule='${SRC[0].abspath()} winexesvc64_exe ${SRC[1]} > ${TGT} 2
+ 
+ if bld.env.ENABLE_SHARED:
+     bld.program(target='winexe',
+-        source='winexe.c svcinstall.c async.c winexesvc32_exe.c winexesvc64_exe.c',
++        source='winexe.c svcinstall.c async.c debug.c winexesvc32_exe.c winexesvc64_exe.c',
+         includes=bld.env.SAMBA_INCS,
+         cflags='-D_FORTIFY_SOURCE=2 -Wall',
+         linkflags=['-Wl,-z,relro', '-Wl,-z,now'],
+@@ -45,7 +45,7 @@ if bld.env.ENABLE_SHARED:
+ 
+ if bld.env.SAMBA_DIR:
+     bld.program(target='winexe-static',
+-        source='winexe.c svcinstall.c async.c winexesvc32_exe.c winexesvc64_exe.c',
++        source='winexe.c svcinstall.c async.c debug.c winexesvc32_exe.c winexesvc64_exe.c',
+         includes=bld.env.SAMBA_DIR + '/bin/default/include/public',
+         cflags='-pthread -include ' + bld.env.SAMBA_DIR + '/bin/default/include/config.h',
+         linkflags='-pthread',

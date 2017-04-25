@@ -33,5 +33,8 @@
 
     - sources:
       - salt://{{slspath}}/sources/winexe-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/samba42-debug.patch
+      - salt://{{slspath}}/sources/samba4-libs.patch
+
 {% endif %}
 

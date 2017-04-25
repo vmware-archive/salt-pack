@@ -397,7 +397,7 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     winexe:
-      version: 1.1-b787d2
+      version: 1.1-1b787d2.2
       results:
         - winexe
         - winexe-debuginfo

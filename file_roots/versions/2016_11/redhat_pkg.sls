@@ -4,10 +4,13 @@ include:
 {% if buildcfg.build_release == 'rhel7' %}
 
     - pkg.libsodium.1_0_5.rhel7
+    - pkg.libtomcrypt.1_17.rhel7
+    - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
-    - pkg.python-cherrypy.3_2_2.rhel7
-    - pkg.python-crypto.2_6_1.rhel7
+    - pkg.python-cherrypy.5_6_0.rhel7
+##    - pkg.python-crypto.2_6_1.rhel7
+    - pkg.python-pycryptodome.3_4_3.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
     - pkg.python-impacket.0_9_14.rhel7
@@ -15,6 +18,7 @@ include:
     - pkg.python-libcloud.0_20_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
     - pkg.python-msgpack.0_4_6.rhel7
+    - pkg.python-mock.1_0_1.rhel7
     - pkg.python-pyzmq.15_3_0.rhel7
     - pkg.python-raet.0_6_5.rhel7
     - pkg.python-requests.2_6_0.rhel7
@@ -31,13 +35,16 @@ include:
 
     - pkg.babel.0_9_4.rhel6
     - pkg.libsodium.0_4_5.rhel6
+    - pkg.libtomcrypt.1_17.rhel6
+    - pkg.libtommath.0_42_0.rhel6
     - pkg.libyaml.0_1_3.rhel6
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
     - pkg.python-chardet.2_2_1.rhel6
-    - pkg.python-cherrypy.3_2_2.rhel6
-    - pkg.python-crypto.2_6_1.rhel6
+    - pkg.python-cherrypy.5_6_0.rhel6
+##    - pkg.python-crypto.2_6_1.rhel6
+    - pkg.python-pycryptodome.3_4_3.rhel6
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
     - pkg.python-importlib.1_0_2.rhel6
@@ -48,6 +55,7 @@ include:
     - pkg.python-libnacl.1_4_3.rhel6
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6
+    - pkg.python-mock.1_0_1.rhel6
     - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pip.7_1_0.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6

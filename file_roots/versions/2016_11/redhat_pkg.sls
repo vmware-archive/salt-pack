@@ -9,7 +9,7 @@ include:
     - pkg.openpgm.5_2_122.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
-##    - pkg.python-crypto.2_6_1.rhel7
+    - pkg.python-crypto.2_6_1.rhel7
     - pkg.python-pycryptodome.3_4_3.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
@@ -43,7 +43,7 @@ include:
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
     - pkg.python-chardet.2_2_1.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
-##    - pkg.python-crypto.2_6_1.rhel6
+    - pkg.python-crypto.2_6_1.rhel6
     - pkg.python-pycryptodome.3_4_3.rhel6
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6

@@ -147,6 +147,8 @@ pkgbuild_registry:
     python-impacket:
       version: 0.9.14-1
       noarch: True
+      build_deps:
+        - python-crypto
     python-ioflo:
       version: 1.3.8-1
       noarch: True
@@ -303,6 +305,8 @@ pkgbuild_registry:
     python-impacket:
       version: 0.9.14-1
       noarch: True
+      build_deps:
+        - python-crypto
     python-importlib:
       version: 1.0.2-2
       noarch: True
@@ -401,6 +405,8 @@ pkgbuild_registry:
       results:
         - winexe
         - winexe-debuginfo
+      build_deps:
+        - python-impacket
     yum-utils:
       version: 1.1.30-30
       noarch: True

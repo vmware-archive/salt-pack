@@ -32,20 +32,22 @@
 
 Name:           python-%{pypi_name}
 Version:        0.9.14
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Network protocols Constructors and Dissectors
 
 License:        Apache modified
 URL:            https://github.com/CoreSecurity/impacket
 Source0:        https://pypi.python.org/packages/source/i/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
- 
+
 BuildRequires:  python%{?__python_ver}-devel
 BuildRequires:  python%{?__python_ver}-setuptools
- 
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+Requires: python3-crypto >= 2.6.1
 %endif
 
 %description
@@ -157,6 +159,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-3
+- Added requirement for python-crypto
+
 * Fri Oct 21 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-2
 - Ported to build on Amazon Linux 2016.09 natively
 

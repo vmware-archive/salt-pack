@@ -67,6 +67,7 @@ Source18: salt-master.fish
 Source19: salt-minion.fish
 Source20: salt-run.fish
 Source21: salt-syndic.fish
+Source22: %{name}-proxy@.service
 
 ## Patch0:  salt-%%{version}-tests.patch
 
@@ -303,6 +304,7 @@ install -p -m 0644 %{SOURCE6} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE7} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE8} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
+install -p -m 0644 %{SOURCE22} %{buildroot}%{_unitdir}/
 %endif
 
 # Force python2.6 on EPEL6
@@ -403,6 +405,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
 %{_unitdir}/salt-minion.service
+%{_unitdir}/salt-proxy@.service
 %endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
@@ -625,7 +628,9 @@ rm -rf %{buildroot}
 
 %changelog
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
+- Update to feature release 2016.11.5
 - Altered to use pycryptodomex if 64 bit and Redhat 6 and greater otherwise pycrypto
+- Addition of salt-proxy@.service
 
 * Wed Apr 19 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-1
 - Update to feature release 2016.11.4 and use of pycryptodomex

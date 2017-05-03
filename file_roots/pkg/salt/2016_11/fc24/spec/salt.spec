@@ -627,7 +627,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue APr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
+* Tue Apr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
 - Update to feature release 2016.11 branch nightly build %{?__rc_ver}
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1

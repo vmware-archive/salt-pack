@@ -60,7 +60,8 @@ include:
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6
     - pkg.python-mock.1_0_1.rhel6
-    - pkg.python-ordereddict.1_1.rhel6
+    - pkg.python-nose.1_3_7.rhel6
+##    - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pip.9_0_1.rhel6
     - pkg.python-psutil.5_2_2.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
@@ -70,6 +71,7 @@ include:
     - pkg.python-setuptools.33_1_1.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
+    - pkg.python-unittest2.1_1_0.rhel6
     - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2017_5.rhel6

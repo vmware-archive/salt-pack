@@ -283,89 +283,154 @@ pkgbuild_registry:
         - python27-test
         - python27-tools
         - tkinter27
-    python-backports:
-      name: python27-backports
-      version: 1.0-5
-    python-backports-ssl_match_hostname:
-      name: python27-backports-ssl_match_hostname
-      version: 3.4.0.2-2
-      noarch: True
-      build_deps:
-        - python-backports
+##    python-backports:
+##      name: python27-backports
+##      version: 1.0-5
+##    python-backports-ssl_match_hostname:
+##      name: python27-backports-ssl_match_hostname
+##      version: 3.4.0.2-2
+##      noarch: True
+##      build_deps:
+##        - python-backports
     python-chardet:
       name: python27-chardet
-      version: 2.2.1-1
+      version: 2.2.1-2
       noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-nose
+      results:
+        - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
       version: 5.6.0-1
       noarch: True
       build_deps:
+        - python27
         - python-mock
+      results:
+        - python27-cherrypy
     python-crypto:
       name: python27-crypto
       version: 2.6.1-3
+      build_deps:
+        - python27
+      results:
+        - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
       version: 3.4.3-2
-      results:
-        - python2-pycryptodomex
-        - python3-pycryptodomex
       build_deps:
+        - python27
         - libtommath
         - libtomcrypt
         - libtomcrypt-devel
+      results:
+        - python27-pycryptodomex
+        - python3-pycryptodomex
     python-enum34:
       name: python27-enum34
       version: 1.0-4
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-enum34
     python-futures:
       name: python27-futures
       version: 3.0.3-1
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-futures
     python-impacket:
       name: python27-impacket
       version: 0.9.14-3
       noarch: True
       build_deps:
+        - python27
         - python-crypto
+      results:
+        - python27-impacket
     python-importlib:
       name: python27-importlib
       version: 1.0.2-2
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-importlib
     python-ioflo:
       name: python27-ioflo
       version: 1.3.8-1
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-ioflo
     python-jinja2:
       name: python27-jinja2
       version: 2.8.1-1
       noarch: True
       build_deps:
+        - python27
         - python-babel
         - python-markupsafe
+      results:
+        - python27-jinja2
     python-libcloud:
       name: python27-libcloud
       version: 0.20.0-1
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-libcloud
     python-libnacl:
       name: python27-libnacl
       version: 1.4.3-1
       noarch: True
       build_deps:
+        - python27
         - libsodium
+      results:
+        - python27-libnacl
     python-markupsafe:
       name: python27-markupsafe
       version: 0.11-10
+      build_deps:
+        - python27
+      results:
+        - python27-markupsafe
     python-msgpack:
       name: python27-msgpack
       version: 0.4.6-1
+      build_deps:
+        - python27
+      results:
+        - python27-msgpack
     python-mock:
       name: python27-mock
       version: 1.0.1-10
       noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-unittest2
       results:
         - python27-mock
+    python-nose:
+      name: python27-nose
+      version: 1.3.7-1
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-mock
+      results:
+        - python27-nose
 ##    python-ordereddict:
 ##      version: 1.1-2
 ##      noarch: True
@@ -374,6 +439,7 @@ pkgbuild_registry:
       version: 9.0.1-1.ius
       noarch: True
       build_deps:
+        - python27
         - python-setuptools
       results:
         - python27-pip
@@ -381,6 +447,8 @@ pkgbuild_registry:
       name: python27-psutil
       version: 5.2.2-1.ius
       noarch: True
+      build_deps:
+        - python27
       results:
         - python27-psutil
     python-pyzmq:
@@ -393,6 +461,7 @@ pkgbuild_registry:
       version: 0.6.6-1
       noarch: True
       build_deps:
+        - python27
         - python-ioflo
       additional_deps:
         - python-libnacl
@@ -401,41 +470,76 @@ pkgbuild_registry:
       version: 2.6.0-3
       noarch: True
       build_deps:
+        - python27
         - python-chardet
         - python-urllib3
 ##        - python-ordereddict
+      results:
+        - python27-requests
     python-setuptools:
       name: python27-setuptools
       version: 33.1.1-1.ius
       noarch: True
       build_deps:
         - python27
+      results:
+        - python27-setuptools
     python-six:
       name: python27-six
-      version: 1.9.0-2
+      version: 1.9.0-3
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-six
     python-tornado:
       name: python27-tornado
       version: 4.2.1-1
+##      build_deps:
+##        - python-backports-ssl_match_hostname
       build_deps:
-        - python-backports-ssl_match_hostname
+        - python27
+      results:
+        - python27-tornado
     python-timelib:
       name: python27-timelib
       version: 0.2.4-1
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-timelib
+    python-unittest2:
+      name: python27-unittest2
+      version: 1.1.0-5
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-six
+      results:
+        - python27-unittest2
     python-urllib3:
       name: python27-urllib3
       version: 1.10.2-1
       noarch: True
+      build_deps:
+        - python27
+      results:
+        - python27-urllib3
     python-yaml:
       name: python27-PyYAML
       version: 3.11-1
       build_deps:
+        - python27
         - libyaml
+      results:
+        - python27-PyYAML
     salt:
       version: 2017.5.0tobereplaced_date-0
       noarch: True
       build_deps:
+        - python27
         - python-pycrypto
 ##        - python-pycryptodome
         - python-msgpack
@@ -460,6 +564,7 @@ pkgbuild_registry:
         - winexe
         - winexe-debuginfo
       build_deps:
+        - python27
         - python-impacket
     yum-utils:
       version: 1.1.30-30

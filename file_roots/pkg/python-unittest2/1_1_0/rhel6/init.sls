@@ -2,8 +2,8 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-cherrypy" %}
-{% set pypi_name = "CherryPy" %}
+{% set sls_name = "python-unittest2" %}
+{% set pypi_name = "unittest2" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
 {% if "version" in pkg_info %}
@@ -33,6 +33,9 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{pkg_name}}-tutorial-doc.patch
-      - {{ macros.pypi_source(pypi_name, version) }}
+      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-backport-tests-from-py3.5.patch
+      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-argparse-from-requires.patch
+      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-traceback2-from-requires.patch
+      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+
 {% endif %}

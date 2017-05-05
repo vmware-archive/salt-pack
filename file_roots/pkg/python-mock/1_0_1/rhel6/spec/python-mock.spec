@@ -5,11 +5,21 @@
 # Not yet in Fedora buildroot
 %{!?python3_pkgversion:%global python3_pkgversion 3}
 
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
 %global mod_name mock
 
-Name:           python-mock
+Name:           python%{?__python_ver}-mock
 Version:        1.0.1
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        A Python Mocking and Patching Library for Testing
 
 License:        BSD
@@ -18,11 +28,19 @@ Source0:        http://pypi.python.org/packages/source/m/%{mod_name}/%{mod_name}
 Source1:        LICENSE.txt
 
 BuildArch:      noarch
+
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+%else
 BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
+%endif
+BuildRequires:  python%{?__python_ver}-setuptools
+
+Requires: python%{?__python_ver}
+
 # For tests
 %if 0%{?rhel} <= 7
-BuildRequires:  python-unittest2
+BuildRequires:  python%{?__python_ver}-unittest2
 %endif
 
 %if 0%{?with_python3}
@@ -85,7 +103,11 @@ cp -p %{SOURCE1} .
 %{py2_install}
 
  
+%if 0%{?with_explicit_python27}
+%files -n python%{?__python_ver}-mock
+%else
 %files -n python2-mock
+%endif
 %license LICENSE.txt
 %doc docs/* README.txt PKG-INFO
 %{python2_sitelib}/*.egg-info
@@ -102,6 +124,9 @@ cp -p %{SOURCE1} .
 
 
 %changelog
+* Fri May  5 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
+- Update to use Python 2.6 for Redhat 6
+
 * Fri Oct 14 2016 Tim Orling <ticotimo@gmail.com> - 1.0.1-10
 - Enable python3 for rhel >= 6 now that python34 is in el6
 - Merge epel7 branch

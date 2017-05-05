@@ -44,11 +44,9 @@ include:
     - pkg.python-chardet.2_2_1.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
     - pkg.python-crypto.2_6_1.rhel6
-
 {% if buildcfg.build_arch == 'x86_64' %}
     - pkg.python-pycryptodome.3_4_3.rhel6
 {% endif %}
-
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
     - pkg.python-importlib.1_0_2.rhel6

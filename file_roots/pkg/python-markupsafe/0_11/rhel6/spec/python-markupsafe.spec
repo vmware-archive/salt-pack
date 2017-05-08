@@ -4,9 +4,20 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
-Name: python-markupsafe
+%if 0%{?rhel} == 6
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name: python%{?__python_ver}-markupsafe
 Version: 0.11
-Release: 10%{?dist}
+Release: 11%{?dist}
 Summary: Implements a XML/HTML/XHTML Markup safe string for Python
 
 Group: Development/Languages
@@ -15,7 +26,8 @@ URL: http://pypi.python.org/pypi/MarkupSafe
 Source0: http://pypi.python.org/packages/source/M/MarkupSafe/MarkupSafe-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires: python-devel python-setuptools-devel
+BuildRequires: python%{?__python_ver}-devel
+BuildRequires: python%{?__python_ver}-setuptools
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel python3-setuptools
@@ -96,6 +108,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.11.11
+- Updated to use Python 2.7 on Redhat 6
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.11-10
 - Mass rebuild 2014-01-24
 

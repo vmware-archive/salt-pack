@@ -241,8 +241,14 @@ pkgbuild_registry:
 
   rhel6:
     babel:
-      version: 0.9.4-5.1
+      name: python27-babel
+      version: 0.9.4-5.2
       noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-babel
     libsodium:
       version: 0.4.5-3
       results:
@@ -373,7 +379,7 @@ pkgbuild_registry:
         - python27-ioflo
     python-jinja2:
       name: python27-jinja2
-      version: 2.8.1-1
+      version: 2.8.1-2
       noarch: True
       build_deps:
         - python27
@@ -383,10 +389,11 @@ pkgbuild_registry:
         - python27-jinja2
     python-libcloud:
       name: python27-libcloud
-      version: 0.20.0-1
+      version: 0.20.0-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-libcloud
     python-libnacl:
@@ -400,9 +407,10 @@ pkgbuild_registry:
         - python27-libnacl
     python-markupsafe:
       name: python27-markupsafe
-      version: 0.11-10
+      version: 0.11-11
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-markupsafe
     python-msgpack:

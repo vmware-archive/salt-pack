@@ -1,8 +1,19 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Name:           babel
+
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name:           babel%{?__python_ver}
 Version:        0.9.4
-Release:        5.1%{?dist}
+Release:        5.2%{?dist}
 Summary:        Tools for internationalizing Python applications
 
 Group:          Development/Languages
@@ -12,10 +23,10 @@ Source0:        http://ftp.edgewall.com/pub/babel/Babel-%{version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools-devel
-Requires:       python-babel
-Requires:       python-setuptools
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+Requires:       python%{?__python_ver}-babel
+Requires:       python%{?__python_ver}-setuptools
 
 %description
 Babel is composed of two major parts:
@@ -26,11 +37,11 @@ Babel is composed of two major parts:
   providing access to various locale display names, localized number
   and date formatting, etc.
 
-%package -n python-babel
+%package -n python%{?__python_ver}-babel
 Summary:        Library for internationalizing Python applications
 Group:          Development/Languages
 
-%description -n python-babel
+%description -n python%{?__python_ver}-babel
 Babel is composed of two major parts:
 
 * tools to build and work with gettext message catalogs
@@ -59,12 +70,15 @@ rm -rf %{buildroot}
 %doc ChangeLog COPYING README.txt doc/cmdline.txt
 %{_bindir}/pybabel
 
-%files -n python-babel
+%files -n python%{?__python_ver}-babel
 %defattr(-,root,root,-)
 %doc doc
 %{python_sitelib}/*
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.4-5.2
+- Updated to use Python 2.7 on Redhat 6
+
 * Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 0.9.4-5.1
 - Rebuilt for RHEL 6
 

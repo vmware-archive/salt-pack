@@ -127,7 +127,7 @@ cp -p %{SOURCE1} .
 
 
 %changelog
-* Mon May  8 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
+* Mon May 08 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
 - Update to use Python 2.6 for Redhat 6
 
 * Fri Oct 14 2016 Tim Orling <ticotimo@gmail.com> - 1.0.1-10

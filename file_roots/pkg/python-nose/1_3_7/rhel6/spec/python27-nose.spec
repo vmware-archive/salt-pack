@@ -59,7 +59,7 @@ reasonably possible without resorting to too much magic.
 %{python_sitelib}/nose
 
 %changelog
-* Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.3.7-1
+* Fri May 05 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.3.7-1
 - Updated version and use Python 2.7 for Redhat 6
 
 * Tue Feb 17 2015 Erik Johnson <erik@saltstack.com> - 0.11.1-4

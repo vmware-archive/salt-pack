@@ -159,7 +159,7 @@ popd
 %endif # with_python3
 
 %changelog
-* Mon May  8 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
 - Updated to use Python 2.7 on Redhat 7
 
 * Mon Jan 11 2016 Matěj Cepl <mcepl@redhat.com> - 1.1.0-4

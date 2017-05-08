@@ -80,7 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python2_sitelib}/*
 
 %changelog
-* Mon May  8 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
 - Updated to use Python 2.7 on Redhat 6
 
 * Mon Apr 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-1

@@ -330,7 +330,7 @@ pkgbuild_registry:
         - python27-cherrypy
     python-crypto:
       name: python27-crypto
-      version: 2.6.1-3
+      version: 2.6.1-4
       build_deps:
         - python27
       results:
@@ -348,10 +348,11 @@ pkgbuild_registry:
         - python3-pycryptodomex
     python-enum34:
       name: python27-enum34
-      version: 1.0-4
+      version: 1.0-5
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-enum34
     python-futures:

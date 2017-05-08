@@ -52,7 +52,11 @@ BuildRequires:  python%{?__python_ver}-six
 BuildRequires:  python-traceback2
 Requires:       python-traceback2
 %endif
-Requires:       python%{?__python_ver}
+
+%if 0%{?with_explicit_python27}
+Requires:       python%{?__python_ver} >= 2.7.9-1
+%endif
+
 Requires:       python%{?__python_ver}-setuptools
 Requires:       python%{?__python_ver}-six
 

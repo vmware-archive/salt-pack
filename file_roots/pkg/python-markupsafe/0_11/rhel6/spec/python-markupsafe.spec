@@ -35,6 +35,9 @@ BuildRequires: python3-devel python3-setuptools
 BuildRequires: python-tools
 %endif # if with_python3
 
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
 
 %description
 A library for safe markup escaping.

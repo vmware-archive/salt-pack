@@ -28,6 +28,11 @@ BuildRequires:  python%{?__python_ver}-setuptools
 Requires:       python%{?__python_ver}-babel
 Requires:       python%{?__python_ver}-setuptools
 
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
+
 %description
 Babel is composed of two major parts:
 

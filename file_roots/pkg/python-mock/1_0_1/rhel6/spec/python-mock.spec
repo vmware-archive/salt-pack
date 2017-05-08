@@ -36,8 +36,6 @@ BuildRequires:  python2-devel
 %endif
 BuildRequires:  python%{?__python_ver}-setuptools
 
-Requires: python%{?__python_ver}
-
 # For tests
 ## %if 0%{?rhel} <= 7
 ## BuildRequires:  python%{?__python_ver}-unittest2
@@ -49,6 +47,11 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 # For tests
 #BuildRequires:  python%{python3_pkgversion}-unittest2
 %endif
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
 
 
 %description

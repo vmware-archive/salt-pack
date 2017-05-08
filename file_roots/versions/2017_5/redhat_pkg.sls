@@ -40,6 +40,7 @@ include:
     - pkg.libtommath.0_42_0.rhel6
     - pkg.libyaml.0_1_3.rhel6
     - pkg.pciutils.3_1_10.rhel6
+##    - pkg.pytest.2_7_0.rhel6
     - pkg.python27.2_7_13.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
@@ -64,6 +65,7 @@ include:
 ##    - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pip.9_0_1.rhel6
     - pkg.python-psutil.5_2_2.rhel6
+    - pkg.python-py.1_4_27.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_6_0.rhel6

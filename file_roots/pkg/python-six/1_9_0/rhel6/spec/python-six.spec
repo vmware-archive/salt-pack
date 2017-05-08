@@ -33,10 +33,10 @@ BuildArch:      noarch
 
 %if 0%{?with_explicit_python27}
 BuildRequires:  python%{?__python_ver}-devel
+Requires: python%{?__python_ver} >= 2.7.9-1
 %else
 BuildRequires:  python2-devel
 %endif
-Requires:       python%{?__python_ver}
 
 # For use by selftests:
 #BuildRequires:  pytest

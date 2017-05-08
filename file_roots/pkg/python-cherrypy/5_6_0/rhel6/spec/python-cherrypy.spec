@@ -35,13 +35,17 @@ BuildArch:      noarch
 
 %if 0%{?with_explicit_python27}
 BuildRequires:  python%{?__python_ver}-devel
-Requires: python%{?__python_ver}
 %else
 BuildRequires:  python2-devel
 %endif
 
 BuildRequires:  python%{?__python_ver}-setuptools
 BuildRequires:  python%{?__python_ver}-nose
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
 
 %description
 CherryPy allows developers to build web applications in much the same way 

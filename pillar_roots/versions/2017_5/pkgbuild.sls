@@ -279,6 +279,16 @@ pkgbuild_registry:
         - pciutils-devel
         - pciutils-devel-static
         - pciutils-libs
+    pytest:
+      name: pytest27
+      version: 2.7.0-2
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-py
+      results:
+        - pytest27
     python27:
       version: 2.7.13-2.ius
       results:
@@ -415,9 +425,10 @@ pkgbuild_registry:
         - python27-markupsafe
     python-msgpack:
       name: python27-msgpack
-      version: 0.4.6-1
+      version: 0.4.6-2
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-msgpack
     python-mock:
@@ -460,6 +471,15 @@ pkgbuild_registry:
         - python27
       results:
         - python27-psutil
+    python-py:
+      name: python27-py
+      version: 1.4.27-2
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-py
     python-pyzmq:
       name: python27-zmq
       version: 14.5.0-2

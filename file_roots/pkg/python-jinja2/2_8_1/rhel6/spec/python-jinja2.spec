@@ -40,6 +40,11 @@ BuildRequires:	python-sphinx
 Requires:	python%{?__python_ver}-babel >= 0.8
 Requires:	python%{?__python_ver}-markupsafe
 
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
+
 %if 0%{?with_python3}
 BuildRequires:	python3-devel
 BuildRequires:	python3-setuptools

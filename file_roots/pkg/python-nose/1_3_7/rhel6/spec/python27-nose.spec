@@ -25,6 +25,10 @@ BuildRequires:  python%{py_basever}-devel python%{py_basever}-setuptools
 Requires:       python%{py_basever}-setuptools
 Requires:       python%{py_basever}
 
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
 
 %description
 nose: a discovery-based unittest extension.

@@ -1,5 +1,5 @@
 %if 0%{?fedora} > 12 || 0%{?rhel} >= 6
-%global with_python3 1
+%global with_python3 0
 %endif
 
 # Not yet in Fedora buildroot
@@ -11,7 +11,7 @@
 %global __python_ver 27
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
-%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global __os_install_post %{__python27_os_install_post}
 %endif
 
@@ -39,9 +39,9 @@ BuildRequires:  python%{?__python_ver}-setuptools
 Requires: python%{?__python_ver}
 
 # For tests
-%if 0%{?rhel} <= 7
-BuildRequires:  python%{?__python_ver}-unittest2
-%endif
+## %if 0%{?rhel} <= 7
+## BuildRequires:  python%{?__python_ver}-unittest2
+## %endif
 
 %if 0%{?with_python3}
 BuildRequires:  python%{python3_pkgversion}-devel
@@ -89,17 +89,20 @@ cp -p %{SOURCE1} .
 
 %build
 %{py2_build}
+%if 0%{?with_python3}
 %{py3_build}
+%endif
 
-
-%check
-%{__python2} setup.py test
+## %check
+## %{__python2} setup.py test
 # Failing
 #{__python3} setup.py test
 
 
 %install
+%if 0%{?with_python3}
 %{py3_install}
+%endif
 %{py2_install}
 
  
@@ -124,7 +127,7 @@ cp -p %{SOURCE1} .
 
 
 %changelog
-* Fri May  5 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
+* Mon May  8 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
 - Update to use Python 2.6 for Redhat 6
 
 * Fri Oct 14 2016 Tim Orling <ticotimo@gmail.com> - 1.0.1-10

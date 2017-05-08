@@ -33,6 +33,6 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{pkg_name}}-tutorial-doc.patch
       - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/{{sls_name}}-tutorial-doc.patch
 {% endif %}

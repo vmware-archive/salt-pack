@@ -33,9 +33,10 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-backport-tests-from-py3.5.patch
-      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-argparse-from-requires.patch
-      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-traceback2-from-requires.patch
-      - spec: salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-backport-tests-from-py3.5.patch
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-argparse-from-requires.patch
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-traceback2-from-requires-p2.patch
+##      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}-remove-traceback2-from-requires.patch
 
 {% endif %}

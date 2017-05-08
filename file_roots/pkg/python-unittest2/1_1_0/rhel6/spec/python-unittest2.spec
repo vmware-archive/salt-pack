@@ -12,12 +12,12 @@
 %global __python_ver 27
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
-%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global pypi_name unittest2
-%global bootstrap_traceback2 0
+%global bootstrap_traceback2 1
 
 Name:           python%{?__python_ver}-%{pypi_name}
 Version:        1.1.0
@@ -32,7 +32,7 @@ Source0:        https://pypi.python.org/packages/source/u/%{pypi_name}/%{pypi_na
 Patch0:         unittest2-1.1.0-remove-argparse-from-requires.patch
 
 # we only apply this if bootstrap_traceback2 == 1
-Patch1:         unittest2-1.1.0-remove-traceback2-from-requires.patch
+Patch1:         unittest2-1.1.0-remove-traceback2-from-requires-p2.patch
 # this patch backports tests from Python 3.5, that weren't yet merged, thus the tests are failing
 #  (the test is modified to also pass on Python < 3.5)
 #  TODO: submit upstream
@@ -159,7 +159,7 @@ popd
 %endif # with_python3
 
 %changelog
-* Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
+* Mon May  8 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
 - Updated to use Python 2.7 on Redhat 7
 
 * Mon Jan 11 2016 Matěj Cepl <mcepl@redhat.com> - 1.1.0-4

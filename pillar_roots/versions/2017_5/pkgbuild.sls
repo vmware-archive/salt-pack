@@ -304,11 +304,12 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-1
+      version: 5.6.0-2
       noarch: True
       build_deps:
         - python27
         - python-mock
+        - python-nose
       results:
         - python27-cherrypy
     python-crypto:
@@ -413,7 +414,7 @@ pkgbuild_registry:
         - python27-msgpack
     python-mock:
       name: python27-mock
-      version: 1.0.1-10
+      version: 1.0.1-11
       noarch: True
       build_deps:
         - python27

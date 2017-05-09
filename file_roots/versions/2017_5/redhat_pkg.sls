@@ -66,6 +66,7 @@ include:
     - pkg.python-pip.9_0_1.rhel6
     - pkg.python-psutil.5_2_2.rhel6
     - pkg.python-py.1_4_27.rhel6
+    - pkg.python-pycurl.7_19_0.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_6_0.rhel6

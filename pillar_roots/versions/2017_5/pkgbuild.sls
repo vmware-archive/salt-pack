@@ -486,6 +486,13 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-py
+    python-pycurl:
+      name: python27-pycurl
+      version: 7.19.0-10
+      build_deps:
+        - python27
+      results:
+        - python27-pycurl
     python-pyzmq:
       name: python27-zmq
       version: 14.5.0-2
@@ -531,11 +538,13 @@ pkgbuild_registry:
         - python27-six
     python-tornado:
       name: python27-tornado
-      version: 4.2.1-1
+      version: 4.2.1-2
 ##      build_deps:
 ##        - python-backports-ssl_match_hostname
       build_deps:
         - python27
+        - python-setuptools
+        - python-unittest2
       results:
         - python27-tornado
     python-timelib:
@@ -569,12 +578,13 @@ pkgbuild_registry:
         - python27-urllib3
     python-yaml:
       name: python27-PyYAML
-      version: 3.11-1
+      version: 3.11-2
       build_deps:
         - python27
+        - python-setuptools
         - libyaml
       results:
-        - python27-PyYAML
+        - PyYAML27
     salt:
       version: 2017.5.0tobereplaced_date-0
       noarch: True

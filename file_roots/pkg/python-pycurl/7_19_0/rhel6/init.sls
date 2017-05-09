@@ -2,8 +2,8 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-tornado" %}
-{% set pypi_name = "tornado" %}
+{% set sls_name = "python-pycurl" %}
+{% set pypi_name = "pycurl" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
 {% if "version" in pkg_info %}
@@ -33,7 +33,10 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{sls_name}}-cert.patch
-      - salt://{{slspath}}/sources/{{sls_name}}-netutil-cert.patch
       - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/python-pycurl-7.19.0-tls12.patch
+      - salt://{{slspath}}/sources/python-pycurl-do_curl_reset-refcount.patch
+      - salt://{{slspath}}/sources/python-pycurl-do_curl_reset-reinitialize-handle.patch
+      - salt://{{slspath}}/sources/python-pycurl-no-static-libs.patch
+
 {% endif %}

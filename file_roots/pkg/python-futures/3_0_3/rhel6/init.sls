@@ -33,5 +33,6 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - https://pypi.python.org/packages/source/f/{{pypi_name}}/{{pypi_name}}-{{version}}.tar.gz
+      - {{ macros.pypi_source(pypi_name, version) }}
+
 {% endif %}

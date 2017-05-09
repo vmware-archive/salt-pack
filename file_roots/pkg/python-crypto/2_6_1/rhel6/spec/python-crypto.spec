@@ -18,7 +18,7 @@
 %global srcname python-crypto
 
 Summary:	Cryptography library for Python
-Name:		python-crypto
+Name:		python%{?__python_ver}-crypto
 Version:	2.6.1
 Release:	4%{?dist}
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
@@ -60,17 +60,17 @@ Requires: python%{?__python_ver}  >= 2.7.9-1
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
 
-%if 0%{?with_explicit_python27}
-%package -n python%{?__python_ver}-crypto
-Summary:	Cryptography library for Python %{__python_ver}
-Group:		Development/Libraries
-
-%description -n python%{?__python_ver}-crypto
-PyCrypto is a collection of both secure hash functions (such as MD5 and
-SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
-
-This is the Python %{__python_ver} build of the package.
-%endif
+## %if 0%{?with_explicit_python27}
+## %package -n python%{?__python_ver}-crypto
+## Summary:	Cryptography library for Python %{__python_ver}
+## Group:		Development/Libraries
+## 
+## %description -n python%{?__python_ver}-crypto
+## PyCrypto is a collection of both secure hash functions (such as MD5 and
+## SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
+## 
+## This is the Python %{__python_ver} build of the package.
+## %endif
 
 %if %{with_python3}
 %package -n python3-crypto

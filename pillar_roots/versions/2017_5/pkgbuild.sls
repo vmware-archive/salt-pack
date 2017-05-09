@@ -337,9 +337,10 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.3-2
+      version: 3.4.3-3
       build_deps:
         - python27
+        - python-setuptools
         - libtommath
         - libtomcrypt
         - libtomcrypt-devel
@@ -372,20 +373,21 @@ pkgbuild_registry:
         - python-crypto
       results:
         - python27-impacket
-    python-importlib:
-      name: python27-importlib
-      version: 1.0.2-2
-      noarch: True
-      build_deps:
-        - python27
-      results:
-        - python27-importlib
+##     python-importlib:
+##       name: python27-importlib
+##       version: 1.0.2-2
+##       noarch: True
+##       build_deps:
+##         - python27
+##       results:
+##         - python27-importlib
     python-ioflo:
       name: python27-ioflo
-      version: 1.3.8-1
+      version: 1.3.8-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-ioflo
     python-jinja2:
@@ -409,10 +411,11 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-1
+      version: 1.4.3-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - libsodium
       results:
         - python27-libnacl
@@ -488,11 +491,13 @@ pkgbuild_registry:
         - zeromq
     python-raet:
       name: python27-raet
-      version: 0.6.6-1
+      version: 0.6.6-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-ioflo
+        - python-six
       additional_deps:
         - python-libnacl
     python-requests:
@@ -514,6 +519,13 @@ pkgbuild_registry:
         - python27
       results:
         - python27-setuptools
+## TBD ?     python-simplejson:
+## TBD ?       name: python27-simplejson
+## TBD ?       version: 3.10.0-2
+## TBD ?       build_deps:
+## TBD ?         - python27
+## TBD ?       results:
+## TBD ?         - python27-simplejson
     python-six:
       name: python27-six
       version: 1.9.0-3

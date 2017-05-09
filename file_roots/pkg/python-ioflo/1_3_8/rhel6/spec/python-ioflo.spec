@@ -4,6 +4,7 @@
 
 %if 0%{?rhel} < 7
 %global pybasever 2.6
+%global __python_ver 26
 %endif
 
 %{!?__python2: %global __python2 /usr/bin/python%{?pybasever}}
@@ -12,11 +13,21 @@
 
 %endif
 
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
 %global srcname ioflo
 
-Name:           python-%{srcname}
+Name:           python%{?__python_ver}-%{srcname}
 Version:        1.3.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Flow-based programming interface
 
 Group:          Development/Libraries
@@ -27,23 +38,17 @@ Source0:        http://pypi.python.org/packages/source/i/%{srcname}/%{srcname}-%
 BuildRoot:      %{_tmppath}/%{srcname}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
-%if 0%{?rhel} == 5
-BuildRequires:  python26
-BuildRequires:  python26-devel
-BuildRequires:  python26-distribute
-BuildRequires:  python26-importlib
-Requires:       python26
-Requires:       python26-importlib
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
 %else
+BuildRequires:  python%{?__python_ver}-importlib
+Requires:       python%{?__python_ver}-importlib
 
-%if "%{?pybasever}" == "2.6"
-BuildRequires:  python-importlib
-Requires:       python-importlib
-%endif
+%endif 
 
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-%endif
 
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
@@ -64,19 +69,6 @@ Group:    Development/Libraries
 Ioflo is a flow-based programming automated reasoning engine and automation
 operation system, written in Python.
 %endif
-
-%if 0%{?rhel} == 5
-%package -n python26-%{srcname}
-Summary:  Flow-based programming interface
-Group:    Development/Libraries
-Requires: python26
-Requires: python26-importlib
-
-%description -n python26-%{srcname}
-Ioflo is a flow-based programming automated reasoning engine and automation
-operation system, written in Python.
-%endif
-
 
 %prep
 %setup -q -n %{srcname}-%{version}
@@ -123,21 +115,17 @@ rm -rf %{buildroot}
 %{python3_sitelib}/*
 %endif
 
-%if 0%{?rhel} == 5
-%files -n python26-%{srcname}
-%defattr(-,root,root,-)
-%{python2_sitelib}/*
-%{_bindir}/%{srcname}
-%{_bindir}/%{srcname}2
-%else
 %files
 %defattr(-,root,root,-)
 %{python2_sitelib}/*
 %{_bindir}/%{srcname}
 %{_bindir}/%{srcname}2
-%endif
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 
+- Updated to use Python 2.7 on Redhat 6
+- Removed support for Redhat 5
+
 * Wed Aug  5 2015 Packaging <packaging@saltstack.com> - 1.3.8-1
 - Build 1.3.8 for Salt implementation
 

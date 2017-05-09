@@ -358,18 +358,20 @@ pkgbuild_registry:
         - python27-enum34
     python-futures:
       name: python27-futures
-      version: 3.0.3-1
+      version: 3.0.3-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-futures
     python-impacket:
       name: python27-impacket
-      version: 0.9.14-3
+      version: 0.9.14-4
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-crypto
       results:
         - python27-impacket
@@ -502,7 +504,7 @@ pkgbuild_registry:
         - python-libnacl
     python-requests:
       name: python27-requests
-      version: 2.6.0-3
+      version: 2.6.0-4
       noarch: True
       build_deps:
         - python27
@@ -519,13 +521,6 @@ pkgbuild_registry:
         - python27
       results:
         - python27-setuptools
-## TBD ?     python-simplejson:
-## TBD ?       name: python27-simplejson
-## TBD ?       version: 3.10.0-2
-## TBD ?       build_deps:
-## TBD ?         - python27
-## TBD ?       results:
-## TBD ?         - python27-simplejson
     python-six:
       name: python27-six
       version: 1.9.0-3
@@ -545,10 +540,11 @@ pkgbuild_registry:
         - python27-tornado
     python-timelib:
       name: python27-timelib
-      version: 0.2.4-1
+      version: 0.2.4-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-timelib
     python-unittest2:
@@ -563,10 +559,12 @@ pkgbuild_registry:
         - python27-unittest2
     python-urllib3:
       name: python27-urllib3
-      version: 1.10.2-1
+      version: 1.10.2-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
+        - python-six
       results:
         - python27-urllib3
     python-yaml:

@@ -12,13 +12,25 @@
 
 %endif
 
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
 %define debug_package %{nil}
 
 %global srcname timelib
 
-Name:           python-%{srcname}
+Name:           python%{?__python_ver}-%{srcname}
 Version:        0.2.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Parse English textual date descriptions
 
 Group:          Development/Languages
@@ -32,15 +44,8 @@ Source0:        http://pypi.python.org/packages/source/t/%{srcname}/%{srcname}-%
 BuildRoot:      %{_tmppath}/%{srcname}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
-%if 0%{?rhel} == 5
-BuildRequires:  python26
-BuildRequires:  python26-devel
-Requires:       python26
-%else
-
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-%endif
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
@@ -71,21 +76,6 @@ Summary:  Parse English textual date descriptions
 Group:    Development/Languages
 
 %description -n python3-%{srcname}
-timelib is a short wrapper around php's internal timelib modules
-It currently only provides a few functions:
-
-timelib.strtodatetime
-timelib.strtotime
-%endif
-
-%if 0%{?rhel} == 5
-%package -n python26-%{srcname}
-Summary:  Parse English textual date descriptions
-Group:    Development/Languages
-Requires: python26
-Requires: python26-importlib
-
-%description -n python26-%{srcname}
 timelib is a short wrapper around php's internal timelib modules
 It currently only provides a few functions:
 
@@ -134,19 +124,16 @@ rm -rf %{buildroot}
 %{python3_sitearch}/%{srcname}*.egg-info
 %endif
 
-%if 0%{?rhel} == 5
-%files -n python26-%{srcname}
-%defattr(-,root,root,-)
-%{python2_sitearch}/%{srcname}*.so
-%{python2_sitearch}/%{srcname}*.egg-info
-%else
 %files
 %defattr(-,root,root,-)
 %{python2_sitearch}/%{srcname}*.so
 %{python2_sitearch}/%{srcname}*.egg-info
-%endif
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.2.4-1
+- Updated to use Python 2.7 on Redhat 6
+- Removed support for Redhat 5
+
 * Fri Aug  7 2015 Packaging <packaging@saltstack.com> - 0.2.4-1
 - Initial build 0.2.4 for Salt implementation
 

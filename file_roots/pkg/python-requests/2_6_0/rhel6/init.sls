@@ -25,7 +25,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{pkg_name}}.spec
+    - spec: salt://{{slspath}}/spec/{{sls_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 
@@ -33,7 +33,7 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{pkg_name}}-system-cert-bundle.patch
-      - salt://{{slspath}}/sources/{{pkg_name}}-remove-nested-bundling-dep.patch
+      - salt://{{slspath}}/sources/{{sls_name}}-system-cert-bundle.patch
+      - salt://{{slspath}}/sources/{{sls_name}}-remove-nested-bundling-dep.patch
       - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

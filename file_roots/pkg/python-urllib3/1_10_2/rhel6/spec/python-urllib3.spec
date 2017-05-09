@@ -1,14 +1,25 @@
 %if 0%{?fedora}
 %global with_python3 1
 %else
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
 
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
 %global srcname urllib3
 
-Name:           python-%{srcname}
+Name:           python%{?__python_ver}-%{srcname}
 Version:        1.10.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python HTTP library with thread-safe connection pooling and file post
 
 License:        MIT
@@ -24,18 +35,25 @@ BuildArch:      noarch
 Requires:       ca-certificates
 
 # Previously bundled things:
-Requires:       python-six
-Requires:       python-backports-ssl_match_hostname
+Requires:       python%{?__python_ver}-six
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%else
 %if 0%{?rhel} <= 6
 BuildRequires:  python-ordereddict
 Requires:       python-ordereddict
 %endif
 
 BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-BuildRequires:  python-six
 BuildRequires:  python-backports-ssl_match_hostname
+Requires:       python-backports-ssl_match_hostname
+%endif
+
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  python%{?__python_ver}-six
+
 # For unittests
 #BuildRequires: python-nose
 #BuildRequires: python-six
@@ -91,15 +109,15 @@ popd
 rm -rf %{buildroot}
 %{__python} setup.py install --skip-build --root %{buildroot}
 
-rm -rf %{buildroot}/%{python_sitelib}/urllib3/packages/six.py*
-rm -rf %{buildroot}/%{python_sitelib}/urllib3/packages/ssl_match_hostname/
+rm -rf %{buildroot}/%{python2_sitelib}/urllib3/packages/six.py*
+rm -rf %{buildroot}/%{python2_sitelib}/urllib3/packages/ssl_match_hostname/
 
-mkdir -p %{buildroot}/%{python_sitelib}/urllib3/packages/
-ln -s ../../six.py %{buildroot}/%{python_sitelib}/urllib3/packages/six.py
-ln -s ../../backports/ssl_match_hostname %{buildroot}/%{python_sitelib}/urllib3/packages/ssl_match_hostname
+mkdir -p %{buildroot}/%{python2_sitelib}/urllib3/packages/
+ln -s ../../six.py %{buildroot}/%{python2_sitelib}/urllib3/packages/six.py
+ln -s ../../backports/ssl_match_hostname %{buildroot}/%{python2_sitelib}/urllib3/packages/ssl_match_hostname
 
 # dummyserver is part of the unittest framework
-rm -rf %{buildroot}%{python_sitelib}/dummyserver
+rm -rf %{buildroot}%{python2_sitelib}/dummyserver
 
 %if 0%{?with_python3}
 pushd %{py3dir}
@@ -122,7 +140,7 @@ popd
 %files
 %doc CHANGES.rst LICENSE.txt README.rst CONTRIBUTORS.txt
 # For noarch packages: sitelib
-%{python_sitelib}/*
+%{python2_sitelib}/*
 
 %if 0%{?with_python3}
 %files -n python3-%{srcname}
@@ -132,6 +150,9 @@ popd
 %endif # with_python3
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.10.2-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Mon Apr 13 2015 Matej Stuchlik <mstuchli@redhat.com> - 1.10.2-1
 - Update to 1.10.2
 Resolves: rhbz#1176257

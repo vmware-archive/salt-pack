@@ -3,7 +3,7 @@
 
 {% set name = 'salt' %}
 {% set release_rc_ver = '' %}
-{% set version = '2016.11.4' ~ release_rc_ver %}
+{% set version = '2016.11.5' ~ release_rc_ver %}
 {% set release_nameadd = '+ds' %}
 {% set release_ver = '1' %}
 

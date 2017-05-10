@@ -131,17 +131,19 @@ BuildRequires: python-argparse
 
 BuildRequires: python%{?__python_ver}-devel
 
+Requires: python%{?__python_ver}-jinja2
+Requires: python%{?__python_ver}-msgpack > 0.3
+%if ( "0%{?dist}" == "0.amzn1" )
+Requires: python27-PyYAML
+Requires: python%{?__python_ver}
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+%else
 %if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
 Requires: python2-pycryptodomex >= 3.4.3
 %else
 Requires: python-crypto >= 2.6.1
 %endif
 
-Requires: python%{?__python_ver}-jinja2
-Requires: python%{?__python_ver}-msgpack > 0.3
-%if ( "0%{?dist}" == "0.amzn1" )
-Requires: python27-PyYAML
-%else
 Requires: PyYAML
 %endif
 Requires: python%{?__python_ver}-requests >= 1.0.0

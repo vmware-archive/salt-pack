@@ -101,7 +101,7 @@ Requires: python26-six
 BuildRequires: python-tornado >= 4.2.1
 BuildRequires: python-futures >= 2.0
 
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
+%if (0%{?rhel} >= 6 && 0%{__isa_bits} == 64)
 BuildRequires: python2-pycryptodomex >= 3.4.3
 %else
 BuildRequires: python-crypto >= 2.6.1
@@ -138,7 +138,7 @@ Requires: python27-PyYAML
 Requires: python%{?__python_ver}
 Requires: python%{?__python_ver}-crypto >= 2.6.1
 %else
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
+%if (0%{?rhel} >= 6 && 0%{__isa_bits} == 64)
 Requires: python2-pycryptodomex >= 3.4.3
 %else
 Requires: python-crypto >= 2.6.1
@@ -629,7 +629,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
+* Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5
 - Altered to use pycryptodomex if 64 bit and Redhat 6 and greater otherwise pycrypto
 - Addition of salt-proxy@.service

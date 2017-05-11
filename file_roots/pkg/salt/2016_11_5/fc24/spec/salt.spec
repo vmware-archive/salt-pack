@@ -39,7 +39,7 @@
 
 Name: salt
 Version: 2016.11.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -138,11 +138,11 @@ Requires: python27-PyYAML
 Requires: python%{?__python_ver}
 Requires: python%{?__python_ver}-crypto >= 2.6.1
 %else
-%if (0%{?rhel} >= 6 && 0%{__isa_bits} == 64)
-Requires: python2-pycryptodomex >= 3.4.3
-%else
+## %%if (0%%{?rhel} >= 6 && 0%%{__isa_bits} == 64)
+## Requires: python2-pycryptodomex >= 3.4.3
+## %%else
 Requires: python-crypto >= 2.6.1
-%endif
+## %endif
 
 Requires: PyYAML
 %endif
@@ -629,6 +629,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-2
+- Commented out check for pycryptodomex on Fedora
+
 * Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5
 - Altered to use pycryptodomex if 64 bit and Redhat 6 and greater otherwise pycrypto

@@ -495,8 +495,10 @@ pkgbuild_registry:
         - python27-pycurl
     python-pyzmq:
       name: python27-zmq
-      version: 14.5.0-2
+      version: 14.5.0-3
       build_deps:
+        - python27
+        - python-setuptools
         - zeromq
     python-raet:
       name: python27-raet

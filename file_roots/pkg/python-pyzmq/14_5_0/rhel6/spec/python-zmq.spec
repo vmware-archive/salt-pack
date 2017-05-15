@@ -2,30 +2,27 @@
 %global with_python3 0
 %endif
 
-# Fix lack of rhel macro on COPR
-# (https://bugzilla.redhat.com/show_bug.cgi?id=1213482)
-%if 0%{?rhel} == 5 || (0%{?rhel} == 0 && 0%{?fedora} == 0)
-%global rhel5 1
+
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
 %endif
 
-# el5 has python-2.4, but 2.5 is minimum, so build with python2.6:
-# http://lists.zeromq.org/pipermail/zeromq-dev/2010-November/007597.html
-%if 0%{?rhel5}
-%global pybasever 2.6
-%global __python_ver 26
-%global __python %{_bindir}/python%{?pybasever}
-%global python python26
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%else
 %{?filter_setup:
-%filter_provides_in %{python_sitearch}/.*\.so$
+%filter_provides_in %{python2_sitearch}/.*\.so$
 %if 0%{?fedora} > 12 || 0%{?rhel} > 6
 %filter_provides_in %{python3_sitearch}/.*\.so$
 %endif
 %filter_setup
 }
-%endif
 
 %global checkout 18f5d061558a176f5496aa8e049182c1a7da64f6
 
@@ -33,9 +30,9 @@
 
 %global run_tests 0
 
-Name:           python-zmq
+Name:           python%{?__python_ver}-zmq
 Version:        14.5.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Software library for fast, message-based applications
 
 Group:          Development/Libraries
@@ -50,13 +47,8 @@ Source0:        http://cloud.github.com/downloads/zeromq/pyzmq/pyzmq-%{version}.
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if 0%{?rhel5}
-BuildRequires:  python26-devel
-BuildRequires:  python26-distribute
-%else
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-%endif
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 
 BuildRequires:  zeromq-devel >= 4.0.5
 
@@ -66,6 +58,10 @@ BuildRequires:  python3-setuptools
 # needed for 2to3
 BuildRequires:  python-tools
 %endif
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
 
 
 %description
@@ -79,38 +75,12 @@ multiple transport protocols and more.
 This package contains the python bindings.
 
 
-%if 0%{?rhel5}
-%package -n python26-zmq
-Summary:        Software library for fast, message-based applications
-Group:          Development/Libraries
-License:        LGPLv3+
-%description -n python26-zmq
-The 0MQ lightweight messaging kernel is a library which extends the
-standard socket interfaces with features traditionally provided by
-specialized messaging middle-ware products. 0MQ sockets provide an
-abstraction of asynchronous message queues, multiple messaging
-patterns, message filtering (subscriptions), seamless access to
-multiple transport protocols and more.
-
-This package contains the python bindings for python26.
-%endif
-
-
-%if 0%{?rhel5}
-%package -n python26-zmq-tests
-%else
 %package tests
-%endif
 Summary:        Software library for fast, message-based applications
 Group:          Development/Libraries
 License:        LGPLv3+
-%if 0%{?rhel5}
-Requires:       python26-zmq = %{version}-%{release}
-%description -n python26-zmq-tests
-%else
-Requires:       python-zmq = %{version}-%{release}
+Requires:       python%{?__python_ver}-zmq = %{version}-%{release}
 %description tests
-%endif
 The 0MQ lightweight messaging kernel is a library which extends the
 standard socket interfaces with features traditionally provided by
 specialized messaging middle-ware products. 0MQ sockets provide an
@@ -151,12 +121,12 @@ patterns, message filtering (subscriptions), seamless access to
 multiple transport protocols and more.
 
 This package contains the testsuite for the python bindings.
-
 %endif
 
 
 %prep
-%setup -q -n %{srcname}-%{version}
+## %setup -q -n %{srcname}-%{version}
+%setup  -n %{srcname}-%{version}
 # remove shebangs
 for lib in zmq/eventloop/*.py; do
     sed '/\/usr\/bin\/env/d' $lib > $lib.new &&
@@ -177,7 +147,6 @@ rm -rf %{py3dir}
 cp -a . %{py3dir}
 find %{py3dir} -name '*.py' | xargs sed -i '1s|^#!python|#!%{__python3}|'
 rm -r %{py3dir}/examples
-
 %endif
 
 
@@ -215,7 +184,7 @@ popd
 %check
 %if 0%{?run_tests}
     rm zmq/__*
-    PYTHONPATH=%{buildroot}%{python_sitearch} \
+    PYTHONPATH=%{buildroot}%{python2_sitearch} \
         %{__python} setup.py test
 
     %if 0%{?with_python3}
@@ -229,24 +198,16 @@ popd
 %endif
 
 
-%if 0%{?rhel5}
-%files -n python26-zmq
-%else
 %files
-%endif
 %defattr(-,root,root,-)
 %doc COPYING.LESSER examples/
-%{python_sitearch}/%{srcname}-*.egg-info
-%{python_sitearch}/zmq
-%exclude %{python_sitearch}/zmq/tests
+%{python2_sitearch}/%{srcname}-*.egg-info
+%{python2_sitearch}/zmq
+%exclude %{python2_sitearch}/zmq/tests
 
-%if 0%{?rhel5}
-%files -n python26-zmq-tests
-%else
 %files tests
-%endif
 %defattr(-,root,root,-)
-%{python_sitearch}/zmq/tests
+%{python2_sitearch}/zmq/tests
 
 %if 0%{?with_python3}
 %files -n python3-zmq
@@ -264,6 +225,9 @@ popd
 
 
 %changelog
+* Mon May 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 14.5.0-3
+- Updated to use Python 2.7 on Redhat 6a, removed support for Redhat 5
+
 * Fri Apr 10 2015 Erik Johnson <erik@saltstack.com> - 14.5.0-1
 - Updated for version 14.5.0
 

@@ -39,7 +39,7 @@
 
 Name: salt
 Version: 2016.11.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -70,6 +70,7 @@ Source21: salt-syndic.fish
 Source22: %{name}-proxy@.service
 
 ## Patch0:  salt-%%{version}-tests.patch
+Patch0:  salt-%{version}-fix-nameserver.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -138,11 +139,15 @@ Requires: python27-PyYAML
 Requires: python%{?__python_ver}
 Requires: python%{?__python_ver}-crypto >= 2.6.1
 %else
-## %%if (0%%{?rhel} >= 6 && 0%%{__isa_bits} == 64)
-## Requires: python2-pycryptodomex >= 3.4.3
-## %%else
+%if 0%{?fedora} >= 1
 Requires: python-crypto >= 2.6.1
-## %endif
+%else
+%if ( 0%{?rhel} >= 6 && 0%{__isa_bits} == 64 )
+Requires: python2-pycryptodomex >= 3.4.3
+%else
+Requires: python-crypto >= 2.6.1
+%endif
+%endif
 
 Requires: PyYAML
 %endif
@@ -258,7 +263,7 @@ of an agent (salt-minion) service.
 %setup -q -T -D -a 1
 
 cd %{name}-%{version}
-## %%patch0 -p1
+%patch0 -p1
 
 %build
 
@@ -629,6 +634,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon May 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-3
+- Add patch for Fix ipv6 nameserver grains #41244
+
 * Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-2
 - Commented out check for pycryptodomex on Fedora
 

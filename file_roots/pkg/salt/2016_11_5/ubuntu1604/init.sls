@@ -5,7 +5,7 @@
 {% set release_rc_ver = '' %}
 {% set version = '2016.11.5' ~ release_rc_ver %}
 {% set release_nameadd = '+ds' %}
-{% set release_ver = '2' %}
+{% set release_ver = '3' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:

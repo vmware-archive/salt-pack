@@ -169,7 +169,6 @@ pkgbuild_registry:
         - python2-mock
     python-psutil:
       version: 2.2.1-1
-      noarch: True
     python-pyzmq:
       name: python-zmq
       version: 15.3.0-2
@@ -472,9 +471,9 @@ pkgbuild_registry:
     python-psutil:
       name: python27-psutil
       version: 5.2.2-1.ius
-      noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-psutil
     python-py:
@@ -699,7 +698,9 @@ pkgbuild_registry:
     python-psutil:
       name: python27-psutil
       version: 5.2.2-1.ius
-      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
       results:
         - python27-psutil
     python-pyzmq:

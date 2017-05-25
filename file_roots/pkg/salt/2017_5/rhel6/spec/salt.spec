@@ -146,6 +146,7 @@ Requires: python%{?__python_ver}-markupsafe
 Requires: python%{?__python_ver}-tornado >= 4.2.1
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
+Requires: python%{?__python_ver}-psutil
 
 
 %endif
@@ -449,35 +450,43 @@ rm -rf %{buildroot}
 
 %preun master
   if [ $1 -eq 0 ] ; then
-      /sbin/service salt-master stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-master
+    /sbin/service salt-master stop >/dev/null 2>&1
   fi
 
 %preun syndic
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-syndic stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-syndic
   fi
 
 %preun minion
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-minion stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-minion
   fi
 
 %preun api
   if [ $1 -eq 0 ] ; then
       /sbin/service salt-api stop >/dev/null 2>&1
-      /sbin/chkconfig --del salt-api
   fi
 
 %post master
-  /sbin/chkconfig --add salt-master
+  if [ "$1" -ge "2" ] ; then
+    /sbin/service salt-master condrestart >/dev/null 2>&1 || :
+  fi
+
+%post syndic
+  if [ "$1" -ge "2" ] ; then
+    /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
+  fi
 
 %post minion
-  /sbin/chkconfig --add salt-minion
+  if [ "$1" -ge "2" ] ; then
+    /sbin/service salt-minion condrestart >/dev/null 2>&1 || :
+  fi
 
-## auto enable of salt-syndic and salt-api on startup not implemented
+%post api
+  if [ "$1" -ge "2" ] ; then
+    /sbin/service salt-api condrestart >/dev/null 2>&1 || :
+  fi
 
 %postun master
   if [ "$1" -ge "1" ] ; then
@@ -625,6 +634,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed May  3 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.5.0%{?__rc_ver}-0
 - Update to feature release 2017.5 branch nightly build %{?__rc_ver}
+- Added python-psutil as a requirement, diabled auto enable for Redhat 6
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

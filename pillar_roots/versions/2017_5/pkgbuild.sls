@@ -153,7 +153,8 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-libcloud:
-      version: 0.20.0-1
+      name: python2-libcloud
+      version: 2.0.0-2
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -403,7 +404,7 @@ pkgbuild_registry:
         - python27-jinja2
     python-libcloud:
       name: python27-libcloud
-      version: 0.20.0-2
+      version: 2.0.0-2
       noarch: True
       build_deps:
         - python27
@@ -684,7 +685,7 @@ pkgbuild_registry:
       noarch: True
     python-libcloud:
       name: python27-libcloud
-      version: 0.20.0-2
+      version: 2.0.0-2
       noarch: True
     python-libnacl:
       name: python27-libnacl

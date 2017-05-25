@@ -15,7 +15,7 @@
 
 Name: winexe
 Version: 1.1
-Release: b787d2%{?dist}
+Release: 1b787d2.2%{?dist}
 Summary: Remote Windows command executor.
 
 
@@ -23,35 +23,15 @@ Group: Applications/System
 License: GPLv3
 URL: http://sourceforge.net/projects/winexe/
 Source0: %{name}-%{version}.tar.gz
+Patch0: samba4-libs.patch
+Patch1: samba42-debug.patch
 
-AutoReqProv: no
 BuildRequires: gcc
-BuildRequires: perl
-BuildRequires: mingw-binutils-generic
-BuildRequires: mingw-filesystem-base
-BuildRequires: mingw32-binutils
-BuildRequires: mingw32-cpp
-BuildRequires: mingw32-crt
-BuildRequires: mingw32-filesystem
 BuildRequires: mingw32-gcc
-BuildRequires: mingw32-headers
-BuildRequires: mingw64-binutils
-BuildRequires: mingw64-cpp
-BuildRequires: mingw64-crt
-BuildRequires: mingw64-filesystem
 BuildRequires: mingw64-gcc
-BuildRequires: mingw64-headers
-BuildRequires: libcom_err-devel
 BuildRequires: popt-devel
-BuildRequires: zlib-devel
-BuildRequires: zlib-static
-BuildRequires: glibc-devel
-BuildRequires: glibc-static
-BuildRequires: git
-BuildRequires: gnutls-devel
-BuildRequires: libacl-devel
 BuildRequires: openldap-devel
-Requires: samba4-libs >= 4.0.0
+Requires: samba4-libs >= 4.2.0
 
 %if (0%{?rhel} >= 7 || "0%{?dist}" == "0.amzn1")
 BuildRequires: python%{?__python_ver}-devel
@@ -63,7 +43,7 @@ Requires: glibc >= 2.17
 BuildRequires: rpm-build
 BuildRequires: pkgconfig
 BuildRequires: libtalloc-devel
-BuildRequires: samba4-devel
+BuildRequires: samba4-devel >= 4.2.0
 Requires: glibc >= 2.12
 
 %endif
@@ -78,17 +58,22 @@ NT/2000/XP/2003/Vista/7/2008/8/2012 systems from GNU/Linux.
 
 %prep
 cd ../SOURCES
-tar -xf winexe-1.1.tar.gz
-chmod +x ./generatetarball
-./generatetarball
+tar -xzvf winexe-1.1.tar.gz
+
+%setup 
+%patch0 -p0 -b .patch0
 
 
-%setup -q
-
+# Disable debug only for EL >= 7 because of https://sourceforge.net/p/winexe/bugs/77/
+# Patch from Michael Stowe: https://sourceforge.net/u/mstowe/winexe/ci/master/tree/
+%if 0%{?rhel} >= 7
+%patch1 -p0 -b .patch1
+%endif
 
 %build
 cd source
-./waf --samba-dir=../../samba configure build
+./waf configure build
+## ./waf --samba-dir=../../samba configure build
 
 
 %install
@@ -108,6 +93,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue Apr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1-1b787d2-2
+- Update to support minimum samba 4.2 or greater
+- Change waf script so it can use the new samba 4.x library names
+- Support CentOS7 again thanks to a patch from Michel Stowe at
+  https://sourceforge.net/u/mstowe/winexe/ci/master/tree
+
 * Wed Oct 26 2016 SaltStack Packaging Team <packaging@saltstack.com> - 1.1-b787d2-1
 - Update to support Redhat 6 and native Amazon Linux
 

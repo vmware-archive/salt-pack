@@ -14,7 +14,7 @@
 
 Name:           python-%{srcname}
 Version:        3.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Self-contained Python package of low-level cryptographic primitives
 
 # Only OCB blockcipher mode is patented, but according to
@@ -27,6 +27,7 @@ Source0:        https://github.com/Legrandin/pycryptodome/archive/v%{version}/%{
 
 # Unbundle libtomcrypt
 Patch0:         0001-use-system-libtomcrypt.patch
+Patch1:         0002-handle-MD5.patch
 
 BuildRequires:  gcc
 BuildRequires:  libtomcrypt-devel
@@ -93,8 +94,9 @@ BuildRequires:  python%{python3_pkgversion}-setuptools
 Python 3 version.
 
 %prep
-%setup -n %{srcname}-%{version} 
+%setup -n %{srcname}-%{version}
 %patch0 -p1
+%patch1 -p1
 
 # Bundled libtomcrypt
 rm -vrf src/libtom/
@@ -124,6 +126,9 @@ touch .separate_namespace
 %{python3_sitearch}/%{modname}/
 
 %changelog
+* Wed Apr 26 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.3-2
+- Patched to allow for MD5 handling on Redhat 6 using  hashlib causing errors
+
 * Sun Jan 01 2017 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 3.4.3-1
 - Update to 3.4.3
 

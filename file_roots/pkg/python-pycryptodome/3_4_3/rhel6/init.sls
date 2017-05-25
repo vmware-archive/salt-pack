@@ -36,6 +36,7 @@
     - sources:
       - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
       - salt://{{slspath}}/sources/0001-use-system-libtomcrypt.patch
+      - salt://{{slspath}}/sources/0002-handle-MD5.patch
 
 ##      - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

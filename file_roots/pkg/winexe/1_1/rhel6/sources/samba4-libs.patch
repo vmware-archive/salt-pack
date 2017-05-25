@@ -1,0 +1,23 @@
+--- source/wscript	2016-06-04 23:40:30.000000000 +0200
++++ source/wscript	2016-06-05 01:34:54.710096046 +0200
+@@ -55,9 +55,9 @@
+         else:
+             import subprocess
+             for subdir in 'samba private'.split():
+-                p = subprocess.Popen(['gcc', '-print-file-name=%s/libcli-ldap.so' % (subdir)], stdout=subprocess.PIPE).communicate()[0].rstrip()
++                p = subprocess.Popen(['gcc', '-print-file-name=%s/libcli-ldap-samba4.so' % (subdir)], stdout=subprocess.PIPE).communicate()[0].rstrip()
+                 if not os.path.exists(p):
+-                    p = subprocess.Popen(['gcc', '-print-file-name=%s/libcli-ldap.so.0' % (subdir)], stdout=subprocess.PIPE).communicate()[0].rstrip()
++                    p = subprocess.Popen(['gcc', '-print-file-name=%s/libcli-ldap-samba4.so.0' % (subdir)], stdout=subprocess.PIPE).communicate()[0].rstrip()
+                 if not os.path.exists(p):
+                     continue
+                 ctx.env.SAMBA_LIBS = os.path.abspath(p + '/..')
+@@ -78,7 +78,7 @@
+                 ''' % (h in 'smb_cli.h smb_cliraw.h smb_composite.h util/debug.h'.split(), h))
+ 
+             libs = []
+-            for l in 'cli-ldap dcerpc dcerpc-samba errors popt talloc ndr-standard samba-hostconfig samba-credentials smbclient-raw'.split():
++            for l in 'cli-ldap-samba4 dcerpc dcerpc-samba4 dcerpc-samba-samba4 errors-samba4 popt talloc ndr-standard samba-hostconfig samba-credentials smbclient-raw'.split():
+                 if ctx.check(lib=l, libpath=ctx.env.SAMBA_LIBS, mandatory=False):
+                     libs.append(l)
+                 else:

@@ -67,6 +67,7 @@ Source18: salt-master.fish
 Source19: salt-minion.fish
 Source20: salt-run.fish
 Source21: salt-syndic.fish
+Source22: %{name}-proxy@.service
 
 ## Patch0:  salt-%%{version}-tests.patch
 
@@ -99,7 +100,13 @@ Requires: python26-six
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python-tornado >= 4.2.1
 BuildRequires: python-futures >= 2.0
+
+%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
+BuildRequires: python2-pycryptodomex >= 3.4.3
+%else
 BuildRequires: python-crypto >= 2.6.1
+%endif
+
 BuildRequires: python-jinja2
 BuildRequires: python-msgpack > 0.3
 BuildRequires: python-pip
@@ -123,7 +130,13 @@ BuildRequires: python-argparse
 %endif
 
 BuildRequires: python%{?__python_ver}-devel
-Requires: python%{?__python_ver}-crypto >= 2.6.1
+
+%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
+Requires: python2-pycryptodomex >= 3.4.3
+%else
+Requires: python-crypto >= 2.6.1
+%endif
+
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack > 0.3
 %if ( "0%{?dist}" == "0.amzn1" )
@@ -291,6 +304,7 @@ install -p -m 0644 %{SOURCE6} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE7} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE8} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
+install -p -m 0644 %{SOURCE22} %{buildroot}%{_unitdir}/
 %endif
 
 # Force python2.6 on EPEL6
@@ -391,6 +405,7 @@ rm -rf %{buildroot}
 %attr(0755, root, root) %{_initrddir}/salt-minion
 %else
 %{_unitdir}/salt-minion.service
+%{_unitdir}/salt-proxy@.service
 %endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
@@ -612,8 +627,16 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Mon Mar 20 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
-- Update to feature release 2016.11.0 nightly build %{?__rc_ver}
+* Tue Apr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
+- Update to feature release 2016.11 branch nightly build %{?__rc_ver}
+
+* Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
+- Update to feature release 2016.11.5
+- Altered to use pycryptodomex if 64 bit and Redhat 6 and greater otherwise pycrypto
+- Addition of salt-proxy@.service
+
+* Wed Apr 19 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.4-1
+- Update to feature release 2016.11.4 and use of pycryptodomex
 
 * Mon Mar 20 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.3-2
 - Updated to allow for pre and post processing for salt-syndic and salt-api

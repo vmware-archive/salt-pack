@@ -130,7 +130,7 @@ pkgbuild_registry:
     python-crypto:
       version: 2.6.1-2
     python-pycryptodome:
-      version: 3.4.3-1
+      version: 3.4.3-2
       results:
         - python2-pycryptodomex
         - python3-pycryptodomex
@@ -145,8 +145,10 @@ pkgbuild_registry:
       version: 3.0.3-1
       noarch: True
     python-impacket:
-      version: 0.9.14-1
+      version: 0.9.14-3
       noarch: True
+      build_deps:
+        - python-crypto
     python-ioflo:
       version: 1.3.8-1
       noarch: True
@@ -286,7 +288,7 @@ pkgbuild_registry:
     python-crypto:
       version: 2.6.1-3
     python-pycryptodome:
-      version: 3.4.3-1
+      version: 3.4.3-2
       results:
         - python2-pycryptodomex
         - python3-pycryptodomex
@@ -301,8 +303,10 @@ pkgbuild_registry:
       version: 3.0.3-1
       noarch: True
     python-impacket:
-      version: 0.9.14-1
+      version: 0.9.14-3
       noarch: True
+      build_deps:
+        - python-crypto
     python-importlib:
       version: 1.0.2-2
       noarch: True
@@ -379,7 +383,8 @@ pkgbuild_registry:
       version: 2016.11.0tobereplaced_date-0
       noarch: True
       build_deps:
-        - python-pycryptodome
+        - python-pycrypto
+##        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests
@@ -397,10 +402,12 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     winexe:
-      version: 1.1-b787d2
+      version: 1.1-1b787d2.2
       results:
         - winexe
         - winexe-debuginfo
+      build_deps:
+        - python-impacket
     yum-utils:
       version: 1.1.30-30
       noarch: True
@@ -697,7 +704,7 @@ pkgbuild_registry:
       noarch: True
     python-impacket:
       name: python27-impacket
-      version: 0.9.14-2
+      version: 0.9.14-3
       noarch: True
     python-ioflo:
       name: python27-ioflo
@@ -759,6 +766,8 @@ pkgbuild_registry:
       results:
         - winexe
         - winexe-debuginfo
+      build_deps:
+        - python-impacket
     zeromq:
       version: 4.0.5-4
       results:

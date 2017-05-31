@@ -1,4 +1,5 @@
 %if ( "0%{?dist}" == "0.amzn1" )
+%global with_python3 0
 %global with_explicit_python27 1
 %global pybasever 2.7
 %global __python_ver 27
@@ -15,9 +16,20 @@
 %endif
 
 %global tarball_name apache-libcloud
+%global srcname libcloud
+%global eggname apache_libcloud
+%global _description \
+libcloud is a client library for interacting with many of \
+the popular cloud server providers.  It was created to make \
+it easy for developers to build products that work between \
+any of the services that it supports.
+
+# Don't duplicate the same documentation
+%global _docdir_fmt %{name}
+
 
 Name:           python-libcloud
-Version:        0.20.0
+Version:        2.0.0
 Release:        2%{?dist}
 Summary:        A Python library to address multiple cloud provider APIs
 
@@ -29,6 +41,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
+%description %{_description}
+
 %if 0%{?with_explicit_python27}
 BuildRequires:  python27-setuptools
 BuildRequires:  python27-devel
@@ -37,46 +51,50 @@ BuildRequires:  python-setuptools
 BuildRequires:  python2-devel
 %endif
 
-%description
-libcloud is a client library for interacting with many of the popular cloud 
-server providers.  It was created to make it easy for developers to build 
-products that work between any of the services that it supports.
-
 %if 0%{?with_explicit_python27}
-%package -n python%{?__python_ver}-libcloud
-Summary:        A Python library to address multiple cloud provider APIs
-Group:          Development/Languages
+%package -n python%{?__python_ver}-%{srcname}
+Summary:        %{summary}
 
-%description  -n python%{?__python_ver}-libcloud
-libcloud is a client library for interacting with many of the popular cloud 
-server providers.  It was created to make it easy for developers to build 
-products that work between any of the services that it supports.
-
+%description -n python%{?__python_ver}-%{srcname} %{_description}
 This package is meant to be used with Python 2.7.
 %endif
 
 %prep
-%setup -qn %{tarball_name}-%{version}
+%setup -n %{tarball_name}-%{version}
 
+# Delete shebang lines in the demos
+sed -i '1d' demos/gce_demo.py demos/compute_demo.py
 
 %build
 %{__python} setup.py build
+
+# Fix permissions for demos
+chmod -x demos/gce_demo.py demos/compute_demo.py
 
 %install
 rm -rf %{buildroot}
 %{__python} setup.py install -O1 --skip-build %{?__inst_layout } --root %{buildroot}
 
- 
+# Don't package the test suite. We dont run it anyway
+# because it requires some valid cloud credentials
+rm -r $RPM_BUILD_ROOT%{python2_sitelib}/%{srcname}/test
+
+
 %clean
 rm -rf %{buildroot}
 
 
-%files -n python%{?__python_ver}-libcloud
-%defattr(-,root,root,-)
-%doc LICENSE README.rst
-%{python2_sitelib}/*
+%files -n python%{?__python_ver}-%{srcname}
+%doc README.rst demos/
+%license LICENSE
+%{python2_sitelib}/%{srcname}/
+%{python2_sitelib}/%{eggname}-*.egg-info/
+
 
 %changelog
+* Tue May 30 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
+- Apache Libcloud version 2.0.0 upgrade
+
 * Wed Oct 19 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-2
 - Ported to build on Amazon Linux 2016.09 natively
 

@@ -20,6 +20,7 @@ build_pkgs:
       - python-gnupg
       - pkg-config
       - ccache
+      - dh-python
 ##      - dh-systemd
 
 {{build_cfg.build_runas}}:

@@ -20,6 +20,7 @@ build_pkgs:
       - gnupg-agent
       - pkg-config
       - packaging-dev
+      - dh-python
 
 
 {{build_cfg.build_runas}}:

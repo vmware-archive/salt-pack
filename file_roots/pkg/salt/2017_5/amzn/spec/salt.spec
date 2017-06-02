@@ -30,7 +30,7 @@
 %global include_tests 0
 
 # Release Candidate
-%define __rc_ver tobereplaced_date
+%define __rc_ver nb201706011505073579307
 
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
@@ -127,19 +127,26 @@ BuildRequires: python-argparse
 
 BuildRequires: python%{?__python_ver}-devel
 
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
-Requires: python2-pycryptodomex >= 3.4.3
-%else
-Requires: python-crypto >= 2.6.1
-%endif
-
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack > 0.3
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
+Requires: python%{?__python_ver}
+Requires: python%{?__python_ver}-crypto >= 2.6.1
 %else
+%if 0%{?fedora} >= 1
+Requires: python-crypto >= 2.6.1
+%else
+%if ( 0%{?rhel} >= 6 && 0%{__isa_bits} == 64 )
+Requires: python2-pycryptodomex >= 3.4.3
+%else
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+%endif
+%endif
+
 Requires: PyYAML
 %endif
+
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
@@ -249,8 +256,9 @@ The salt-ssh tool can run remote execution functions and states without the use
 of an agent (salt-minion) service.
 
 %prep
-%setup -q -c
-%setup -q -T -D -a 1
+## %setup -q -c
+## %setup -q -T -D -a 1
+%setup -c
 
 cd %{name}-%{version}
 ## %%patch0 -p1
@@ -304,12 +312,12 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 %endif
 
-# Force python2.6 on EPEL6
+# Force python2.7 on EPEL6
 # https://github.com/saltstack/salt/issues/22003
 %if 0%{?rhel} == 6
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/spm
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_bindir}/salt*
-sed -i 's#/usr/bin/python#/usr/bin/python2.6#g' %{buildroot}%{_initrddir}/salt*
+sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
+sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
+sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
 %endif
 
 # Logrotate

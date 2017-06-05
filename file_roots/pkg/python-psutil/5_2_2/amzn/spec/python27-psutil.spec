@@ -5,9 +5,14 @@
 %global __python2 %{_bindir}/python%{pyver}
 %global python2_sitelib  %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
+
+## %global __os_install_post %{__python27_os_install_post}
+%global __python27_os_install_post %{__os_install_post }
+
 %global srcname psutil
 %global src %(echo %{srcname} | cut -c1)
+
+%global __inst_layout --install-layout=unix
 
 # Filter Python modules from Provides
 %{?filter_setup:
@@ -17,7 +22,7 @@
 
 Name:           python%{iusver}-%{srcname}
 Version:        5.2.2
-Release:        1.ius%{?dist}
+Release:        2.ius%{?dist}
 Summary:        A process and system utilities module for Python
 Vendor:         IUS Community Project
 Group:          Development/Languages
@@ -52,11 +57,12 @@ CFLAGS=$RPM_OPT_FLAGS %{__python2} setup.py build
 
 %install
 %{?el5:%{__rm} -rf %{buildroot}}
-%{__python2} setup.py install --optimize 1 --skip-build --root %{buildroot}
+%{__python2} setup.py install --optimize 1 --skip-build %{?__inst_layout } --root %{buildroot}
 
 
 %{?el5:%clean}
 %{?el5:%{__rm} -rf %{buildroot}}
+
 
 %files
 %doc CREDITS HISTORY.rst LICENSE README.rst
@@ -64,6 +70,9 @@ CFLAGS=$RPM_OPT_FLAGS %{__python2} setup.py build
 
 
 %changelog
+* Mon Jun 05 2017 Ben Harper <packaging@saltstack.com> - 5.2.2-2.ius
+- Port to Amazon Python 2.7
+
 * Tue Apr 11 2017 Ben Harper <ben.harper@rackspace.com> - 5.2.2-1.ius
 - Latest upstream
 

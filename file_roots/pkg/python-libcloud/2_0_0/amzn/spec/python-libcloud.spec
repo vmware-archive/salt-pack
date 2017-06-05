@@ -41,8 +41,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
-%description %{_description}
-
 %if 0%{?with_explicit_python27}
 BuildRequires:  python27-setuptools
 BuildRequires:  python27-devel
@@ -50,6 +48,8 @@ BuildRequires:  python27-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python2-devel
 %endif
+
+%description %{_description}
 
 %if 0%{?with_explicit_python27}
 %package -n python%{?__python_ver}-%{srcname}
@@ -66,14 +66,14 @@ This package is meant to be used with Python 2.7.
 sed -i '1d' demos/gce_demo.py demos/compute_demo.py
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 
 # Fix permissions for demos
 chmod -x demos/gce_demo.py demos/compute_demo.py
 
 %install
 rm -rf %{buildroot}
-%{__python} setup.py install -O1 --skip-build %{?__inst_layout } --root %{buildroot}
+%{__python2} setup.py install -O1 --skip-build %{?__inst_layout } --root %{buildroot}
 
 # Don't package the test suite. We dont run it anyway
 # because it requires some valid cloud credentials
@@ -92,8 +92,8 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Tue May 30 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
-- Apache Libcloud version 2.0.0 upgrade
+* Mon Jun 05 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
+- Apache Libcloud version 2.0.0 upgrade for Amazon
 
 * Wed Oct 19 2016 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-2
 - Ported to build on Amazon Linux 2016.09 natively

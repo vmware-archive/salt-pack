@@ -204,7 +204,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2017.5.0tobereplaced_date-0
+      version: 2017.5.0nb201706051419508752182-0
       noarch: True
       build_deps:
         - python-pycryptodome
@@ -588,7 +588,7 @@ pkgbuild_registry:
       results:
         - PyYAML27
     salt:
-      version: 2017.5.0tobereplaced_date-0
+      version: 2017.5.0nb201706051419508752182-0
       noarch: True
       build_deps:
         - python27
@@ -687,6 +687,8 @@ pkgbuild_registry:
       name: python27-libcloud
       version: 2.0.0-2
       noarch: True
+      results:
+        - python27-libcloud
     python-libnacl:
       name: python27-libnacl
       version: 1.4.3-2
@@ -698,10 +700,7 @@ pkgbuild_registry:
       version: 0.4.6-2
     python-psutil:
       name: python27-psutil
-      version: 5.2.2-1.ius
-      build_deps:
-        - python27
-        - python-setuptools
+      version: 5.2.2-2.ius
       results:
         - python27-psutil
     python-pyzmq:
@@ -725,7 +724,7 @@ pkgbuild_registry:
       version: 0.2.4-2
       noarch: True
     salt:
-      version: 2017.5.0tobereplaced_date-0
+      version: 2017.5.0nb201706051419508752182-0
       noarch: True
       build_deps:
         - python-msgpack

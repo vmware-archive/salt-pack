@@ -204,7 +204,7 @@ pkgbuild_registry:
       name: PyYAML
       version: 3.11-1
     salt:
-      version: 2017.5.0nb201706051419508752182-0
+      version: 2017.5.0tobereplaced_date-0
       noarch: True
       build_deps:
         - python-pycryptodome
@@ -588,7 +588,7 @@ pkgbuild_registry:
       results:
         - PyYAML27
     salt:
-      version: 2017.5.0nb201706051419508752182-0
+      version: 2017.5.0tobereplaced_date-0
       noarch: True
       build_deps:
         - python27
@@ -724,7 +724,7 @@ pkgbuild_registry:
       version: 0.2.4-2
       noarch: True
     salt:
-      version: 2017.5.0nb201706051419508752182-0
+      version: 2017.5.0tobereplaced_date-0
       noarch: True
       build_deps:
         - python-msgpack

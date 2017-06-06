@@ -30,7 +30,7 @@
 %global include_tests 0
 
 # Release Candidate
-%define __rc_ver nb201706011505073579307
+%define __rc_ver tobereplaced_date
 
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 

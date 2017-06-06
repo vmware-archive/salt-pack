@@ -1,7 +1,23 @@
 {% import "setup/debian/map.jinja" as buildcfg %}
 
 include:
-{% if buildcfg.build_release == 'debian8' %}
+{% if buildcfg.build_release == 'debian9' %}
+
+    - pkg.libsodium.1_0_3.debian9
+##    - pkg.python-future.0_14_3.debian9
+##    - pkg.python-futures.3_0_3.debian9
+    - pkg.python-ioflo.1_3_8.debian9
+##    - pkg.python-libcloud.1_5_0.debian9
+    - pkg.python-libnacl.4_1.debian9
+##    - pkg.python-pyzmq.14_4_0.debian9
+    - pkg.python-raet.0_6_3.debian9
+##    - pkg.python-systemd.231.debian9
+    - pkg.python-timelib.0_2_4.debian9
+##    - pkg.python-tornado.4_2_1.debian9
+    - pkg.salt.2017_5.debian9
+##    - pkg.zeromq.4_0_5.debian9
+
+{% elif buildcfg.build_release == 'debian8' %}
 
 {% if buildcfg.build_arch == 'armhf' %}
 

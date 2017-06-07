@@ -25,6 +25,12 @@ include:
   - setup.debian.gpg_agent
 
 
+build_additional_pkgs:
+  pkg.installed:
+    - pkgs:
+      - python-support
+
+
 build_pbldhooks_rm_G05:
   file.absent:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences

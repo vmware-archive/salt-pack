@@ -15,12 +15,11 @@ build_pkgs:
       - debhelper
       - gnupg
       - gnupg-agent
-      - python-support
       - python-setuptools
       - python-gnupg
       - pkg-config
       - ccache
-##      - dh-systemd
+
 
 {{build_cfg.build_runas}}:
   user.present:

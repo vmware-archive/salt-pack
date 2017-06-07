@@ -3,20 +3,20 @@
 
 {% set pypi_name = 'raet' %}
 {% set name = 'python-' ~ pypi_name %}
-{% set version = '0.6.3' %}
+{% set version = '0.6.7' %}
 {% set release_ver = '1' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:
     - runas: {{buildcfg.build_runas}}
-    - results: 
+    - results:
       - {{name}}_{{version}}-{{release_ver}}_all.deb
       - {{pypi_name}}_{{version}}.orig.tar.gz
       - {{pypi_name}}_{{version}}-{{release_ver}}.dsc
       - {{pypi_name}}_{{version}}-{{release_ver}}.debian.tar.xz
     - force: {{force}}
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{pypi_name}}_{{version}}-{{release_ver}}.dsc 
+    - spec: salt://{{slspath}}/spec/{{pypi_name}}_{{version}}-{{release_ver}}.dsc
     - tgt: {{buildcfg.build_tgt}}
     - template: jinja
     - env:

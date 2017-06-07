@@ -30,6 +30,7 @@ build_additional_pkgs:
     - pkgs:
       - dh-systemd
       - dh-python
+      - pinentry-tty
 
 
 build_pbldhooks_rm_G05:

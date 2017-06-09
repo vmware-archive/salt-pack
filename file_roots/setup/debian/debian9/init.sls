@@ -30,6 +30,7 @@ build_additional_pkgs:
     - pkgs:
       - dh-systemd
       - dh-python
+      - gnupg2
       - pinentry-tty
 
 
@@ -57,13 +58,13 @@ build_prefs_rm:
   file.absent:
     - name: /etc/apt/preferences
 
-
-build_pbldhookskeys_file:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
-    - text: |
-        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
-        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
+##  Only needed for Raspbian 8
+## build_pbldhookskeys_file:
+##   file.append:
+##     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
+##     - text: |
+##         /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
+##         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 
 
 build_pbldhooks_file_G05:
@@ -139,9 +140,9 @@ build_pbldrc:
             '--variant=buildd' 
             '--keyring' "${HOME}/.gnupg/pubring.gpg"
         )
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ stretch main contrib non-free rpi"
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ ${DIST} main contrib non-free rpi"
 {% else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://deb.debian.org/debian/ stable main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://deb.debian.org/debian/ ${DIST} main contrib "
 {% endif %}
 
 

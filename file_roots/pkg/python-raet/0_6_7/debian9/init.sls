@@ -4,7 +4,7 @@
 {% set pypi_name = 'raet' %}
 {% set name = 'python-' ~ pypi_name %}
 {% set version = '0.6.7' %}
-{% set release_ver = '1' %}
+{% set release_ver = '2' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:

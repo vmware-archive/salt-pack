@@ -32,6 +32,7 @@ build_additional_pkgs:
       - dh-python
       - gnupg2
       - pinentry-tty
+      - python-sphinx
 
 
 build_pbldhooks_rm_G05:
@@ -142,7 +143,7 @@ build_pbldrc:
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ ${DIST} main contrib non-free rpi"
 {% else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://deb.debian.org/debian/ ${DIST} main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://deb.debian.org/debian/ ${DIST} main | deb http://deb.debian.org/debian/ ${DIST} contrib "
 {% endif %}
 
 

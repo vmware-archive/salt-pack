@@ -14,16 +14,23 @@
 
 %else
 
-%if ! (0%{?rhel} >= 6 || 0%{?fedora} > 12)
-%global with_python26 1
-%define pybasever 2.6
-%define __python_ver 26
-%define __python %{_bindir}/python%{?pybasever}
-%endif
-
 %{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
+
+
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
 
 %endif
 
@@ -79,72 +86,57 @@ Requires: pciutils
 Requires: which
 Requires: yum-utils
 
-%if 0%{?with_python26}
-
-BuildRequires: python26-devel
-Requires: python26-crypto >= 2.6.1
-Requires: python26-jinja2
-Requires: python26-msgpack > 0.3
-Requires: python26-PyYAML
-Requires: python26-requests >= 1.0.0
-Requires: python26-tornado >= 4.2.1
-Requires: python26-zmq
-Requires: python26-six
-
-%else
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python-tornado >= 4.2.1
-BuildRequires: python-futures >= 2.0
+BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
+BuildRequires: python%{?__python_ver}-futures >= 2.0
+BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
+BuildRequires: python%{?__python_ver}-jinja2
+BuildRequires: python%{?__python_ver}-msgpack > 0.3
+BuildRequires: python%{?__python_ver}-pip
+BuildRequires: python%{?__python_ver}-zmq
 
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
-BuildRequires: python2-pycryptodomex >= 3.4.3
+%if 0%{?with_explicit_python27}
+BuildRequires: PyYAML%{?__python_ver}
 %else
-BuildRequires: python-crypto >= 2.6.1
+BuildRequires: PyYAML
 %endif
 
-BuildRequires: python-jinja2
-BuildRequires: python-msgpack > 0.3
-BuildRequires: python-pip
-BuildRequires: python-zmq
-BuildRequires: PyYAML
-BuildRequires: python-requests
-BuildRequires: python-unittest2
+BuildRequires: python%{?__python_ver}-requests
+BuildRequires: python%{?__python_ver}-unittest2
 # this BR causes windows tests to happen
 # clearly, that's not desired
 # https://github.com/saltstack/salt/issues/3749
-BuildRequires: python-mock
+BuildRequires: python%{?__python_ver}-mock
 BuildRequires: git
-BuildRequires: python-libcloud
-BuildRequires: python-six
+BuildRequires: python%{?__python_ver}-libcloud
+BuildRequires: python%{?__python_ver}-six
 
 %if ((0%{?rhel} == 6) && 0%{?include_tests})
 # argparse now a salt-testing requirement
 BuildRequires: python-argparse
 %endif
 
-%endif
+%endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 
 BuildRequires: python%{?__python_ver}-devel
 
+
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack > 0.3
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
 Requires: python%{?__python_ver}
-Requires: python%{?__python_ver}-crypto >= 2.6.1
 %else
-%if 0%{?fedora} >= 1
-Requires: python-crypto >= 2.6.1
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+Requires: PyYAML%{?__python_ver}
 %else
-%if ( 0%{?rhel} >= 6 && 0%{__isa_bits} == 64 )
-Requires: python2-pycryptodomex >= 3.4.3
-%else
-Requires: python%{?__python_ver}-crypto >= 2.6.1
-%endif
+Requires: PyYAML
 %endif
 
-Requires: PyYAML
 %endif
 
 Requires: python%{?__python_ver}-requests >= 1.0.0
@@ -155,8 +147,6 @@ Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
 Requires: python%{?__python_ver}-psutil
 
-
-%endif
 
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 
@@ -222,11 +212,7 @@ infrastructure.
 Summary: REST API for Salt, a parallel remote execution system
 Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-%if 0%{?with_python26}
-Requires: python26-cherrypy
-%else
 Requires: python%{?__python_ver}-cherrypy
-%endif
 
 
 %description api
@@ -236,11 +222,7 @@ salt-api provides a REST interface to the Salt master.
 Summary: Cloud provisioner for Salt, a parallel remote execution system
 Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-%if 0%{?with_python26}
-Requires: python26-libcloud
-%else
 Requires: python%{?__python_ver}-libcloud
-%endif
 
 %description cloud
 The salt-cloud tool provisions new cloud VMs, installs salt-minion on them, and
@@ -312,13 +294,13 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 %endif
 
-# Force python2.7 on EPEL6
-# https://github.com/saltstack/salt/issues/22003
-%if 0%{?rhel} == 6
-sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
-sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
-sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
-%endif
+## # Force python2.7 on EPEL6
+## # https://github.com/saltstack/salt/issues/22003
+## %if 0%{?rhel} == 6
+## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
+## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
+## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
+## %endif
 
 # Logrotate
 install -p %{SOURCE10} .
@@ -640,7 +622,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed May  3 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.5.0%{?__rc_ver}-0
+* Mon Jun 12 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.5.0%{?__rc_ver}-0
 - Update to feature release 2017.5 branch nightly build %{?__rc_ver}
 - Added python-psutil as a requirement, diabled auto enable for Redhat 6
 

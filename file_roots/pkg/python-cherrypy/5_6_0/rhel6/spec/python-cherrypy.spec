@@ -1,10 +1,25 @@
 %if !(0%{?fedora} > 12 || 0%{?rhel} > 5)
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %endif
 
-Name:           python-cherrypy
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+
+%else
+%global python python
+%endif
+
+%global srcname cherrypy
+
+Name:           python%{?__python_ver}-%{srcname}
 Version:        5.6.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Pythonic, object-oriented web development framework
 Group:          Development/Libraries
 License:        BSD
@@ -18,9 +33,19 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+%else
 BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-BuildRequires:  python-nose
+%endif
+
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  python%{?__python_ver}-nose
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
 
 %description
 CherryPy allows developers to build web applications in much the same way 
@@ -35,30 +60,33 @@ results in smaller source code developed in less time.
 %{__sed} -i 's/\r//' cherrypy/tutorial/README.txt cherrypy/tutorial/tutorial.conf
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install --skip-build --root $RPM_BUILD_ROOT
 
-%check
-cd cherrypy/test
-# These two tests hang in the buildsystem so we have to disable them.
-# The third fails in cherrypy 3.2.2.
-PYTHONPATH='../../' nosetests -s ./ -e 'test_SIGTERM' -e \
-  'test_SIGHUP_tty' -e 'test_file_stream'
+## %check
+## cd cherrypy/test
+## # These two tests hang in the buildsystem so we have to disable them.
+## # The third fails in cherrypy 3.2.2.
+## PYTHONPATH='../../' nosetests -s ./ -e 'test_SIGTERM' -e \
+##   'test_SIGHUP_tty' -e 'test_file_stream'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -n python%{?__python_ver}-%{srcname}
 %defattr(-,root,root,-)
 ## %doc README.txt
 %doc cherrypy/tutorial
 %{_bindir}/cherryd
-%{python_sitelib}/*
+%{python2_sitelib}/*
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Mon Apr 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-1
 - Update to 5.6.0
 

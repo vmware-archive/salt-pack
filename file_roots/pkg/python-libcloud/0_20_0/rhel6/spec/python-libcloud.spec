@@ -1,10 +1,20 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
 
 %global tarball_name apache-libcloud
 
-Name:           python-libcloud
+Name:           python%{?__python_ver}-libcloud
 Version:        0.20.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Python library to address multiple cloud provider APIs
 
 Group:          Development/Languages
@@ -15,9 +25,18 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
-BuildRequires:  python-setuptools
+BuildRequires:  python%{?__python_ver}-setuptools
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+%else
 BuildRequires:  python2-devel
+%endif
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
 
 %description
 libcloud is a client library for interacting with many of the popular cloud 
@@ -43,10 +62,13 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc LICENSE README.rst
-%{python_sitelib}/*
+%{python2_sitelib}/*
 
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Thu Jan 07 2016 Daniel Bruno dbruno@fedoraproject.org - 0.20.0-1
 - Release 0.20.0 with new features and improvements
 

@@ -1,16 +1,27 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 
 %if 0%{?fedora} > 12 || 0%{?rhel} > 7
-%global with_python3 1
+%global with_python3 0
 
 %global __python3 python3
 
 %{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %endif
 
-Name:           python-six
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+
+Name:           python%{?__python_ver}-six
 Version:        1.9.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -19,7 +30,14 @@ URL:            http://pypi.python.org/pypi/six/
 Source0:        http://pypi.python.org/packages/source/s/six/six-%{version}.tar.gz
 
 BuildArch:      noarch
+
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+Requires: python%{?__python_ver} >= 2.7.9-1
+%else
 BuildRequires:  python2-devel
+%endif
+
 # For use by selftests:
 #BuildRequires:  pytest
 #BuildRequires:  tkinter
@@ -57,7 +75,7 @@ cp -a . %{py3dir}
 
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 %if 0%{?with_python3}
 pushd %{py3dir}
 %{__python3} setup.py build
@@ -70,7 +88,7 @@ pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 popd
 %endif
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 
 #%check
@@ -82,7 +100,7 @@ popd
 #%endif
 
 
-%files
+%files -n python%{?__python_ver}-six
 %doc LICENSE README documentation/index.rst
 %{python_sitelib}/*
 
@@ -94,6 +112,9 @@ popd
 
 
 %changelog
+* Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.9.0-3
+- Updated to use Python 2.7 on Redhat 6 and disabled Python 3
+
 * Thu Mar 12 2015 Matej Stuchlik <mstuchli@redhat.com> - 1.9.0-2
 - Rebuild for RHEL 6.7
 Resolves: rhbz#1183146

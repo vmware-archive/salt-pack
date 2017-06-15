@@ -3,6 +3,7 @@
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
 {% set sls_name = "python-pyzmq" %}
+{% set spec_name = "python-zmq" %}
 {% set pypi_name = "pyzmq" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
@@ -25,7 +26,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{pkg_name}}.spec
+    - spec: salt://{{slspath}}/spec/{{spec_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 

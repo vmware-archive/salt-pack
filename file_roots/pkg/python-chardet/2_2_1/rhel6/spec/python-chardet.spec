@@ -1,8 +1,15 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+## DGM %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Name:           python-chardet
+%global python python27
+%global python2_version 2.7 
+%global __python2 %{_bindir}/python%{python2_version}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+%global __os_install_post %{__python27_os_install_post}
+%global srcname chardet
+
+Name:           %{python}-%{srcname}
 Version:        2.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Character encoding auto-detection in Python
 
 Group:          Development/Languages
@@ -12,11 +19,23 @@ Source0:        https://pypi.python.org/packages/source/c/chardet/chardet-2.2.1.
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel, python-setuptools
+BuildRequires:  %{python}-devel
+BuildRequires:  %{python}-tools
+BuildRequires:  %{python}-setuptools
+Requires: %{python}
 
 %description
 Character encoding auto-detection in Python. As 
 smart as your browser. Open source.
+
+## %package -n %{python}-%{srcname}
+## Summary:        Character encoding auto-detection in Python
+## Group:          Development/Languages
+## Requires:       %{python}
+## 
+## %description -n %{python}-%{srcname}
+## Character encoding auto-detection in Python. As smart as your browser. Open
+## source.
 
 %prep
 %setup -q -n chardet-%{version}
@@ -25,26 +44,29 @@ sed -ie '1d' chardet/chardetect.py
 
 %build
 # Remove CFLAGS=... for noarch packages (unneeded)
-%{__python} setup.py build
+%{__python2} setup.py build
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
  
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
-%files
+%files -n %{python}-%{srcname}
 %defattr(-,root,root,-)
 %doc LICENSE README.rst
 # For noarch packages: sitelib
-%{python_sitelib}/*
+%{python2_sitelib}/*
 %{_bindir}/chardetect
 
 
 %changelog
+* Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-2
+- Alter to support Python 2.7 on Redhat 6
+
 * Mon Apr 13 2015 Matej Stuchlik <mstuchli@redhat.com> - 2.2.1-1
 - Update to 2.2.1
 Resolves: rhbz#1176251

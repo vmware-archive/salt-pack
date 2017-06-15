@@ -28,7 +28,9 @@ include:
 build_additional_pkgs:
   pkg.installed:
     - pkgs:
+      - python-support
       - dh-systemd
+      - dh-python
 
 
 build_pbldhooks_rm_G05:

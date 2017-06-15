@@ -1,0 +1,26 @@
+# Provide an alternate definition of __os_install_post
+# (normally defined by /usr/lib/rpm/redhat/macros)
+#
+# This definition is identical to that one, except that in this one
+# brp-python-bytecompile is invoked with python2.7 rather than with no
+# arguments (which leads to it incorrectly using /usr/bin/python)
+%__python27_os_install_post    \
+    /usr/lib/rpm/redhat/brp-compress \
+    %{!?__debug_package:/usr/lib/rpm/redhat/brp-strip %{__strip}} \
+    /usr/lib/rpm/redhat/brp-strip-static-archive %{__strip} \
+    /usr/lib/rpm/redhat/brp-strip-comment-note %{__strip} %{__objdump} \
+    /usr/lib/rpm/brp-python-bytecompile /usr/bin/python2.7 \
+    /usr/lib/rpm/redhat/brp-java-repack-jars \
+%{nil}
+
+# This is again very similar to the above, however adds support for
+# packages building against multiple versions of python.  We add a
+# New macro in order to keep the above compatible
+%__multiple_python_os_install_post    \
+    /usr/lib/rpm/redhat/brp-compress \
+    %{!?__debug_package:/usr/lib/rpm/redhat/brp-strip %{__strip}} \
+    /usr/lib/rpm/redhat/brp-strip-static-archive %{__strip} \
+    /usr/lib/rpm/redhat/brp-strip-comment-note %{__strip} %{__objdump} \
+    /usr/lib/rpm/brp-multiple-python-bytecompile %{__python} \
+    /usr/lib/rpm/redhat/brp-java-repack-jars \
+%{nil}

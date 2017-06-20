@@ -153,7 +153,8 @@ pkgbuild_registry:
       version: 1.3.8-1
       noarch: True
     python-libcloud:
-      version: 0.20.0-1
+      name: python2-libcloud
+      version: 2.0.0-2
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -204,7 +205,7 @@ pkgbuild_registry:
       version: 2016.11.0tobereplaced_date-0
       noarch: True
       build_deps:
-        - python-pycryptodome
+        - python-pycrypto
         - python-msgpack
         - python-yaml
         - python-requests
@@ -320,7 +321,8 @@ pkgbuild_registry:
         - python-babel
         - python-markupsafe
     python-libcloud:
-      version: 0.20.0-1
+      name: python2-libcloud
+      version: 2.0.0-2
       noarch: True
     python-libnacl:
       version: 1.4.3-1
@@ -445,243 +447,6 @@ pkgbuild_registry:
         - zeromq
         - zeromq-devel
 
-  rhel5:
-    babel:
-      version: 0.9.5-2
-      noarch: True
-      build_deps:
-        - python-distribute
-    libffi:
-      version: 3.0.5-1
-      results:
-        - libffi
-        - libffi-debuginfo
-        - libffi-devel
-    libsodium:
-      version: 0.4.5-3
-      results:
-        - libsodium
-        - libsodium-debuginfo
-        - libsodium-devel
-    libyaml:
-      version: 0.1.2-8
-      results:
-        - libyaml
-        - libyaml-debuginfo
-        - libyaml-devel
-    pciutils:
-      version: 3.1.10-4
-      results:
-        - pciutils
-        - pciutils-debuginfo
-        - pciutils-devel
-        - pciutils-devel-static
-        - pciutils-libs
-    python26:
-      version: 2.6.8-3
-      results:
-        - python26
-        - python26-debuginfo
-        - python26-devel
-        - python26-libs
-        - python26-test
-        - python26-tools
-    python-backports:
-      name: python26-backports
-      version: 1.0-4
-    python-backports-ssl_match_hostname:
-      name: python26-backports-ssl_match_hostname
-      version: 3.4.0.2-2
-      noarch: True
-      build_deps:
-        - python-backports
-        - python-distribute
-    python-chardet:
-      name: python26-chardet
-      version: 2.0.1-2
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-cherrypy:
-      name: python26-cherrypy
-      version: 3.5.0-2
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-crypto:
-      name: python26-crypto
-      version: 2.6.1-2
-    python-distribute:
-      name: python26-distribute
-      version: 0.6.10-4
-      noarch: True
-    python-enum34:
-      version: 1.0-4
-      noarch: True
-    python-importlib:
-      version: 1.0.2-1
-      noarch: True
-    python-ioflo:
-      name: python26-ioflo
-      version: 1.3.8-1
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-jinja2:
-      name: python26-jinja2
-      version: 2.8.1-1
-      noarch: True
-      build_deps:
-        - python-babel
-        - python-crypto
-        - python-markupsafe
-        - python-distribute
-    python-libcloud:
-      name: python26-libcloud
-      version: 0.20.0-1
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-libnacl:
-      name: python26-libnacl
-      version: 1.4.3-1
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-nose:
-      name: python26-nose
-      version: 0.11.1-4
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-markupsafe:
-      name: python26-markupsafe
-      version: 0.11-3
-      build_deps:
-        - python-distribute
-    python-msgpack:
-      name: python26-msgpack
-      version: 0.4.5-1
-      build_deps:
-        - python-distribute
-    python-ordereddict:
-      version: 1.1-3
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-pip:
-      name: python26-pip
-      version: 1.5.6-1
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-pycurl:
-      name: python26-pycurl
-      version: 7.15.5.1-9
-    python-pyzmq:
-      name: python26-zmq
-      version: 14.5.0-2
-      build_deps:
-        - zeromq
-        - python-distribute
-    python-requests:
-      name: python26-requests
-      version: 1.1.0-5
-      noarch: True
-      build_deps:
-        - python-chardet
-        - python-distribute
-        - python-ordereddict
-        - python-urllib3
-    python-six:
-      name: python26-six
-      version: 1.6.1-2
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-tornado:
-      name: python26-tornado
-      version: 4.2.1-1
-      build_deps:
-        - python-backports-ssl_match_hostname
-        - python-distribute
-      additonal_deps:
-        - python-pycurl
-    python-timelib:
-      name: python26-timelib
-      version: 0.2.4-1
-      noarch: True
-    python-urllib3:
-      name: python26-urllib3
-      version: 1.5-8
-      noarch: True
-      build_deps:
-        - python-distribute
-    python-yaml:
-      name: python26-PyYAML
-      version: 3.08-4
-      build_deps:
-        - libyaml
-        - python-distribute
-    rpmdevtools:
-      version: 6.8-1
-      noarch: True
-    salt:
-      version: 2016.11.0tobereplaced_date-0
-      noarch: True
-      build_deps:
-        - python-crypto
-        - python-msgpack
-        - python-yaml
-        - python-requests
-        - python-pyzmq
-        - python-markupsafe
-        - python-tornado
-        - python-libcloud
-      results:
-        - salt
-        - salt-master
-        - salt-minion
-        - salt-syndic
-        - salt-api
-        - salt-cloud
-        - salt-ssh
-    yum-utils:
-      version: 1.1.30-30
-      noarch: True
-      results:
-        - yum-utils
-        - yum-NetworkManager-dispatcher
-        - yum-plugin-verify
-        - yum-plugin-fastestmirror
-        - yum-plugin-show-leaves
-        - yum-plugin-filter-data
-        - yum-plugin-versionlock
-        - yum-plugin-ps
-        - yum-plugin-tsflags
-        - yum-plugin-changelog
-        - yum-plugin-remove-with-leaves
-        - yum-plugin-downloadonly
-        - yum-plugin-tmprepo
-        - yum-plugin-protectbase
-        - yum-plugin-priorities
-        - yum-plugin-post-transaction-actions
-        - yum-plugin-fs-snapshot
-        - yum-plugin-aliases
-        - yum-plugin-local
-        - yum-plugin-auto-update-debug-info
-        - yum-plugin-security
-        - yum-plugin-rpm-warm-cache
-        - yum-plugin-list-data
-        - yum-plugin-upgrade-helper
-        - yum-plugin-merge-conf
-        - yum-plugin-keys
-        - yum-updateonboot
-    zeromq:
-      version: 4.0.5-4
-      results:
-        - zeromq
-        - zeromq-devel
 
   amzn:
     libsodium:
@@ -712,8 +477,10 @@ pkgbuild_registry:
       noarch: True
     python-libcloud:
       name: python27-libcloud
-      version: 0.20.0-2
+      version: 2.0.0-2
       noarch: True
+      results:
+        - python27-libcloud
     python-libnacl:
       name: python27-libnacl
       version: 1.4.3-2

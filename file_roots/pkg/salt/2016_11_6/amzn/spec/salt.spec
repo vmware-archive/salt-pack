@@ -147,8 +147,6 @@ Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
 
 
-%endif
-
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 
 Requires(post): chkconfig
@@ -622,7 +620,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Jun 20 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
 - Update to feature release 2016.11.6
 
 * Mon May 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-3

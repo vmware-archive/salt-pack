@@ -15,7 +15,7 @@ include:
     - pkg.python-futures.3_0_3.rhel7
     - pkg.python-impacket.0_9_14.rhel7
     - pkg.python-ioflo.1_3_8.rhel7
-    - pkg.python-libcloud.2_0_0.rhel7
+    - pkg.python-libcloud.0_20_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
     - pkg.python-msgpack.0_4_6.rhel7
     - pkg.python-mock.1_0_1.rhel7
@@ -53,7 +53,7 @@ include:
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_8_1.rhel6
-    - pkg.python-libcloud.2_0_0.rhel6
+    - pkg.python-libcloud.0_20_0.rhel6
     - pkg.python-libnacl.1_4_3.rhel6
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6

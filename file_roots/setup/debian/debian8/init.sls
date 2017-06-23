@@ -29,6 +29,7 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
+      - python3-lockfile
       - dh-systemd
       - dh-python
 

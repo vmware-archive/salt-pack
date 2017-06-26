@@ -18,7 +18,7 @@ include:
         OPTIONS : 'ask-passphrase'
         ORIGIN : 'SaltStack'
         LABEL : 'salt_debian8'
-        SUITE: 'stable'
+        SUITE: 'oldstable'
         CODENAME : 'jessie'
 {% if buildcfg.build_arch == 'armhf' %}
         ARCHS : '{{buildcfg.build_arch}} source'

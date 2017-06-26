@@ -15,7 +15,7 @@
         Pin: release a=' ~ os_codename ~ '
         Pin-Priority: 720
         Package: *
-        Pin: release a=oldstable
+        Pin: release a=oldoldstable
         Pin-Priority: 700
 ' %}
 
@@ -115,7 +115,7 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}}-updates main contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}}-backports main contrib | deb http://ftp.us.debian.org/debian/ oldstable main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}}-updates main contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}}-backports main contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}} main contrib "
 
 
 build_prefs:

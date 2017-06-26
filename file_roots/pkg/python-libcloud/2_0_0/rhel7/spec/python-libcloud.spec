@@ -33,8 +33,8 @@ Summary:        %{summary}
 ## BuildRequires:  python2-setuptools
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
-##%{?python_provide:%python_provide python2-%{srcname}}
-%python_provide python-%{srcname}
+## %{?python_provide:%python_provide python2-%{srcname}}
+## %python_provide python-%{srcname}
 
 %description -n python2-%{srcname} %{_description}
 Python 2 version.
@@ -96,7 +96,7 @@ rm -r $RPM_BUILD_ROOT%{python3_sitelib}/%{srcname}/test
 %endif
 
 %changelog
-* Thu May 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
 - Removed support for Python 3, and support for RHEL
 
 * Wed Apr 19 2017 Daniel Bruno <dbruno@fedoraproject.org> - 2.0.0-1

@@ -12,11 +12,8 @@
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
         Package: *
-        Pin: release a=' ~ os_codename ~ '
-        Pin-Priority: 720
-        Package: *
         Pin: release a=stable
-        Pin-Priority: 700
+        Pin-Priority: 720
 ' %}
 
 
@@ -141,9 +138,9 @@ build_pbldrc:
             '--variant=buildd' 
             '--keyring' "${HOME}/.gnupg/pubring.gpg"
         )
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ ${DIST} main contrib non-free rpi"
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
 {% else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://deb.debian.org/debian/ ${DIST} main | deb http://deb.debian.org/debian/ ${DIST} contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}} main | deb http://ftp.us.debian.org/debian/ {{os_codename}} contrib "
 {% endif %}
 
 

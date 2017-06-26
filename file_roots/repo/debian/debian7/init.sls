@@ -18,7 +18,7 @@ include:
         OPTIONS : 'ask-passphrase'
         ORIGIN : 'SaltStack'
         LABEL : 'salt_debian7'
-        SUITE: 'oldstable'
+        SUITE: 'oldoldstable'
         CODENAME : 'wheezy'
         ARCHS : 'amd64 i386 source'
         COMPONENTS : 'main'

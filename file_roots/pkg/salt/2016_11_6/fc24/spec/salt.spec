@@ -134,11 +134,13 @@ Requires: python%{?__python_ver}-msgpack > 0.3
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
 Requires: python%{?__python_ver}
+%else
+Requires: PyYAML
 %endif
 
 Requires: python%{?__python_ver}-crypto >= 2.6.1
-Requires: PyYAML
 %endif
+
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe

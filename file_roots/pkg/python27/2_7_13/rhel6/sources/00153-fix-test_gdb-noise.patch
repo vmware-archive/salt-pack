@@ -1,0 +1,31 @@
+--- Lib/test/test_gdb.py.old	2012-04-11 21:04:01.367073855 -0400
++++ Lib/test/test_gdb.py	2012-04-12 08:52:58.320288761 -0400
+@@ -96,6 +96,15 @@ class DebuggerTests(unittest.TestCase):
+         # Generate a list of commands in gdb's language:
+         commands = ['set breakpoint pending yes',
+                     'break %s' % breakpoint,
++
++                    # GDB as of Fedora 17 onwards can distinguish between the
++                    # value of a variable at entry vs current value:
++                    #   http://sourceware.org/gdb/onlinedocs/gdb/Variables.html
++                    # which leads to the selftests failing with errors like this:
++                    #   AssertionError: 'v@entry=()' != '()'
++                    # Disable this:
++                    'set print entry-values no',
++
+ 
+                     # The tests assume that the first frame of printed
+                     #  backtrace will not contain program counter,
+--- Lib/test/test_gdb.py.old	2012-04-11 21:04:01.367073855 -0400
++++ Lib/test/test_gdb.py	2012-04-12 08:52:58.320288761 -0400
+@@ -144,6 +153,10 @@
+             'Missing separate debuginfo for ',
+             'Try: zypper install -C ',
+             )
++        ignore_patterns += ('warning: Unable to open',
++                            'Missing separate debuginfo for',
++                            'Try: yum --disablerepo=',
++                            'Undefined set print command')
+         for line in errlines:
+             if not line.startswith(ignore_patterns):
+                 unexpected_errlines.append(line)

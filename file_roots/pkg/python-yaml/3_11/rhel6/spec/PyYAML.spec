@@ -4,19 +4,42 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %endif
 
-Name:           PyYAML
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+%global srcname PyYAML
+
+Name:           %{srcname}%{?__python_ver}
 Version:        3.11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        YAML parser and emitter for Python
 
 Group:          Development/Libraries
 License:        MIT
 URL:            http://pyyaml.org/
-Source0:        http://pyyaml.org/download/pyyaml/%{name}-%{version}.tar.gz
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires:  python-devel, python-setuptools, libyaml-devel
-Provides:       python-yaml = %{version}-%{release}
-Provides:       python-yaml%{?_isa} = %{version}-%{release}
+Source0:        http://pyyaml.org/download/pyyaml/%{srcname}-%{version}.tar.gz
+BuildRoot:      %(mktemp -ud %{_tmppath}/%{srcname}-%{version}-%{release}-XXXXXX)
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  libyaml-devel
+Provides:       python%{?__python_ver}-yaml = %{version}-%{release}
+Provides:       python%{?__python_ver}-yaml%{?_isa} = %{version}-%{release}
+
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
+
 %if 0%{?with_python3}
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
@@ -56,7 +79,7 @@ configuration files to object serialization and persistance.
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{srcname}-%{version}
 chmod a-x examples/yaml-highlight/yaml_hl.py
 
 %if 0%{?with_python3}
@@ -104,6 +127,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.11-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Fri Apr 27 2012 John Eckersberg <jeckersb@redhat.com> - 3.10-3
 - Add Provides for python-yaml (BZ#740390)
 

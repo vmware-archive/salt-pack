@@ -11,10 +11,20 @@
 ## %global python2_pkgversion 2
 %global python2_pkgversion %{nil}
 
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
 
-Name:           python-%{srcname}
+Name:           python%{?__python_ver}-%{srcname}
 Version:        3.4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Self-contained Python package of low-level cryptographic primitives
 
 # Only OCB blockcipher mode is patented, but according to
@@ -32,6 +42,10 @@ Patch1:         0002-handle-MD5.patch
 BuildRequires:  gcc
 BuildRequires:  libtomcrypt-devel
 BuildRequires:  gmp-devel
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
 
 %global _description \
 PyCryptodome is a fork of PyCrypto. It brings the following enhancements with\
@@ -71,6 +85,19 @@ implemented as C extensions.
 ## DGM %description -n python2-%{eggname} %{_description}
 ## DGM 
 
+%if 0%{?with_explicit_python27}
+%package -n python%{?__python_ver}-%{eggname}
+Summary:        %{summary}
+%{?python_provide:%python_provide python-%{eggname}}
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+
+%description -n python%{?__python_ver}-%{eggname} %{_description}
+
+Python %{?__python_ver} version.
+
+%else
+
 %package -n python2-%{eggname}
 Summary:        %{summary}
 %{?python_provide:%python_provide python2-%{eggname}}
@@ -80,6 +107,7 @@ BuildRequires:  python%{python2_pkgversion}-setuptools
 %description -n python2-%{eggname} %{_description}
 
 Python 2 version.
+%endif
 
 %package -n python3-%{eggname}
 Summary:        %{summary}
@@ -115,7 +143,11 @@ touch .separate_namespace
 %{__python2} setup.py test -v
 %{__python3} setup.py test -v
 
+%if 0%{?with_explicit_python27}
+%files -n python%{?__python_ver}-%{eggname}
+%else
 %files -n python2-%{eggname}
+%endif
 %license Doc/LEGAL/
 %{python2_sitearch}/%{eggname}-*.egg-info/
 %{python2_sitearch}/%{modname}/
@@ -126,6 +158,9 @@ touch .separate_namespace
 %{python3_sitearch}/%{modname}/
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.3-3
+- Updated to use Python 2.7 on Redhat 6
+
 * Wed Apr 26 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.3-2
 - Patched to allow for MD5 handling on Redhat 6 using  hashlib causing errors
 

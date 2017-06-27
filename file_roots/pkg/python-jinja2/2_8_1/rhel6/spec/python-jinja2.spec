@@ -1,16 +1,27 @@
 %if 0%{?fedora}
 %global with_python3 0
 %else
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%endif
+
+%if 0%{?rhel} == 6
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
 %endif
 
 # Enable building without docs to avoid a circular dependency between this
 # and python-sphinx:
 %global with_docs 0
 
-Name:		python-jinja2
+Name:		python%{?__python_ver}-jinja2
 Version:	2.8.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	General purpose template engine
 Group:		Development/Languages
 License:	BSD
@@ -18,14 +29,22 @@ URL:		http://jinja.pocoo.org/
 Source0:	http://pypi.python.org/packages/source/J/Jinja2/Jinja2-%{version}.tar.gz
 # see https://github.com/mitsuhiko/jinja2/pull/259
 BuildArch:	noarch
-BuildRequires:	python-devel
-BuildRequires:	python-setuptools
-BuildRequires:	python-markupsafe
+BuildRequires:	python%{?__python_ver}-devel
+BuildRequires:	python%{?__python_ver}-setuptools
+BuildRequires:	python%{?__python_ver}-markupsafe
+
 %if 0%{?with_docs}
 BuildRequires:	python-sphinx
 %endif # with_docs
-Requires:	python-babel >= 0.8
-Requires:	python-markupsafe
+
+Requires:	python%{?__python_ver}-babel >= 0.8
+Requires:	python%{?__python_ver}-markupsafe
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif
+
+
 %if 0%{?with_python3}
 BuildRequires:	python3-devel
 BuildRequires:	python3-setuptools
@@ -130,8 +149,8 @@ popd
 %endif # with_docs
 %doc ext
 %doc examples
-%{python_sitelib}/*
-#%exclude %{python_sitelib}/jinja2/_debugsupport.c
+%{python2_sitelib}/*
+#%exclude %{python2_sitelib}/jinja2/_debugsupport.c
 
 
 %if 0%{?with_python3}
@@ -148,6 +167,9 @@ popd
 
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.8.1-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Fri Jan 13 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.8.1-1
 - Attempt to generate python-jinja2 for building on older Redhat 6 and 5
 

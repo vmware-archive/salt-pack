@@ -13,6 +13,7 @@ include:
 ##    - pkg.python-libnacl.1_4_3.amzn
     - pkg.python-msgpack.0_4_6.amzn
 ##    - pkg.python-ordereddict.1_1.amzn - included in python 2.7
+    - pkg.python-psutil.5_2_2.amzn
     - pkg.python-pyzmq.14_5_0.amzn
 ##    - pkg.python-raet.0_6_3.amzn
     - pkg.salt.2016_3_3.amzn

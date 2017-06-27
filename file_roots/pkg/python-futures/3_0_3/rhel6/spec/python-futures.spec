@@ -1,16 +1,26 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(0)")}
 
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
 %global oname  futures
 
+Name:          python%{?__python_ver}-futures
 Summary:       Backport of the concurrent.futures package from Python 3.2
-Name:          python-futures
 Version:       3.0.3
-Release:       1%{?dist}
+Release:       2%{?dist}
 License:       BSD
 Group:         Development/Libraries
 URL:           https://github.com/agronholm/pythonfutures
 Source0:       https://pypi.python.org/packages/source/f/futures/futures-%{version}.tar.gz
-BuildRequires: python-setuptools
+BuildRequires: python%{?__python_ver}-setuptools
 BuildArch:     noarch
 
 %description
@@ -32,6 +42,9 @@ asynchronously executing callables.
 %{python_sitelib}/futures-*.egg-info*
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.0.3-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Wed Jun 24 2015 Terje Rosten <terje.rosten@ntnu.no> - 3.0.3-1
 - 3.0.3
 

@@ -8,12 +8,48 @@
 
 {% set gpg_key_dir = build_cfg.build_gpg_keydir %}
 {% set gpg_config_file = gpg_key_dir ~ '/gpg.conf' %}
-{% set gpg_agent_info = gpg_key_dir ~ '/gpg-agent-info-salt' %}
+{% set gpg_tty_info = gpg_key_dir ~ '/gpg-tty-info-salt' %}
+{% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %}
 
-{# {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %} #}
+{% if build_cfg.build_release != 'debian9' %}
+{% set write_env_file_prefix = '--' %}
+{% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
+{% set pinentry_text = '' %}
+{% else %}
+{% set write_env_file_prefix = '' %}
+{% set write_env_file = '' %}
+{% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
+{% endif %}
 
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
+
+{% set gpg_agent_text = '# enable-ssh-support
+        ' ~ write_env_file  ~ '
+        default-cache-ttl 300
+        default-cache-ttl-ssh 300
+        max-cache-ttl 300
+        max-cache-ttl-ssh 300
+        ## debug-all
+        ## debug-pinentry
+        ## log-file /root/gpg-agent.log
+        ## verbose
+
+        # PIN entry program
+        ' ~ pinentry_text
+%}
+
+
+gpg_agent_stop:
+  cmd.run:
+    - name: killall gpg-agent
+    - use_vt: True
+    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
+
+
+gpg_dir_rm:
+  file.absent:
+    - name: {{gpg_key_dir}}
 
 
 manage_priv_key:
@@ -27,6 +63,7 @@ manage_priv_key:
     - group: adm
     - makedirs: True
 
+
 manage_pub_key:
   file.managed:
     - name: {{pkg_pub_key_absfile}}
@@ -38,10 +75,18 @@ manage_pub_key:
     - group: adm
     - makedirs: True
 
+
 gpg_conf_file_exists:
   file.touch:
     - name: {{gpg_config_file}}
     - makedirs: True
+
+
+gpg_tty_file_exists:
+  file.touch:
+    - name: {{gpg_tty_info}}
+    - makedirs: True
+
 
 gpg_conf_file:
   file.replace:
@@ -55,21 +100,29 @@ gpg_conf_file:
     - require:
       - file: gpg_conf_file_exists
 
-gpg_agent_stop:
-  module.run:
-    - name: cmd.run
-    - cmd: /usr/bin/killall gpg-agent
+
+gpg_agent_conf_file:
+  file.append:
+    - name: {{gpg_agent_config_file}}
+    - makedirs: True
+    - text: |
+        {{gpg_agent_text}}
+
 
 gpg_agent_start:
-  module.run:
-    - name: cmd.run
-    - cmd: |
-        /usr/bin/gpg-agent --homedir {{gpg_key_dir}} --write-env-file {{gpg_agent_info}} --allow-preset-passphrase --max-cache-ttl 7300 --daemon ; ls
-    - user: {{build_cfg.build_runas}}
-    - python_shell: True
-##    - use_vt: True
+  cmd.run:
+    - name: |
+        eval $(gpg-agent --homedir {{gpg_key_dir}} {{write_env_file_prefix}}{{write_env_file}} --allow-preset-passphrase --max-cache-ttl 300 --daemon)
+        GPG_TTY=$(tty)
+        export GPG_TTY
+        echo "GPG_TTY=${GPG_TTY}" > {{gpg_tty_info}}
+#    - python_shell: True
+    - use_vt: True
+    - runas: {{build_cfg.build_runas}}
+    - reload_modules: True
     - require:
-      - module: gpg_agent_stop
+      - cmd: gpg_agent_stop
+
 
 gpg_load_pub_key:
   module.run:
@@ -78,8 +131,7 @@ gpg_load_pub_key:
         user: {{build_cfg.build_runas}}
         filename: {{pkg_pub_key_absfile}}
         gnupghome: {{gpg_key_dir}}
-    - require:
-      - module: gpg_agent_start
+
 
 gpg_load_priv_key:
   module.run:
@@ -88,8 +140,6 @@ gpg_load_priv_key:
         user: {{build_cfg.build_runas}}
         filename: {{pkg_priv_key_absfile}}
         gnupghome: {{gpg_key_dir}}
-    - require:
-      - module: gpg_agent_start
 
 {% endif %}
 

@@ -14,7 +14,6 @@
 %if 0%{?fedora} > 12 || 0%{?rhel} > 8
 %global with_python3 1
 %else
-
 %if 0%{?rhel} < 7
 %global pybasever 2.6
 %endif
@@ -22,17 +21,30 @@
 %{!?__python2: %global __python2 /usr/bin/python%{?pybasever}}
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
 %endif
-%endif
+
+%endif  # amzn
+
 
 %define debug_package %{nil}
 
 %global pypi_name impacket
 
-Name:           python-%{pypi_name}
+Name:           python%{?__python_ver}-%{pypi_name}
 Version:        0.9.14
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Network protocols Constructors and Dissectors
 
 License:        Apache modified
@@ -43,6 +55,10 @@ BuildArch:      noarch
 BuildRequires:  python%{?__python_ver}-devel
 BuildRequires:  python%{?__python_ver}-setuptools
 Requires: python%{?__python_ver}-crypto >= 2.6.1
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
 
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
@@ -66,18 +82,6 @@ network packets. Impacket allows Python developers to craft and decode network
 packets in simple and consistent manner.
 %endif
 
-%if 0%{?with_explicit_python27}
-%package -n python%{?__python_ver}-%{pypi_name}
-Summary:        Network protocols Constructors and Dissectors
-%{?python_provide:%python_provide python%{?__python_ver}-%{pypi_name}}
-
-%description -n python%{?__python_ver}-%{pypi_name}
-Impacket is a collection of Python classes focused on providing access to
-network packets. Impacket allows Python developers to craft and decode network
-packets in simple and consistent manner.
-
-This package is meant to be used with Python 2.7.
-%endif
 
 %prep
 %setup -q -n %{pypi_name}-%{version}
@@ -159,6 +163,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-4
+- Updated to use Python 2.7 on Redhat 6
+
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-3
 - Added requirement for python-crypto
 

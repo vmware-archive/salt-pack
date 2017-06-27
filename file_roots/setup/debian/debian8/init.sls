@@ -15,7 +15,7 @@
         Pin: release a=' ~ os_codename ~ '
         Pin-Priority: 720
         Package: *
-        Pin: release a=stable
+        Pin: release a=oldstable
         Pin-Priority: 700
 ' %}
 
@@ -28,7 +28,10 @@ include:
 build_additional_pkgs:
   pkg.installed:
     - pkgs:
+      - python-support
+      - python3-lockfile
       - dh-systemd
+      - dh-python
 
 
 build_pbldhooks_rm_G05:
@@ -137,9 +140,9 @@ build_pbldrc:
             '--variant=buildd' 
             '--keyring' "${HOME}/.gnupg/pubring.gpg"
         )
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ jessie main contrib non-free rpi"
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
 {% else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ stable main contrib | deb http://ftp.us.debian.org/debian/ testing main contrib "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}} main contrib "
 {% endif %}
 
 

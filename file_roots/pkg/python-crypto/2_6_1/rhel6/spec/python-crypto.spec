@@ -4,10 +4,23 @@
 # Python3 introduced in Fedora 13
 %global with_python3 %([ 0%{?fedora} -gt 12 ] && echo 1 || echo 0)
 
+%if 0%{?rhel} == 6
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+%global srcname python-crypto
+
 Summary:	Cryptography library for Python
-Name:		python-crypto
+Name:		python%{?__python_ver}-crypto
 Version:	2.6.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
 License:	Public Domain and Python
 Group:		Development/Libraries
@@ -17,12 +30,24 @@ Patch0:		python-crypto-2.4-optflags.patch
 Patch1:		python-crypto-2.4-fix-pubkey-size-divisions.patch
 Patch2:		CVE-2013-7459.patch
 Provides:	pycrypto = %{version}-%{release}
-BuildRequires:	python2-devel >= 2.2, gmp-devel >= 4.1
+
+%if 0%{?with_explicit_python27}
+BuildRequires:	python%{?__python_ver}-devel >= 2.2
+%else
+BuildRequires:	python2-devel >= 2.2
+%endif
+
+BuildRequires:	gmp-devel >= 4.1
 %if %{with_python3}
 BuildRequires:	python-tools
 BuildRequires:	python3-devel
 %endif
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot-%(id -nu)
+BuildRoot:	%{_tmppath}/%{srcname}-%{version}-buildroot-%(id -nu)
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
+
 
 # Don't want provides for python shared objects
 %{?filter_provides_in: %filter_provides_in %{python_sitearch}/Crypto/.*\.so}
@@ -34,6 +59,18 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot-%(id -nu)
 %description
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
+
+## %if 0%{?with_explicit_python27}
+## %package -n python%{?__python_ver}-crypto
+## Summary:	Cryptography library for Python %{__python_ver}
+## Group:		Development/Libraries
+## 
+## %description -n python%{?__python_ver}-crypto
+## PyCrypto is a collection of both secure hash functions (such as MD5 and
+## SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
+## 
+## This is the Python %{__python_ver} build of the package.
+## %endif
 
 %if %{with_python3}
 %package -n python3-crypto
@@ -89,10 +126,17 @@ cd -
 find %{buildroot}%{python3_sitearch} -name '*.so' -exec chmod -c g-w {} \;
 %endif
 
+%if 0%{?with_explicit_python27}
+# See if there's any egg-info
+if [ -f %{buildroot}%{python_sitearch}/pycrypto-%{version}-py%{pybasever}.egg-info ]; then
+	echo %{python_sitearch}/pycrypto-%{version}-py%{pybasever}.egg-info
+fi > egg-info
+%else
 # See if there's any egg-info
 if [ -f %{buildroot}%{python_sitearch}/pycrypto-%{version}-py%{pythonver}.egg-info ]; then
 	echo %{python_sitearch}/pycrypto-%{version}-py%{pythonver}.egg-info
 fi > egg-info
+%endif
 
 # Remove the _fastmath extension module for now.  Timing vulnerability when
 # this is used with libgmp<5 which is what RHEL6 provides
@@ -118,7 +162,8 @@ cd -
 %clean
 rm -rf %{buildroot}
 
-%files -f egg-info
+## %files -f egg-info
+%files -n python%{?__python_ver}-crypto -f egg-info
 %defattr(-,root,root,-)
 %doc README TODO ACKS ChangeLog LEGAL/ COPYRIGHT Doc/
 %{python_sitearch}/Crypto/
@@ -132,6 +177,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.1-4
+- Updated to use Python 2.7 on Redhat 6
+
 * Wed Feb  1 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.1-3
 - Update to 2.6.1
   - Raise warning when IV is used with ECB or CTR and ignored IV in that case (CVE-2013-7459)

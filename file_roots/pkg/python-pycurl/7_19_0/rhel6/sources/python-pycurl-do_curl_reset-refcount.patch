@@ -1,0 +1,26 @@
+diff -up pycurl-7.19.0/src/pycurl.c.reset-refcount pycurl-7.19.0/src/pycurl.c
+--- pycurl-7.19.0/src/pycurl.c.reset-refcount	2011-01-25 12:05:07.000000000 +0100
++++ pycurl-7.19.0/src/pycurl.c	2011-01-25 12:06:31.935893380 +0100
+@@ -1473,6 +1473,7 @@ do_curl_reset(CurlObject *self)
+      * return value. */
+     util_curl_init_handle(self);
+ 
++    Py_INCREF(Py_None);
+     return Py_None;
+ }
+ 
+diff -up pycurl-7.19.0/tests/test_internals.py.reset-refcount pycurl-7.19.0/tests/test_internals.py
+--- pycurl-7.19.0/tests/test_internals.py.reset-refcount	2003-05-01 18:48:54.000000000 +0200
++++ pycurl-7.19.0/tests/test_internals.py	2011-01-25 12:05:07.058253443 +0100
+@@ -245,6 +245,11 @@ if 1 and gc:
+     if opts.verbose >= 1:
+         print "Tracked objects:", len(gc.get_objects())
+ 
++if 1:
++    # Ensure that the refcounting error in "reset" is fixed:
++    for i in xrange(100000):
++        c = Curl()
++        c.reset()
+ 
+ # /***********************************************************************
+ # // done

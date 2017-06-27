@@ -1,0 +1,12 @@
+diff -Naur a/setup.py b/setup.py
+--- a/setup.py	2014-12-10 10:00:01.000000000 -0600
++++ b/setup.py	2015-02-17 15:41:03.309261976 -0600
+@@ -1465,7 +1465,7 @@
+         if '--with-system-expat' in sysconfig.get_config_var("CONFIG_ARGS"):
+             expat_inc = []
+             define_macros = []
+-            expat_lib = ['expat']
++            expat_lib = ['expat21']
+             expat_sources = []
+             expat_depends = []
+         else:

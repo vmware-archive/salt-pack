@@ -4,9 +4,21 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
 
-Name:           python-requests
+%if 0%{?rhel} == 6
+%global _with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name:           python%{?__python_ver}-requests
 Version:        2.6.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        HTTP library, written in Python, for human beings
 
 License:        ASL 2.0
@@ -20,18 +32,24 @@ Patch0:         python-requests-system-cert-bundle.patch
 Patch1:         python-requests-remove-nested-bundling-dep.patch
 
 BuildArch:      noarch
-BuildRequires:  python2-devel
-BuildRequires:  python-chardet >= 2.2.1-1
-BuildRequires:  python-urllib3 >= 1.10.2-1
+BuildRequires:  python%{?__python_ver}-chardet >= 2.2.1-1
+BuildRequires:  python%{?__python_ver}-urllib3 >= 1.10.2-1
 
 Requires:       ca-certificates
-Requires:       python-chardet >= 2.2.1-1
-Requires:       python-urllib3 >= 1.10.2-1
+Requires:       python%{?__python_ver}-chardet >= 2.2.1-1
+Requires:       python%{?__python_ver}-urllib3 >= 1.10.2-1
 
+%if ! 0%{?with_explicit_python27}
+BuildRequires:  python2-devel
 %if 0%{?rhel} && 0%{?rhel} <= 6
 BuildRequires:  python-ordereddict >= 1.1
 Requires:       python-ordereddict >= 1.1
 %endif
+%else
+BuildRequires:  python%{?__python_ver}-devel
+Requires: python%{?__python_ver} >= 2.7.9-1
+%endif 
+
 
 %description
 Most existing Python modules for sending HTTP requests are extremely verbose and 
@@ -121,6 +139,9 @@ popd
 %endif
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.0-4
+- Updated to use Python 2.7 on Redhat 6
+
 * Fri May 22 2015 Matej Stuchlik <mstuchli@redhat.com> - 2.6.0-3
 - Use explicit version in Requires to force update
 Resolves: rhbz#1224002

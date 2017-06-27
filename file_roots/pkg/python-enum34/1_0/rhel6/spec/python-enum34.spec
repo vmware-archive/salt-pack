@@ -10,9 +10,21 @@
 %global with_python3 1
 %endif
 
-Name:           python-enum34
+%if 0%{?rhel} == 6
+%global with_python3 0
+
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name:           python%{?__python_ver}-enum34
 Version:        1.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Group:          Development/Libraries
 Summary:        Backport of Python 3.4 Enum
 License:        BSD
@@ -20,10 +32,20 @@ BuildArch:      noarch
 URL:            https://pypi.python.org/pypi/enum34
 Source0:        https://pypi.python.org/packages/source/e/enum34/enum34-%{version}.tar.gz
 
-BuildRequires:  python2-devel python-setuptools
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel 
+%else
+BuildRequires:  python2-devel 
+%endif
+BuildRequires:  python%{?__python_ver}-setuptools
 %if 0%{?with_python3}
 BuildRequires:  python3-devel python3-setuptools
 %endif # if with_python3
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
+
 
 %description
 Python 3.4 introduced official support for enumerations.  This is a
@@ -108,6 +130,9 @@ rm -rf %{buildroot}%{python2_sitelib}/enum/{LICENSE,README,doc}
 %endif # with_python3
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.0-5
+- Updated to use Python 2.7 on Redhat 6
+
 * Mon Jul 21 2014 Matěj Cepl <mcepl@redhat.com> - 1.0-4
 - No, we don’t have python3 in RHEL-7 :'(
 

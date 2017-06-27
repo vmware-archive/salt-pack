@@ -25,7 +25,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/{{pkg_name}}.spec
+    - spec: salt://{{slspath}}/spec/{{pypi_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 
@@ -33,5 +33,5 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - http://pyyaml.org/download/pyyaml/{{pkg_name}}-{{version}}.tar.gz
+      - http://pyyaml.org/download/pyyaml/{{pypi_name}}-{{version}}.tar.gz
 {% endif %}

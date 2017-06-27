@@ -10,18 +10,32 @@
 
 # Fix lack of rhel macro on COPR
 # (https://bugzilla.redhat.com/show_bug.cgi?id=1213482)
-%if 0%{?rhel} == 0 && 0%{?fedora} == 0
-%global rhel5 1
-%endif
+## %if 0%{?rhel} == 0 && 0%{?fedora} == 0
+## %global rhel5 1  # remove support for Redhat 5
+## %endif
 
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 
-%global pkgname tornado
+%if 0%{?rhel} == 6
+%global with_python3 0
 
-Name:           python-%{pkgname}
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+%global pkgname tornado
+%global srcname python-%{pkgname}
+
+Name:           python%{?__python_ver}-%{pkgname}
 Version:        4.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Scalable, non-blocking web server and tools
 
 Group:          Development/Libraries
@@ -32,23 +46,19 @@ Source0:        https://pypi.python.org/packages/source/t/tornado/tornado-%{vers
 Patch0:         python-tornado-cert.patch
 Patch1:         python-tornado-netutil-cert.patch
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{srcname}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if 0%{?rhel5}
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  python%{?__python_ver}-unittest2
 
-BuildRequires:  python26-devel
-BuildRequires:  python26-distribute
-BuildRequires:  python26-backports-ssl_match_hostname
-Requires:       python26-backports-ssl_match_hostname
-Requires:       python26-pycurl
-
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
 %else
-
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
 BuildRequires:  python-backports-ssl_match_hostname
-BuildRequires:  python-unittest2
 Requires:       python-backports-ssl_match_hostname
+%endif 
+
 Requires:       python-pycurl
 
 %if 0%{?with_python3}
@@ -57,7 +67,6 @@ BuildRequires:  python3-setuptools
 BuildRequires:  python3-devel
 %endif
 
-%endif
 
 %description
 Tornado is an open source version of the scalable, non-blocking web
@@ -77,34 +86,6 @@ Requires:       python-tornado = %{version}-%{release}
 %description doc
 Tornado is an open source version of the scalable, non-blocking web
 server and and tools. This package contains some example applications.
-
-%if 0%{?rhel5}
-%package -n python26-tornado
-Summary:        Scalable, non-blocking web server and tools
-Group:          Development/Libraries
-Requires:       python26-backports-ssl_match_hostname
-Requires:       python26-pycurl
-
-%description -n python26-tornado
-Tornado is an open source version of the scalable, non-blocking web
-server and tools.
-
-The framework is distinct from most mainstream web server frameworks
-(and certainly most Python frameworks) because it is non-blocking and
-reasonably fast. Because it is non-blocking and uses epoll, it can
-handle thousands of simultaneous standing connections, which means it is
-ideal for real-time web services.
-
-%package -n python26-tornado-doc
-Summary:        Examples for python-tornado
-Group:          Documentation
-Requires:       python26-tornado = %{version}-%{release}
-
-%description -n python26-tornado-doc
-Tornado is an open source version of the scalable, non-blocking web
-server and and tools. This package contains some example applications.
-
-%endif # rhel5
 
 
 %if 0%{?with_python3}
@@ -175,7 +156,7 @@ popd
 
 
 %check
-%if ! 0%{?rhel5} || 0%{?rhel} > 6 || 0%{?fedora} > 12
+%if ! 0%{?rhel} > 6 || 0%{?fedora} > 12
     %if 0%{?with_python3}
     pushd python3
         PYTHONPATH=%{python3_sitearch} \
@@ -188,18 +169,6 @@ popd
     popd
 %endif
 
-%if 0%{?rhel5}
-
-%files -n python26-tornado
-%doc python2/README.rst python2/PKG-INFO
-
-%{python2_sitearch}/%{pkgname}/
-%{python2_sitearch}/%{pkgname}-%{version}-*.egg-info
-
-%files -n python26-tornado-doc
-%doc python2/demos
-
-%else
 
 %files
 %doc python2/README.rst python2/PKG-INFO
@@ -210,7 +179,6 @@ popd
 %files doc
 %doc python2/demos
 
-%endif
 
 %if 0%{?with_python3}
 %files -n python3-tornado
@@ -225,6 +193,9 @@ popd
 
 
 %changelog
+* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Thu Aug 20 2015 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-1
 - Picking up security fix for 4.2.1-1
 

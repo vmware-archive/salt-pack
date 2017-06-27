@@ -10,18 +10,40 @@
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
-Name:           python-%{srcname}
+%if 0%{?rhel} == 6
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name:           python%{?__python_ver}-%{srcname}
 Version:        0.4.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Python MessagePack (de)serializer
 
 License:        ASL 2.0
 URL:            http://pypi.python.org/pypi/msgpack-python/
 Source0:        http://pypi.python.org/packages/source/m/%{srcname}-python/%{srcname}-python-%{version}.tar.gz
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+%else
 BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-BuildRequires:  pytest
+%endif
+
+BuildRequires:  python%{?__python_ver}-setuptools
+## BuildRequires:  pytest
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
+
 
 # We don't want to provide private python extension libs
 %{?filter_setup:
@@ -51,7 +73,8 @@ This is a Python (de)serializer for MessagePack.
 %endif
 
 %prep
-%setup -q -n %{srcname}-python-%{version}
+## %setup -q -n %{srcname}-python-%{version}
+%setup -n %{srcname}-python-%{version}
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -79,10 +102,9 @@ pushd %{py3dir}
 popd
 %endif
 
-%check
-export PYTHONPATH=$(pwd)
-
-py.test-%{python_version} -v test
+## %check
+## export PYTHONPATH=$(pwd)
+## py.test-%{python_version} -v test
 
 %if 0%{?with_python3}
 pushd %{py3dir}
@@ -104,6 +126,9 @@ popd
 %endif
 
 %changelog
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-2
+- Updated to use Python 2.7 on Redhat 6
+
 * Fri Mar 13 2015 Ken Dreyer <ktdreyer@ktdreyer.com> - 0.4.6-1
 - Update to latest upstream version 0.4.6 (RHBZ #1201568)
 

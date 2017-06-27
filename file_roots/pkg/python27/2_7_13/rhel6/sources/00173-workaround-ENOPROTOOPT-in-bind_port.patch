@@ -1,0 +1,14 @@
+diff -up Python-2.7.3/Lib/test/test_support.py.rhbz913732 Python-2.7.3/Lib/test/test_support.py
+--- Python-2.7.3/Lib/test/test_support.py.rhbz913732	2013-03-04 16:11:53.757315921 -0500
++++ Python-2.7.3/Lib/test/test_support.py	2013-03-04 16:12:11.331314722 -0500
+@@ -304,7 +304,8 @@ def bind_port(sock, host=HOST):
+             if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR) == 1:
+                 raise TestFailed("tests should never set the SO_REUSEADDR "   \
+                                  "socket option on TCP/IP sockets!")
+-        if hasattr(socket, 'SO_REUSEPORT'):
++        if hasattr(socket, 'SO_REUSEPORT') \
++                and 'WITHIN_PYTHON_RPM_BUILD' not in os.environ: # rhbz#913732
+             try:
+                 if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT) == 1:
+                     raise TestFailed("tests should never set the SO_REUSEPORT "   \
+                                      "socket option on TCP/IP sockets!")

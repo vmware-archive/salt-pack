@@ -1,0 +1,32 @@
+From 30bdd6a5292102380bcaf00f3d892a85c2083942 Mon Sep 17 00:00:00 2001
+From: Oleg Pudeyev <oleg@bsdpower.com>
+Date: Tue, 19 May 2015 11:41:27 -0400
+Subject: [PATCH] Add libcurl 7.34.0 sslversion options
+
+Upstream-commit: 83ccaa22e824b1bd9d2c60cab10dff323c7d0ca4
+Signed-off-by: Kamil Dudka <kdudka@redhat.com>
+---
+ src/pycurl.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/pycurl.c b/src/pycurl.c
+index 9a7135c..bc3730b 100644
+--- a/src/pycurl.c
++++ b/src/pycurl.c
+@@ -3781,9 +3781,12 @@ initpycurl(void)
+ 
+     /* constants for setopt(SSLVERSION, x) */
+     insint_c(d, "SSLVERSION_DEFAULT", CURL_SSLVERSION_DEFAULT);
+-    insint_c(d, "SSLVERSION_TLSv1", CURL_SSLVERSION_TLSv1);
+     insint_c(d, "SSLVERSION_SSLv2", CURL_SSLVERSION_SSLv2);
+     insint_c(d, "SSLVERSION_SSLv3", CURL_SSLVERSION_SSLv3);
++    insint_c(d, "SSLVERSION_TLSv1", CURL_SSLVERSION_TLSv1);
++    insint_c(d, "SSLVERSION_TLSv1_0", CURL_SSLVERSION_TLSv1_0);
++    insint_c(d, "SSLVERSION_TLSv1_1", CURL_SSLVERSION_TLSv1_1);
++    insint_c(d, "SSLVERSION_TLSv1_2", CURL_SSLVERSION_TLSv1_2);
+ 
+     /* curl_TimeCond: constants for setopt(TIMECONDITION, x) */
+     insint_c(d, "TIMECONDITION_NONE", CURL_TIMECOND_NONE);
+-- 
+2.4.6
+

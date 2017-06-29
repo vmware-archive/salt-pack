@@ -30,10 +30,12 @@
         default-cache-ttl-ssh 300
         max-cache-ttl 300
         max-cache-ttl-ssh 300
-        ## debug-all
+        allow-preset-passphrase
+        daemon
+        debug-all
         ## debug-pinentry
-        ## log-file /root/gpg-agent.log
-        ## verbose
+        log-file /root/gpg-agent.log
+        verbose
 
         # PIN entry program
         ' ~ pinentry_text
@@ -42,7 +44,7 @@
 
 gpg_agent_stop:
   cmd.run:
-    - name: killall gpg-agent
+    - name: killall -v -w gpg-agent
     - use_vt: True
     - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
 

@@ -37,13 +37,13 @@
 %global include_tests 0
 
 # Release Candidate
-%define __rc_ver rc1
+%define __rc_ver %{nil}
 
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2017.7.0%{?__rc_ver}
-Release: 0%{?dist}
+Version: 2017.7.0
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -622,8 +622,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed Jul  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0%{?__rc_ver}-0
-- Update to feature release 2017.7.0%{?__rc_ver}
+* Wed Jul 12 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0-1
+- Update to feature release 2017.7.0
 - Added python-psutil as a requirement, disabled auto enable for Redhat 6
 
 * Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1

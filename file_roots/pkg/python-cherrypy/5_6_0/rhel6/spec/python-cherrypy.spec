@@ -45,6 +45,8 @@ BuildRequires:  python%{?__python_ver}-nose
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver} >= 2.7.9-1
 %endif
+Provides: python-cherrpy = %{version}-%{release}
+Obsoletes: python-cherrypy < %{version}-%{release}
 
 
 %description
@@ -84,7 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python2_sitelib}/*
 
 %changelog
-* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
 - Updated to use Python 2.7 on Redhat 6
 
 * Mon Apr 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-1

@@ -43,6 +43,8 @@ BuildRequires:  python%{?__python_ver}-setuptools
 
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
+Provides: python-%{srcname} = %{version}-%{release}
+Obsoletes: python-%{srcname} < %{version}-%{release}
 %else
 BuildRequires:  python%{?__python_ver}-importlib
 Requires:       python%{?__python_ver}-importlib
@@ -122,7 +124,7 @@ rm -rf %{buildroot}
 %{_bindir}/%{srcname}2
 
 %changelog
-* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> -1.3.8-2
 - Updated to use Python 2.7 on Redhat 6
 - Removed support for Redhat 5
 

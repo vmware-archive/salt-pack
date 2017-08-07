@@ -23,8 +23,7 @@ BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-tools
 BuildRequires:  %{python}-setuptools
 Requires: %{python}
-Provides: python-chardet = %{version}-%{release}
-## Obsoletes: python-chardet < %{version}-%{release}
+Provides: python-chardet
 
 %description
 Character encoding auto-detection in Python. As 
@@ -68,8 +67,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Jul 24 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-3
-- Allow for parallel install
+* Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-3
+- Allow for parallel install, removed Obsoletes
 
 * Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-2
 - Alter to support Python 2.7 on Redhat 6

@@ -35,7 +35,7 @@
 
 Name:           python%{?__python_ver}-%{pkgname}
 Version:        4.2.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Scalable, non-blocking web server and tools
 
 Group:          Development/Libraries
@@ -59,7 +59,7 @@ BuildRequires:  python-backports-ssl_match_hostname
 Requires:       python-backports-ssl_match_hostname
 %endif 
 
-Requires:       python-pycurl
+Requires:       python%{?__python_ver}-pycurl
 
 %if 0%{?with_python3}
 BuildRequires:  python2-devel
@@ -193,6 +193,9 @@ popd
 
 
 %changelog
+* Mon Aug 07 2017 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-3
+- Updated to python27-pycurl if building for python27
+
 * Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-2
 - Updated to use Python 2.7 on Redhat 6
 

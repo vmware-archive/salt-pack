@@ -19,7 +19,7 @@
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        5.6.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Pythonic, object-oriented web development framework
 Group:          Development/Libraries
 License:        BSD
@@ -45,8 +45,7 @@ BuildRequires:  python%{?__python_ver}-nose
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver} >= 2.7.9-1
 %endif
-Provides: python-cherrpy = %{version}-%{release}
-Obsoletes: python-cherrypy < %{version}-%{release}
+Provides: python-cherrpy
 
 
 %description
@@ -67,6 +66,7 @@ results in smaller source code developed in less time.
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__python2} setup.py install --skip-build --root $RPM_BUILD_ROOT
+mv ${RPM_BUILD_ROOT}%{_bindir}/cherryd ${RPM_BUILD_ROOT}%{_bindir}/python%{?__python_ver}-cherryd
 
 ## %check
 ## cd cherrypy/test
@@ -82,10 +82,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 ## %doc README.txt
 %doc cherrypy/tutorial
-%{_bindir}/cherryd
+%{_bindir}/python%{?__python_ver}-cherryd
 %{python2_sitelib}/*
 
 %changelog
+* Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-3
+- Allow for parallel install, removed Obsoletes
+
 * Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
 - Updated to use Python 2.7 on Redhat 6
 

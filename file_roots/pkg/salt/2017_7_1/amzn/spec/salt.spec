@@ -627,7 +627,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0-2
+* Tue Aug 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.1-1
 - Update to feature release 2017.7.1
 - Altered dependency for dnf-utils instead of yum-utils if Fedora 26 or greater
 

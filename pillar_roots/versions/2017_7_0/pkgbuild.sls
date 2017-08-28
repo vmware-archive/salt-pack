@@ -310,7 +310,7 @@ pkgbuild_registry:
 ##        - python-backports
     python-chardet:
       name: python27-chardet
-      version: 2.2.1-2
+      version: 2.2.1-3
       noarch: True
       build_deps:
         - python27

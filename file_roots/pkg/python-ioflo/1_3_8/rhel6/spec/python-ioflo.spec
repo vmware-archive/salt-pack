@@ -27,7 +27,7 @@
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        1.3.8
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Flow-based programming interface
 
 Group:          Development/Libraries
@@ -43,11 +43,12 @@ BuildRequires:  python%{?__python_ver}-setuptools
 
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
+Provides: python-%{srcname}
 %else
 BuildRequires:  python%{?__python_ver}-importlib
 Requires:       python%{?__python_ver}-importlib
 
-%endif 
+%endif
 
 
 %if 0%{?with_python3}
@@ -122,7 +123,10 @@ rm -rf %{buildroot}
 %{_bindir}/%{srcname}2
 
 %changelog
-* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 
+* Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> -1.3.8-3
+- Removed Obsoletes
+
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> -1.3.8-2
 - Updated to use Python 2.7 on Redhat 6
 - Removed support for Redhat 5
 

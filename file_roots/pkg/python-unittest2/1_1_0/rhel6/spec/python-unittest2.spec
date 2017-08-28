@@ -69,6 +69,11 @@ BuildRequires:  python3-traceback2
 %endif # bootstrap_traceback2
 %endif # if with_python3
 
+%if 0%{?with_explicit_python27}
+Provides: python-%{pypi_name} = %{version}-%{release}
+Obsoletes: python-%{pypi_name} < %{version}-%{release}
+%endif
+
 
 %description
 unittest2 is a backport of the new features added to the unittest testing
@@ -163,7 +168,7 @@ popd
 %endif # with_python3
 
 %changelog
-* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.1.0-5
 - Updated to use Python 2.7 on Redhat 7
 
 * Mon Jan 11 2016 Matěj Cepl <mcepl@redhat.com> - 1.1.0-4

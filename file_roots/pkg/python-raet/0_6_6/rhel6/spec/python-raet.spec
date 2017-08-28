@@ -49,6 +49,8 @@ Requires:       python-importlib
 
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
+Provides: python-%{srcname} = %{version}-%{release}
+Obsoletes: python-%{srcname} < %{version}-%{release}
 %endif 
 
 Patch0:         raet-0.6.6.patch
@@ -77,7 +79,7 @@ A high level, stack based communication protocol for network and IPC communicati
 %exclude %{python_sitelib}/systest*
 
 %changelog
-* Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.6.6-2
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.6.6-2
 - Updated to use Python 2.7 on Redhat 6
 
 * Tue Jan 17 2017 Packaging <packaging@saltstack.com> - 0.6.6-1

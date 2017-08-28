@@ -1,7 +1,7 @@
-## DGM %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+## %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 %global python python27
-%global python2_version 2.7 
+%global python2_version 2.7
 %global __python2 %{_bindir}/python%{python2_version}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 %global __os_install_post %{__python27_os_install_post}
@@ -9,7 +9,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        2.2.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Character encoding auto-detection in Python
 
 Group:          Development/Languages
@@ -23,6 +23,7 @@ BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-tools
 BuildRequires:  %{python}-setuptools
 Requires: %{python}
+Provides: python-chardet
 
 %description
 Character encoding auto-detection in Python. As 
@@ -50,7 +51,9 @@ sed -ie '1d' chardet/chardetect.py
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
- 
+mv ${RPM_BUILD_ROOT}/%{_bindir}/chardetect ${RPM_BUILD_ROOT}/%{_bindir}/%{python}-chardetect
+
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -60,11 +63,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE README.rst
 # For noarch packages: sitelib
 %{python2_sitelib}/*
-%{_bindir}/chardetect
+%{_bindir}/%{python}-chardetect
 
 
 %changelog
-* Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-2
+* Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-3
+- Allow for parallel install, removed Obsoletes
+
+* Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-2
 - Alter to support Python 2.7 on Redhat 6
 
 * Mon Apr 13 2015 Matej Stuchlik <mstuchli@redhat.com> - 2.2.1-1

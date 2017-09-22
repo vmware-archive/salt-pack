@@ -299,15 +299,19 @@ pkgbuild_registry:
         - python27-test
         - python27-tools
         - tkinter27
-##    python-backports:
-##      name: python27-backports
-##      version: 1.0-5
-##    python-backports-ssl_match_hostname:
-##      name: python27-backports-ssl_match_hostname
-##      version: 3.4.0.2-2
-##      noarch: True
-##      build_deps:
-##        - python-backports
+    python-backports:
+      name: python27-backports
+      version: 1.0-6
+      build_deps:
+        - python27
+    python-backports-ssl_match_hostname:
+      name: python27-backports-ssl_match_hostname
+      version: 3.4.0.2-3
+      noarch: True
+      build_deps:
+        - python27
+        - python-backports
+        - python-setuptools
     python-chardet:
       name: python27-chardet
       version: 2.2.1-3
@@ -541,10 +545,9 @@ pkgbuild_registry:
     python-tornado:
       name: python27-tornado
       version: 4.2.1-3
-##      build_deps:
-##        - python-backports-ssl_match_hostname
       build_deps:
         - python27
+        - python-backports-ssl_match_hostname
         - python-pycurl
         - python-setuptools
         - python-unittest2

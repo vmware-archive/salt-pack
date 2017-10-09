@@ -299,18 +299,22 @@ pkgbuild_registry:
         - python27-test
         - python27-tools
         - tkinter27
-##    python-backports:
-##      name: python27-backports
-##      version: 1.0-5
-##    python-backports-ssl_match_hostname:
-##      name: python27-backports-ssl_match_hostname
-##      version: 3.4.0.2-2
-##      noarch: True
-##      build_deps:
-##        - python-backports
+    python-backports:
+      name: python27-backports
+      version: 1.0-6
+      build_deps:
+        - python27
+    python-backports-ssl_match_hostname:
+      name: python27-backports-ssl_match_hostname
+      version: 3.4.0.2-3
+      noarch: True
+      build_deps:
+        - python27
+        - python-backports
+        - python-setuptools
     python-chardet:
       name: python27-chardet
-      version: 2.2.1-2
+      version: 2.2.1-3
       noarch: True
       build_deps:
         - python27
@@ -320,7 +324,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-2
+      version: 5.6.0-3
       noarch: True
       build_deps:
         - python27
@@ -385,7 +389,7 @@ pkgbuild_registry:
 ##         - python27-importlib
     python-ioflo:
       name: python27-ioflo
-      version: 1.3.8-2
+      version: 1.3.8-3
       noarch: True
       build_deps:
         - python27
@@ -513,7 +517,7 @@ pkgbuild_registry:
         - python-libnacl
     python-requests:
       name: python27-requests
-      version: 2.6.0-4
+      version: 2.7.0-8
       noarch: True
       build_deps:
         - python27
@@ -540,11 +544,11 @@ pkgbuild_registry:
         - python27-six
     python-tornado:
       name: python27-tornado
-      version: 4.2.1-2
-##      build_deps:
-##        - python-backports-ssl_match_hostname
+      version: 4.2.1-3
       build_deps:
         - python27
+        - python-backports-ssl_match_hostname
+        - python-pycurl
         - python-setuptools
         - python-unittest2
       results:
@@ -570,7 +574,7 @@ pkgbuild_registry:
         - python27-unittest2
     python-urllib3:
       name: python27-urllib3
-      version: 1.10.2-2
+      version: 1.10.4-7
       noarch: True
       build_deps:
         - python27

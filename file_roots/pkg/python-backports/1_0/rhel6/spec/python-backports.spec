@@ -1,8 +1,20 @@
 # https://bugzilla.redhat.com/show_bug.cgi?id=998047
 
-Name:           python-backports
+%if 0%{?rhel} == 6
+%global with_python3 0
+%global with_explicit_python27 1
+%global pybasever 2.7
+%global __python_ver 27
+%global __python %{_bindir}/python%{?pybasever}
+%global __python2 %{_bindir}/python%{?pybasever}
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%global __os_install_post %{__python27_os_install_post}
+%endif
+
+Name:           python%{?__python_ver}-backports
 Version:        1.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Namespace for backported Python features
 
 # Only code is sourced from http://www.python.org/dev/peps/pep-0382/
@@ -10,7 +22,16 @@ License:        Public Domain
 URL:            https://pypi.python.org/pypi/backports
 Source0:        backports.py
 
+%if 0%{?with_explicit_python27}
+BuildRequires:  python%{?__python_ver}-devel
+%else
 BuildRequires:  python2-devel
+%endif
+
+%if 0%{?with_explicit_python27}
+Requires: python%{?__python_ver}  >= 2.7.9-1
+%endif 
+
 
 %description
 The backports namespace is a namespace reserved for features backported from
@@ -31,22 +52,25 @@ package because of changes made in Python 3.3 in PEP 420
 
 
 %install
-mkdir -pm 755 %{buildroot}%{python_sitelib}/backports
-install -pm 644 %{SOURCE0} %{buildroot}%{python_sitelib}/backports/__init__.py
-%if "%{python_sitelib}" != "%{python_sitearch}"
-mkdir -pm 755 %{buildroot}%{python_sitearch}/backports
-install -pm 644 %{SOURCE0} %{buildroot}%{python_sitearch}/backports/__init__.py
+mkdir -pm 755 %{buildroot}%{python2_sitelib}/backports
+install -pm 644 %{SOURCE0} %{buildroot}%{python2_sitelib}/backports/__init__.py
+%if "%{python2_sitelib}" != "%{python2_sitearch}"
+mkdir -pm 755 %{buildroot}%{python2_sitearch}/backports
+install -pm 644 %{SOURCE0} %{buildroot}%{python2_sitearch}/backports/__init__.py
 %endif
 
  
 %files
-%{python_sitelib}/backports
-%if "%{python_sitelib}" != "%{python_sitearch}"
-%{python_sitearch}/backports
+%{python2_sitelib}/backports
+%if "%{python2_sitelib}" != "%{python2_sitearch}"
+%{python2_sitearch}/backports
 %endif
 
 
 %changelog
+* Fri Sep 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.0-6
+- Updated to use Python 2.7 on Redhat 6
+
 * Wed Apr 29 2015 Matej Stuchlik <mstuchli@redhat.com> - 1.0-5
 - Fix description
 Resolves: rhbz#1208226

@@ -513,7 +513,7 @@ pkgbuild_registry:
         - python-libnacl
     python-requests:
       name: python27-requests
-      version: 2.6.0-4
+      version: 2.7.0-8
       noarch: True
       build_deps:
         - python27
@@ -571,7 +571,7 @@ pkgbuild_registry:
         - python27-unittest2
     python-urllib3:
       name: python27-urllib3
-      version: 1.10.2-2
+      version: 1.10.4-7
       noarch: True
       build_deps:
         - python27

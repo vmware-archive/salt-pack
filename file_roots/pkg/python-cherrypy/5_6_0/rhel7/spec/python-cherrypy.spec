@@ -4,7 +4,7 @@
 
 Name:           python-cherrypy
 Version:        5.6.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Pythonic, object-oriented web development framework
 Group:          Development/Libraries
 License:        BSD
@@ -13,6 +13,7 @@ Source0:        http://download.cherrypy.org/cherrypy/%{version}/CherryPy-%{vers
 # Don't ship the tests or tutorials in the python module directroy,
 # tutorial will be shipped as doc instead
 Patch0:         python-cherrypy-tutorial-doc.patch
+Patch1:         python-cherrypy-expose.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -30,6 +31,7 @@ results in smaller source code developed in less time.
 %prep
 %setup -q -n CherryPy-%{version}
 %patch0 -p1
+%patch1 -p1
 
 ## %{__sed} -i 's/\r//' README.txt cherrypy/tutorial/README.txt cherrypy/tutorial/tutorial.conf
 %{__sed} -i 's/\r//' cherrypy/tutorial/README.txt cherrypy/tutorial/tutorial.conf
@@ -59,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Tue Oct 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-2
+- Apply patch from upstream https://github.com/cherrypy/cherrypy/commit/f3c0165a372375d4ce49f70c6b00e1788db845a1
+
 * Mon Apr 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-1
 - Update to 5.6.0
 

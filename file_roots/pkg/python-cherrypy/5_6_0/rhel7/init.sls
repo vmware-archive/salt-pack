@@ -34,5 +34,6 @@
 
     - sources:
       - salt://{{slspath}}/sources/{{pkg_name}}-tutorial-doc.patch
+      - salt://{{slspath}}/sources/{{pkg_name}}-expose.patch
       - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

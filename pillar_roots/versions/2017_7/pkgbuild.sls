@@ -232,7 +232,7 @@ pkgbuild_registry:
       build_deps:
         - python-impacket
     zeromq:
-      version: 4.1.4-5
+      version: 4.1.4-6
       build_deps:
         - openpgm
       results:

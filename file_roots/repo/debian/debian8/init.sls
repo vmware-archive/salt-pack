@@ -9,22 +9,24 @@ include:
   pkgbuild.repo:
 {% if repo_keyid != 'None' %}
     - keyid: {{repo_keyid}}
-    - use_passphrase: True
+    - use_passphrase: {{buildcfg.repo_use_passphrase}}
     - gnupghome: {{buildcfg.build_gpg_keydir}}
     - runas: {{buildcfg.build_runas}}
     - timeout: {{buildcfg.repo_sign_timeout}}
 {% endif %}
     - env:
+{%- if buildcfg.repo_use_passphrase %}    
         OPTIONS : 'ask-passphrase'
+{%- endif %}
         ORIGIN : 'SaltStack'
         LABEL : 'salt_debian8'
         SUITE: 'oldstable'
         CODENAME : 'jessie'
-{% if buildcfg.build_arch == 'armhf' %}
+{%- if buildcfg.build_arch == 'armhf' %}
         ARCHS : '{{buildcfg.build_arch}} source'
-{% else %}
+{%- else %}
         ARCHS : 'amd64 i386 source'
-{% endif %}
+{%- endif %}
         COMPONENTS : 'main'
         DESCRIPTION : 'SaltStack Debian 8 package repo'
 

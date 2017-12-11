@@ -82,8 +82,8 @@ include:
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 
-{% elif buildcfg.build_release == 'fc24' %}
+{% elif buildcfg.build_release == 'fedora' %}
 
-    - pkg.salt.2017_7.fc24
+    - pkg.salt.2017_7.fedora
 
 {% endif %}

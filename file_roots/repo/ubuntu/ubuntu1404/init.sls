@@ -19,9 +19,9 @@ include:
         OPTIONS : 'ask-passphrase'
 {%- endif %}
         ORIGIN : 'SaltStack'
-        LABEL : 'salt_ubuntu16'
-        CODENAME : 'xenial'
+        LABEL : 'salt_ubuntu1404'
+        CODENAME : 'trusty'
         ARCHS : 'amd64 i386 source'
         COMPONENTS : 'main'
-        DESCRIPTION : 'SaltStack Ubuntu 16 package repo'
+        DESCRIPTION : 'SaltStack Ubuntu 14.04 package repo'
 

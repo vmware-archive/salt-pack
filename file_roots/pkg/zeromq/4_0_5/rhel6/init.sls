@@ -32,6 +32,7 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - http://download.zeromq.org/{{pkg_name}}-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/{{pkg_name}}-{{version}}.tar.gz
       - salt://{{slspath}}/sources/{{pkg_name}}-{{version}}-downgrade-attack.patch
+##      - http://download.zeromq.org/{{pkg_name}}-{{version}}.tar.gz
 {% endif %}

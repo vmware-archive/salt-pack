@@ -33,8 +33,9 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
       - salt://{{slspath}}/sources/raet-0.6.6.patch
+##      - {{ macros.pypi_source(pypi_name, version) }}
 ##      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.patch
 
 {% endif %}

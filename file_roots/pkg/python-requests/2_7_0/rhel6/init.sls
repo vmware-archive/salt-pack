@@ -36,5 +36,6 @@
       - salt://{{slspath}}/sources/{{sls_name}}-urllib3-at-1.10.4.patch
       - salt://{{slspath}}/sources/{{sls_name}}-system-cert-bundle.patch
       - salt://{{slspath}}/sources/{{sls_name}}-remove-nested-bundling-dep.patch
-      - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+##      - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

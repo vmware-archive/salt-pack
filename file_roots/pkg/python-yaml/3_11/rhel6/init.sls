@@ -33,5 +33,6 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - http://pyyaml.org/download/pyyaml/{{pypi_name}}-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+##      - http://pyyaml.org/download/pyyaml/{{pypi_name}}-{{version}}.tar.gz
 {% endif %}

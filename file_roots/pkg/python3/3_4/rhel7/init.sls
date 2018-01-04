@@ -1,6 +1,6 @@
 python343:
   pkgbuild.built:
-    - runas: builder
+    - runas: root
     - results:
       - python34u-3.4.3-2.ius.el7.x86_64.rpm
     - dest_dir: /srv/pkgs/rhel7

@@ -35,5 +35,6 @@
     - sources:
       - salt://{{slspath}}/sources/{{sls_name}}-cert.patch
       - salt://{{slspath}}/sources/{{sls_name}}-netutil-cert.patch
-      - {{ macros.pypi_source(pypi_name, version) }}
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+##      - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

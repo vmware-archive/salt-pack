@@ -123,7 +123,7 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 5.6.0-1
+      version: 5.6.0-2
       noarch: True
       build_deps:
         - python-mock
@@ -324,7 +324,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-3
+      version: 5.6.0-4
       noarch: True
       build_deps:
         - python27

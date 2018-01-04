@@ -123,7 +123,7 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 5.6.0-1
+      version: 5.6.0-2
       noarch: True
       build_deps:
         - python-mock
@@ -189,7 +189,6 @@ pkgbuild_registry:
       build_deps:
         - python-chardet
         - python-urllib3
-##        - python-ordereddict
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
@@ -232,7 +231,7 @@ pkgbuild_registry:
       build_deps:
         - python-impacket
     zeromq:
-      version: 4.1.4-5
+      version: 4.1.4-6
       build_deps:
         - openpgm
       results:
@@ -324,7 +323,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-3
+      version: 5.6.0-4
       noarch: True
       build_deps:
         - python27
@@ -379,14 +378,6 @@ pkgbuild_registry:
         - python-crypto
       results:
         - python27-impacket
-##     python-importlib:
-##       name: python27-importlib
-##       version: 1.0.2-2
-##       noarch: True
-##       build_deps:
-##         - python27
-##       results:
-##         - python27-importlib
     python-ioflo:
       name: python27-ioflo
       version: 1.3.8-3
@@ -461,9 +452,6 @@ pkgbuild_registry:
         - python-mock
       results:
         - python27-nose
-##    python-ordereddict:
-##      version: 1.1-2
-##      noarch: True
     python-pip:
       name: python27-pip
       version: 9.0.1-1.ius
@@ -523,7 +511,6 @@ pkgbuild_registry:
         - python27
         - python-chardet
         - python-urllib3
-##        - python-ordereddict
       results:
         - python27-requests
     python-setuptools:
@@ -597,7 +584,6 @@ pkgbuild_registry:
       build_deps:
         - python27
         - python-pycrypto
-##        - python-pycryptodome
         - python-msgpack
         - python-yaml
         - python-requests

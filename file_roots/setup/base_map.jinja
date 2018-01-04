@@ -1,5 +1,5 @@
 {% set build_dest = pillar.get('build_dest', '/srv/pkgs') %}
-{% set build_runas = pillar.get('build_runas', 'builder') %}
+{% set build_runas = pillar.get('build_runas', 'root') %}
 
 # branch build version
 {% set build_version = pillar.get('build_version', '') %}
@@ -19,4 +19,7 @@
 
 # repo sign timeout for signing packages
 {% set repo_sign_timeout = 100.0 %}
+
+# repo use of passphrases when signing
+{% set repo_use_passphrase = True %}
 

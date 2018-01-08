@@ -1,6 +1,6 @@
 include:
   - setup.redhat
-  - setup.redhat.fc24.gpg_agent
+  - setup.redhat.fedora.gpg_agent
 
 build_additional_pkgs:
   pkg.installed:

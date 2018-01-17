@@ -297,7 +297,7 @@ pkgbuild_registry:
         - python27-libs
         - python27-test
         - python27-tools
-        - tkinter27
+        - python27-tkinter
     python-backports:
       name: python27-backports
       version: 1.0-6

@@ -1,0 +1,11 @@
+diff -Nurp Python-2.7.14.orig/Lib/test/test_regrtest.py Python-2.7.14/Lib/test/test_regrtest.py
+--- Python-2.7.14.orig/Lib/test/test_regrtest.py	2017-09-16 12:38:35.000000000 -0500
++++ Python-2.7.14/Lib/test/test_regrtest.py	2017-09-22 15:08:59.871453907 -0500
+@@ -493,6 +493,7 @@ class ArgsTestCase(BaseTestCase):
+             self.assertIn(line2, reflog)
+ 
+     @unittest.skipUnless(Py_DEBUG, 'need a debug build')
++    @unittest._skipInRpmBuild('very slow test')
+     def test_huntrleaks(self):
+         # test --huntrleaks
+         code = textwrap.dedent("""

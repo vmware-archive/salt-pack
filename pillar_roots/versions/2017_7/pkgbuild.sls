@@ -289,7 +289,7 @@ pkgbuild_registry:
       results:
         - pytest27
     python27:
-      version: 2.7.13-2.ius
+      version: 2.7.14-2.ius
       results:
         - python27
         - python27-debuginfo

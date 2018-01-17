@@ -1,0 +1,14 @@
+--- Python-2.7.12/Lib/test/test_sys.py	2016-06-25 21:49:31.000000000 +0000
++++ Python-2.7.12/Lib/test/test_sys.py.patch	2016-06-28 16:17:20.281000000 +0000
+@@ -743,6 +743,11 @@
+                   '10P'                 # PySequenceMethods
+                   '6P'                  # PyBufferProcs
+                   '2P')
++
++        # COUNT_ALLOCS adds further fields to the end of a PyTypeObject:
++        if hasattr(sys, 'getcounts'):
++            s += size('P')
++
+         class newstyleclass(object):
+             pass
+         check(newstyleclass, s)

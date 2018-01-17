@@ -1,0 +1,24 @@
+diff -up Python-2.7.2/Lib/test/test_gc.py.fix-test_gc_with_COUNT_ALLOCS Python-2.7.2/Lib/test/test_gc.py
+--- Python-2.7.2/Lib/test/test_gc.py.fix-test_gc_with_COUNT_ALLOCS	2011-09-08 19:49:13.045924309 -0400
++++ Python-2.7.2/Lib/test/test_gc.py	2011-09-08 19:50:07.035920617 -0400
+@@ -102,11 +102,17 @@ class GCTests(unittest.TestCase):
+         del a
+         self.assertNotEqual(gc.collect(), 0)
+         del B, C
+-        self.assertNotEqual(gc.collect(), 0)
++        if hasattr(sys, 'getcounts'):
++            self.assertEqual(gc.collect(), 0)
++        else:
++            self.assertNotEqual(gc.collect(), 0)
+         A.a = A()
+         del A
+-        self.assertNotEqual(gc.collect(), 0)
+-        self.assertEqual(gc.collect(), 0)
++        if hasattr(sys, 'getcounts'):
++            self.assertEqual(gc.collect(), 0)
++        else:
++            self.assertNotEqual(gc.collect(), 0)
++            self.assertEqual(gc.collect(), 0)
+ 
+     def test_method(self):
+         # Tricky: self.__init__ is a bound method, it references the instance.

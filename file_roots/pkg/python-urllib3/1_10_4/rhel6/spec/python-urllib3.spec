@@ -19,14 +19,13 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global srcname urllib3
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        1.10.4
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Python HTTP library with thread-safe connection pooling and file post
 
 License:        MIT
@@ -244,6 +243,9 @@ rm -rf %{buildroot}/%{python3_sitelib}/__pycache__*
 %endif # with_python3
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.10.4-8
+- Removed os_install_post override
+
 * Tue Aug 29 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.10.4-7
 - Updated to use Python 2.7 on Redhat 6
 

@@ -15,13 +15,12 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 
 Name:           python%{?__python_ver}-six
 Version:        1.9.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -112,6 +111,9 @@ popd
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.9.0-4
+- Removed __os_install_post override
+
 * Fri May  5 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.9.0-3
 - Updated to use Python 2.7 on Redhat 6 and disabled Python 3
 

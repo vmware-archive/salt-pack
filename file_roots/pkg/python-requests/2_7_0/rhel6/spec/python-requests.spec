@@ -13,14 +13,13 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global urllib3_unbundled_version 1.10.4
 
 Name:           python%{?__python_ver}-requests
 Version:        2.7.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        HTTP library, written in Python, for human beings
 
 License:        ASL 2.0
@@ -185,6 +184,9 @@ popd
 %endif
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.7.0-9
+- Removed os_install_post override
+
 * Tue Aug 29 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.7.0-8
 - Updated to use Python 2.7 on Redhat 6
 

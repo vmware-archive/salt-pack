@@ -6,12 +6,9 @@
 %define real_name python-nose
 %define name python%{py_basever}-nose
 
-# Fix byte-compilation:
-%define __os_install_post %{__python27_os_install_post}
-
 Name:           %{name} 
 Version:        1.3.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A discovery-based unittest extension for Python
 
 Group:          Development/Languages
@@ -63,6 +60,9 @@ reasonably possible without resorting to too much magic.
 %{python_sitelib}/nose
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.3.7-2
+- Removed os_install_post override
+
 * Fri May 05 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.3.7-1
 - Updated version and use Python 2.7 for Redhat 6
 

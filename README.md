@@ -746,9 +746,9 @@ Note: that currently the building of 32-bit packages on Debian and Ubuntu does n
 
 # Vagrant
 
-Vagrant support has been added for centos6/7 Ubuntu 14.04/16.04 and Debian 8 (Jessie)
+Vagrant support has been added for testing the prerequisites for centos6/7 Ubuntu 14.04/16.04 and Debian 8 (Jessie)
 
-To set up the prereqs, run:
+To set up the prerequisites, run:
 
 ```bash
 salt jessie state.sls setup.debian.debian8
@@ -758,8 +758,4 @@ salt rhel6 state.sls setup.redhat.rhel6 #Currently failing, Jan 23, 2018 even af
 salt rhel7 state.sls setup.redhat.rhel7 #Failing Jan 23 due to https://github.com/saltstack-formulas/epel-formula/issues/39
  ```
  
-Then to build, run:
-
-```bash
-
-```
+Vagrant support for building salt is not supported (yet).

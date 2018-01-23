@@ -55,6 +55,9 @@ master: 192.168.50.10
 #id:
 id: jessie
 
+grains:
+   virtualization: vagrant
+
 # Append a domain to a hostname in the event that it does not exist.  This is
 # useful for systems where socket.getfqdn() does not actually result in a
 # FQDN (for instance, Solaris).

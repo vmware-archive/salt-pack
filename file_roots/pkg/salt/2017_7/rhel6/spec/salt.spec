@@ -29,7 +29,6 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %endif
@@ -103,7 +102,8 @@ BuildRequires: PyYAML
 %endif
 
 BuildRequires: python%{?__python_ver}-requests
-BuildRequires: python%{?__python_ver}-unittest2
+## BuildRequires: python%{?__python_ver}-unittest2
+
 # this BR causes windows tests to happen
 # clearly, that's not desired
 # https://github.com/saltstack/salt/issues/3749
@@ -625,6 +625,7 @@ rm -rf %{buildroot}
 * Thu Jun 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0%{?__rc_ver}-0
 - Update to feature release 2017.7 branch nightly build %{?__rc_ver}
 - Added python-psutil as a requirement, diabled auto enable for Redhat 6
+- Removed unittest2 as a build requires
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

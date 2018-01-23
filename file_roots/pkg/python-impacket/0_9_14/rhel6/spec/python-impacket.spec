@@ -32,7 +32,6 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %endif  # amzn
@@ -44,7 +43,7 @@
 
 Name:           python%{?__python_ver}-%{pypi_name}
 Version:        0.9.14
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Network protocols Constructors and Dissectors
 
 License:        Apache modified
@@ -163,6 +162,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-5
+- Removed os_install_post override
+
 * Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.9.14-4
 - Updated to use Python 2.7 on Redhat 6
 

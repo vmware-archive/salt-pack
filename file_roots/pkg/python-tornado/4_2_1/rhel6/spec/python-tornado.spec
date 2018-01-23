@@ -27,7 +27,6 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global pkgname tornado
@@ -35,7 +34,7 @@
 
 Name:           python%{?__python_ver}-%{pkgname}
 Version:        4.2.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Scalable, non-blocking web server and tools
 
 Group:          Development/Libraries
@@ -50,7 +49,7 @@ BuildRoot:      %{_tmppath}/%{srcname}-%{version}-%{release}-root-%(%{__id_u} -n
 
 BuildRequires:  python%{?__python_ver}-devel
 BuildRequires:  python%{?__python_ver}-setuptools
-BuildRequires:  python%{?__python_ver}-unittest2
+## BuildRequires:  python%{?__python_ver}-unittest2
 
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
@@ -155,19 +154,19 @@ pushd python2
 popd
 
 
-%check
-%if ! 0%{?rhel} > 6 || 0%{?fedora} > 12
-    %if 0%{?with_python3}
-    pushd python3
-        PYTHONPATH=%{python3_sitearch} \
-        %{__python3} -m tornado.test.runtests --verbose
-    popd
-    %endif # with_python3
-    pushd python2
-        PYTHONPATH=%{python2_sitearch} \
-        %{__python2} -m tornado.test.runtests --verbose
-    popd
-%endif
+## %check
+## %if ! 0%{?rhel} > 6 || 0%{?fedora} > 12
+##     %if 0%{?with_python3}
+##     pushd python3
+##         PYTHONPATH=%{python3_sitearch} \
+##         %{__python3} -m tornado.test.runtests --verbose
+##     popd
+##     %endif # with_python3
+##     pushd python2
+##         PYTHONPATH=%{python2_sitearch} \
+##         %{__python2} -m tornado.test.runtests --verbose
+##     popd
+## %endif
 
 
 %files
@@ -193,6 +192,10 @@ popd
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-4
+- Removed os_install_post override
+- disabled check for Redhat 6 and removed build requires for unittest2
+
 * Mon Aug 07 2017 SaltStack Packaging Team <packaging@saltstack.com> - 4.2.1-3
 - Updated to python27-pycurl if building for python27
 

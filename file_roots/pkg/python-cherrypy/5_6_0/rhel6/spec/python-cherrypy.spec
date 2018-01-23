@@ -9,7 +9,6 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 
 %else
 %global python python
@@ -19,7 +18,7 @@
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        5.6.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Pythonic, object-oriented web development framework
 Group:          Development/Libraries
 License:        BSD
@@ -88,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python2_sitelib}/*
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-5
+- Removed os_install_post override
+
 * Tue Oct 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 5.6.0-4
 - Apply patch from upstream https://github.com/cherrypy/cherrypy/commit/f3c0165a372375d4ce49f70c6b00e1788db845a1
 

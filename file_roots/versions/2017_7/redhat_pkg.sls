@@ -69,11 +69,11 @@ include:
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_7_0.rhel6
-    - pkg.python-setuptools.33_1_1.rhel6
+    - pkg.python-setuptools.36_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
-    - pkg.python-unittest2.1_1_0.rhel6
+##    - pkg.python-unittest2.1_1_0.rhel6
     - pkg.python-urllib3.1_10_4.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2017_7.rhel6

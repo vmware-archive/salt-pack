@@ -313,7 +313,7 @@ pkgbuild_registry:
         - python-setuptools
     python-chardet:
       name: python27-chardet
-      version: 2.2.1-3
+      version: 2.2.1-4
       noarch: True
       build_deps:
         - python27
@@ -323,7 +323,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-4
+      version: 5.6.0-5
       noarch: True
       build_deps:
         - python27
@@ -333,7 +333,7 @@ pkgbuild_registry:
         - python27-cherrypy
     python-crypto:
       name: python27-crypto
-      version: 2.6.1-4
+      version: 2.6.1-5
       build_deps:
         - python27
       results:
@@ -454,7 +454,7 @@ pkgbuild_registry:
         - python27-nose
     python-pip:
       name: python27-pip
-      version: 9.0.1-1.ius
+      version: 9.0.1-2.ius
       noarch: True
       build_deps:
         - python27

@@ -627,8 +627,20 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Apr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
-- Update to feature release 2016.11 branch nightly build %{?__rc_ver}
+* Fri Sep  8 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.8-1
+- Update to feature release 2016.11.8
+
+* Thu Aug  3 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.7-1
+- Update to feature release 2016.11.7
+
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
+- Update to feature release 2016.11.6
+
+* Mon May 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-3
+- Add patch for Fix ipv6 nameserver grains #41244
+
+* Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-2
+- Commented out check for pycryptodomex on Fedora
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

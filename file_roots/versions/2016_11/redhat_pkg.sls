@@ -28,7 +28,7 @@ include:
     - pkg.python-urllib3.1_10_2.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2016_11.rhel7
-    - pkg.winexe.1_1.rhel7
+##    - pkg.winexe.1_1.rhel7
     - pkg.zeromq.4_1_4.rhel7
 
 {% elif buildcfg.build_release == 'rhel6' %}

@@ -622,10 +622,19 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Jun 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0%{?__rc_ver}-0
-- Update to feature release 2017.7 branch nightly build %{?__rc_ver}
-- Added python-psutil as a requirement, diabled auto enable for Redhat 6
-- Removed unittest2 as a build requires
+* Mon Sep 18 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.2-1
+- Update to feature release 2017.7.2
+
+* Tue Aug 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.1-1
+- Update to feature release 2017.7.1
+- Altered dependency for dnf-utils instead of yum-utils if Fedora 26 or greater
+
+* Wed Jul 12 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0-1
+- Update to feature release 2017.7.0
+- Added python-psutil as a requirement, disabled auto enable for Redhat 6
+
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
+- Update to feature release 2016.11.6
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

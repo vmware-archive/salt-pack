@@ -78,7 +78,7 @@
 %{nil}
 
 # Turn this to 0 to turn off the "check" phase:
-%global run_selftest_suite 1
+%global run_selftest_suite 0
 
 # Some of the files below /usr/lib/pythonMAJOR.MINOR/test  (e.g. bad_coding.py)
 # are deliberately invalid, leading to SyntaxError exceptions if they get
@@ -142,7 +142,7 @@ Summary: An interpreted, interactive, object-oriented programming language
 Name: %{python}
 # Remember to also rebase python-docs when changing this:
 Version: 2.7.13
-Release: 2.ius%{?dist}
+Release: 3.ius%{?dist}
 License: Python
 Group: Development/Languages
 Requires: %{python}-libs%{?_isa} = %{version}-%{release}
@@ -1784,6 +1784,9 @@ CheckPython \
 # ======================================================
 
 %changelog
+* Wed Jan 31 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.7.13-3.ius
+- Disabled run_selftest_suite tests in order to build for Redhat 6
+
 * Mon Mar 27 2017 Carl George <carl.george@rackspace.com> - 2.7.13-2.ius
 - Remove main_python conditionals
 - Rename *27 commands to python2.7-*

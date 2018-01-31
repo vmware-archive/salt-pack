@@ -289,7 +289,7 @@ pkgbuild_registry:
       results:
         - pytest27
     python27:
-      version: 2.7.14-2.ius
+      version: 2.7.13-3.ius
       results:
         - python27
         - python27-debuginfo
@@ -297,7 +297,7 @@ pkgbuild_registry:
         - python27-libs
         - python27-test
         - python27-tools
-        - python27-tkinter
+        - tkinter27
     python-backports:
       name: python27-backports
       version: 1.0-7

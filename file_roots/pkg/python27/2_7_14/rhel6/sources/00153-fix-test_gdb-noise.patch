@@ -1,0 +1,29 @@
+diff -Nurp Python-2.7.14.orig/Lib/test/test_gdb.py Python-2.7.14/Lib/test/test_gdb.py
+--- Python-2.7.14.orig/Lib/test/test_gdb.py	2017-09-16 12:38:35.000000000 -0500
++++ Python-2.7.14/Lib/test/test_gdb.py	2017-09-20 10:19:52.372072348 -0500
+@@ -148,6 +148,14 @@ class DebuggerTests(unittest.TestCase):
+         commands = ['set breakpoint pending yes',
+                     'break %s' % breakpoint,
+ 
++                    # GDB as of Fedora 17 onwards can distinguish between the
++                    # value of a variable at entry vs current value:
++                    #   http://sourceware.org/gdb/onlinedocs/gdb/Variables.html
++                    # which leads to the selftests failing with errors like this:
++                    #   AssertionError: 'v@entry=()' != '()'
++                    # Disable this:
++                    'set print entry-values no',
++
+                     # The tests assume that the first frame of printed
+                     #  backtrace will not contain program counter,
+                     #  that is however not guaranteed by gdb
+@@ -211,6 +219,10 @@ class DebuggerTests(unittest.TestCase):
+             # ignore all warnings
+             'warning: ',
+             )
++        ignore_patterns += ('warning: Unable to open',
++                            'Missing separate debuginfo for',
++                            'Try: yum --disablerepo=',
++                            'Undefined set print command')
+         for line in errlines:
+             if not line:
+                 continue

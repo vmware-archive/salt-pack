@@ -8,14 +8,13 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global srcname python-pycurl
 
 Name:           python%{?__python_ver}-pycurl
 Version:        7.19.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        A Python interface to libcurl
 
 Group:          Development/Languages
@@ -82,6 +81,9 @@ rm -rf %{buildroot}
 %{python_sitearch}/*
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 7.19.0-11
+- Removed os_install_post override
+
 * Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 7.19.0-10
 - Updated to use Python 2.7 on Redhat 6
 

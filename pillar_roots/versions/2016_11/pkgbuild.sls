@@ -123,7 +123,7 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 5.6.0-1
+      version: 5.6.0-2
       noarch: True
       build_deps:
         - python-mock
@@ -229,7 +229,7 @@ pkgbuild_registry:
       build_deps:
         - python-impacket
     zeromq:
-      version: 4.1.4-5
+      version: 4.1.4-6
       build_deps:
         - openpgm
       results:

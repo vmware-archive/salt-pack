@@ -4,12 +4,11 @@
 %global python2_version 2.7
 %global __python2 %{_bindir}/python%{python2_version}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
-%global __os_install_post %{__python27_os_install_post}
 %global srcname chardet
 
 Name:           %{python}-%{srcname}
 Version:        2.2.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Character encoding auto-detection in Python
 
 Group:          Development/Languages
@@ -67,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-4
+- Removed os_install_post override
+
 * Mon Aug 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.2.1-3
 - Allow for parallel install, removed Obsoletes
 

@@ -9,12 +9,11 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 Name:           python%{?__python_ver}-backports
 Version:        1.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Namespace for backported Python features
 
 # Only code is sourced from http://www.python.org/dev/peps/pep-0382/
@@ -68,6 +67,9 @@ install -pm 644 %{SOURCE0} %{buildroot}%{python2_sitearch}/backports/__init__.py
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0-7
+- Removed os_install_post override
+
 * Fri Sep 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.0-6
 - Updated to use Python 2.7 on Redhat 6
 

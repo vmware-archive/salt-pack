@@ -12,7 +12,6 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global srcname python-crypto
@@ -20,7 +19,7 @@
 Summary:	Cryptography library for Python
 Name:		python%{?__python_ver}-crypto
 Version:	2.6.1
-Release:	4%{?dist}
+Release:	5%{?dist}
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
 License:	Public Domain and Python
 Group:		Development/Libraries
@@ -177,6 +176,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.1-5
+- Removed os_install_post override
+
 * Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.6.1-4
 - Updated to use Python 2.7 on Redhat 6
 

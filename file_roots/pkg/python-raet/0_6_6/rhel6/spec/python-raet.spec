@@ -15,14 +15,13 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global srcname raet
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        0.6.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Reliable Asynchronous Event Transport Protocol
 
 License:        ASL 2.0
@@ -79,6 +78,9 @@ A high level, stack based communication protocol for network and IPC communicati
 %exclude %{python_sitelib}/systest*
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.6.6-3
+- Removed os_install_post override
+
 * Mon Jul 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.6.6-2
 - Updated to use Python 2.7 on Redhat 6
 

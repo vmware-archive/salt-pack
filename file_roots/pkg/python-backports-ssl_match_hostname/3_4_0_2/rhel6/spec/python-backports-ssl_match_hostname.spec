@@ -15,14 +15,13 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global module_name backports.ssl_match_hostname
 
 Name:           python%{?__python_ver}-backports-ssl_match_hostname
 Version:        3.4.0.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The ssl.match_hostname() function from Python 3
 
 License:        Python
@@ -83,6 +82,9 @@ rm %{buildroot}%{python2_sitelib}/backports/__init__.py*
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.0.2-4
+- Removed os_install_post override
+
 * Fri Sep 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.0.2-3
 - Update to use Python 2.7 on Redhat 6
 

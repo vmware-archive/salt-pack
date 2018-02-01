@@ -8,7 +8,6 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global tarball_name apache-libcloud
@@ -26,7 +25,7 @@ any of the services that it supports.
 
 Name:           python%{?__python_ver}-libcloud
 Version:        2.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A Python library to address multiple cloud provider APIs
 
 Group:          Development/Languages
@@ -93,6 +92,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-3
+- Removed os_install_post override
+
 * Thu May 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.0.0-2
 - Apache Libcloud version 2.0.0 upgrade, and support for RHEL 6
 

@@ -12,14 +12,13 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global mod_name mock
 
 Name:           python%{?__python_ver}-mock
 Version:        1.0.1
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        A Python Mocking and Patching Library for Testing
 
 License:        BSD
@@ -130,6 +129,9 @@ cp -p %{SOURCE1} .
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.1-12
+- Removed os_install_post override
+
 * Mon May 08 2017 SalStack Packaging Team <packaging@saltstack.com> - 1.0.1-11
 - Update to use Python 2.6 for Redhat 6
 

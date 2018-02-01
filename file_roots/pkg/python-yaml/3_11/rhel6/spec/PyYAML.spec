@@ -14,14 +14,13 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global srcname PyYAML
 
 Name:           %{srcname}%{?__python_ver}
 Version:        3.11
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        YAML parser and emitter for Python
 
 Group:          Development/Libraries
@@ -127,6 +126,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 3.11-3
+- Removed os_install_post override
+
 * Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.11-2
 - Updated to use Python 2.7 on Redhat 6
 

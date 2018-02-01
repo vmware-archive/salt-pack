@@ -19,12 +19,11 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        3.4.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Self-contained Python package of low-level cryptographic primitives
 
 # Only OCB blockcipher mode is patented, but according to
@@ -158,6 +157,9 @@ touch .separate_namespace
 %{python3_sitearch}/%{modname}/
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.3-4
+- Removed os_install_post override
+
 * Tue May 09 2017 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.3-3
 - Updated to use Python 2.7 on Redhat 6
 

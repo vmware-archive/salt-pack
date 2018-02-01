@@ -1,0 +1,37 @@
+%__python27 /usr/bin/python2.7
+%python27_sitelib %(%{__python27} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+%python27_sitearch %(%{__python27} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%python27_version %(%{__python27} -c "import sys; sys.stdout.write('{0.major}.{0.minor}'.format(sys.version_info))")
+%python27_version_nodots %(%{__python27} -c "import sys; sys.stdout.write('{0.major}{0.minor}'.format(sys.version_info))")
+
+%py27_shbang_opts -s
+
+# Use the slashes after expand so that the command starts on the same line as
+# the macro
+%py2_build() %{expand:\\\
+  CFLAGS="%{optflags}" %{__python27} %{py_setup} %{?py_setup_args} build --executable="%{__python27} %{py2_shbang_opts}" %{?*}
+  sleep 1
+}
+
+%py2_build_egg() %{expand:\\\
+  CFLAGS="%{optflags}" %{__python27} %{py_setup} %{?py_setup_args} bdist_egg %{?*}
+  sleep 1
+}
+
+%py2_build_wheel() %{expand:\\\
+  CFLAGS="%{optflags}" %{__python27} %{py_setup} %{?py_setup_args} bdist_wheel %{?*}
+  sleep 1
+}
+
+%py2_install() %{expand:\\\
+  CFLAGS="%{optflags}" %{__python27} %{py_setup} %{?py_setup_args} install -O1 --skip-build --root %{buildroot} %{?*}
+}
+
+%py2_install_egg() %{expand:\\\
+  mkdir -p %{buildroot}%{python27_sitelib}
+  easy_install-%{python27_version} -m --prefix %{buildroot}%{_prefix} -Z dist/*-py%{python27_version}.egg %{?*}
+}
+
+%py2_install_wheel() %{expand:\\\
+  pip%{python27_version} install -I dist/%{1} --root %{buildroot} --strip-file-prefix %{buildroot} --no-deps
+}

@@ -19,12 +19,11 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 Name:           python%{?__python_ver}-%{srcname}
 Version:        0.4.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A Python MessagePack (de)serializer
 
 License:        ASL 2.0
@@ -126,6 +125,9 @@ popd
 %endif
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-3
+- Removed os_install_post override
+
 * Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.4.6-2
 - Updated to use Python 2.7 on Redhat 6
 

@@ -26,14 +26,13 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %global pytest_version 2.3.1
 
 Name:           python%{?__python_ver}-py
 Version:        1.4.27
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Library with cross-python path, ini-parsing, io, code, log facilities
 Group:          Development/Languages
 License:        MIT and Public Domain
@@ -187,6 +186,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.4.27-3
+- Removed os_install_post override
+
 * Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.4.27-2
 - Updated to use Python 2.7 on Redhat 6
 

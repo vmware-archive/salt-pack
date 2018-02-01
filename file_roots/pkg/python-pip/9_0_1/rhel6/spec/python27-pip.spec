@@ -2,14 +2,13 @@
 %global __python2 %{_bindir}/python2.7
 %global python2_sitelib  %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_version  %(%{__python2} -c "import sys; sys.stdout.write(sys.version[:3])")
-%global __os_install_post %{__python27_os_install_post}
 %global srcname pip
 %global bashcompdir %{_sysconfdir}/bash_completion.d
 
 
 Name:           python%{ius_suffix}-%{srcname}
 Version:        9.0.1
-Release:        1.ius%{?dist}
+Release:        2.ius%{?dist}
 Summary:        A tool for installing and managing Python %{python2_version} packages
 Group:          Development/Libraries
 License:        MIT
@@ -70,6 +69,9 @@ sed -i -e "s/^\\(complete.*\\) pip\$/\\1 pip%{python2_version}/" \
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 9.0.1-2.ius
+- Removed os_install_post override
+
 * Tue Nov 08 2016 Ben Harper <ben.harper@rackspace.com> - 9.0.1-1.ius
 - Latest upstream
 

@@ -1,0 +1,18 @@
+diff -up Python-2.7.2/Lib/test/test_weakref.py.skip-test-within-test_weakref-in-debug-build Python-2.7.2/Lib/test/test_weakref.py
+--- Python-2.7.2/Lib/test/test_weakref.py.skip-test-within-test_weakref-in-debug-build	2011-09-08 17:55:09.675392260 -0400
++++ Python-2.7.2/Lib/test/test_weakref.py	2011-09-08 17:59:08.857375903 -0400
+@@ -550,6 +550,14 @@ class ReferencesTestCase(TestBase):
+         del c1, c2, C, D
+         gc.collect()
+ 
++    # In a debug build, this fails with:
++    #   AssertionError: Lists differ: [] != ['C went away']
++    #   Second list contains 1 additional elements.
++    #   First extra element 0:
++    #   C went away
++    #   - []
++    #   + ['C went away']
++    @unittest.skipIf(hasattr(sys, 'getobjects'), 'debug build')
+     def test_callback_in_cycle_resurrection(self):
+         import gc
+ 

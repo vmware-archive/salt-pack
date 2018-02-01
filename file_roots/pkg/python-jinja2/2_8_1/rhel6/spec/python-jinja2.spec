@@ -12,7 +12,6 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 # Enable building without docs to avoid a circular dependency between this
@@ -21,7 +20,7 @@
 
 Name:		python%{?__python_ver}-jinja2
 Version:	2.8.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	General purpose template engine
 Group:		Development/Languages
 License:	BSD
@@ -167,6 +166,9 @@ popd
 
 
 %changelog
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.8.1-3
+- Removed os_install_post override
+
 * Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.8.1-2
 - Updated to use Python 2.7 on Redhat 6
 

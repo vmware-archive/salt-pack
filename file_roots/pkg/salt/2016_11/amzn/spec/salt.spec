@@ -1,3 +1,6 @@
+
+%global __python_ver %{nil}
+
 %if ( "0%{?dist}" == "0.amzn1" )
 %global with_explicit_python27 1
 %global pybasever 2.7
@@ -100,13 +103,7 @@ Requires: python26-six
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python-tornado >= 4.2.1
 BuildRequires: python-futures >= 2.0
-
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
-BuildRequires: python2-pycryptodomex >= 3.4.3
-%else
 BuildRequires: python-crypto >= 2.6.1
-%endif
-
 BuildRequires: python-jinja2
 BuildRequires: python-msgpack > 0.3
 BuildRequires: python-pip
@@ -131,19 +128,18 @@ BuildRequires: python-argparse
 
 BuildRequires: python%{?__python_ver}-devel
 
-%if (0%{?rhel} >= 6 && %{__isa_bits} == 64)
-Requires: python2-pycryptodomex >= 3.4.3
-%else
-Requires: python-crypto >= 2.6.1
-%endif
-
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack > 0.3
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
+Requires: python%{?__python_ver}
 %else
 Requires: PyYAML
 %endif
+
+Requires: python%{?__python_ver}-crypto >= 2.6.1
+%endif
+
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
@@ -151,8 +147,6 @@ Requires: python%{?__python_ver}-tornado >= 4.2.1
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
 
-
-%endif
 
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 
@@ -627,8 +621,26 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Apr 25 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.0%{?__rc_ver}-0
-- Update to feature release 2016.11 branch nightly build %{?__rc_ver}
+* Mon Jan 30 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.9-r2
+- Correct use of pycryptodomex
+
+* Thu Jan 25 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.9-1
+- Update to feature release 2016.11.9-1
+
+* Fri Sep  8 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.8-1
+- Update to feature release 2016.11.8
+
+* Thu Aug  3 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.7-1
+- Update to feature release 2016.11.7
+
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
+- Update to feature release 2016.11.6
+
+* Mon May 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-3
+- Add patch for Fix ipv6 nameserver grains #41244
+
+* Wed May 10 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-2
+- Commented out check for pycryptodomex on Fedora
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

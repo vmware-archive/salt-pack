@@ -12,12 +12,11 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 Name: python%{?__python_ver}-markupsafe
 Version: 0.11
-Release: 11%{?dist}
+Release: 12%{?dist}
 Summary: Implements a XML/HTML/XHTML Markup safe string for Python
 
 Group: Development/Languages
@@ -111,7 +110,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.11.11
+* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.11-12
+- Removed os_install_post override
+
+* Mon May 08 2017 SaltStack Packaging Team <packaging@saltstack.com> - 0.11-11
 - Updated to use Python 2.7 on Redhat 6
 
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.11-10

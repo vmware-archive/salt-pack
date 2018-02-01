@@ -29,7 +29,6 @@
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%global __os_install_post %{__python27_os_install_post}
 %endif
 
 %endif
@@ -84,8 +83,12 @@ Requires: dmidecode
 
 Requires: pciutils
 Requires: which
-Requires: yum-utils
 
+%if 0%{?fedora} >= 26
+Requires: dnf-utils
+%else
+Requires: yum-utils
+%endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
@@ -103,7 +106,8 @@ BuildRequires: PyYAML
 %endif
 
 BuildRequires: python%{?__python_ver}-requests
-BuildRequires: python%{?__python_ver}-unittest2
+## BuildRequires: python%{?__python_ver}-unittest2
+
 # this BR causes windows tests to happen
 # clearly, that's not desired
 # https://github.com/saltstack/salt/issues/3749
@@ -622,9 +626,22 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Thu Jun 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0%{?__rc_ver}-0
-- Update to feature release 2017.7 branch nightly build %{?__rc_ver}
+* Tue Jan 30 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2017.7.3-1
+- Update to feature release 2017.7.3-1
+
+* Mon Sep 18 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.2-1
+- Update to feature release 2017.7.2
+
+* Tue Aug 15 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.1-1
+- Update to feature release 2017.7.1
+- Altered dependency for dnf-utils instead of yum-utils if Fedora 26 or greater
+
+* Wed Jul 12 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.0-1
+- Update to feature release 2017.7.0
 - Added python-psutil as a requirement, disabled auto enable for Redhat 6
+
+* Thu Jun 22 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.6-1
+- Update to feature release 2016.11.6
 
 * Thu Apr 27 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2016.11.5-1
 - Update to feature release 2016.11.5

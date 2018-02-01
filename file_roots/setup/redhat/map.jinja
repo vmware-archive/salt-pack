@@ -33,9 +33,9 @@
   {% set build_tgt = build_epel ~ '-' ~ build_arch %}
   {% set build_dist = 'el5' %}
 
-{% elif build_release == 'fc24' %}
+{% elif build_release == 'fedora' %}
 
-  {% set build_epel = 'fedora-24' %}
+  {% set build_epel = 'fedora' %}
   {% set build_tgt = build_epel ~ '-' ~ build_arch %}
   {% set build_dist = build_release %}
 

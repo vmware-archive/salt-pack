@@ -83,8 +83,12 @@ Requires: dmidecode
 
 Requires: pciutils
 Requires: which
-Requires: yum-utils
 
+%if 0%{?fedora} >= 26
+Requires: dnf-utils
+%else
+Requires: yum-utils
+%endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1

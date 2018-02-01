@@ -41,7 +41,7 @@ include:
     - pkg.libyaml.0_1_3.rhel6
     - pkg.pciutils.3_1_10.rhel6
 ##    - pkg.pytest.2_7_0.rhel6
-    - pkg.python27.2_7_14.rhel6
+    - pkg.python27.2_7_13.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
     - pkg.python-chardet.2_2_1.rhel6

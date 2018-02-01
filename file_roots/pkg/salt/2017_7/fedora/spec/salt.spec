@@ -83,8 +83,12 @@ Requires: dmidecode
 
 Requires: pciutils
 Requires: which
-Requires: yum-utils
 
+%if 0%{?fedora} >= 26
+Requires: dnf-utils
+%else
+Requires: yum-utils
+%endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
@@ -622,6 +626,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Jan 30 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2017.7.3-1
+- Update to feature release 2017.7.3-1
+
 * Mon Sep 18 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.2-1
 - Update to feature release 2017.7.2
 

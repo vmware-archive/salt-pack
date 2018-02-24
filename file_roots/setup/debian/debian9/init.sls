@@ -136,7 +136,7 @@ build_pbldrc:
 {% if build_cfg.build_arch == 'armhf' %}
         DEBOOTSTRAPOPTS=( 
             '--variant=buildd' 
-            '--keyring' "${HOME}/.gnupg/pubring.gpg"
+            '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
 {% else %}

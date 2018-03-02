@@ -41,11 +41,6 @@ build_pbldhooks_rm_G05:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
 
 
-build_pbldhookskeys_rm:
-  file.absent:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
-
-
 build_pbldhooks_rm_D04:
   file.absent:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
@@ -59,14 +54,6 @@ build_pbldrc_rm:
 build_prefs_rm:
   file.absent:
     - name: /etc/apt/preferences
-
-
-build_pbldhookskeys_file:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
-    - text: |
-        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
-        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 
 
 build_pbldhooks_file_G05:
@@ -140,7 +127,7 @@ build_pbldrc:
 {% if build_cfg.build_arch == 'armhf' %}
         DEBOOTSTRAPOPTS=( 
             '--variant=buildd' 
-            '--keyring' "${HOME}/.gnupg/pubring.gpg"
+            '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
 {% else %}

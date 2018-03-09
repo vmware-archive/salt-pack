@@ -4,10 +4,10 @@ include:
 {% if buildcfg.build_release == 'ubuntu1604' %}
 
     - pkg.libsodium.1_0_8.ubuntu1604
-    - pkg.python-ioflo.1_7_4.ubuntu1604
+    - pkg.python-ioflo.1_5_0.ubuntu1604
     - pkg.python-libcloud.1_5_0.ubuntu1604
     - pkg.python-libnacl.4_1.ubuntu1604
-    - pkg.python-raet.0_6_8.ubuntu1604
+    - pkg.python-raet.0_6_5.ubuntu1604
     - pkg.python-timelib.0_2_4.ubuntu1604
     - pkg.python-tornado.4_2_1.ubuntu1604
     - pkg.salt.2018_3.ubuntu1604

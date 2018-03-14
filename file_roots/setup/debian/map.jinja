@@ -15,7 +15,7 @@
 # determine which version of Python to build for
 {% set build_py3 = basecfg.build_py3 %}
 
-{% if build_py3 == True %}
+{% if build_py3 %}
 {% set build_py_ver = 'py3' %}
 {% else %}
 {% set build_py_ver = 'py2' %}

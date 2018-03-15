@@ -24,6 +24,8 @@
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
 
+{% set gpg_agent_log_file = '/root/gpg-agent.log' %}
+
 {% set gpg_agent_text = '# enable-ssh-support
         ' ~ write_env_file  ~ '
         default-cache-ttl 300
@@ -34,12 +36,13 @@
         daemon
         debug-all
         ## debug-pinentry
-        log-file /root/gpg-agent.log
+        log-file ' ~ gpg_agent_log_file ~ '
         verbose
 
         # PIN entry program
         ' ~ pinentry_text
 %}
+
 
 
 gpg_agent_stop:
@@ -52,6 +55,11 @@ gpg_agent_stop:
 gpg_dir_rm:
   file.absent:
     - name: {{gpg_key_dir}}
+
+
+gpg_clear_agent_log:
+  file.absent:
+    - name: {{gpg_agent_log_file}}
 
 
 manage_priv_key:

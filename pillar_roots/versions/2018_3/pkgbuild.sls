@@ -174,8 +174,8 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python-ioflo
-      additonal_deps:
         - python-libnacl
+      additonal_deps:
         - python-simplejson
     python-requests:
       version: 2.6.0-1

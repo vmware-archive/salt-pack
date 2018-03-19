@@ -12,8 +12,18 @@
 {% set build_release = pillar.get('build_release', 'debian9') %}
 {% set build_arch = pillar.get('build_arch', 'amd64') %}
 
+# determine which version of Python to build for
+{% set build_py3 = basecfg.build_py3 %}
+
+{% if build_py3 %}
+{% set build_py_ver = 'py3' %}
+{% else %}
+{% set build_py_ver = 'py2' %}
+{% endif %}
+
 # Set the destination for built packages
-{% set build_dest_dir = basecfg.build_dest ~ '/' ~ build_release ~ '/' ~ build_arch %}
+{% set build_dest_dir = basecfg.build_dest ~ '/' ~ build_py_ver ~ '/' ~ build_release ~ '/' ~ build_arch %}
+
 
 # Set the mock target
 {% set build_tgt = 'deb-' ~ build_arch %}

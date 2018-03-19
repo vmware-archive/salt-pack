@@ -3,7 +3,7 @@
 include:
 {% if buildcfg.build_release == 'rhel7' %}
 
-    - pkg.libsodium.1_0_5.rhel7
+    - pkg.libsodium.1_0_16.rhel7
     - pkg.libtomcrypt.1_17.rhel7
     - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
@@ -13,7 +13,6 @@ include:
     - pkg.python-pycryptodome.3_4_3.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
-    - pkg.python-impacket.0_9_14.rhel7
     - pkg.python-ioflo.1_3_8.rhel7
     - pkg.python-libcloud.2_0_0.rhel7
     - pkg.python-libnacl.1_4_3.rhel7
@@ -29,7 +28,6 @@ include:
     - pkg.python-urllib3.1_10_2.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2017_7.rhel7
-##    - pkg.winexe.1_1.rhel7
     - pkg.zeromq.4_1_4.rhel7
 
 {% elif buildcfg.build_release == 'rhel6' %}
@@ -40,7 +38,6 @@ include:
     - pkg.libtommath.0_42_0.rhel6
     - pkg.libyaml.0_1_3.rhel6
     - pkg.pciutils.3_1_10.rhel6
-##    - pkg.pytest.2_7_0.rhel6
     - pkg.python27.2_7_13.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
@@ -54,7 +51,6 @@ include:
     - pkg.python-futures.3_0_3.rhel6
     - pkg.python-importlib.1_0_2.rhel6
     - pkg.python-ioflo.1_3_8.rhel6
-    - pkg.python-impacket.0_9_14.rhel6
     - pkg.python-jinja2.2_8_1.rhel6
     - pkg.python-libcloud.2_0_0.rhel6
     - pkg.python-libnacl.1_4_3.rhel6
@@ -73,11 +69,9 @@ include:
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
-##    - pkg.python-unittest2.1_1_0.rhel6
     - pkg.python-urllib3.1_10_4.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2017_7.rhel6
-##    - pkg.winexe.1_1.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 

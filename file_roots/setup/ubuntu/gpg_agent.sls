@@ -36,6 +36,8 @@
         daemon
         debug-all
         ## debug-pinentry
+        pinentry-timeout 20
+        allow-loopback-pinentry
         log-file ' ~ gpg_agent_log_file ~ '
         verbose
 

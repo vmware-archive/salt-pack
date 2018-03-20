@@ -36,6 +36,8 @@
         daemon
         debug-all
         ## debug-pinentry
+        pinentry-timeout 20
+        allow-loopback-pinentry
         log-file ' ~ gpg_agent_log_file ~ '
         verbose
 
@@ -157,5 +159,14 @@ gpg_load_priv_key:
         filename: {{pkg_priv_key_absfile}}
         gnupghome: {{gpg_key_dir}}
 
+{% endif %}
+
+
+{% if build_cfg.build_arch == 'armhf' %}
+retrieve_raspbian_keys:
+  cmd.run:
+    - name: |
+        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
+        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 {% endif %}
 

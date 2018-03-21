@@ -129,14 +129,6 @@ pkgbuild_registry:
         - python-mock
     python-crypto:
       version: 2.6.1-2
-    python-pycryptodome:
-      version: 3.4.3-2
-      results:
-        - python2-pycryptodomex
-      build_deps:
-        - libtommath
-        - libtomcrypt
-        - libtomcrypt-devel
     python-enum34:
       version: 1.0-4
       noarch: True
@@ -155,6 +147,12 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - libsodium
+    python-m2crypto:
+      version: 0.28.2-2
+      results:
+        - m2crypto
+      build_deps:
+        - python-typing
     python-msgpack:
       version: 0.4.6-1
     python-mock:
@@ -164,6 +162,14 @@ pkgbuild_registry:
         - python2-mock
     python-psutil:
       version: 2.2.1-1
+    python-pycryptodome:
+      version: 3.4.3-2
+      results:
+        - python2-pycryptodomex
+      build_deps:
+        - libtommath
+        - libtomcrypt
+        - libtomcrypt-devel
     python-pyzmq:
       name: python-zmq
       version: 15.3.0-2
@@ -190,6 +196,11 @@ pkgbuild_registry:
     python-timelib:
       version: 0.2.4-1
       noarch: True
+    python-typing: 
+      version: 3.6.2-2 
+      noarch: True 
+      results: 
+        - python2-typing 
     python-urllib3:
       version: 1.10.2-1
       noarch: True

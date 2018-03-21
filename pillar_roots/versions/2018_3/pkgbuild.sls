@@ -148,7 +148,7 @@ pkgbuild_registry:
       build_deps:
         - libsodium
     python-m2crypto:
-      version: 0.28.2-2
+      version: 0.28.2-3
       results:
         - m2crypto
       build_deps:

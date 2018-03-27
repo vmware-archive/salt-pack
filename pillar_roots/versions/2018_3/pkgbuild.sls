@@ -197,7 +197,7 @@ pkgbuild_registry:
       version: 0.2.4-1
       noarch: True
     python-typing: 
-      version: 3.6.2-2 
+      version: 3.5.2.2-3 
       noarch: True 
       results: 
         - python2-typing 

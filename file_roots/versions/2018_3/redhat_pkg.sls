@@ -26,7 +26,7 @@ include:
     - pkg.python-simplejson.3_3_3.rhel7
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-tornado.4_2_1.rhel7
-    - pkg.python-typing.3_6_2.rhel7
+    - pkg.python-typing.3_5_2_2.rhel7
     - pkg.python-urllib3.1_10_2.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2018_3.rhel7

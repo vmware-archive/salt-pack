@@ -26,7 +26,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/python2-{{spec_name}}.spec
+    - spec: salt://{{slspath}}/spec/python-{{spec_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 
@@ -34,7 +34,7 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/typing-3.6.2.tar.gz
+      - salt://{{slspath}}/sources/typing-3.5.2.2.tar.gz
 ##      - {{ macros.pypi_source(pypi_name, version) }}
 
 {% endif %}

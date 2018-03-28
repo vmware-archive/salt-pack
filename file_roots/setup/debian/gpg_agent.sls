@@ -14,10 +14,13 @@
 {% if build_cfg.build_release != 'debian9' %}
 {% set write_env_file_prefix = '--' %}
 {% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
+{% set pinentry_parms = '' %}
 {% set pinentry_text = '' %}
 {% else %}
 {% set write_env_file_prefix = '' %}
 {% set write_env_file = '' %}
+{% set pinentry_parms = 'pinentry-timeout 20
+allow-loopback-pinentry' %}
 {% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
 {% endif %}
 
@@ -36,8 +39,7 @@
         daemon
         debug-all
         ## debug-pinentry
-        pinentry-timeout 20
-        allow-loopback-pinentry
+        ' ~ pinentry_parms ~ '
         log-file ' ~ gpg_agent_log_file ~ '
         verbose
 
@@ -61,13 +63,6 @@ gpg_dir_rm:
 gpg_clear_agent_log:
   file.absent:
     - name: {{gpg_agent_log_file}}
-
-
-retrieve_raspbian_keys:
-  cmd.run:
-    - name: |
-        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
-        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 
 
 manage_priv_key:

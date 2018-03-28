@@ -100,7 +100,7 @@
 pkgbuild_registry:
   rhel7:
     libsodium:
-      version: 1.0.5-1
+      version: 1.0.16-1
       results:
         - libsodium
         - libsodium-devel

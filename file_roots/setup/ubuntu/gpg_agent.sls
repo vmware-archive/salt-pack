@@ -19,8 +19,9 @@
 {% else %}
 {% set write_env_file_prefix = '' %}
 {% set write_env_file = '' %}
-{% set pinentry_parms = 'pinentry-timeout 20
-allow-loopback-pinentry' %}
+{% set pinentry_parms = '
+        pinentry-timeout 20
+        allow-loopback-pinentry' %}
 {% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
 {% endif %}
 
@@ -39,12 +40,10 @@ allow-loopback-pinentry' %}
         daemon
         debug-all
         ## debug-pinentry
-        ' ~ pinentry_parms ~ '
         log-file ' ~ gpg_agent_log_file ~ '
         verbose
-
         # PIN entry program
-        ' ~ pinentry_text
+        ' ~ pinentry_text ~ pinentry_parms
 %}
 
 

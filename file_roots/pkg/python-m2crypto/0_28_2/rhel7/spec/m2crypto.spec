@@ -115,7 +115,7 @@ popd
 %endif
 
 %changelog
-* Tuw Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-3
+* Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-3
 - Adjusted support for Python 3 for Redhat 7
 
 * Sat Feb 17 2018 Miloslav Trmač <mitr@redhat.com> - 0.28.2-2

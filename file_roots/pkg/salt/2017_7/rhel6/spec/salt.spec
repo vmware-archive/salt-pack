@@ -41,8 +41,8 @@
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2017.7.0%{?__rc_ver}
-Release: 0%{?dist}
+Version: 2017.7%{?__rc_ver}
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -626,6 +626,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.5-1
+- Update to feature release 2017.7.5-1  for Python 2
+
 * Fri Feb 16 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.4-1
 - Update to feature release 2017.7.4-1
 - Limit to Tornado use to between versions 4.2.1 and less than 5.0

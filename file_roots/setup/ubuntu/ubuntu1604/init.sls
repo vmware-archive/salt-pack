@@ -40,6 +40,22 @@ build_additional_pkgs:
       - pinentry-tty
 
 
+{% if build_cfg.build_py3 %}
+build_additional_py3_pkgs:
+  pkg.installed:
+    - pkgs:
+      - python3
+      - python3-all
+      - python3-dev
+      - python3-setuptools
+      - python3-apt
+      - python3-pkg-resources
+      - python3-sphinx
+      - python3-all-dev
+      - python3-debian
+      - apt-utils
+{% endif %}
+
 build_pbldhooks_rm_G05:
   file.absent:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences

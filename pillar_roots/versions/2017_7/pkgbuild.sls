@@ -100,7 +100,7 @@
 pkgbuild_registry:
   rhel7:
     libsodium:
-      version: 1.0.5-1
+      version: 1.0.16-1
       results:
         - libsodium
         - libsodium-devel
@@ -144,11 +144,6 @@ pkgbuild_registry:
     python-futures:
       version: 3.0.3-1
       noarch: True
-    python-impacket:
-      version: 0.9.14-3
-      noarch: True
-      build_deps:
-        - python-crypto
     python-ioflo:
       version: 1.3.8-1
       noarch: True
@@ -223,13 +218,6 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
-    winexe:
-      version: 1.1-b787d2
-      results:
-        - winexe
-        - winexe-debuginfo
-      build_deps:
-        - python-impacket
     zeromq:
       version: 4.1.4-6
       build_deps:
@@ -368,16 +356,6 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-futures
-    python-impacket:
-      name: python27-impacket
-      version: 0.9.14-5
-      noarch: True
-      build_deps:
-        - python27
-        - python-setuptools
-        - python-crypto
-      results:
-        - python27-impacket
     python-ioflo:
       name: python27-ioflo
       version: 1.3.8-4
@@ -439,7 +417,6 @@ pkgbuild_registry:
       build_deps:
         - python27
         - python-setuptools
-##        - python-unittest2
       results:
         - python27-mock
     python-nose:
@@ -537,7 +514,6 @@ pkgbuild_registry:
         - python-backports-ssl_match_hostname
         - python-pycurl
         - python-setuptools
-##        - python-unittest2
       results:
         - python27-tornado
     python-timelib:
@@ -600,14 +576,6 @@ pkgbuild_registry:
         - salt-api
         - salt-cloud
         - salt-ssh
-    winexe:
-      version: 1.1-1b787d2.2
-      results:
-        - winexe
-        - winexe-debuginfo
-      build_deps:
-        - python27
-        - python-impacket
     yum-utils:
       version: 1.1.30-30
       noarch: True

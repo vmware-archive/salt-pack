@@ -5,9 +5,6 @@
 {% set prefs_text = 'Package: *
         Pin: origin ""
         Pin-Priority: 1001
-        Package: python3-*
-        Pin: release a=testing
-        Pin-Priority: 800
         Package: *
         Pin: release a=' ~ os_codename ~ '-backports
         Pin-Priority: 750
@@ -34,6 +31,25 @@ build_additional_pkgs:
 {% endif %}
       - dh-systemd
       - dh-python
+      - python-setuptools-git
+
+
+{% if build_cfg.build_py3 %}
+build_additional_py3_pkgs:
+  pkg.installed:
+    - pkgs:
+      - python3
+      - python3-all
+      - python3-dev
+      - python3-setuptools
+      - python3-setuptools-git
+      - python3-apt
+      - python3-pkg-resources
+      - python3-sphinx
+      - python3-all-dev
+      - python3-debian
+      - apt-utils
+{% endif %}
 
 
 build_pbldhooks_rm_G05:

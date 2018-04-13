@@ -229,7 +229,7 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     zeromq:
-      version: 4.1.4-6
+      version: 4.1.4-7
       build_deps:
         - openpgm
       results:

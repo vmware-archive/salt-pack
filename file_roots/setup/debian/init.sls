@@ -19,6 +19,7 @@ build_pkgs:
       - python-gnupg
       - pkg-config
       - ccache
+      - nfs-common
 
 
 {{build_cfg.build_runas}}:

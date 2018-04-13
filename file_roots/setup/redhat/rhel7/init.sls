@@ -10,6 +10,7 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - rpm-sign
+      - nfs-utils
 
 
 {% if build_cfg.build_py3 %}

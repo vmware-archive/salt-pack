@@ -50,9 +50,19 @@ BuildRequires:  python
 Summary:        C implementation of the Git core methods as a library with a solid API
 
 %description -n python27-%{name} %{_description}
-
 Build to operate with Python2.7
-%endif
+
+
+%package -n python27-%{name}-devel
+Summary:        Development files for %{name}
+Requires:       python27-%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description -n python27-%{name}-devel
+This package contains libraries and header files for
+developing applications that use %{name}.
+Build to operate with Python2.7
+
+%else
 
 %package        devel
 Summary:        Development files for %{name}
@@ -62,17 +72,6 @@ Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 This package contains libraries and header files for
 developing applications that use %{name}.
 
-
-%if 0%{?with_explicit_python27}
-%package -n python27-%{name}-devel
-Summary:        Development files for %{name}
-Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
-
-%description -n python27-%{name}-devel
-This package contains libraries and header files for
-developing applications that use %{name}.
-
-Build to operate with Python2.7
 %endif
 
 %prep
@@ -99,36 +98,34 @@ make %{?_smp_mflags}
 %install
 %make_install
 
-%check
-# remove when rhbz#1105552 is fixed:
-%ifnarch %{arm} %{power64} ppc64 s390x
-ctest -V
-%endif
+## %check
+## # remove when rhbz#1105552 is fixed:
+## %%ifnarch %{arm} %{power64} ppc64 s390x
+## ctest -V
+## %%endif
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
-%files
-%doc COPYING AUTHORS
-%{_libdir}/libgit2.so.*
-
 %if 0%{?with_explicit_python27}
 %files -n python27-%{name}
 %doc COPYING AUTHORS
 %{_libdir}/libgit2.so.*
-%endif
 
-
-%files devel
+%files -n python27-%{name}-devel
 %doc docs examples README.md
 %{_libdir}/libgit2.so
 %{_libdir}/pkgconfig/libgit2.pc
 %{_includedir}/git2.h
 %{_includedir}/git2/
 
-%if 0%{?with_explicit_python27}
-%files -n python27-%{name}-devel
+%else
+%files
+%doc COPYING AUTHORS
+%{_libdir}/libgit2.so.*
+
+%files devel
 %doc docs examples README.md
 %{_libdir}/libgit2.so
 %{_libdir}/pkgconfig/libgit2.pc
@@ -139,7 +136,7 @@ ctest -V
 
 
 %changelog
-* Thu Apr 12 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-3
+* Fri Apr 13 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.0-3
 - Updated to use Python 2.7 on Redhat 6
 
 * Sun Oct  5 2014 Erik Johnson <erik@saltstack.com> - 1:0.20.0-2

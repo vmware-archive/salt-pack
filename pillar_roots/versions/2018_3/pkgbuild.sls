@@ -252,6 +252,7 @@ pkgbuild_registry:
         - python27
       results:
         - python27-libgit2
+        - python27-libgit2-devel
     libsodium:
       version: 0.4.5-3
       results:

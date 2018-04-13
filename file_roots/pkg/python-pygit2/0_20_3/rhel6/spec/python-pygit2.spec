@@ -6,10 +6,11 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-
+%global _build_docs 0
 %else
 %global python python
 %global __python_ver %{nil}
+%global _build_docs %{nil}
 %endif
 
 %global pkgname pygit2
@@ -30,13 +31,17 @@ BuildRequires:  openssl-devel
 %if 0%{?with_explicit_python27}
 BuildRequires:  python%{?__python_ver}-libgit2-devel
 BuildRequires:  python%{?__python_ver}-devel
-## BuildRequires:  python-sphinx
+%if 0%{?_build_docs}
+BuildRequires:  python%{?__python_ver}-sphinx
+%endif
 BuildRequires:  python%{?__python_ver}-nose
 BuildRequires:  python%{?__python_ver}-setuptools
 %else
 BuildRequires:  libgit2-devel
 BuildRequires:  python-devel
+%if 0%{?_build_docs}
 BuildRequires:  python-sphinx
+%endif
 BuildRequires:  python-nose
 BuildRequires:  python-setuptools
 %endif
@@ -48,12 +53,14 @@ the core of Git. Pygit2 works with Python 2.6, 2.7, 3.1, 3.2 and 3.3.
 Build for use with Python 2.7
 %endif
 
-## %package        doc
-## Summary:        Documentation for %{name}
-## BuildArch:      noarch
-## 
-## %description    doc
-## Documentation for %{name}.
+%if 0%{?_build_docs}
+%package        doc
+Summary:        Documentation for %{name}
+BuildArch:      noarch
+
+%description    doc
+Documentation for %{name}.
+%endif
 
 %prep
 %setup -qn %{pkgname}-%{version}
@@ -62,7 +69,10 @@ Build for use with Python 2.7
 
 %build
 CFLAGS="%{optflags}" %{__python} setup.py build
-## make -C docs html
+%if 0%{?_build_docs}
+make -C docs html
+%endif
+
 
 %install
 %{__python} setup.py install --prefix=%{_prefix} -O1 --skip-build --root=%{buildroot}
@@ -79,12 +89,14 @@ find %{buildroot} -name '*.so' -exec chmod 755 {} ';'
 %{python_sitearch}/%{pkgname}
 %{python_sitearch}/_%{pkgname}.so
 
-## %files doc
-## %doc docs/_build/html/*
+%if 0%{?_build_docs}
+%files doc
+%doc docs/_build/html/*
+%endif
 
 %changelog
-* Thu Apr 12 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.3-5
-- Updated to use Python 2.7 on Redhat 6
+* Fri Apr 13 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.20.3-5
+- Updated to use Python 2.7 on Redhat 6 and disable doc builds
 
 * Fri Feb 13 2015 Erik Johnson <erik@saltstack.com> - 0.20.3-4
 - Initial EL6 build

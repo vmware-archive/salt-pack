@@ -2,7 +2,7 @@
 
 Name:           zeromq
 Version:        4.1.4
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Software library for fast, message-based applications
 
 Group:          System Environment/Libraries
@@ -133,6 +133,9 @@ rm %{buildroot}%{_libdir}/libzmq.la
 
 
 %changelog
+* Fri Apr 13 2018 SaltStack Packaging Team <packaging@saltstack.com> - 4.1.4-7
+- Increment release number to ease pickup of updated libsodium
+
 * Tue Oct 17 2017 SaltStack Packaging Team <packaging@saltstack.com> - 4.1.4-6
 - Disabled check due to build failue on RHEL 7
 

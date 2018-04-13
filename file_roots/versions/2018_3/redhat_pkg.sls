@@ -35,6 +35,7 @@ include:
 {% elif buildcfg.build_release == 'rhel6' %}
 
     - pkg.babel.0_9_4.rhel6
+    - pkg.libgit2.0_20_0.rhel6
     - pkg.libsodium.0_4_5.rhel6
     - pkg.libtomcrypt.1_17.rhel6
     - pkg.libtommath.0_42_0.rhel6
@@ -64,6 +65,7 @@ include:
     - pkg.python-psutil.5_4_2.rhel6
     - pkg.python-py.1_4_27.rhel6
     - pkg.python-pycurl.7_19_0.rhel6
+    - pkg.python-pygit2.0_20_3.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_7_0.rhel6

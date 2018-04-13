@@ -246,6 +246,13 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-babel
+    libgit2:
+      version: 0.20.0-3
+      build_deps:
+        - python27
+      results:
+        - python27-libgit2
+        - python27-libgit2-devel
     libsodium:
       version: 0.4.5-3
       results:
@@ -464,6 +471,17 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-py
+    python-pygit2:
+      name: python27-pygit2
+      version: 0.20.3-5
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-nose
+        - libgit2
+## TBD        - http-parser
+      results:
+        - python27-pygit2
     python-pycurl:
       name: python27-pycurl
       version: 7.19.0-11

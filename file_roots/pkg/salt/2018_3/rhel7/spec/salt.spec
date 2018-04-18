@@ -42,7 +42,7 @@
 
 Name: salt
 Version: 2018.3.0%{?__rc_ver}
-Release: 1%{?dist}
+Release: 0%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons

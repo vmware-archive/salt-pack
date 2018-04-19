@@ -1,0 +1,16 @@
+diff -ur a/lib/Crypto/Hash/MD5.py b/lib/Crypto/Hash/MD5.py
+--- a/lib/Crypto/Hash/MD5.py	2018-04-19 16:41:56.329859207 -0600
++++ b/lib/Crypto/Hash/MD5.py	2018-04-19 16:48:36.040310650 -0600
+@@ -29,7 +29,11 @@
+     except ImportError:
+         from md5 import new as _hash_new
+ 
+-    h = _hash_new()
++    try:
++        h = _hash_new()
++    except ValueError:
++        h = None    # force drop through to givce something for the expected API
++
+     if hasattr(h, 'new') and hasattr(h, 'name') and hasattr(h, 'digest_size') and hasattr(h, 'block_size'):
+         # The module from stdlib has the API that we need.  Just use it.
+         return _hash_new

@@ -8,7 +8,7 @@ include:
     - pkg.python-impacket.0_9_14.amzn
     - pkg.python-ioflo.1_3_8.amzn
     - pkg.python-libcloud.2_0_0.amzn
-    - pkg.python-libnacl.1_4_3.amzn
+    - pkg.python-libnacl.1_6_1.amzn
     - pkg.python-msgpack.0_4_6.amzn
     - pkg.python-psutil.5_2_2.amzn
     - pkg.python-pyzmq.14_5_0.amzn

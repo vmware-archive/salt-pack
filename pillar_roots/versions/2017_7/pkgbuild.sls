@@ -151,7 +151,7 @@ pkgbuild_registry:
       version: 2.0.0-2
       noarch: True
     python-libnacl:
-      version: 1.4.3-1
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - libsodium
@@ -384,7 +384,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-3
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - python27
@@ -647,7 +647,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-2
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - libsodium

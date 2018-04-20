@@ -130,10 +130,9 @@ pkgbuild_registry:
     python-crypto:
       version: 2.6.1-2
     python-pycryptodome:
-      version: 3.4.3-2
+      version: 3.4.11-2
       results:
         - python2-pycryptodomex
-        - python3-pycryptodomex
       build_deps:
         - libtommath
         - libtomcrypt
@@ -328,7 +327,7 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.3-4
+      version: 3.4.11-2
       build_deps:
         - python27
         - python-setuptools
@@ -337,7 +336,6 @@ pkgbuild_registry:
         - libtomcrypt-devel
       results:
         - python27-pycryptodomex
-        - python3-pycryptodomex
     python-enum34:
       name: python27-enum34
       version: 1.0-6

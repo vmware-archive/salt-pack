@@ -163,7 +163,7 @@ pkgbuild_registry:
     python-psutil:
       version: 2.2.1-1
     python-pycryptodome:
-      version: 3.4.3-2
+      version: 3.4.11-2
       results:
         - python2-pycryptodomex
       build_deps:
@@ -345,7 +345,7 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.3-4
+      version: 3.4.11-2
       build_deps:
         - python27
         - python-setuptools

@@ -1,0 +1,42 @@
+diff -ur a/setup.py b/setup.py
+--- a/setup.py	2018-04-19 16:41:56.325859224 -0600
++++ b/setup.py	2018-04-19 16:45:11.678160161 -0600
+@@ -514,10 +514,10 @@
+         include_dirs=['src/'],
+         sources=["src/CAST.c"]),
+     Extension("Crypto.Cipher._raw_des",
+-        include_dirs=['src/', 'src/libtom/'],
++        include_dirs=['src/'],
+         sources=["src/DES.c"]),
+     Extension("Crypto.Cipher._raw_des3",
+-        include_dirs=['src/', 'src/libtom/'],
++        include_dirs=['src/'],
+         sources=["src/DES3.c"]),
+     Extension("Crypto.Util._galois",
+         include_dirs=['src/'],
+diff -ur a/src/DES.c b/src/DES.c
+--- a/src/DES.c	2018-04-19 16:41:56.325859224 -0600
++++ b/src/DES.c	2018-04-19 16:45:37.270341221 -0600
+@@ -39,7 +39,7 @@
+ 
+ /* Include the actial DES implementation */
+ #define LTC_NO_PROTOTYPES
+-#include "libtom/tomcrypt_des.c"
++#include <tomcrypt.h>
+ 
+ typedef struct {
+     symmetric_key sk;
+diff -ur a/src/Salsa20.c b/src/Salsa20.c
+--- a/src/Salsa20.c	2018-04-19 16:41:56.329859207 -0600
++++ b/src/Salsa20.c	2018-04-19 16:46:12.486635565 -0600
+@@ -29,9 +29,7 @@
+ 
+ FAKE_INIT(Salsa20)
+ 
+-#include "libtom/tomcrypt_cfg.h"
+-#include "libtom/tomcrypt_custom.h"
+-#include "libtom/tomcrypt_macros.h"
++#include <tomcrypt.h>
+ 
+ #define ROUNDS 20
+ #define MAX_KEY_SIZE 32

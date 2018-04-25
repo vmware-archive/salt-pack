@@ -147,6 +147,8 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - libsodium
+      results:
+        - python-libnacl
     python-m2crypto:
       version: 0.28.2-3
       results:

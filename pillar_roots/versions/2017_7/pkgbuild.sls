@@ -155,6 +155,8 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - libsodium
+      results:
+        - python-libnacl
     python-msgpack:
       version: 0.4.6-1
     python-mock:

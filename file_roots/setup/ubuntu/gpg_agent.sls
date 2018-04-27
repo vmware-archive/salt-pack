@@ -11,7 +11,7 @@
 {% set gpg_tty_info = gpg_key_dir ~ '/gpg-tty-info-salt' %}
 {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %}
 
-{% if build_cfg.build_release != 'ubuntu1604' %}
+{% if build_cfg.build_release == 'ubuntu1404' %}
 {% set write_env_file_prefix = '--' %}
 {% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
 {% set pinentry_parms = '' %}

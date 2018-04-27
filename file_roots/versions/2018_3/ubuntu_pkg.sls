@@ -3,7 +3,6 @@
 include:
 {% if buildcfg.build_release == 'ubuntu1804' %}
 
-    - pkg.libsodium.1_0_8.ubuntu1804
     - pkg.python-ioflo.1_5_0.ubuntu1804
     - pkg.python-raet.0_6_5.ubuntu1804
     - pkg.python-timelib.0_2_4.ubuntu1804

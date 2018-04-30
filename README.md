@@ -744,3 +744,18 @@ salt redhat7_minion state.sls pkg.salt.2015_8_8.rhel7  pillar='{ "build_dest" : 
 
 Note: that currently the building of 32-bit packages on Debian and Ubuntu does not work.  It had worked in early development of salt-pack but for some as yet undetermined reason it stopped working.  Given the movement to 64-bit architectures, 32-bit support is a low priority task.
 
+# Vagrant
+
+Vagrant support has been added for testing the prerequisites for centos6/7 Ubuntu 14.04/16.04 and Debian 8 (Jessie)
+
+To set up the prerequisites, run:
+
+```bash
+salt jessie state.sls setup.debian.debian8
+salt ubuntu1404 state.sls setup.ubuntu.ubuntu1404
+salt ubuntu1604 state.sls setup.ubuntu.ubuntu1604
+salt rhel6 state.sls setup.redhat.rhel6 #Currently failing, Jan 23, 2018 even after applying the https://github.com/saltstack-formulas/epel-formula/issues/39 patch
+salt rhel7 state.sls setup.redhat.rhel7 #Failing Jan 23 due to https://github.com/saltstack-formulas/epel-formula/issues/39
+ ```
+ 
+Vagrant support for building salt is not supported (yet).

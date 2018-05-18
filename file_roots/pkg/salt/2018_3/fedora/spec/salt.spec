@@ -94,7 +94,7 @@ BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
 BuildRequires: python%{?__python_ver}-msgpack >= 0.4
 BuildRequires: python%{?__python_ver}-pip
-BuildRequires: python%{?__python_ver}-zmq
+BuildRequires: python%{?__python_ver}-zmq >= 14.5
 
 %if 0%{?with_explicit_python27}
 BuildRequires: PyYAML%{?__python_ver}

@@ -91,7 +91,7 @@ Requires: yum-utils
 %endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 5.0
+BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2

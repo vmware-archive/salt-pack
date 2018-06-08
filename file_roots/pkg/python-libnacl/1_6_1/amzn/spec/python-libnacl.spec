@@ -25,7 +25,7 @@
 
 Name:           python-%{srcname}
 Version:        1.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python bindings for libsodium/tweetnacl based on ctypes
 
 Group:          Development/Libraries
@@ -81,6 +81,7 @@ Group:          Development/Libraries
 BuildRequires:  python%{?__python_ver}
 BuildRequires:  libsodium
 BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
 Requires:       python%{?__python_ver}
 Requires:       libsodium
 
@@ -137,6 +138,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Jun 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.6.1-2
+- added python27-setuptools as a BuildRequires for Amazon
+
 * Fri Apr 20 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.6.1-1
 - Update to 1.6.1, removed Redhat 5 and adjusted Python 3 support
 

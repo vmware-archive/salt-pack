@@ -1,0 +1,14 @@
+diff -up urllib3-1.10.2/urllib3/connectionpool.py.ms urllib3-1.10.2/urllib3/connectionpool.py
+--- urllib3-1.10.2/urllib3/connectionpool.py.ms	2015-04-09 14:47:43.871891490 +0200
++++ urllib3-1.10.2/urllib3/connectionpool.py	2015-04-09 14:48:40.709302298 +0200
+@@ -675,8 +675,8 @@ class HTTPSConnectionPool(HTTPConnection
+                  strict=False, timeout=Timeout.DEFAULT_TIMEOUT, maxsize=1,
+                  block=False, headers=None, retries=None,
+                  _proxy=None, _proxy_headers=None,
+-                 key_file=None, cert_file=None, cert_reqs=None,
+-                 ca_certs=None, ssl_version=None,
++                 key_file=None, cert_file=None, cert_reqs='CERT_REQUIRED',
++                 ca_certs='/etc/ssl/certs/ca-certificates.crt', ssl_version=None,
+                  assert_hostname=None, assert_fingerprint=None,
+                  **conn_kw):
+ 

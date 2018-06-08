@@ -649,7 +649,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.6.1-1
+      version: 1.6.1-2
       noarch: True
       build_deps:
         - libsodium

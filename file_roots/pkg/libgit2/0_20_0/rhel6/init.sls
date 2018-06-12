@@ -2,8 +2,7 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-pygit2" %}
-{% set pypi_name = "pygit2" %}
+{% set sls_name = "libgit2" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
 {% if "version" in pkg_info %}
@@ -25,7 +24,7 @@
 {{ macros.results(sls_name, pkg_data) }}
 
     - dest_dir: {{buildcfg.build_dest_dir}}
-    - spec: salt://{{slspath}}/spec/python-{{pypi_name}}.spec
+    - spec: salt://{{slspath}}/spec/{{sls_name}}.spec
     - template: jinja
     - tgt: {{buildcfg.build_tgt}}
 
@@ -33,7 +32,7 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/{{pypi_name}}-0.20.3.tar.gz
-      - salt://{{slspath}}/sources/disable_tests.patch
+      - salt://{{slspath}}/sources/{{sls_name}}-{{version}}.tar.gz
+      - salt://{{slspath}}/sources/0001-Disable-failing-test.patch
 
 {% endif %}

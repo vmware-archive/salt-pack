@@ -1,0 +1,68 @@
+diff -up ./setup.py.orig ./setup.py
+--- ./setup.py.orig	2018-02-04 21:03:07.000000000 +0100
++++ ./setup.py	2018-03-06 13:25:27.459746877 +0100
+@@ -204,9 +204,6 @@ class PCTBuildExt (build_ext):
+         return []
+ 
+     def build_extensions(self):
+-        # Disable any assembly in libtomcrypt files
+-        self.compiler.define_macro("LTC_NO_ASM")
+-
+         # Detect which modules should be compiled
+         self.detect_modules()
+ 
+@@ -543,11 +540,13 @@ ext_modules = [
+         include_dirs=['src/'],
+         sources=["src/CAST.c"]),
+     Extension("Crypto.Cipher._raw_des",
+-        include_dirs=['src/', 'src/libtom/'],
++        include_dirs=['src/'],
++        extra_link_args=['-ltomcrypt'],
+         sources=["src/DES.c"]),
+     Extension("Crypto.Cipher._raw_des3",
+-        include_dirs=['src/', 'src/libtom/'],
+-        sources=["src/DES3.c"]),
++        include_dirs=['src/'],
++        sources=["src/DES3.c"],
++        extra_link_args=['-ltomcrypt']),
+     Extension("Crypto.Util._galois",
+         include_dirs=['src/'],
+         sources=['src/galois.c']),
+@@ -580,8 +579,9 @@ ext_modules = [
+         include_dirs=['src/'],
+         sources=["src/ARC4.c"]),
+     Extension("Crypto.Cipher._Salsa20",
+-        include_dirs=['src/', 'src/libtom/'],
+-        sources=["src/Salsa20.c"]),
++        include_dirs=['src/'],
++        sources=["src/Salsa20.c"],
++        extra_link_args=['-ltomcrypt']),
+     Extension("Crypto.Cipher._chacha20",
+         include_dirs=['src/'],
+         sources=["src/chacha20.c"]),
+diff -up ./src/DES.c.orig ./src/DES.c
+--- ./src/DES.c.orig	2018-02-04 21:03:07.000000000 +0100
++++ ./src/DES.c	2018-03-06 13:11:55.318990638 +0100
+@@ -39,7 +39,7 @@ FAKE_INIT(raw_des3)
+ 
+ /* Include the actial DES implementation */
+ #define LTC_NO_PROTOTYPES
+-#include "libtom/tomcrypt_des.c"
++#include <tomcrypt.h>
+ 
+ typedef struct {
+     symmetric_key sk;
+diff -up ./src/Salsa20.c.orig ./src/Salsa20.c
+--- ./src/Salsa20.c.orig	2018-02-04 21:03:07.000000000 +0100
++++ ./src/Salsa20.c	2018-03-06 13:03:37.616222145 +0100
+@@ -29,9 +29,7 @@
+ 
+ FAKE_INIT(Salsa20)
+ 
+-#include "libtom/tomcrypt_cfg.h"
+-#include "libtom/tomcrypt_custom.h"
+-#include "libtom/tomcrypt_macros.h"
++#include <tomcrypt.h>
+ 
+ #define ROUNDS 20
+ #define MAX_KEY_SIZE 32

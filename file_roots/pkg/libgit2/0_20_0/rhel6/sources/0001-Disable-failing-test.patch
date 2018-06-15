@@ -1,0 +1,29 @@
+From e833b8c00da12619ab58032715b8b1ccc404d5ea Mon Sep 17 00:00:00 2001
+From: Mathieu Bridon <bochecha@fedoraproject.org>
+Date: Sat, 22 Mar 2014 12:29:40 +0800
+Subject: [PATCH] Disable failing test
+
+https://github.com/libgit2/libgit2/issues/2199
+---
+ tests/blame/simple.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tests/blame/simple.c b/tests/blame/simple.c
+index 79bd56b..eb0d8b9 100644
+--- a/tests/blame/simple.c
++++ b/tests/blame/simple.c
+@@ -135,6 +135,11 @@ void test_blame_simple__trivial_libgit2(void)
+ 	git_blame_options opts = GIT_BLAME_OPTIONS_INIT;
+ 	git_object *obj;
+ 
++        /* This test doesn't seem to work from a release tarball
++         * https://github.com/libgit2/libgit2/issues/2199
++         */
++        return;
++
+ 	cl_git_pass(git_repository_open(&g_repo, cl_fixture("../..")));
+ 
+ 	/* This test can't work on a shallow clone */
+-- 
+1.8.5.3
+

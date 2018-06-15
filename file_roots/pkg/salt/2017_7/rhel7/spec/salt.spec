@@ -41,8 +41,8 @@
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2017.7%{?__rc_ver}
-Release: 1%{?dist}
+Version: 2017.7.0%{?__rc_ver}
+Release: 0%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -91,13 +91,13 @@ Requires: yum-utils
 %endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 5.0
+BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
-BuildRequires: python%{?__python_ver}-msgpack > 0.3
+BuildRequires: python%{?__python_ver}-msgpack >= 0.4
 BuildRequires: python%{?__python_ver}-pip
-BuildRequires: python%{?__python_ver}-zmq
+BuildRequires: python%{?__python_ver}-zmq >= 14.5
 
 %if 0%{?with_explicit_python27}
 BuildRequires: PyYAML%{?__python_ver}
@@ -127,7 +127,7 @@ BuildRequires: python%{?__python_ver}-devel
 
 
 Requires: python%{?__python_ver}-jinja2
-Requires: python%{?__python_ver}-msgpack > 0.3
+Requires: python%{?__python_ver}-msgpack >= 0.4
 Requires: python%{?__python_ver}-crypto >= 2.6.1
 
 %if ( "0%{?dist}" == "0.amzn1" )
@@ -626,6 +626,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Apr 18 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.x-0
+- Revised minimum msgpack version >= 0.4
+
+* Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.5-1
+- Update to feature release 2017.7.5-1  for Python 2
+
 * Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.5-1
 - Update to feature release 2017.7.5-1  for Python 2
 

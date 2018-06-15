@@ -130,10 +130,9 @@ pkgbuild_registry:
     python-crypto:
       version: 2.6.1-2
     python-pycryptodome:
-      version: 3.4.3-2
+      version: 3.4.11-2
       results:
         - python2-pycryptodomex
-        - python3-pycryptodomex
       build_deps:
         - libtommath
         - libtomcrypt
@@ -152,10 +151,12 @@ pkgbuild_registry:
       version: 2.0.0-2
       noarch: True
     python-libnacl:
-      version: 1.4.3-1
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - libsodium
+      results:
+        - python-libnacl
     python-msgpack:
       version: 0.4.6-1
     python-mock:
@@ -219,7 +220,7 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     zeromq:
-      version: 4.1.4-6
+      version: 4.1.4-7
       build_deps:
         - openpgm
       results:
@@ -328,7 +329,7 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.3-4
+      version: 3.4.11-2
       build_deps:
         - python27
         - python-setuptools
@@ -337,7 +338,6 @@ pkgbuild_registry:
         - libtomcrypt-devel
       results:
         - python27-pycryptodomex
-        - python3-pycryptodomex
     python-enum34:
       name: python27-enum34
       version: 1.0-6
@@ -386,7 +386,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-3
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - python27
@@ -649,7 +649,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-2
+      version: 1.6.1-2
       noarch: True
       build_deps:
         - libsodium

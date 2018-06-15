@@ -1,0 +1,26 @@
+From 6964c7b29b0221f74fa28a391c13e44831b443e7 Mon Sep 17 00:00:00 2001
+From: Ralph Bean <rbean@redhat.com>
+Date: Mon, 8 Jun 2015 09:39:07 -0400
+Subject: [PATCH] pyopenssl
+
+---
+ urllib3/__init__.py | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/urllib3/__init__.py b/urllib3/__init__.py
+index 333060c..272da31 100644
+--- a/urllib3/__init__.py
++++ b/urllib3/__init__.py
+@@ -66,3 +66,9 @@ def disable_warnings(category=exceptions.HTTPWarning):
+     Helper for quickly disabling all urllib3 warnings.
+     """
+     warnings.simplefilter('ignore', category)
++
++# Just for Fedora 21 since python core is out of date.  See:
++# - https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning
++# - https://urllib3.readthedocs.org/en/latest/security.html#pyopenssl
++import urllib3.contrib.pyopenssl
++urllib3.contrib.pyopenssl.inject_into_urllib3()
+-- 
+2.4.2
+

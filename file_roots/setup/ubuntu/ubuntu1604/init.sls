@@ -38,6 +38,7 @@ build_additional_pkgs:
     - pkgs:
       - dh-systemd
       - pinentry-tty
+      - python-sphinx
 
 
 {% if build_cfg.build_py3 %}
@@ -53,6 +54,7 @@ build_additional_py3_pkgs:
       - python3-sphinx
       - python3-all-dev
       - python3-debian
+      - python3-gnupg
       - apt-utils
 {% endif %}
 

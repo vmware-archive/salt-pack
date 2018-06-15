@@ -143,10 +143,12 @@ pkgbuild_registry:
       version: 2.0.0-2
       noarch: True
     python-libnacl:
-      version: 1.4.3-1
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - libsodium
+      results:
+        - python-libnacl
     python-m2crypto:
       version: 0.28.2-3
       results:
@@ -163,7 +165,7 @@ pkgbuild_registry:
     python-psutil:
       version: 2.2.1-1
     python-pycryptodome:
-      version: 3.4.3-2
+      version: 3.6.1-2
       results:
         - python2-pycryptodomex
       build_deps:
@@ -229,7 +231,7 @@ pkgbuild_registry:
         - salt-cloud
         - salt-ssh
     zeromq:
-      version: 4.1.4-6
+      version: 4.1.4-7
       build_deps:
         - openpgm
       results:
@@ -246,6 +248,13 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-babel
+    libgit2:
+      version: 0.20.0-3
+      build_deps:
+        - python27
+      results:
+        - python27-libgit2
+        - python27-libgit2-devel
     libsodium:
       version: 0.4.5-3
       results:
@@ -338,7 +347,7 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.3-4
+      version: 3.6.1-2
       build_deps:
         - python27
         - python-setuptools
@@ -395,7 +404,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-3
+      version: 1.6.1-1
       noarch: True
       build_deps:
         - python27
@@ -464,6 +473,17 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-py
+    python-pygit2:
+      name: python27-pygit2
+      version: 0.20.3-5
+      build_deps:
+        - python27
+        - python-setuptools
+        - python-nose
+        - libgit2
+## TBD        - http-parser
+      results:
+        - python27-pygit2
     python-pycurl:
       name: python27-pycurl
       version: 7.19.0-11
@@ -658,7 +678,7 @@ pkgbuild_registry:
         - python27-libcloud
     python-libnacl:
       name: python27-libnacl
-      version: 1.4.3-2
+      version: 1.6.1-2
       noarch: True
       build_deps:
         - libsodium

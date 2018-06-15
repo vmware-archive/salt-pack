@@ -10,12 +10,12 @@ include:
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
     - pkg.python-crypto.2_6_1.rhel7
-    - pkg.python-pycryptodome.3_4_3.rhel7
+    - pkg.python-pycryptodome.3_6_1.rhel7
     - pkg.python-enum34.1_0.rhel7
     - pkg.python-futures.3_0_3.rhel7
     - pkg.python-ioflo.1_3_8.rhel7
     - pkg.python-libcloud.2_0_0.rhel7
-    - pkg.python-libnacl.1_4_3.rhel7
+    - pkg.python-libnacl.1_6_1.rhel7
     - pkg.python-m2crypto.0_28_2.rhel7
     - pkg.python-msgpack.0_4_6.rhel7
     - pkg.python-mock.1_0_1.rhel7
@@ -35,6 +35,7 @@ include:
 {% elif buildcfg.build_release == 'rhel6' %}
 
     - pkg.babel.0_9_4.rhel6
+    - pkg.libgit2.0_20_0.rhel6
     - pkg.libsodium.0_4_5.rhel6
     - pkg.libtomcrypt.1_17.rhel6
     - pkg.libtommath.0_42_0.rhel6
@@ -47,7 +48,7 @@ include:
     - pkg.python-cherrypy.5_6_0.rhel6
     - pkg.python-crypto.2_6_1.rhel6
 {% if buildcfg.build_arch == 'x86_64' %}
-    - pkg.python-pycryptodome.3_4_3.rhel6
+    - pkg.python-pycryptodome.3_6_1.rhel6
 {% endif %}
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
@@ -55,7 +56,7 @@ include:
     - pkg.python-ioflo.1_3_8.rhel6
     - pkg.python-jinja2.2_8_1.rhel6
     - pkg.python-libcloud.2_0_0.rhel6
-    - pkg.python-libnacl.1_4_3.rhel6
+    - pkg.python-libnacl.1_6_1.rhel6
     - pkg.python-markupsafe.0_11.rhel6
     - pkg.python-msgpack.0_4_6.rhel6
     - pkg.python-mock.1_0_1.rhel6
@@ -64,6 +65,7 @@ include:
     - pkg.python-psutil.5_4_2.rhel6
     - pkg.python-py.1_4_27.rhel6
     - pkg.python-pycurl.7_19_0.rhel6
+    - pkg.python-pygit2.0_20_3.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
     - pkg.python-requests.2_7_0.rhel6

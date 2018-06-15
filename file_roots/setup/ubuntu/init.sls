@@ -21,6 +21,7 @@ build_pkgs:
       - pkg-config
       - packaging-dev
       - dh-python
+      - nfs-common
 
 
 {{build_cfg.build_runas}}:

@@ -626,7 +626,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed Apr 18 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.x-0
+* Thu Jun 07 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.6-1
+- Update to feature release 2017.7.6-1
 - Revised minimum msgpack version >= 0.4
 
 * Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.5-1

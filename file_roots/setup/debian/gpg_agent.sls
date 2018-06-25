@@ -160,7 +160,7 @@ gpg_load_priv_key:
 retrieve_raspbian_keys:
   cmd.run:
     - name: |
-        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
+        /usr/bin/gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 90FDDD2E
         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 {% endif %}
 

@@ -298,14 +298,6 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 %endif
 
-## # Force python2.7 on EPEL6
-## # https://github.com/saltstack/salt/issues/22003
-## %if 0%{?rhel} == 6
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
-## %endif
-
 # Logrotate
 install -p %{SOURCE10} .
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
@@ -626,6 +618,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Jun 21 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-1
+- Update to feature release 2018.3.2-1  for Python 2
+
 * Fri Jun 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.1-1
 - Update to feature release 2018.3.1-1  for Python 2
 - Revised minimum msgpack version >= 0.4

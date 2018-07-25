@@ -301,21 +301,6 @@ install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
 %endif
 
-## # Force python2.7 on EPEL6
-## # https://github.com/saltstack/salt/issues/22003
-## %if 0%{?rhel} == 6
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
-## %endif
-
-%if 0%{?fedora} >= 28
-sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/spm
-sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_bindir}/salt*
-## sed -i 's#/usr/bin/python#/usr/bin/python2.7#g' %{buildroot}%{_initrddir}/salt*
-%endif
-
-
 # Logrotate
 install -p %{SOURCE10} .
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
@@ -348,7 +333,6 @@ PYTHONPATH=%{pythonpath} %{__python2} setup.py test --runtests-opts=-u
 rm -rf %{buildroot}
 
 %files
-%defattr(-,root,root,-)
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
 %{python2_sitelib}/%{name}/*
 #%%{python2_sitelib}/%%{name}-%%{version}-py?.?.egg-info
@@ -371,7 +355,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{fish_dir}/salt*.fish
 
 %files master
-%defattr(-,root,root)
 %doc %{_mandir}/man7/salt.7*
 %doc %{_mandir}/man1/salt.1*
 %doc %{_mandir}/man1/salt-cp.1*
@@ -395,7 +378,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/salt/pki/master
 
 %files minion
-%defattr(-,root,root)
 %doc %{_mandir}/man1/salt-call.1*
 %doc %{_mandir}/man1/salt-minion.1*
 %doc %{_mandir}/man1/salt-proxy.1*
@@ -423,7 +405,6 @@ rm -rf %{buildroot}
 %endif
 
 %files api
-%defattr(-,root,root)
 %doc %{_mandir}/man1/salt-api.1*
 %{_bindir}/salt-api
 %if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
@@ -636,6 +617,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Jul 24 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-5
+- Fix version of python used, multiple addition of 2.7 
+
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2018.3.2-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Mon Jul 09 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-3
 - Allow for removal of /usr/bin/python
 

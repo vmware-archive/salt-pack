@@ -174,7 +174,7 @@ pkgbuild_registry:
         - libtomcrypt-devel
     python-pyzmq:
       name: python-zmq
-      version: 15.3.0-2
+      version: 15.3.0-3
       build_deps:
         - zeromq
     python-raet:

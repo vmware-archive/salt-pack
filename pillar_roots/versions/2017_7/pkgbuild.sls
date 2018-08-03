@@ -168,7 +168,7 @@ pkgbuild_registry:
       version: 2.2.1-1
     python-pyzmq:
       name: python-zmq
-      version: 15.3.0-2
+      version: 15.3.0-3
       build_deps:
         - zeromq
     python-raet:

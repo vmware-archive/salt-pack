@@ -1,5 +1,5 @@
 # set version to build
-{% set build_version = '2017_7_7' %}
+{% set build_version = '2018_11' %}
 
 
 {% if build_version != '' %}

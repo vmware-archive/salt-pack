@@ -1,0 +1,83 @@
+diff --git a/Configure b/Configure
+index c39f71a..7f3d905 100755
+--- a/Configure
++++ b/Configure
+@@ -727,6 +727,7 @@ my $idx_multilib = $idx++;
+ my $prefix="";
+ my $libdir="";
+ my $openssldir="";
++my $enginesdir="";
+ my $exe_ext="";
+ my $install_prefix= "$ENV{'INSTALL_PREFIX'}";
+ my $cross_compile_prefix="";
+@@ -956,6 +957,10 @@ PROCESS_ARGS:
+ 				{
+ 				$openssldir=$1;
+ 				}
++			elsif (/^--enginesdir=(.*)$/)
++				{
++				$enginesdir=$1;
++				}
+ 			elsif (/^--install.prefix=(.*)$/)
+ 				{
+ 				$install_prefix=$1;
+@@ -1207,7 +1212,7 @@ chop $prefix if $prefix =~ /.\/$/;
+ 
+ $openssldir=$prefix . "/ssl" if $openssldir eq "";
+ $openssldir=$prefix . "/" . $openssldir if $openssldir !~ /(^\/|^[a-zA-Z]:[\\\/])/;
+-
++$enginesdir="$prefix/lib/engines" if $enginesdir eq "";
+ 
+ print "IsMK1MF=$IsMK1MF\n";
+ 
+@@ -1709,6 +1714,7 @@ while (<IN>)
+ 	s/^INSTALLTOP=.*$/INSTALLTOP=$prefix/;
+ 	s/^MULTILIB=.*$/MULTILIB=$multilib/;
+ 	s/^OPENSSLDIR=.*$/OPENSSLDIR=$openssldir/;
++	s/^ENGINESDIR=.*$/ENGINESDIR=$enginesdir/;
+ 	s/^LIBDIR=.*$/LIBDIR=$libdir/;
+ 	s/^INSTALL_PREFIX=.*$/INSTALL_PREFIX=$install_prefix/;
+ 	s/^PLATFORM=.*$/PLATFORM=$target/;
+@@ -1915,7 +1921,7 @@ while (<IN>)
+ 		}
+ 	elsif	(/^#define\s+ENGINESDIR/)
+ 		{
+-		my $foo = "$prefix/$libdir/engines";
++		my $foo = "$enginesdir";
+ 		$foo =~ s/\\/\\\\/g;
+ 		print OUT "#define ENGINESDIR \"$foo\"\n";
+ 		}
+diff --git a/Makefile.org b/Makefile.org
+index 2377f50..fe8d54c 100644
+--- a/Makefile.org
++++ b/Makefile.org
+@@ -28,6 +28,7 @@ INSTALLTOP=/usr/local/ssl
+ 
+ # Do not edit this manually. Use Configure --openssldir=DIR do change this!
+ OPENSSLDIR=/usr/local/ssl
++ENGINESDIR=$${libdir}/engines
+ 
+ # NO_IDEA - Define to build without the IDEA algorithm
+ # NO_RC4  - Define to build without the RC4 algorithm
+@@ -368,7 +369,7 @@ libcrypto.pc: Makefile
+ 	    echo 'exec_prefix=$${prefix}'; \
+ 	    echo 'libdir=$${exec_prefix}/$(LIBDIR)'; \
+ 	    echo 'includedir=$${prefix}/include'; \
+-	    echo 'enginesdir=$${libdir}/engines'; \
++	    echo 'enginesdir=$(ENGINESDIR)'; \
+ 	    echo ''; \
+ 	    echo 'Name: OpenSSL-libcrypto'; \
+ 	    echo 'Description: OpenSSL cryptography library'; \
+diff --git a/engines/Makefile b/engines/Makefile
+index 2058ff4..a2c407b 100644
+--- a/engines/Makefile
++++ b/engines/Makefile
+@@ -124,7 +124,7 @@ install:
+ 				esac; \
+ 				cp $$pfx$$l$$sfx $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx.new; \
+ 			  fi; \
+-			  chmod 555 $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx.new; \
++			  chmod 755 $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx.new; \
+ 			  mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx.new $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx ); \
+ 		done; \
+ 	fi

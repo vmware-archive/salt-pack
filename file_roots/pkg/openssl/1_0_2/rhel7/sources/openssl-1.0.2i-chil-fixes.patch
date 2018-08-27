@@ -1,0 +1,15 @@
+diff -up openssl-1.0.2i/engines/e_chil.c.chil openssl-1.0.2i/engines/e_chil.c
+--- openssl-1.0.2i/engines/e_chil.c.chil	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/engines/e_chil.c	2016-09-22 13:49:32.532017102 +0200
+@@ -1274,6 +1274,11 @@ static int hwcrhk_insert_card(const char
+     UI *ui;
+     void *callback_data = NULL;
+     UI_METHOD *ui_method = NULL;
++    /* Despite what the documentation says prompt_info can be
++     * an empty string.
++     */
++    if (prompt_info && !*prompt_info)
++        prompt_info = NULL;
+ 
+     if (cactx) {
+         if (cactx->ui_method)

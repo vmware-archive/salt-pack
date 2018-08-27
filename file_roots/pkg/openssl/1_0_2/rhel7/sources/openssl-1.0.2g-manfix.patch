@@ -1,0 +1,90 @@
+diff -up openssl-1.0.2g/doc/apps/ec.pod.manfix openssl-1.0.2g/doc/apps/ec.pod
+--- openssl-1.0.2g/doc/apps/ec.pod.manfix	2016-03-01 14:35:05.000000000 +0100
++++ openssl-1.0.2g/doc/apps/ec.pod	2016-03-01 16:47:35.331568290 +0100
+@@ -93,10 +93,6 @@ prints out the public, private key compo
+ 
+ this option prevents output of the encoded version of the key.
+ 
+-=item B<-modulus>
+-
+-this option prints out the value of the public key component of the key.
+-
+ =item B<-pubin>
+ 
+ by default a private key is read from the input file: with this option a
+diff -up openssl-1.0.2g/doc/apps/openssl.pod.manfix openssl-1.0.2g/doc/apps/openssl.pod
+--- openssl-1.0.2g/doc/apps/openssl.pod.manfix	2016-03-01 14:35:05.000000000 +0100
++++ openssl-1.0.2g/doc/apps/openssl.pod	2016-03-01 16:47:35.331568290 +0100
+@@ -163,7 +163,7 @@ Create or examine a netscape certificate
+ 
+ Online Certificate Status Protocol utility.
+ 
+-=item L<B<passwd>|passwd(1)>
++=item L<B<passwd>|sslpasswd(1)>
+ 
+ Generation of hashed passwords.
+ 
+@@ -187,7 +187,7 @@ Public key algorithm parameter managemen
+ 
+ Public key algorithm cryptographic operation utility.
+ 
+-=item L<B<rand>|rand(1)>
++=item L<B<rand>|sslrand(1)>
+ 
+ Generate pseudo-random bytes.
+ 
+@@ -401,9 +401,9 @@ L<crl(1)|crl(1)>, L<crl2pkcs7(1)|crl2pkc
+ L<dhparam(1)|dhparam(1)>, L<dsa(1)|dsa(1)>, L<dsaparam(1)|dsaparam(1)>,
+ L<enc(1)|enc(1)>, L<gendsa(1)|gendsa(1)>, L<genpkey(1)|genpkey(1)>,
+ L<genrsa(1)|genrsa(1)>, L<nseq(1)|nseq(1)>, L<openssl(1)|openssl(1)>,
+-L<passwd(1)|passwd(1)>,
++L<sslpasswd(1)|sslpasswd(1)>,
+ L<pkcs12(1)|pkcs12(1)>, L<pkcs7(1)|pkcs7(1)>, L<pkcs8(1)|pkcs8(1)>,
+-L<rand(1)|rand(1)>, L<req(1)|req(1)>, L<rsa(1)|rsa(1)>,
++L<sslrand(1)|sslrand(1)>, L<req(1)|req(1)>, L<rsa(1)|rsa(1)>,
+ L<rsautl(1)|rsautl(1)>, L<s_client(1)|s_client(1)>,
+ L<s_server(1)|s_server(1)>, L<s_time(1)|s_time(1)>,
+ L<smime(1)|smime(1)>, L<spkac(1)|spkac(1)>,
+diff -up openssl-1.0.2g/doc/apps/s_client.pod.manfix openssl-1.0.2g/doc/apps/s_client.pod
+--- openssl-1.0.2g/doc/apps/s_client.pod.manfix	2016-03-01 14:35:53.000000000 +0100
++++ openssl-1.0.2g/doc/apps/s_client.pod	2016-03-01 16:47:35.358568902 +0100
+@@ -35,6 +35,9 @@ B<openssl> B<s_client>
+ [B<-ssl2>]
+ [B<-ssl3>]
+ [B<-tls1>]
++[B<-tls1_1>]
++[B<-tls1_2>]
++[B<-dtls1>]
+ [B<-no_ssl2>]
+ [B<-no_ssl3>]
+ [B<-no_tls1>]
+@@ -201,7 +204,7 @@ Use the PSK key B<key> when using a PSK
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+ These options require or disable the use of the specified SSL or TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+diff -up openssl-1.0.2g/doc/apps/s_server.pod.manfix openssl-1.0.2g/doc/apps/s_server.pod
+--- openssl-1.0.2g/doc/apps/s_server.pod.manfix	2016-03-01 14:35:53.000000000 +0100
++++ openssl-1.0.2g/doc/apps/s_server.pod	2016-03-01 16:47:35.359568925 +0100
+@@ -42,6 +42,8 @@ B<openssl> B<s_server>
+ [B<-ssl2>]
+ [B<-ssl3>]
+ [B<-tls1>]
++[B<-tls1_1>]
++[B<-tls1_2>]
+ [B<-no_ssl2>]
+ [B<-no_ssl3>]
+ [B<-no_tls1>]
+@@ -217,7 +219,7 @@ Use the PSK key B<key> when using a PSK
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+ These options require or disable the use of the specified SSL or TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will

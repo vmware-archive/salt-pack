@@ -1,0 +1,23 @@
+diff -up openssl-1.0.2a/ssl/dtls1.h.dtls1-abi openssl-1.0.2a/ssl/dtls1.h
+--- openssl-1.0.2a/ssl/dtls1.h.dtls1-abi	2015-04-21 10:49:57.984781143 +0200
++++ openssl-1.0.2a/ssl/dtls1.h	2015-04-21 16:41:37.835164264 +0200
+@@ -214,9 +214,6 @@ typedef struct dtls1_state_st {
+      * loss.
+      */
+     record_pqueue buffered_app_data;
+-    /* Is set when listening for new connections with dtls1_listen() */
+-    unsigned int listen;
+-    unsigned int link_mtu;      /* max on-the-wire DTLS packet size */
+     unsigned int mtu;           /* max DTLS packet size */
+     struct hm_header_st w_msg_hdr;
+     struct hm_header_st r_msg_hdr;
+@@ -241,6 +238,9 @@ typedef struct dtls1_state_st {
+      * Cleared after the message has been processed.
+      */
+     unsigned int change_cipher_spec_ok;
++    /* Is set when listening for new connections with dtls1_listen() */
++    unsigned int listen;
++    unsigned int link_mtu;      /* max on-the-wire DTLS packet size */
+ #  ifndef OPENSSL_NO_SCTP
+     /* used when SSL_ST_XX_FLUSH is entered */
+     int next_state;

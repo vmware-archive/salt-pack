@@ -1,0 +1,46 @@
+diff -up openssl-1.0.2a/crypto/dsa/dsa_key.c.compat openssl-1.0.2a/crypto/dsa/dsa_key.c
+--- openssl-1.0.2a/crypto/dsa/dsa_key.c.compat	2015-04-09 18:21:11.687977858 +0200
++++ openssl-1.0.2a/crypto/dsa/dsa_key.c	2015-04-09 18:21:07.869889659 +0200
+@@ -68,6 +68,11 @@
+ #  include <openssl/fips.h>
+ #  include <openssl/evp.h>
+ 
++/* just a compatibility symbol - no-op */
++void FIPS_corrupt_dsa_keygen(void)
++{
++}
++
+ static int fips_check_dsa(DSA *dsa)
+ {
+     EVP_PKEY *pk;
+diff -up openssl-1.0.2a/crypto/engine/eng_all.c.compat openssl-1.0.2a/crypto/engine/eng_all.c
+--- openssl-1.0.2a/crypto/engine/eng_all.c.compat	2015-04-09 18:21:11.688977881 +0200
++++ openssl-1.0.2a/crypto/engine/eng_all.c	2015-04-09 18:21:09.159919459 +0200
+@@ -63,6 +63,11 @@
+ # include <openssl/fips.h>
+ #endif
+ 
++/* just backwards compatibility symbol - no-op */
++void ENGINE_load_aesni(void)
++{
++}
++
+ void ENGINE_load_builtin_engines(void)
+ {
+     /* Some ENGINEs need this */
+diff -up openssl-1.0.2a/crypto/fips/fips.c.compat openssl-1.0.2a/crypto/fips/fips.c
+--- openssl-1.0.2a/crypto/fips/fips.c.compat	2015-04-09 18:21:11.689977904 +0200
++++ openssl-1.0.2a/crypto/fips/fips.c	2015-04-09 18:21:09.925937154 +0200
+@@ -113,6 +113,12 @@ int FIPS_module_mode(void)
+     return ret;
+ }
+ 
++/* just a compat symbol - return NULL */
++const void *FIPS_rand_check(void)
++{
++    return NULL;
++}
++
+ int FIPS_selftest_failed(void)
+ {
+     int ret = 0;

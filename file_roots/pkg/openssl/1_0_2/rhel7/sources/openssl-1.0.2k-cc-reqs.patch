@@ -1,0 +1,27 @@
+diff -up openssl-1.0.2k/crypto/rsa/rsa_gen.c.cc-reqs openssl-1.0.2k/crypto/rsa/rsa_gen.c
+--- openssl-1.0.2k/crypto/rsa/rsa_gen.c.cc-reqs	2017-02-06 16:42:47.313963001 +0100
++++ openssl-1.0.2k/crypto/rsa/rsa_gen.c	2017-02-06 16:46:54.453628783 +0100
+@@ -474,6 +474,12 @@ static int rsa_builtin_keygen(RSA *rsa,
+     if (!rsa->iqmp && ((rsa->iqmp = BN_new()) == NULL))
+         goto err;
+ 
++    /* prepare minimum p and q difference */
++    if (!BN_one(r3))
++        goto err;
++    if (bitsp > 100 && !BN_lshift(r3, r3, bitsp - 100))
++        goto err;
++
+     if (BN_copy(rsa->e, e_value) == NULL)
+         goto err;
+ 
+@@ -502,7 +508,9 @@ static int rsa_builtin_keygen(RSA *rsa,
+         do {
+             if (!BN_generate_prime_ex(rsa->q, bitsq, 0, NULL, NULL, cb))
+                 goto err;
+-        } while ((BN_cmp(rsa->p, rsa->q) == 0) && (++degenerate < 3));
++            if (!BN_sub(r2, rsa->q, rsa->p))
++                goto err;
++        } while ((BN_ucmp(r2, r3) <= 0) && (++degenerate < 3));
+         if (degenerate == 3) {
+             ok = 0;             /* we set our own err */
+             RSAerr(RSA_F_RSA_BUILTIN_KEYGEN, RSA_R_KEY_SIZE_TOO_SMALL);

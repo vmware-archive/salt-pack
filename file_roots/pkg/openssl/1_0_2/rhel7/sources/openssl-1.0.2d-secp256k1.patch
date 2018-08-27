@@ -1,0 +1,82 @@
+diff -up openssl-1.0.2d/crypto/ec/ec_curve.c.secp256k1 openssl-1.0.2d/crypto/ec/ec_curve.c
+--- openssl-1.0.2d/crypto/ec/ec_curve.c.secp256k1	2015-08-12 14:55:15.203415420 -0400
++++ openssl-1.0.2d/crypto/ec/ec_curve.c	2015-08-12 15:07:12.659113262 -0400
+@@ -86,6 +86,42 @@ typedef struct {
+     unsigned int cofactor;      /* promoted to BN_ULONG */
+ } EC_CURVE_DATA;
+ 
++static const struct {
++    EC_CURVE_DATA h;
++    unsigned char data[0 + 32 * 6];
++} _EC_SECG_PRIME_256K1 = {
++    {
++        NID_X9_62_prime_field, 0, 32, 1
++    },
++    {
++        /* no seed */
++        /* p */
++        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
++        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
++        0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFC, 0x2F,
++        /* a */
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        /* b */
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07,
++        /* x */
++        0x79, 0xBE, 0x66, 0x7E, 0xF9, 0xDC, 0xBB, 0xAC, 0x55, 0xA0, 0x62, 0x95,
++        0xCE, 0x87, 0x0B, 0x07, 0x02, 0x9B, 0xFC, 0xDB, 0x2D, 0xCE, 0x28, 0xD9,
++        0x59, 0xF2, 0x81, 0x5B, 0x16, 0xF8, 0x17, 0x98,
++        /* y */
++        0x48, 0x3a, 0xda, 0x77, 0x26, 0xa3, 0xc4, 0x65, 0x5d, 0xa4, 0xfb, 0xfc,
++        0x0e, 0x11, 0x08, 0xa8, 0xfd, 0x17, 0xb4, 0x48, 0xa6, 0x85, 0x54, 0x19,
++        0x9c, 0x47, 0xd0, 0x8f, 0xfb, 0x10, 0xd4, 0xb8,
++        /* order */
++        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
++        0xFF, 0xFF, 0xFF, 0xFE, 0xBA, 0xAE, 0xDC, 0xE6, 0xAF, 0x48, 0xA0, 0x3B,
++        0xBF, 0xD2, 0x5E, 0x8C, 0xD0, 0x36, 0x41, 0x41
++    }
++};
++
+ /* the nist prime curves */
+ static const struct {
+     EC_CURVE_DATA h;
+@@ -235,6 +271,8 @@ typedef struct _ec_list_element_st {
+ static const ec_list_element curve_list[] = {
+     /* prime field curves */
+     /* secg curves */
++    {NID_secp256k1, &_EC_SECG_PRIME_256K1.h, 0,
++     "SECG curve over a 256 bit prime field"},
+     /* SECG secp256r1 is the same as X9.62 prime256v1 and hence omitted */
+     {NID_secp384r1, &_EC_NIST_PRIME_384.h, 0,
+      "NIST/SECG curve over a 384 bit prime field"},
+diff -up openssl-1.0.2d/ssl/t1_lib.c.secp256k1 openssl-1.0.2d/ssl/t1_lib.c
+--- openssl-1.0.2d/ssl/t1_lib.c.secp256k1	2015-08-12 15:04:42.876925441 -0400
++++ openssl-1.0.2d/ssl/t1_lib.c	2015-08-12 15:04:47.837699822 -0400
+@@ -269,6 +269,7 @@ static const unsigned char eccurves_auto
+     /* Other >= 256-bit prime curves. */
+     0, 25,                      /* secp521r1 (25) */
+     0, 24,                      /* secp384r1 (24) */
++    0, 22,                      /* secp256k1 (22) */
+ # ifndef OPENSSL_NO_EC2M
+     /* >= 256-bit binary curves. */
+     0, 14,                      /* sect571r1 (14) */
+@@ -286,6 +287,7 @@ static const unsigned char eccurves_all[
+     /* Other >= 256-bit prime curves. */
+     0, 25,                      /* secp521r1 (25) */
+     0, 24,                      /* secp384r1 (24) */
++    0, 22,                      /* secp256k1 (22) */
+ # ifndef OPENSSL_NO_EC2M
+     /* >= 256-bit binary curves. */
+     0, 14,                      /* sect571r1 (14) */
+@@ -333,6 +335,7 @@ static const unsigned char fips_curves_d
+     0, 9,                       /* sect283k1 (9) */
+     0, 10,                      /* sect283r1 (10) */
+ #  endif
++    0, 22,                      /* secp256k1 (22) */
+     0, 23,                      /* secp256r1 (23) */
+ #  ifndef OPENSSL_NO_EC2M
+     0, 8,                       /* sect239k1 (8) */

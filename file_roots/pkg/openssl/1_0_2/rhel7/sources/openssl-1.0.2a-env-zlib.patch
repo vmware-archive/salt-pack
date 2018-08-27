@@ -1,0 +1,39 @@
+diff -up openssl-1.0.2a/doc/ssl/SSL_COMP_add_compression_method.pod.env-zlib openssl-1.0.2a/doc/ssl/SSL_COMP_add_compression_method.pod
+--- openssl-1.0.2a/doc/ssl/SSL_COMP_add_compression_method.pod.env-zlib	2015-04-09 18:17:20.509637597 +0200
++++ openssl-1.0.2a/doc/ssl/SSL_COMP_add_compression_method.pod	2015-04-09 18:17:14.767504953 +0200
+@@ -47,6 +47,13 @@ Once the identities of the compression m
+ been standardized, the compression API will most likely be changed. Using
+ it in the current state is not recommended.
+ 
++It is also not recommended to use compression if data transfered contain
++untrusted parts that can be manipulated by an attacker as he could then
++get information about the encrypted data. See the CRIME attack. For
++that reason the default loading of the zlib compression method is
++disabled and enabled only if the environment variable B<OPENSSL_DEFAULT_ZLIB>
++is present during the library initialization.
++
+ =head1 RETURN VALUES
+ 
+ SSL_COMP_add_compression_method() may return the following values:
+diff -up openssl-1.0.2a/ssl/ssl_ciph.c.env-zlib openssl-1.0.2a/ssl/ssl_ciph.c
+--- openssl-1.0.2a/ssl/ssl_ciph.c.env-zlib	2015-04-09 18:17:20.510637620 +0200
++++ openssl-1.0.2a/ssl/ssl_ciph.c	2015-04-09 18:17:20.264631937 +0200
+@@ -140,6 +140,8 @@
+  * OTHERWISE.
+  */
+ 
++/* for secure_getenv */
++#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <openssl/objects.h>
+ #ifndef OPENSSL_NO_COMP
+@@ -450,7 +452,8 @@ static void load_builtin_compressions(vo
+ 
+             MemCheck_off();
+             ssl_comp_methods = sk_SSL_COMP_new(sk_comp_cmp);
+-            if (ssl_comp_methods != NULL) {
++            if (ssl_comp_methods != NULL
++                && secure_getenv("OPENSSL_DEFAULT_ZLIB") != NULL) {
+                 comp = (SSL_COMP *)OPENSSL_malloc(sizeof(SSL_COMP));
+                 if (comp != NULL) {
+                     comp->method = COMP_zlib();

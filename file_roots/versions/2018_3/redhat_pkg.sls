@@ -7,6 +7,7 @@ include:
     - pkg.libtomcrypt.1_17.rhel7
     - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
+    - pkg.openssl.1_0_2k.rhel7
     - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
     - pkg.python-crypto.2_6_1.rhel7

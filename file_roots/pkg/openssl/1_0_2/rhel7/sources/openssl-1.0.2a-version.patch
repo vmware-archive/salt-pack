@@ -1,0 +1,83 @@
+diff -up openssl-1.0.2a/crypto/cversion.c.version openssl-1.0.2a/crypto/cversion.c
+--- openssl-1.0.2a/crypto/cversion.c.version	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/cversion.c	2015-04-21 16:48:56.285535316 +0200
+@@ -62,7 +62,7 @@
+ # include "buildinf.h"
+ #endif
+ 
+-const char *SSLeay_version(int t)
++const char *_current_SSLeay_version(int t)
+ {
+     if (t == SSLEAY_VERSION)
+         return OPENSSL_VERSION_TEXT;
+@@ -101,7 +101,40 @@ const char *SSLeay_version(int t)
+     return ("not available");
+ }
+ 
+-unsigned long SSLeay(void)
++const char *_original_SSLeay_version(int t)
++{
++    if (t == SSLEAY_VERSION)
++        return "OpenSSL 1.0.0-fips 29 Mar 2010";
++    else
++        return _current_SSLeay_version(t);
++}
++
++const char *_original101_SSLeay_version(int t)
++{
++    if (t == SSLEAY_VERSION)
++        return "OpenSSL 1.0.1e-fips 11 Feb 2013";
++    else
++        return _current_SSLeay_version(t);
++}
++
++unsigned long _original_SSLeay(void)
++{
++    return (0x10000003L);
++}
++
++unsigned long _original101_SSLeay(void)
++{
++    return (0x1000105fL);
++}
++
++unsigned long _current_SSLeay(void)
+ {
+     return (SSLEAY_VERSION_NUMBER);
+ }
++
++__asm__(".symver _original_SSLeay,SSLeay@");
++__asm__(".symver _original_SSLeay_version,SSLeay_version@");
++__asm__(".symver _original101_SSLeay,SSLeay@OPENSSL_1.0.1");
++__asm__(".symver _original101_SSLeay_version,SSLeay_version@OPENSSL_1.0.1");
++__asm__(".symver _current_SSLeay,SSLeay@@OPENSSL_1.0.2");
++__asm__(".symver _current_SSLeay_version,SSLeay_version@@OPENSSL_1.0.2");
+diff -up openssl-1.0.2a/Makefile.shared.version openssl-1.0.2a/Makefile.shared
+--- openssl-1.0.2a/Makefile.shared.version	2015-04-21 16:43:02.624170648 +0200
++++ openssl-1.0.2a/Makefile.shared	2015-04-21 16:43:02.676171879 +0200
+@@ -151,7 +151,7 @@ DO_GNU_SO=$(CALC_VERSIONS); \
+ 	SHLIB_SUFFIX=; \
+ 	ALLSYMSFLAGS='-Wl,--whole-archive'; \
+ 	NOALLSYMSFLAGS='-Wl,--no-whole-archive'; \
+-	SHAREDFLAGS="$(CFLAGS) $(SHARED_LDFLAGS) -shared -Wl,-Bsymbolic -Wl,-soname=$$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX"
++	SHAREDFLAGS="$(CFLAGS) $(SHARED_LDFLAGS) -shared -Wl,-Bsymbolic -Wl,--default-symver,--version-script=version.map -Wl,-soname=$$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX"
+ 
+ DO_GNU_APP=LDFLAGS="$(CFLAGS)"
+ 
+diff -up openssl-1.0.2a/version.map.version openssl-1.0.2a/version.map
+--- openssl-1.0.2a/version.map.version	2015-04-21 16:43:02.676171879 +0200
++++ openssl-1.0.2a/version.map	2015-04-21 16:51:49.621630589 +0200
+@@ -0,0 +1,13 @@
++OPENSSL_1.0.1 {
++    global:
++	    SSLeay;
++	    SSLeay_version;
++    local:
++	    _original*;
++	    _current*;
++};
++OPENSSL_1.0.2 {
++    global:
++	    SSLeay;
++	    SSLeay_version;
++} OPENSSL_1.0.1;

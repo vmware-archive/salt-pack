@@ -1,0 +1,217 @@
+diff -up openssl-1.0.2k/apps/ciphers.c.no-ssl2 openssl-1.0.2k/apps/ciphers.c
+--- openssl-1.0.2k/apps/ciphers.c.no-ssl2	2017-01-26 14:22:03.000000000 +0100
++++ openssl-1.0.2k/apps/ciphers.c	2017-03-01 14:18:28.058046372 +0100
+@@ -73,7 +73,9 @@ static const char *ciphers_usage[] = {
+     "usage: ciphers args\n",
+     " -v          - verbose mode, a textual listing of the SSL/TLS ciphers in OpenSSL\n",
+     " -V          - even more verbose\n",
++#ifndef OPENSSL_NO_SSL2
+     " -ssl2       - SSL2 mode\n",
++#endif
+     " -ssl3       - SSL3 mode\n",
+     " -tls1       - TLS1 mode\n",
+     NULL
+diff -up openssl-1.0.2k/apps/s_client.c.no-ssl2 openssl-1.0.2k/apps/s_client.c
+--- openssl-1.0.2k/apps/s_client.c.no-ssl2	2017-03-01 14:04:57.000000000 +0100
++++ openssl-1.0.2k/apps/s_client.c	2017-03-01 14:17:42.368974209 +0100
+@@ -380,7 +380,9 @@ static void sc_usage(void)
+                " -srp_strength int - minimal length in bits for N (default %d).\n",
+                SRP_MINIMAL_N);
+ #endif
++#ifndef OPENSSL_NO_SSL2
+     BIO_printf(bio_err, " -ssl2         - just use SSLv2\n");
++#endif
+ #ifndef OPENSSL_NO_SSL3_METHOD
+     BIO_printf(bio_err, " -ssl3         - just use SSLv3\n");
+ #endif
+diff -up openssl-1.0.2k/apps/s_server.c.no-ssl2 openssl-1.0.2k/apps/s_server.c
+--- openssl-1.0.2k/apps/s_server.c.no-ssl2	2017-02-15 11:33:38.000000000 +0100
++++ openssl-1.0.2k/apps/s_server.c	2017-03-01 14:13:54.154618822 +0100
+@@ -598,7 +598,9 @@ static void sv_usage(void)
+     BIO_printf(bio_err,
+                " -srpuserseed string - A seed string for a default user salt.\n");
+ #endif
++#ifndef OPENSSL_NO_SSL2
+     BIO_printf(bio_err, " -ssl2         - Just talk SSLv2\n");
++#endif
+ #ifndef OPENSSL_NO_SSL3_METHOD
+     BIO_printf(bio_err, " -ssl3         - Just talk SSLv3\n");
+ #endif
+@@ -610,7 +612,7 @@ static void sv_usage(void)
+     BIO_printf(bio_err, " -timeout      - Enable timeouts\n");
+     BIO_printf(bio_err, " -mtu          - Set link layer MTU\n");
+     BIO_printf(bio_err, " -chain        - Read a certificate chain\n");
+-    BIO_printf(bio_err, " -no_ssl2      - Just disable SSLv2\n");
++    BIO_printf(bio_err, " -no_ssl2      - No-op, SSLv2 is always disabled\n");
+     BIO_printf(bio_err, " -no_ssl3      - Just disable SSLv3\n");
+     BIO_printf(bio_err, " -no_tls1      - Just disable TLSv1\n");
+     BIO_printf(bio_err, " -no_tls1_1    - Just disable TLSv1.1\n");
+diff -up openssl-1.0.2k/apps/s_time.c.no-ssl2 openssl-1.0.2k/apps/s_time.c
+--- openssl-1.0.2k/apps/s_time.c.no-ssl2	2017-02-15 11:33:38.000000000 +0100
++++ openssl-1.0.2k/apps/s_time.c	2017-03-01 14:20:15.708572549 +0100
+@@ -191,7 +191,9 @@ static void s_time_usage(void)
+            SSL_CONNECT_NAME);
+ #ifdef FIONBIO
+     printf("-nbio         - Run with non-blocking IO\n");
++#ifndef OPENSSL_NO_SSL2
+     printf("-ssl2         - Just use SSLv2\n");
++#endif
+     printf("-ssl3         - Just use SSLv3\n");
+     printf("-bugs         - Turn on SSL bug compatibility\n");
+     printf("-new          - Just time new connections\n");
+diff -up openssl-1.0.2k/doc/apps/ciphers.pod.no-ssl2 openssl-1.0.2k/doc/apps/ciphers.pod
+--- openssl-1.0.2k/doc/apps/ciphers.pod.no-ssl2	2017-01-26 14:22:04.000000000 +0100
++++ openssl-1.0.2k/doc/apps/ciphers.pod	2017-03-01 14:02:51.275041593 +0100
+@@ -9,7 +9,6 @@ ciphers - SSL cipher display and cipher
+ B<openssl> B<ciphers>
+ [B<-v>]
+ [B<-V>]
+-[B<-ssl2>]
+ [B<-ssl3>]
+ [B<-tls1>]
+ [B<cipherlist>]
+@@ -42,10 +41,6 @@ Like B<-v>, but include cipher suite cod
+ 
+ This lists ciphers compatible with any of SSLv3, TLSv1, TLSv1.1 or TLSv1.2.
+ 
+-=item B<-ssl2>
+-
+-Only include SSLv2 ciphers.
+-
+ =item B<-h>, B<-?>
+ 
+ Print a brief usage message.
+diff -up openssl-1.0.2k/doc/apps/s_client.pod.no-ssl2 openssl-1.0.2k/doc/apps/s_client.pod
+--- openssl-1.0.2k/doc/apps/s_client.pod.no-ssl2	2017-03-01 14:04:57.000000000 +0100
++++ openssl-1.0.2k/doc/apps/s_client.pod	2017-03-01 14:06:28.389146669 +0100
+@@ -33,13 +33,11 @@ B<openssl> B<s_client>
+ [B<-ign_eof>]
+ [B<-no_ign_eof>]
+ [B<-quiet>]
+-[B<-ssl2>]
+ [B<-ssl3>]
+ [B<-tls1>]
+ [B<-tls1_1>]
+ [B<-tls1_2>]
+ [B<-dtls1>]
+-[B<-no_ssl2>]
+ [B<-no_ssl3>]
+ [B<-no_tls1>]
+ [B<-no_tls1_1>]
+@@ -207,7 +205,7 @@ Use the PSK key B<key> when using a PSK
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+ These options require or disable the use of the specified SSL or TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+@@ -326,8 +324,8 @@ would typically be used (https uses port
+ then an HTTP command can be given such as "GET /" to retrieve a web page.
+ 
+ If the handshake fails then there are several possible causes, if it is
+-nothing obvious like no client certificate then the B<-bugs>, B<-ssl2>,
+-B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1> options can be tried
++nothing obvious like no client certificate then the B<-bugs>,
++B<-ssl3>, B<-tls1>, B<-no_ssl3>, B<-no_tls1> options can be tried
+ in case it is a buggy server. In particular you should play with these
+ options B<before> submitting a bug report to an OpenSSL mailing list.
+ 
+@@ -349,10 +347,6 @@ on the command line is no guarantee that
+ If there are problems verifying a server certificate then the
+ B<-showcerts> option can be used to show the whole chain.
+ 
+-Since the SSLv23 client hello cannot include compression methods or extensions
+-these will only be supported if its use is disabled, for example by using the
+-B<-no_sslv2> option.
+-
+ The B<s_client> utility is a test tool and is designed to continue the
+ handshake after any certificate verification errors. As a result it will
+ accept any certificate chain (trusted or not) sent by the peer. None test
+diff -up openssl-1.0.2k/doc/apps/s_server.pod.no-ssl2 openssl-1.0.2k/doc/apps/s_server.pod
+--- openssl-1.0.2k/doc/apps/s_server.pod.no-ssl2	2017-03-01 14:04:57.000000000 +0100
++++ openssl-1.0.2k/doc/apps/s_server.pod	2017-03-01 14:04:17.871077754 +0100
+@@ -42,12 +42,10 @@ B<openssl> B<s_server>
+ [B<-keytab filename>]
+ [B<-quiet>]
+ [B<-no_tmp_rsa>]
+-[B<-ssl2>]
+ [B<-ssl3>]
+ [B<-tls1>]
+ [B<-tls1_1>]
+ [B<-tls1_2>]
+-[B<-no_ssl2>]
+ [B<-no_ssl3>]
+ [B<-no_tls1>]
+ [B<-no_dhe>]
+@@ -229,7 +227,7 @@ Use the PSK key B<key> when using a PSK
+ given as a hexadecimal number without leading 0x, for example -psk
+ 1a2b3c4d.
+ 
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
++=item B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-dtls1>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+ 
+ These options require or disable the use of the specified SSL or TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+diff -up openssl-1.0.2k/doc/apps/s_time.pod.no-ssl2 openssl-1.0.2k/doc/apps/s_time.pod
+--- openssl-1.0.2k/doc/apps/s_time.pod.no-ssl2	2017-02-15 11:33:38.000000000 +0100
++++ openssl-1.0.2k/doc/apps/s_time.pod	2017-03-01 14:03:50.440432769 +0100
+@@ -20,7 +20,6 @@ B<openssl> B<s_time>
+ [B<-verify depth>]
+ [B<-nbio>]
+ [B<-time seconds>]
+-[B<-ssl2>]
+ [B<-ssl3>]
+ [B<-bugs>]
+ [B<-cipher cipherlist>]
+@@ -99,9 +98,9 @@ specified, they are both on by default a
+ 
+ turns on non-blocking I/O.
+ 
+-=item B<-ssl2>, B<-ssl3>
++=item B<-ssl3>
+ 
+-these options disable the use of certain SSL or TLS protocols. By default
++this option disables the use of certain SSL or TLS protocols. By default
+ the initial handshake uses a method which should be compatible with all
+ servers and permit them to use SSL v3, SSL v2 or TLS as appropriate.
+ The timing program is not as rich in options to turn protocols on and off as
+@@ -109,8 +108,7 @@ the L<s_client(1)|s_client(1)> program a
+ 
+ Unfortunately there are a lot of ancient and broken servers in use which
+ cannot handle this technique and will fail to connect. Some servers only
+-work if TLS is turned off with the B<-ssl3> option; others
+-will only support SSL v2 and may need the B<-ssl2> option.
++work if TLS is turned off with the B<-ssl3> option.
+ 
+ =item B<-bugs>
+ 
+@@ -144,7 +142,7 @@ which both client and server can agree,
+ for details.
+ 
+ If the handshake fails then there are several possible causes, if it is
+-nothing obvious like no client certificate then the B<-bugs>, B<-ssl2>,
++nothing obvious like no client certificate then the B<-bugs>,
+ B<-ssl3> options can be tried
+ in case it is a buggy server. In particular you should play with these
+ options B<before> submitting a bug report to an OpenSSL mailing list.
+diff -up openssl-1.0.2k/doc/ssl/SSL_CTX_new.pod.no-ssl2 openssl-1.0.2k/doc/ssl/SSL_CTX_new.pod
+--- openssl-1.0.2k/doc/ssl/SSL_CTX_new.pod.no-ssl2	2017-01-26 14:22:04.000000000 +0100
++++ openssl-1.0.2k/doc/ssl/SSL_CTX_new.pod	2017-03-01 14:09:12.981016773 +0100
+@@ -123,13 +123,8 @@ used.
+ 
+ =item SSLv2_method(), SSLv2_server_method(), SSLv2_client_method()
+ 
+-A TLS/SSL connection established with these methods will only understand the
+-SSLv2 protocol.  A client will send out SSLv2 client hello messages and will
+-also indicate that it only understand SSLv2.  A server will only understand
+-SSLv2 client hello messages.  The SSLv2 protocol offers little to no security
+-and should not be used.
+-As of OpenSSL 1.0.2g, EXPORT ciphers and 56-bit DES are no longer available
+-with SSLv2.
++These calls are provided only as stubs for keeping ABI compatibility. There
++is no support for SSLv2 built in the library.
+ 
+ =item DTLS_method(), DTLS_server_method(), DTLS_client_method()
+ 

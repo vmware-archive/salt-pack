@@ -1,0 +1,50 @@
+diff -up openssl-1.0.2a/README.warning openssl-1.0.2a/README
+--- openssl-1.0.2a/README.warning	2015-03-20 16:00:47.000000000 +0100
++++ openssl-1.0.2a/README	2015-03-21 09:06:11.000000000 +0100
+@@ -5,6 +5,46 @@
+  Copyright (c) 1995-1998 Eric A. Young, Tim J. Hudson
+  All rights reserved.
+ 
++ WARNING
++ -------
++
++ This version of OpenSSL is built in a way that supports operation in
++ the so called FIPS mode. Note though that the library as we build it
++ is not FIPS 140-2 validated and the FIPS mode is present for testing
++ purposes only.
++
++ This version also contains a few differences from the upstream code
++ some of which are:
++   * The FIPS validation support is significantly different from the
++     upstream FIPS support. For example the FIPS integrity verification
++     check is implemented differently as the FIPS module is built inside
++     the shared library. The HMAC-SHA256 checksums of the whole shared
++     libraries are verified. Also note that the FIPS integrity
++     verification check requires that the libcrypto and libssl shared
++     library files are unmodified which means that it will fail if these
++     files are changed for example by prelink.
++   * If the file /etc/system-fips is present the integrity verification
++     and selftests of the crypto algorithms are run inside the library
++     constructor code.
++   * With the /etc/system-fips present the module respects the kernel
++     FIPS flag /proc/sys/crypto/fips and tries to initialize the FIPS mode
++     if it is set to 1 aborting if the FIPS mode could not be initialized.
++     With the /etc/system-fips present it is also possible to force the
++     OpenSSL library to FIPS mode especially for debugging purposes by
++     setting the environment variable OPENSSL_FORCE_FIPS_MODE.
++   * If the environment variable OPENSSL_NO_DEFAULT_ZLIB is set the module
++     will not automatically load the built in compression method ZLIB
++     when initialized. Applications can still explicitely ask for ZLIB
++     compression method.
++   * The library was patched so the certificates, CRLs and other objects
++     signed with use of MD5 fail verification as the MD5 is too insecure
++     to be used for signatures. If the environment variable
++     OPENSSL_ENABLE_MD5_VERIFY is set, the verification can proceed
++     normally.
++   * If the OPENSSL_ENFORCE_MODULUS_BITS environment variable is set,
++     the library will not allow generation of DSA and RSA keys with
++     other lengths than specified in the FIPS 186-4 standard.
++
+  DESCRIPTION
+  -----------
+ 

@@ -1,0 +1,172 @@
+diff -up openssl-1.0.2j/apps/s_client.c.krb5keytab openssl-1.0.2j/apps/s_client.c
+--- openssl-1.0.2j/apps/s_client.c.krb5keytab	2017-01-05 17:02:05.481441088 +0100
++++ openssl-1.0.2j/apps/s_client.c	2017-01-05 17:08:28.311073180 +0100
+@@ -171,6 +171,10 @@ typedef unsigned int u_int;
+ #include "s_apps.h"
+ #include "timeouts.h"
+ 
++#ifndef OPENSSL_NO_KRB5
++static char *krb5svc = NULL;
++#endif
++
+ #if (defined(OPENSSL_SYS_VMS) && __VMS_VER < 70000000)
+ /* FIONBIO used as a switch to enable ioctl, and that isn't in VMS < 7.0 */
+ # undef FIONBIO
+@@ -400,6 +404,9 @@ static void sc_usage(void)
+     BIO_printf(bio_err,
+                "                 only \"smtp\", \"pop3\", \"imap\", \"ftp\" and \"xmpp\"\n");
+     BIO_printf(bio_err, "                 are supported.\n");
++#ifndef OPENSSL_NO_KRB5
++    BIO_printf(bio_err, " -krb5svc arg  - Kerberos service name\n");
++#endif
+ #ifndef OPENSSL_NO_ENGINE
+     BIO_printf(bio_err,
+                " -engine id    - Initialise and use the specified engine\n");
+@@ -1069,6 +1076,13 @@ int MAIN(int argc, char **argv)
+             c_nbio = 1;
+         }
+ #endif
++#ifndef OPENSSL_NO_KRB5
++	else if	(strcmp(*argv, "-krb5svc") == 0) {
++            if (--argc < 1)
++                goto bad;
++            krb5svc= *(++argv);
++        }
++#endif
+         else if (strcmp(*argv, "-starttls") == 0) {
+             if (--argc < 1)
+                 goto bad;
+@@ -1435,6 +1449,8 @@ int MAIN(int argc, char **argv)
+     if (con && (kctx = kssl_ctx_new()) != NULL) {
+         SSL_set0_kssl_ctx(con, kctx);
+         kssl_ctx_setstring(kctx, KSSL_SERVER, host);
++        if (krb5svc != NULL)
++            kssl_ctx_setstring(kctx, KSSL_SERVICE, krb5svc);
+     }
+ #endif                          /* OPENSSL_NO_KRB5 */
+ /*      SSL_set_cipher_list(con,"RC4-MD5"); */
+diff -up openssl-1.0.2j/apps/s_server.c.krb5keytab openssl-1.0.2j/apps/s_server.c
+--- openssl-1.0.2j/apps/s_server.c.krb5keytab	2017-01-05 17:02:05.482441111 +0100
++++ openssl-1.0.2j/apps/s_server.c	2017-01-05 17:16:36.458078609 +0100
+@@ -206,6 +206,11 @@ typedef unsigned int u_int;
+ # include <fcntl.h>
+ #endif
+ 
++#ifndef OPENSSL_NO_KRB5
++static char *krb5svc = NULL;
++static char *keytab = NULL;
++#endif
++
+ #ifndef OPENSSL_NO_RSA
+ static RSA MS_CALLBACK *tmp_rsa_cb(SSL *s, int is_export, int keylength);
+ #endif
+@@ -579,6 +584,10 @@ static void sv_usage(void)
+     BIO_printf(bio_err, " -serverpref   - Use server's cipher preferences\n");
+     BIO_printf(bio_err, " -quiet        - No server output\n");
+     BIO_printf(bio_err, " -no_tmp_rsa   - Do not generate a tmp RSA key\n");
++#ifndef OPENSSL_NO_KRB5
++    BIO_printf(bio_err, " -krb5svc arg  - Kerberos service name\n");
++    BIO_printf(bio_err, " -keytab arg   - Kerberos keytab filename\n");
++#endif
+ #ifndef OPENSSL_NO_PSK
+     BIO_printf(bio_err, " -psk_hint arg - PSK identity hint to use\n");
+     BIO_printf(bio_err, " -psk arg      - PSK in hex (without 0x)\n");
+@@ -1326,6 +1335,17 @@ int MAIN(int argc, char *argv[])
+                 goto bad;
+             vfyCAfile = *(++argv);
+         }
++#ifndef OPENSSL_NO_KRB5
++        else if (strcmp(*argv, "-krb5svc") == 0) {
++            if (--argc < 1)
++                goto bad;
++            krb5svc = *(++argv);
++        } else if (strcmp(*argv, "-keytab") == 0) {
++            if (--argc < 1)
++                goto bad;
++            keytab = *(++argv);
++        }
++#endif
+ #ifdef FIONBIO
+         else if (strcmp(*argv, "-nbio") == 0) {
+             s_nbio = 1;
+@@ -2226,8 +2246,10 @@ static int sv_body(char *hostname, int s
+ #ifndef OPENSSL_NO_KRB5
+         if ((kctx = kssl_ctx_new()) != NULL) {
+             SSL_set0_kssl_ctx(con, kctx);
+-            kssl_ctx_setstring(kctx, KSSL_SERVICE, KRB5SVC);
+-            kssl_ctx_setstring(kctx, KSSL_KEYTAB, KRB5KEYTAB);
++            kssl_ctx_setstring(kctx, KSSL_SERVICE,
++                krb5svc == NULL ? KRB5SVC : krb5svc);
++            if (keytab != NULL)
++                kssl_ctx_setstring(kctx, KSSL_KEYTAB, keytab);
+         }
+ #endif                          /* OPENSSL_NO_KRB5 */
+         if (context)
+@@ -2836,8 +2858,11 @@ static int www_body(char *hostname, int
+ #endif
+ #ifndef OPENSSL_NO_KRB5
+     if ((kctx = kssl_ctx_new()) != NULL) {
+-        kssl_ctx_setstring(kctx, KSSL_SERVICE, KRB5SVC);
+-        kssl_ctx_setstring(kctx, KSSL_KEYTAB, KRB5KEYTAB);
++        SSL_set0_kssl_ctx(con, kctx);
++        kssl_ctx_setstring(kctx, KSSL_SERVICE,
++            krb5svc == NULL ? KRB5SVC : krb5svc);
++        if (keytab != NULL)
++            kssl_ctx_setstring(kctx, KSSL_KEYTAB, keytab);
+     }
+ #endif                          /* OPENSSL_NO_KRB5 */
+     if (context)
+diff -up openssl-1.0.2j/doc/apps/s_client.pod.krb5keytab openssl-1.0.2j/doc/apps/s_client.pod
+--- openssl-1.0.2j/doc/apps/s_client.pod.krb5keytab	2016-09-26 11:49:07.000000000 +0200
++++ openssl-1.0.2j/doc/apps/s_client.pod	2017-01-05 17:21:30.562709291 +0100
+@@ -43,6 +43,7 @@ B<openssl> B<s_client>
+ [B<-fallback_scsv>]
+ [B<-bugs>]
+ [B<-cipher cipherlist>]
++[B<-krb5svc service>]
+ [B<-serverpref>]
+ [B<-starttls protocol>]
+ [B<-engine id>]
+@@ -228,6 +229,12 @@ command for more information.
+ 
+ use the server's cipher preferences; only used for SSLV2.
+ 
++=item B<-krb5svc service>
++
++the Kerberos service name to use (default "host"). This means s_server
++will expect a ticket for the principal I<service>/hostname@REALM, and will
++need keys for that principal in its keytab.
++
+ =item B<-starttls protocol>
+ 
+ send the protocol-specific message(s) to switch to TLS for communication.
+diff -up openssl-1.0.2j/doc/apps/s_server.pod.krb5keytab openssl-1.0.2j/doc/apps/s_server.pod
+--- openssl-1.0.2j/doc/apps/s_server.pod.krb5keytab	2017-01-05 17:02:05.482441111 +0100
++++ openssl-1.0.2j/doc/apps/s_server.pod	2017-01-05 17:20:54.769902331 +0100
+@@ -37,6 +37,8 @@ B<openssl> B<s_server>
+ [B<-nocert>]
+ [B<-cipher cipherlist>]
+ [B<-serverpref>]
++[B<-krb5svc service>]
++[B<-keytab filename>]
+ [B<-quiet>]
+ [B<-no_tmp_rsa>]
+ [B<-ssl2>]
+@@ -246,6 +248,17 @@ the B<ciphers> command for more informat
+ 
+ use the server's cipher preferences, rather than the client's preferences.
+ 
++=item B<-krb5svc service>
++
++the Kerberos service name to use (default "host"). This means s_server
++will expect a ticket for the principal I<service>/hostname@REALM, and will
++need keys for that principal in its keytab.
++
++=item B<-keytab filename>
++
++the Kerberos "keytab" (key table) file, containing keys for the s_server
++service principal (Kerberos identity; see -krb5svc).
++
+ =item B<-tlsextdebug>
+ 
+ print out a hex dump of any TLS extensions received from the server.

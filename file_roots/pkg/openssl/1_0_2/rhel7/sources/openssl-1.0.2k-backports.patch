@@ -1,0 +1,244 @@
+diff -up openssl-1.0.2k/crypto/aes/asm/aesni-sha1-x86_64.pl.backports openssl-1.0.2k/crypto/aes/asm/aesni-sha1-x86_64.pl
+--- openssl-1.0.2k/crypto/aes/asm/aesni-sha1-x86_64.pl.backports	2017-03-09 17:59:26.367233931 +0100
++++ openssl-1.0.2k/crypto/aes/asm/aesni-sha1-x86_64.pl	2017-03-27 15:25:28.615014528 +0200
+@@ -1702,6 +1702,7 @@ $code.=<<___;
+ 	mov	240($key),$rounds
+ 	sub	$in0,$out
+ 	movups	($key),$rndkey0			# $key[0]
++	movups	($ivp),$iv			# load IV
+ 	movups	16($key),$rndkey[0]		# forward reference
+ 	lea	112($key),$key			# size optimization
+ 
+diff -up openssl-1.0.2k/crypto/aes/asm/aesni-sha256-x86_64.pl.backports openssl-1.0.2k/crypto/aes/asm/aesni-sha256-x86_64.pl
+--- openssl-1.0.2k/crypto/aes/asm/aesni-sha256-x86_64.pl.backports	2017-03-09 17:59:26.369233978 +0100
++++ openssl-1.0.2k/crypto/aes/asm/aesni-sha256-x86_64.pl	2017-03-27 15:25:28.618014599 +0200
+@@ -1299,6 +1299,7 @@ $code.=<<___;
+ 	mov		240($key),$rounds
+ 	sub		$in0,$out
+ 	movups		($key),$rndkey0		# $key[0]
++	movups		($ivp),$iv		# load IV
+ 	movups		16($key),$rndkey[0]	# forward reference
+ 	lea		112($key),$key		# size optimization
+ 
+diff -up openssl-1.0.2k/crypto/x86cpuid.pl.backports openssl-1.0.2k/crypto/x86cpuid.pl
+--- openssl-1.0.2k/crypto/x86cpuid.pl.backports	2017-03-09 17:59:26.339233278 +0100
++++ openssl-1.0.2k/crypto/x86cpuid.pl	2017-03-27 15:26:06.833916588 +0200
+@@ -20,10 +20,10 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
+ 	&pop	("eax");
+ 	&xor	("ecx","eax");
+ 	&xor	("eax","eax");
++	&mov	("esi",&wparam(0));
++	&mov	(&DWP(8,"esi"),"eax");	# clear extended feature flags
+ 	&bt	("ecx",21);
+ 	&jnc	(&label("nocpuid"));
+-	&mov	("esi",&wparam(0));
+-	&mov	(&DWP(8,"esi"),"eax");	# clear 3rd word
+ 	&cpuid	();
+ 	&mov	("edi","eax");		# max value for standard query level
+ 
+@@ -81,26 +81,16 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
+ 	&jmp	(&label("generic"));
+ 	
+ &set_label("intel");
+-	&cmp	("edi",7);
+-	&jb	(&label("cacheinfo"));
+-
+-	&mov	("esi",&wparam(0));
+-	&mov	("eax",7);
+-	&xor	("ecx","ecx");
+-	&cpuid	();
+-	&mov	(&DWP(8,"esi"),"ebx");
+-
+-&set_label("cacheinfo");
+ 	&cmp	("edi",4);
+-	&mov	("edi",-1);
++	&mov	("esi",-1);
+ 	&jb	(&label("nocacheinfo"));
+ 
+ 	&mov	("eax",4);
+ 	&mov	("ecx",0);		# query L1D
+ 	&cpuid	();
+-	&mov	("edi","eax");
+-	&shr	("edi",14);
+-	&and	("edi",0xfff);		# number of cores -1 per L1D
++	&mov	("esi","eax");
++	&shr	("esi",14);
++	&and	("esi",0xfff);		# number of cores -1 per L1D
+ 
+ &set_label("nocacheinfo");
+ 	&mov	("eax",1);
+@@ -118,7 +108,7 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
+ 	&bt	("edx",28);		# test hyper-threading bit
+ 	&jnc	(&label("generic"));
+ 	&and	("edx",0xefffffff);
+-	&cmp	("edi",0);
++	&cmp	("esi",0);
+ 	&je	(&label("generic"));
+ 
+ 	&or	("edx",0x10000000);
+@@ -130,10 +120,19 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
+ &set_label("generic");
+ 	&and	("ebp",1<<11);		# isolate AMD XOP flag
+ 	&and	("ecx",0xfffff7ff);	# force 11th bit to 0
+-	&mov	("esi","edx");
++	&mov	("esi","edx");		# %ebp:%esi is copy of %ecx:%edx
+ 	&or	("ebp","ecx");		# merge AMD XOP flag
+ 
+-	&bt	("ecx",27);		# check OSXSAVE bit
++	&cmp	("edi",7);
++	&mov	("edi",&wparam(0));
++	&jb	(&label("no_extended_info"));
++	&mov	("eax",7);
++	&xor	("ecx","ecx");
++	&cpuid	();
++	&mov	(&DWP(8,"edi"),"ebx");	# save extended feature flag
++&set_label("no_extended_info");
++
++	&bt	("ebp",27);		# check OSXSAVE bit
+ 	&jnc	(&label("clear_avx"));
+ 	&xor	("ecx","ecx");
+ 	&data_byte(0x0f,0x01,0xd0);	# xgetbv
+@@ -147,7 +146,6 @@ for (@ARGV) { $sse2=1 if (/-DOPENSSL_IA3
+ 	&and	("esi",0xfeffffff);	# clear FXSR
+ &set_label("clear_avx");
+ 	&and	("ebp",0xefffe7ff);	# clear AVX, FMA and AMD XOP bits
+-	&mov	("edi",&wparam(0));
+ 	&and	(&DWP(8,"edi"),0xffffffdf);	# clear AVX2
+ &set_label("done");
+ 	&mov	("eax","esi");
+diff -up openssl-1.0.2k/crypto/x86_64cpuid.pl.backports openssl-1.0.2k/crypto/x86_64cpuid.pl
+--- openssl-1.0.2k/crypto/x86_64cpuid.pl.backports	2017-03-09 17:59:26.339233278 +0100
++++ openssl-1.0.2k/crypto/x86_64cpuid.pl	2017-03-27 15:26:06.833916588 +0200
+@@ -59,7 +59,7 @@ OPENSSL_ia32_cpuid:
+ 	mov	%rbx,%r8		# save %rbx
+ 
+ 	xor	%eax,%eax
+-	mov	%eax,8(%rdi)		# clear 3rd word
++	mov	%eax,8(%rdi)		# clear extended feature flags
+ 	cpuid
+ 	mov	%eax,%r11d		# max value for standard query level
+ 
+@@ -127,14 +127,6 @@ OPENSSL_ia32_cpuid:
+ 	shr	\$14,%r10d
+ 	and	\$0xfff,%r10d		# number of cores -1 per L1D
+ 
+-	cmp	\$7,%r11d
+-	jb	.Lnocacheinfo
+-
+-	mov	\$7,%eax
+-	xor	%ecx,%ecx
+-	cpuid
+-	mov	%ebx,8(%rdi)
+-
+ .Lnocacheinfo:
+ 	mov	\$1,%eax
+ 	cpuid
+@@ -164,6 +156,15 @@ OPENSSL_ia32_cpuid:
+ 	or	%ecx,%r9d		# merge AMD XOP flag
+ 
+ 	mov	%edx,%r10d		# %r9d:%r10d is copy of %ecx:%edx
++
++	cmp	\$7,%r11d
++	jb	.Lno_extended_info
++	mov	\$7,%eax
++	xor	%ecx,%ecx
++	cpuid
++	mov	%ebx,8(%rdi)		# save extended feature flags
++.Lno_extended_info:
++
+ 	bt	\$27,%r9d		# check OSXSAVE bit
+ 	jnc	.Lclear_avx
+ 	xor	%ecx,%ecx		# XCR0
+diff -up openssl-1.0.2k/ssl/ssl_locl.h.backports openssl-1.0.2k/ssl/ssl_locl.h
+--- openssl-1.0.2k/ssl/ssl_locl.h.backports	2017-03-09 17:59:26.183229642 +0100
++++ openssl-1.0.2k/ssl/ssl_locl.h	2017-03-09 17:59:26.311232626 +0100
+@@ -1430,7 +1430,7 @@ int ssl_parse_clienthello_renegotiate_ex
+ long ssl_get_algorithm2(SSL *s);
+ int tls1_save_sigalgs(SSL *s, const unsigned char *data, int dsize);
+ int tls1_process_sigalgs(SSL *s);
+-size_t tls12_get_psigalgs(SSL *s, const unsigned char **psigs);
++size_t tls12_get_psigalgs(SSL *s, int sent, const unsigned char **psigs);
+ int tls12_check_peer_sigalg(const EVP_MD **pmd, SSL *s,
+                             const unsigned char *sig, EVP_PKEY *pkey);
+ void ssl_set_client_disabled(SSL *s);
+diff -up openssl-1.0.2k/ssl/s3_lib.c.backports openssl-1.0.2k/ssl/s3_lib.c
+--- openssl-1.0.2k/ssl/s3_lib.c.backports	2017-03-09 17:59:26.294232230 +0100
++++ openssl-1.0.2k/ssl/s3_lib.c	2017-03-09 17:59:26.311232626 +0100
+@@ -4237,7 +4237,7 @@ int ssl3_get_req_cert_type(SSL *s, unsig
+         return (int)s->cert->ctype_num;
+     }
+     /* get configured sigalgs */
+-    siglen = tls12_get_psigalgs(s, &sig);
++    siglen = tls12_get_psigalgs(s, 1, &sig);
+     if (s->cert->cert_flags & SSL_CERT_FLAGS_CHECK_TLS_STRICT)
+         nostrict = 0;
+     for (i = 0; i < siglen; i += 2, sig += 2) {
+diff -up openssl-1.0.2k/ssl/s3_srvr.c.backports openssl-1.0.2k/ssl/s3_srvr.c
+--- openssl-1.0.2k/ssl/s3_srvr.c.backports	2017-01-26 14:22:04.000000000 +0100
++++ openssl-1.0.2k/ssl/s3_srvr.c	2017-03-09 17:59:26.311232626 +0100
+@@ -2084,7 +2084,7 @@ int ssl3_send_certificate_request(SSL *s
+ 
+         if (SSL_USE_SIGALGS(s)) {
+             const unsigned char *psigs;
+-            nl = tls12_get_psigalgs(s, &psigs);
++            nl = tls12_get_psigalgs(s, 1, &psigs);
+             s2n(nl, p);
+             memcpy(p, psigs, nl);
+             p += nl;
+diff -up openssl-1.0.2k/ssl/t1_lib.c.backports openssl-1.0.2k/ssl/t1_lib.c
+--- openssl-1.0.2k/ssl/t1_lib.c.backports	2017-03-09 17:59:26.297232299 +0100
++++ openssl-1.0.2k/ssl/t1_lib.c	2017-03-09 17:59:26.312232649 +0100
+@@ -1015,7 +1015,7 @@ static unsigned char suiteb_sigalgs[] =
+         tlsext_sigalg_ecdsa(TLSEXT_hash_sha384)
+ };
+ # endif
+-size_t tls12_get_psigalgs(SSL *s, const unsigned char **psigs)
++size_t tls12_get_psigalgs(SSL *s, int sent, const unsigned char **psigs)
+ {
+     /*
+      * If Suite B mode use Suite B sigalgs only, ignore any other
+@@ -1037,7 +1037,7 @@ size_t tls12_get_psigalgs(SSL *s, const
+     }
+ # endif
+     /* If server use client authentication sigalgs if not NULL */
+-    if (s->server && s->cert->client_sigalgs) {
++    if (s->server == sent && s->cert->client_sigalgs) {
+         *psigs = s->cert->client_sigalgs;
+         return s->cert->client_sigalgslen;
+     } else if (s->cert->conf_sigalgs) {
+@@ -1101,7 +1101,7 @@ int tls12_check_peer_sigalg(const EVP_MD
+ # endif
+ 
+     /* Check signature matches a type we sent */
+-    sent_sigslen = tls12_get_psigalgs(s, &sent_sigs);
++    sent_sigslen = tls12_get_psigalgs(s, 1, &sent_sigs);
+     for (i = 0; i < sent_sigslen; i += 2, sent_sigs += 2) {
+         if (sig[0] == sent_sigs[0] && sig[1] == sent_sigs[1])
+             break;
+@@ -1149,7 +1149,7 @@ void ssl_set_client_disabled(SSL *s)
+      * Now go through all signature algorithms seeing if we support any for
+      * RSA, DSA, ECDSA. Do this for all versions not just TLS 1.2.
+      */
+-    sigalgslen = tls12_get_psigalgs(s, &sigalgs);
++    sigalgslen = tls12_get_psigalgs(s, 1, &sigalgs);
+     for (i = 0; i < sigalgslen; i += 2, sigalgs += 2) {
+         switch (sigalgs[1]) {
+ # ifndef OPENSSL_NO_RSA
+@@ -1420,7 +1420,7 @@ unsigned char *ssl_add_clienthello_tlsex
+     if (SSL_CLIENT_USE_SIGALGS(s)) {
+         size_t salglen;
+         const unsigned char *salg;
+-        salglen = tls12_get_psigalgs(s, &salg);
++        salglen = tls12_get_psigalgs(s, 1, &salg);
+ 
+         /*-
+          * check for enough space.
+@@ -3783,7 +3783,7 @@ static int tls1_set_shared_sigalgs(SSL *
+         conf = c->conf_sigalgs;
+         conflen = c->conf_sigalgslen;
+     } else
+-        conflen = tls12_get_psigalgs(s, &conf);
++        conflen = tls12_get_psigalgs(s, 0, &conf);
+     if (s->options & SSL_OP_CIPHER_SERVER_PREFERENCE || is_suiteb) {
+         pref = conf;
+         preflen = conflen;

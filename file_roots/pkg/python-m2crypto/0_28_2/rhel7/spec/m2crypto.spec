@@ -13,15 +13,15 @@ Source1: M2Crypto-0.28.2.tar.gz.asc
 # This is only precautionary, it does fix anything - not sent upstream
 Patch0: m2crypto-0.26.4-gcc_macros.patch
 Requires: python2-typing
+Requires: openssl >= 1:1.0.2
  
 License: MIT
 Group: System Environment/Libraries
 URL: https://gitlab.com/m2crypto/m2crypto/
-BuildRequires: openssl >= 1.0.2
-BuildRequires: openssl-devel >= 1.0.2
+BuildRequires: openssl >= 1:1.0.2
+BuildRequires: openssl-devel >= 1:1.0.2
 BuildRequires: python2-devel, python2-setuptools
 BuildRequires: perl-interpreter, pkgconfig, python2-typing, swig, which
-Requires: openssl >= 1.0.2
 
 %if 0%{?with_python3}
 BuildRequires:  python%{python3_pkgversion}-devel
@@ -118,8 +118,8 @@ popd
 %endif
 
 %changelog
-* Mon Aug 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-4
-- Added version check >= openssl 1.0.2
+* Tue Aug 28 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-4
+- Added version check >= openssl 1:1.0.2
 
 * Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-3
 - Adjusted support for Python 3 for Redhat 7

@@ -162,8 +162,7 @@ package provides Perl scripts for converting certificates and keys
 from other formats to the formats used by the OpenSSL toolkit.
 
 %prep
-## DGM %setup -q -n %{name}-%{version}
-%setup -n %{name}-%{version}
+%setup -q -n %{name}-%{version}
 
 # The hobble_openssl is called here redundantly, just to be sure.
 # The tarball has already the sources removed.

@@ -526,7 +526,7 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
-* Mon Aug 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-12
+* Mon Aug 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-13
 - Ensure hobble-openssl is executable, Rebuilt to ensure present for use with RHEL 7.2
 
 * Wed Dec 13 2017 Tomáš Mráz <tmraz@redhat.com> 1.0.2k-12

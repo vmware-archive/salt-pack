@@ -220,7 +220,7 @@ Summary: REST API for Salt, a parallel remote execution system
 Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
 Requires: python%{?__python_ver}-cherrypy
-
+Requires: python%{python3_pkgversion}-cherrypy >= 3.2.2, python%{python3_pkgversion}-cherrypy < 18.0.0
 
 %description api
 salt-api provides a REST interface to the Salt master.
@@ -617,6 +617,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Aug 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.11.0-0
 - Update to feature release branch 2018.11.0-0 for Python 2
+- Revised versions of cherrypy acceptable
 
 * Tue Jul 24 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-5
 - Fix version of python used, multiple addition of 2.7 

@@ -100,7 +100,7 @@
 pkgbuild_registry:
   rhel7:
     libsodium:
-      version: 1.0.5-1
+      version: 1.0.16-1
       results:
         - libsodium
         - libsodium-devel
@@ -169,7 +169,7 @@ pkgbuild_registry:
         - python2-mock
     python-pyzmq:
       name: python-zmq
-      version: 15.3.0-2
+      version: 15.3.0-3
       build_deps:
         - zeromq
     python-raet:
@@ -229,7 +229,7 @@ pkgbuild_registry:
       build_deps:
         - python-impacket
     zeromq:
-      version: 4.1.4-6
+      version: 4.1.4-7
       build_deps:
         - openpgm
       results:

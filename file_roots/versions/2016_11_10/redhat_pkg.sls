@@ -3,7 +3,7 @@
 include:
 {% if buildcfg.build_release == 'rhel7' %}
 
-    - pkg.libsodium.1_0_5.rhel7
+    - pkg.libsodium.1_0_16.rhel7
     - pkg.libtomcrypt.1_17.rhel7
     - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7

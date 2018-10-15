@@ -106,7 +106,7 @@ BuildRequires: PyYAML
 %endif
 
 BuildRequires: python%{?__python_ver}-requests
-## BuildRequires: python%{?__python_ver}-unittest2
+## BuildRequires: python%%{?__python_ver}-unittest2
 
 # this BR causes windows tests to happen
 # clearly, that's not desired
@@ -121,7 +121,7 @@ BuildRequires: python%{?__python_ver}-six
 BuildRequires: python-argparse
 %endif
 
-%endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+%endif  ##  ((0%%{?rhel} >= 6 || 0%%{?fedora} > 12) && 0%%{?include_tests})
 
 BuildRequires: python%{?__python_ver}-devel
 
@@ -241,8 +241,8 @@ The salt-ssh tool can run remote execution functions and states without the use
 of an agent (salt-minion) service.
 
 %prep
-## %setup -q -c
-## %setup -q -T -D -a 1
+## %%setup -q -c
+## %%setup -q -T -D -a 1
 %setup -c
 
 cd %{name}-%{version}
@@ -617,10 +617,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Mon Oct 08 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-1
+* Mon Oct 15 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-1
 - Update to feature release 2018.3.3-1  for Python 2
-
 - Revised versions of cherrypy acceptable
+
+* Mon Jul 09 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-2
+- Correct tornado version check
 
 * Thu Jun 21 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-1
 - Update to feature release 2018.3.2-1  for Python 2

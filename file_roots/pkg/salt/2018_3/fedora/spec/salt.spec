@@ -22,6 +22,7 @@
 %{!?pythonpath: %global pythonpath %(%{__python2} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
 
+
 %if 0%{?rhel} == 6
 %global with_python3 0
 
@@ -44,8 +45,8 @@
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2018.3.0%{?__rc_ver}
-Release: 0%{?dist}
+Version: 2018.3.3%{?__rc_ver}
+Release: 1%{?dist}
 Summary: A parallel remote execution system
 
 Group:   System Environment/Daemons
@@ -109,7 +110,7 @@ BuildRequires: PyYAML
 %endif
 
 BuildRequires: python%{?__python_ver}-requests
-## BuildRequires: python%{?__python_ver}-unittest2
+## BuildRequires: python%%{?__python_ver}-unittest2
 
 # this BR causes windows tests to happen
 # clearly, that's not desired
@@ -124,7 +125,7 @@ BuildRequires: python%{?__python_ver}-six
 BuildRequires: python-argparse
 %endif
 
-%endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+%endif  ##  ((0%%{?rhel} >= 6 || 0%%{?fedora} > 12) && 0%%{?include_tests})
 
 BuildRequires: python%{?__python_ver}-devel
 
@@ -244,8 +245,8 @@ The salt-ssh tool can run remote execution functions and states without the use
 of an agent (salt-minion) service.
 
 %prep
-## %setup -q -c
-## %setup -q -T -D -a 1
+## %%setup -q -c
+## %%setup -q -T -D -a 1
 %setup -c
 
 cd %{name}-%{version}
@@ -616,6 +617,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Oct 15 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-1
+- Update to feature release 2018.3.3-1  for Python 2
 - Revised versions of cherrypy acceptable
 
 * Tue Jul 24 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-5
@@ -999,4 +1002,3 @@ rm -rf %{buildroot}
 
 * Fri Sep 09 2011 Clint Savage <herlo1@gmail.com> - 0.9.1-1
 - Initial packages
-

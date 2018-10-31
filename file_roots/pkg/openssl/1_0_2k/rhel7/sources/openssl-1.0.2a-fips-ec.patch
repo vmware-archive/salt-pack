@@ -1,0 +1,1929 @@
+diff -up openssl-1.0.2a/crypto/ecdh/ecdhtest.c.fips-ec openssl-1.0.2a/crypto/ecdh/ecdhtest.c
+--- openssl-1.0.2a/crypto/ecdh/ecdhtest.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdh/ecdhtest.c	2015-04-22 19:00:19.721884512 +0200
+@@ -501,11 +501,13 @@ int main(int argc, char *argv[])
+         goto err;
+ 
+     /* NIST PRIME CURVES TESTS */
++# if 0
+     if (!test_ecdh_curve
+         (NID_X9_62_prime192v1, "NIST Prime-Curve P-192", ctx, out))
+         goto err;
+     if (!test_ecdh_curve(NID_secp224r1, "NIST Prime-Curve P-224", ctx, out))
+         goto err;
++# endif
+     if (!test_ecdh_curve
+         (NID_X9_62_prime256v1, "NIST Prime-Curve P-256", ctx, out))
+         goto err;
+@@ -536,13 +538,14 @@ int main(int argc, char *argv[])
+     if (!test_ecdh_curve(NID_sect571r1, "NIST Binary-Curve B-571", ctx, out))
+         goto err;
+ # endif
++# if 0
+     if (!test_ecdh_kat(out, "Brainpool Prime-Curve brainpoolP256r1", 256))
+         goto err;
+     if (!test_ecdh_kat(out, "Brainpool Prime-Curve brainpoolP384r1", 384))
+         goto err;
+     if (!test_ecdh_kat(out, "Brainpool Prime-Curve brainpoolP512r1", 512))
+         goto err;
+-
++# endif
+     ret = 0;
+ 
+  err:
+diff -up openssl-1.0.2a/crypto/ecdh/ech_lib.c.fips-ec openssl-1.0.2a/crypto/ecdh/ech_lib.c
+--- openssl-1.0.2a/crypto/ecdh/ech_lib.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdh/ech_lib.c	2015-04-22 19:00:19.721884512 +0200
+@@ -93,14 +93,7 @@ void ECDH_set_default_method(const ECDH_
+ const ECDH_METHOD *ECDH_get_default_method(void)
+ {
+     if (!default_ECDH_method) {
+-#ifdef OPENSSL_FIPS
+-        if (FIPS_mode())
+-            return FIPS_ecdh_openssl();
+-        else
+-            return ECDH_OpenSSL();
+-#else
+         default_ECDH_method = ECDH_OpenSSL();
+-#endif
+     }
+     return default_ECDH_method;
+ }
+diff -up openssl-1.0.2a/crypto/ecdh/ech_ossl.c.fips-ec openssl-1.0.2a/crypto/ecdh/ech_ossl.c
+--- openssl-1.0.2a/crypto/ecdh/ech_ossl.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdh/ech_ossl.c	2015-04-22 19:00:19.722884536 +0200
+@@ -78,6 +78,10 @@
+ #include <openssl/obj_mac.h>
+ #include <openssl/bn.h>
+ 
++#ifdef OPENSSL_FIPS
++# include <openssl/fips.h>
++#endif
++
+ static int ecdh_compute_key(void *out, size_t len, const EC_POINT *pub_key,
+                             EC_KEY *ecdh,
+                             void *(*KDF) (const void *in, size_t inlen,
+@@ -90,7 +94,7 @@ static ECDH_METHOD openssl_ecdh_meth = {
+     NULL,                       /* init */
+     NULL,                       /* finish */
+ #endif
+-    0,                          /* flags */
++    ECDH_FLAG_FIPS_METHOD,      /* flags */
+     NULL                        /* app_data */
+ };
+ 
+@@ -119,6 +123,13 @@ static int ecdh_compute_key(void *out, s
+     size_t buflen, len;
+     unsigned char *buf = NULL;
+ 
++#ifdef OPENSSL_FIPS
++    if (FIPS_selftest_failed()) {
++        FIPSerr(FIPS_F_ECDH_COMPUTE_KEY, FIPS_R_FIPS_SELFTEST_FAILED);
++        return -1;
++    }
++#endif
++
+     if (outlen > INT_MAX) {
+         ECDHerr(ECDH_F_ECDH_COMPUTE_KEY, ERR_R_MALLOC_FAILURE); /* sort of,
+                                                                  * anyway */
+diff -up openssl-1.0.2a/crypto/ecdsa/ecdsatest.c.fips-ec openssl-1.0.2a/crypto/ecdsa/ecdsatest.c
+--- openssl-1.0.2a/crypto/ecdsa/ecdsatest.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdsa/ecdsatest.c	2015-04-22 19:00:19.722884536 +0200
+@@ -138,11 +138,14 @@ int restore_rand(void)
+ }
+ 
+ static int fbytes_counter = 0;
+-static const char *numbers[8] = {
++static const char *numbers[10] = {
++    "651056770906015076056810763456358567190100156695615665659",
+     "651056770906015076056810763456358567190100156695615665659",
+     "6140507067065001063065065565667405560006161556565665656654",
+     "8763001015071075675010661307616710783570106710677817767166"
+         "71676178726717",
++    "8763001015071075675010661307616710783570106710677817767166"
++        "71676178726717",
+     "7000000175690566466555057817571571075705015757757057795755"
+         "55657156756655",
+     "1275552191113212300012030439187146164646146646466749494799",
+@@ -158,7 +161,7 @@ int fbytes(unsigned char *buf, int num)
+     int ret;
+     BIGNUM *tmp = NULL;
+ 
+-    if (fbytes_counter >= 8)
++    if (fbytes_counter >= 10)
+         return 0;
+     tmp = BN_new();
+     if (!tmp)
+@@ -532,8 +535,10 @@ int main(void)
+     RAND_seed(rnd_seed, sizeof(rnd_seed));
+ 
+     /* the tests */
++# if 0
+     if (!x9_62_tests(out))
+         goto err;
++# endif
+     if (!test_builtin(out))
+         goto err;
+ 
+diff -up openssl-1.0.2a/crypto/ecdsa/ecs_lib.c.fips-ec openssl-1.0.2a/crypto/ecdsa/ecs_lib.c
+--- openssl-1.0.2a/crypto/ecdsa/ecs_lib.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdsa/ecs_lib.c	2015-04-22 19:00:19.722884536 +0200
+@@ -80,14 +80,7 @@ void ECDSA_set_default_method(const ECDS
+ const ECDSA_METHOD *ECDSA_get_default_method(void)
+ {
+     if (!default_ECDSA_method) {
+-#ifdef OPENSSL_FIPS
+-        if (FIPS_mode())
+-            return FIPS_ecdsa_openssl();
+-        else
+-            return ECDSA_OpenSSL();
+-#else
+         default_ECDSA_method = ECDSA_OpenSSL();
+-#endif
+     }
+     return default_ECDSA_method;
+ }
+diff -up openssl-1.0.2a/crypto/ecdsa/ecs_ossl.c.fips-ec openssl-1.0.2a/crypto/ecdsa/ecs_ossl.c
+--- openssl-1.0.2a/crypto/ecdsa/ecs_ossl.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/ecdsa/ecs_ossl.c	2015-04-22 19:00:19.722884536 +0200
+@@ -60,6 +60,9 @@
+ #include <openssl/err.h>
+ #include <openssl/obj_mac.h>
+ #include <openssl/bn.h>
++#ifdef OPENSSL_FIPS
++# include <openssl/fips.h>
++#endif
+ 
+ static ECDSA_SIG *ecdsa_do_sign(const unsigned char *dgst, int dlen,
+                                 const BIGNUM *, const BIGNUM *,
+@@ -78,7 +81,7 @@ static ECDSA_METHOD openssl_ecdsa_meth =
+     NULL,                       /* init */
+     NULL,                       /* finish */
+ #endif
+-    0,                          /* flags */
++    ECDSA_FLAG_FIPS_METHOD,     /* flags */
+     NULL                        /* app_data */
+ };
+ 
+@@ -245,6 +248,13 @@ static ECDSA_SIG *ecdsa_do_sign(const un
+     ECDSA_DATA *ecdsa;
+     const BIGNUM *priv_key;
+ 
++#ifdef OPENSSL_FIPS
++    if (FIPS_selftest_failed()) {
++        FIPSerr(FIPS_F_ECDSA_DO_SIGN, FIPS_R_FIPS_SELFTEST_FAILED);
++        return NULL;
++    }
++#endif
++
+     ecdsa = ecdsa_check(eckey);
+     group = EC_KEY_get0_group(eckey);
+     priv_key = EC_KEY_get0_private_key(eckey);
+@@ -358,6 +368,13 @@ static int ecdsa_do_verify(const unsigne
+     const EC_GROUP *group;
+     const EC_POINT *pub_key;
+ 
++#ifdef OPENSSL_FIPS
++    if (FIPS_selftest_failed()) {
++        FIPSerr(FIPS_F_ECDSA_DO_VERIFY, FIPS_R_FIPS_SELFTEST_FAILED);
++        return -1;
++    }
++#endif
++
+     /* check input values */
+     if (eckey == NULL || (group = EC_KEY_get0_group(eckey)) == NULL ||
+         (pub_key = EC_KEY_get0_public_key(eckey)) == NULL || sig == NULL) {
+diff -up openssl-1.0.2a/crypto/ec/ec_cvt.c.fips-ec openssl-1.0.2a/crypto/ec/ec_cvt.c
+--- openssl-1.0.2a/crypto/ec/ec_cvt.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/ec/ec_cvt.c	2015-04-22 19:01:08.703040756 +0200
+@@ -82,10 +82,6 @@ EC_GROUP *EC_GROUP_new_curve_GFp(const B
+     const EC_METHOD *meth;
+     EC_GROUP *ret;
+ 
+-#ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return FIPS_ec_group_new_curve_gfp(p, a, b, ctx);
+-#endif
+ #if defined(OPENSSL_BN_ASM_MONT)
+     /*
+      * This might appear controversial, but the fact is that generic
+@@ -160,10 +156,6 @@ EC_GROUP *EC_GROUP_new_curve_GF2m(const
+     const EC_METHOD *meth;
+     EC_GROUP *ret;
+ 
+-# ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return FIPS_ec_group_new_curve_gf2m(p, a, b, ctx);
+-# endif
+     meth = EC_GF2m_simple_method();
+ 
+     ret = EC_GROUP_new(meth);
+diff -up openssl-1.0.2a/crypto/ec/ec_key.c.fips-ec openssl-1.0.2a/crypto/ec/ec_key.c
+--- openssl-1.0.2a/crypto/ec/ec_key.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ec/ec_key.c	2015-04-22 19:00:19.722884536 +0200
+@@ -64,9 +64,6 @@
+ #include <string.h>
+ #include "ec_lcl.h"
+ #include <openssl/err.h>
+-#ifdef OPENSSL_FIPS
+-# include <openssl/fips.h>
+-#endif
+ 
+ EC_KEY *EC_KEY_new(void)
+ {
+@@ -227,6 +224,38 @@ int EC_KEY_up_ref(EC_KEY *r)
+     return ((i > 1) ? 1 : 0);
+ }
+ 
++#ifdef OPENSSL_FIPS
++
++# include <openssl/evp.h>
++# include <openssl/fips.h>
++# include <openssl/fips_rand.h>
++
++static int fips_check_ec(EC_KEY *key)
++{
++    EVP_PKEY *pk;
++    unsigned char tbs[] = "ECDSA Pairwise Check Data";
++    int ret = 0;
++
++    if ((pk = EVP_PKEY_new()) == NULL)
++        goto err;
++
++    EVP_PKEY_set1_EC_KEY(pk, key);
++
++    if (fips_pkey_signature_test(pk, tbs, -1, NULL, 0, NULL, 0, NULL))
++        ret = 1;
++
++ err:
++    if (ret == 0) {
++        FIPSerr(FIPS_F_FIPS_CHECK_EC, FIPS_R_PAIRWISE_TEST_FAILED);
++        fips_set_selftest_fail();
++    }
++    if (pk)
++        EVP_PKEY_free(pk);
++    return ret;
++}
++
++#endif
++
+ int EC_KEY_generate_key(EC_KEY *eckey)
+ {
+     int ok = 0;
+@@ -235,8 +264,10 @@ int EC_KEY_generate_key(EC_KEY *eckey)
+     EC_POINT *pub_key = NULL;
+ 
+ #ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return FIPS_ec_key_generate_key(eckey);
++    if (FIPS_selftest_failed()) {
++        FIPSerr(FIPS_F_EC_KEY_GENERATE_KEY, FIPS_R_FIPS_SELFTEST_FAILED);
++        return 0;
++    }
+ #endif
+ 
+     if (!eckey || !eckey->group) {
+@@ -277,6 +308,14 @@ int EC_KEY_generate_key(EC_KEY *eckey)
+     eckey->priv_key = priv_key;
+     eckey->pub_key = pub_key;
+ 
++#ifdef OPENSSL_FIPS
++    if (!fips_check_ec(eckey)) {
++        eckey->priv_key = NULL;
++        eckey->pub_key = NULL;
++        goto err;
++    }
++#endif
++
+     ok = 1;
+ 
+  err:
+@@ -408,10 +447,12 @@ int EC_KEY_set_public_key_affine_coordin
+             goto err;
+     }
+     /*
+-     * Check if retrieved coordinates match originals: if not values are out
+-     * of range.
++     * Check if retrieved coordinates match originals and are less
++     * than field order: if not values are out of range.
+      */
+-    if (BN_cmp(x, tx) || BN_cmp(y, ty)) {
++    if (BN_cmp(x, tx) || BN_cmp(y, ty)
++        || (BN_cmp(x, &key->group->field) >= 0)
++        || (BN_cmp(y, &key->group->field) >= 0)) {
+         ECerr(EC_F_EC_KEY_SET_PUBLIC_KEY_AFFINE_COORDINATES,
+               EC_R_COORDINATES_OUT_OF_RANGE);
+         goto err;
+diff -up openssl-1.0.2a/crypto/ec/ecp_mont.c.fips-ec openssl-1.0.2a/crypto/ec/ecp_mont.c
+--- openssl-1.0.2a/crypto/ec/ecp_mont.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ec/ecp_mont.c	2015-04-22 19:00:19.722884536 +0200
+@@ -63,10 +63,6 @@
+ 
+ #include <openssl/err.h>
+ 
+-#ifdef OPENSSL_FIPS
+-# include <openssl/fips.h>
+-#endif
+-
+ #include "ec_lcl.h"
+ 
+ const EC_METHOD *EC_GFp_mont_method(void)
+@@ -111,11 +107,6 @@ const EC_METHOD *EC_GFp_mont_method(void
+         ec_GFp_mont_field_set_to_one
+     };
+ 
+-#ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return fips_ec_gfp_mont_method();
+-#endif
+-
+     return &ret;
+ }
+ 
+diff -up openssl-1.0.2a/crypto/ec/ecp_nist.c.fips-ec openssl-1.0.2a/crypto/ec/ecp_nist.c
+--- openssl-1.0.2a/crypto/ec/ecp_nist.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ec/ecp_nist.c	2015-04-22 19:00:19.723884560 +0200
+@@ -67,10 +67,6 @@
+ #include <openssl/obj_mac.h>
+ #include "ec_lcl.h"
+ 
+-#ifdef OPENSSL_FIPS
+-# include <openssl/fips.h>
+-#endif
+-
+ const EC_METHOD *EC_GFp_nist_method(void)
+ {
+     static const EC_METHOD ret = {
+@@ -113,11 +109,6 @@ const EC_METHOD *EC_GFp_nist_method(void
+         0                       /* field_set_to_one */
+     };
+ 
+-#ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return fips_ec_gfp_nist_method();
+-#endif
+-
+     return &ret;
+ }
+ 
+diff -up openssl-1.0.2a/crypto/ec/ecp_smpl.c.fips-ec openssl-1.0.2a/crypto/ec/ecp_smpl.c
+--- openssl-1.0.2a/crypto/ec/ecp_smpl.c.fips-ec	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a/crypto/ec/ecp_smpl.c	2015-04-22 19:00:19.723884560 +0200
+@@ -66,10 +66,6 @@
+ #include <openssl/err.h>
+ #include <openssl/symhacks.h>
+ 
+-#ifdef OPENSSL_FIPS
+-# include <openssl/fips.h>
+-#endif
+-
+ #include "ec_lcl.h"
+ 
+ const EC_METHOD *EC_GFp_simple_method(void)
+@@ -114,11 +110,6 @@ const EC_METHOD *EC_GFp_simple_method(vo
+         0                       /* field_set_to_one */
+     };
+ 
+-#ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        return fips_ec_gfp_simple_method();
+-#endif
+-
+     return &ret;
+ }
+ 
+@@ -187,6 +178,11 @@ int ec_GFp_simple_group_set_curve(EC_GRO
+         return 0;
+     }
+ 
++    if (BN_num_bits(p) < 256) {
++        ECerr(EC_F_EC_GFP_SIMPLE_GROUP_SET_CURVE, EC_R_UNSUPPORTED_FIELD);
++        return 0;
++    }
++
+     if (ctx == NULL) {
+         ctx = new_ctx = BN_CTX_new();
+         if (ctx == NULL)
+diff -up openssl-1.0.2a/crypto/evp/m_ecdsa.c.fips-ec openssl-1.0.2a/crypto/evp/m_ecdsa.c
+--- openssl-1.0.2a/crypto/evp/m_ecdsa.c.fips-ec	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/evp/m_ecdsa.c	2015-04-22 19:00:19.723884560 +0200
+@@ -136,7 +136,7 @@ static const EVP_MD ecdsa_md = {
+     NID_ecdsa_with_SHA1,
+     NID_ecdsa_with_SHA1,
+     SHA_DIGEST_LENGTH,
+-    EVP_MD_FLAG_PKEY_DIGEST,
++    EVP_MD_FLAG_PKEY_DIGEST | EVP_MD_FLAG_FIPS,
+     init,
+     update,
+     final,
+diff -up openssl-1.0.2a/crypto/fips/cavs/fips_ecdhvs.c.fips-ec openssl-1.0.2a/crypto/fips/cavs/fips_ecdhvs.c
+--- openssl-1.0.2a/crypto/fips/cavs/fips_ecdhvs.c.fips-ec	2015-04-22 19:00:19.723884560 +0200
++++ openssl-1.0.2a/crypto/fips/cavs/fips_ecdhvs.c	2015-04-22 19:00:19.723884560 +0200
+@@ -0,0 +1,456 @@
++/* fips/ecdh/fips_ecdhvs.c */
++/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
++ * project.
++ */
++/* ====================================================================
++ * Copyright (c) 2011 The OpenSSL Project.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. All advertising materials mentioning features or use of this
++ *    software must display the following acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
++ *
++ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For written permission, please contact
++ *    licensing@OpenSSL.org.
++ *
++ * 5. Products derived from this software may not be called "OpenSSL"
++ *    nor may "OpenSSL" appear in their names without prior written
++ *    permission of the OpenSSL Project.
++ *
++ * 6. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
++ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
++ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
++ * OF THE POSSIBILITY OF SUCH DAMAGE.
++ * ====================================================================
++ */
++
++#define OPENSSL_FIPSAPI
++#include <openssl/opensslconf.h>
++
++#ifndef OPENSSL_FIPS
++# include <stdio.h>
++
++int main(int argc, char **argv)
++{
++    printf("No FIPS ECDH support\n");
++    return (0);
++}
++#else
++
++# include <openssl/crypto.h>
++# include <openssl/bn.h>
++# include <openssl/ecdh.h>
++# include <openssl/fips.h>
++# include <openssl/err.h>
++# include <openssl/evp.h>
++# include <string.h>
++# include <ctype.h>
++
++# include "fips_utl.h"
++
++static const EVP_MD *eparse_md(char *line)
++{
++    char *p;
++    if (line[0] != '[' || line[1] != 'E')
++        return NULL;
++    p = strchr(line, '-');
++    if (!p)
++        return NULL;
++    line = p + 1;
++    p = strchr(line, ']');
++    if (!p)
++        return NULL;
++    *p = 0;
++    p = line;
++    while (isspace(*p))
++        p++;
++    if (!strcmp(p, "SHA1"))
++        return EVP_sha1();
++    else if (!strcmp(p, "SHA224"))
++        return EVP_sha224();
++    else if (!strcmp(p, "SHA256"))
++        return EVP_sha256();
++    else if (!strcmp(p, "SHA384"))
++        return EVP_sha384();
++    else if (!strcmp(p, "SHA512"))
++        return EVP_sha512();
++    else
++        return NULL;
++}
++
++static int lookup_curve2(char *cname)
++{
++    char *p;
++    p = strchr(cname, ']');
++    if (!p) {
++        fprintf(stderr, "Parse error: missing ]\n");
++        return NID_undef;
++    }
++    *p = 0;
++
++    if (!strcmp(cname, "B-163"))
++        return NID_sect163r2;
++    if (!strcmp(cname, "B-233"))
++        return NID_sect233r1;
++    if (!strcmp(cname, "B-283"))
++        return NID_sect283r1;
++    if (!strcmp(cname, "B-409"))
++        return NID_sect409r1;
++    if (!strcmp(cname, "B-571"))
++        return NID_sect571r1;
++    if (!strcmp(cname, "K-163"))
++        return NID_sect163k1;
++    if (!strcmp(cname, "K-233"))
++        return NID_sect233k1;
++    if (!strcmp(cname, "K-283"))
++        return NID_sect283k1;
++    if (!strcmp(cname, "K-409"))
++        return NID_sect409k1;
++    if (!strcmp(cname, "K-571"))
++        return NID_sect571k1;
++    if (!strcmp(cname, "P-192"))
++        return NID_X9_62_prime192v1;
++    if (!strcmp(cname, "P-224"))
++        return NID_secp224r1;
++    if (!strcmp(cname, "P-256"))
++        return NID_X9_62_prime256v1;
++    if (!strcmp(cname, "P-384"))
++        return NID_secp384r1;
++    if (!strcmp(cname, "P-521"))
++        return NID_secp521r1;
++
++    fprintf(stderr, "Unknown Curve name %s\n", cname);
++    return NID_undef;
++}
++
++static int lookup_curve(char *cname)
++{
++    char *p;
++    p = strchr(cname, ':');
++    if (!p) {
++        fprintf(stderr, "Parse error: missing :\n");
++        return NID_undef;
++    }
++    cname = p + 1;
++    while (isspace(*cname))
++        cname++;
++    return lookup_curve2(cname);
++}
++
++static EC_POINT *make_peer(EC_GROUP *group, BIGNUM *x, BIGNUM *y)
++{
++    EC_POINT *peer;
++    int rv;
++    BN_CTX *c;
++    peer = EC_POINT_new(group);
++    if (!peer)
++        return NULL;
++    c = BN_CTX_new();
++    if (EC_METHOD_get_field_type(EC_GROUP_method_of(group))
++        == NID_X9_62_prime_field)
++        rv = EC_POINT_set_affine_coordinates_GFp(group, peer, x, y, c);
++    else
++# ifdef OPENSSL_NO_EC2M
++    {
++        fprintf(stderr, "ERROR: GF2m not supported\n");
++        exit(1);
++    }
++# else
++        rv = EC_POINT_set_affine_coordinates_GF2m(group, peer, x, y, c);
++# endif
++
++    BN_CTX_free(c);
++    if (rv)
++        return peer;
++    EC_POINT_free(peer);
++    return NULL;
++}
++
++static int ec_print_key(FILE *out, EC_KEY *key, int add_e, int exout)
++{
++    const EC_POINT *pt;
++    const EC_GROUP *grp;
++    const EC_METHOD *meth;
++    int rv;
++    BIGNUM *tx, *ty;
++    const BIGNUM *d = NULL;
++    BN_CTX *ctx;
++    ctx = BN_CTX_new();
++    if (!ctx)
++        return 0;
++    tx = BN_CTX_get(ctx);
++    ty = BN_CTX_get(ctx);
++    if (!tx || !ty)
++        return 0;
++    grp = EC_KEY_get0_group(key);
++    pt = EC_KEY_get0_public_key(key);
++    if (exout)
++        d = EC_KEY_get0_private_key(key);
++    meth = EC_GROUP_method_of(grp);
++    if (EC_METHOD_get_field_type(meth) == NID_X9_62_prime_field)
++        rv = EC_POINT_get_affine_coordinates_GFp(grp, pt, tx, ty, ctx);
++    else
++# ifdef OPENSSL_NO_EC2M
++    {
++        fprintf(stderr, "ERROR: GF2m not supported\n");
++        exit(1);
++    }
++# else
++        rv = EC_POINT_get_affine_coordinates_GF2m(grp, pt, tx, ty, ctx);
++# endif
++
++    if (add_e) {
++        do_bn_print_name(out, "QeIUTx", tx);
++        do_bn_print_name(out, "QeIUTy", ty);
++        if (d)
++            do_bn_print_name(out, "QeIUTd", d);
++    } else {
++        do_bn_print_name(out, "QIUTx", tx);
++        do_bn_print_name(out, "QIUTy", ty);
++        if (d)
++            do_bn_print_name(out, "QIUTd", d);
++    }
++
++    BN_CTX_free(ctx);
++
++    return rv;
++
++}
++
++static void ec_output_Zhash(FILE *out, int exout, EC_GROUP *group,
++                            BIGNUM *ix, BIGNUM *iy, BIGNUM *id, BIGNUM *cx,
++                            BIGNUM *cy, const EVP_MD *md,
++                            unsigned char *rhash, size_t rhashlen)
++{
++    EC_KEY *ec = NULL;
++    EC_POINT *peerkey = NULL;
++    unsigned char *Z;
++    unsigned char chash[EVP_MAX_MD_SIZE];
++    int Zlen;
++    ec = EC_KEY_new();
++    EC_KEY_set_flags(ec, EC_FLAG_COFACTOR_ECDH);
++    EC_KEY_set_group(ec, group);
++    peerkey = make_peer(group, cx, cy);
++    if (rhash == NULL) {
++        if (md)
++            rhashlen = M_EVP_MD_size(md);
++        EC_KEY_generate_key(ec);
++        ec_print_key(out, ec, md ? 1 : 0, exout);
++    } else {
++        EC_KEY_set_public_key_affine_coordinates(ec, ix, iy);
++        EC_KEY_set_private_key(ec, id);
++    }
++    Zlen = (EC_GROUP_get_degree(group) + 7) / 8;
++    Z = OPENSSL_malloc(Zlen);
++    if (!Z)
++        exit(1);
++    ECDH_compute_key(Z, Zlen, peerkey, ec, 0);
++    if (md) {
++        if (exout)
++            OutputValue("Z", Z, Zlen, out, 0);
++        FIPS_digest(Z, Zlen, chash, NULL, md);
++        OutputValue(rhash ? "IUTHashZZ" : "HashZZ", chash, rhashlen, out, 0);
++        if (rhash) {
++            fprintf(out, "Result = %s\n",
++                    memcmp(chash, rhash, rhashlen) ? "F" : "P");
++        }
++    } else
++        OutputValue("ZIUT", Z, Zlen, out, 0);
++    OPENSSL_cleanse(Z, Zlen);
++    OPENSSL_free(Z);
++    EC_KEY_free(ec);
++    EC_POINT_free(peerkey);
++}
++
++# ifdef FIPS_ALGVS
++int fips_ecdhvs_main(int argc, char **argv)
++# else
++int main(int argc, char **argv)
++# endif
++{
++    char **args = argv + 1;
++    int argn = argc - 1;
++    FILE *in, *out;
++    char buf[2048], lbuf[2048];
++    unsigned char *rhash = NULL;
++    long rhashlen;
++    BIGNUM *cx = NULL, *cy = NULL;
++    BIGNUM *id = NULL, *ix = NULL, *iy = NULL;
++    const EVP_MD *md = NULL;
++    EC_GROUP *group = NULL;
++    char *keyword = NULL, *value = NULL;
++    int do_verify = -1, exout = 0;
++    int rv = 1;
++
++    int curve_nids[5] = { 0, 0, 0, 0, 0 };
++    int param_set = -1;
++
++    fips_algtest_init();
++
++    if (argn && !strcmp(*args, "ecdhver")) {
++        do_verify = 1;
++        args++;
++        argn--;
++    } else if (argn && !strcmp(*args, "ecdhgen")) {
++        do_verify = 0;
++        args++;
++        argn--;
++    }
++
++    if (argn && !strcmp(*args, "-exout")) {
++        exout = 1;
++        args++;
++        argn--;
++    }
++
++    if (do_verify == -1) {
++        fprintf(stderr, "%s [ecdhver|ecdhgen|] [-exout] (infile outfile)\n",
++                argv[0]);
++        exit(1);
++    }
++
++    if (argn == 2) {
++        in = fopen(*args, "r");
++        if (!in) {
++            fprintf(stderr, "Error opening input file\n");
++            exit(1);
++        }
++        out = fopen(args[1], "w");
++        if (!out) {
++            fprintf(stderr, "Error opening output file\n");
++            exit(1);
++        }
++    } else if (argn == 0) {
++        in = stdin;
++        out = stdout;
++    } else {
++        fprintf(stderr, "%s [dhver|dhgen|] [-exout] (infile outfile)\n",
++                argv[0]);
++        exit(1);
++    }
++
++    while (fgets(buf, sizeof(buf), in) != NULL) {
++        fputs(buf, out);
++        if (buf[0] == '[' && buf[1] == 'E') {
++            int c = buf[2];
++            if (c < 'A' || c > 'E')
++                goto parse_error;
++            param_set = c - 'A';
++            /* If just [E?] then initial paramset */
++            if (buf[3] == ']')
++                continue;
++            if (group)
++                EC_GROUP_free(group);
++            group = EC_GROUP_new_by_curve_name(curve_nids[c - 'A']);
++        }
++        if (strlen(buf) > 10 && !strncmp(buf, "[Curve", 6)) {
++            int nid;
++            if (param_set == -1)
++                goto parse_error;
++            nid = lookup_curve(buf);
++            if (nid == NID_undef)
++                goto parse_error;
++            curve_nids[param_set] = nid;
++        }
++
++        if (strlen(buf) > 4 && buf[0] == '[' && buf[2] == '-') {
++            int nid = lookup_curve2(buf + 1);
++            if (nid == NID_undef)
++                goto parse_error;
++            if (group)
++                EC_GROUP_free(group);
++            group = EC_GROUP_new_by_curve_name(nid);
++            if (!group) {
++                fprintf(stderr, "ERROR: unsupported curve %s\n", buf + 1);
++                return 1;
++            }
++        }
++
++        if (strlen(buf) > 6 && !strncmp(buf, "[E", 2)) {
++            md = eparse_md(buf);
++            if (md == NULL)
++                goto parse_error;
++            continue;
++        }
++        if (!parse_line(&keyword, &value, lbuf, buf))
++            continue;
++        if (!strcmp(keyword, "QeCAVSx") || !strcmp(keyword, "QCAVSx")) {
++            if (!do_hex2bn(&cx, value))
++                goto parse_error;
++        } else if (!strcmp(keyword, "QeCAVSy") || !strcmp(keyword, "QCAVSy")) {
++            if (!do_hex2bn(&cy, value))
++                goto parse_error;
++            if (do_verify == 0)
++                ec_output_Zhash(out, exout, group,
++                                NULL, NULL, NULL,
++                                cx, cy, md, rhash, rhashlen);
++        } else if (!strcmp(keyword, "deIUT")) {
++            if (!do_hex2bn(&id, value))
++                goto parse_error;
++        } else if (!strcmp(keyword, "QeIUTx")) {
++            if (!do_hex2bn(&ix, value))
++                goto parse_error;
++        } else if (!strcmp(keyword, "QeIUTy")) {
++            if (!do_hex2bn(&iy, value))
++                goto parse_error;
++        } else if (!strcmp(keyword, "CAVSHashZZ")) {
++            if (!md)
++                goto parse_error;
++            rhash = hex2bin_m(value, &rhashlen);
++            if (!rhash || rhashlen != M_EVP_MD_size(md))
++                goto parse_error;
++            ec_output_Zhash(out, exout, group, ix, iy, id, cx, cy,
++                            md, rhash, rhashlen);
++        }
++    }
++    rv = 0;
++ parse_error:
++    if (id)
++        BN_free(id);
++    if (ix)
++        BN_free(ix);
++    if (iy)
++        BN_free(iy);
++    if (cx)
++        BN_free(cx);
++    if (cy)
++        BN_free(cy);
++    if (group)
++        EC_GROUP_free(group);
++    if (in && in != stdin)
++        fclose(in);
++    if (out && out != stdout)
++        fclose(out);
++    if (rv)
++        fprintf(stderr, "Error Parsing request file\n");
++    return rv;
++}
++
++#endif
+diff -up openssl-1.0.2a/crypto/fips/cavs/fips_ecdsavs.c.fips-ec openssl-1.0.2a/crypto/fips/cavs/fips_ecdsavs.c
+--- openssl-1.0.2a/crypto/fips/cavs/fips_ecdsavs.c.fips-ec	2015-04-22 19:00:19.723884560 +0200
++++ openssl-1.0.2a/crypto/fips/cavs/fips_ecdsavs.c	2015-04-22 19:00:19.723884560 +0200
+@@ -0,0 +1,486 @@
++/* fips/ecdsa/fips_ecdsavs.c */
++/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
++ * project.
++ */
++/* ====================================================================
++ * Copyright (c) 2011 The OpenSSL Project.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. All advertising materials mentioning features or use of this
++ *    software must display the following acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
++ *
++ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For written permission, please contact
++ *    licensing@OpenSSL.org.
++ *
++ * 5. Products derived from this software may not be called "OpenSSL"
++ *    nor may "OpenSSL" appear in their names without prior written
++ *    permission of the OpenSSL Project.
++ *
++ * 6. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
++ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
++ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
++ * OF THE POSSIBILITY OF SUCH DAMAGE.
++ * ====================================================================
++ */
++
++#define OPENSSL_FIPSAPI
++#include <openssl/opensslconf.h>
++#include <stdio.h>
++
++#ifndef OPENSSL_FIPS
++
++int main(int argc, char **argv)
++{
++    printf("No FIPS ECDSA support\n");
++    return (0);
++}
++#else
++
++# include <string.h>
++# include <ctype.h>
++# include <openssl/err.h>
++# include <openssl/bn.h>
++# include <openssl/ecdsa.h>
++# include <openssl/evp.h>
++# include "fips_utl.h"
++
++# include <openssl/objects.h>
++
++static int elookup_curve(char *in, char *curve_name, const EVP_MD **pmd)
++{
++    char *cname, *p;
++    /* Copy buffer as we will change it */
++    strcpy(curve_name, in);
++    cname = curve_name + 1;
++    p = strchr(cname, ']');
++    if (!p) {
++        fprintf(stderr, "Parse error: missing ]\n");
++        return NID_undef;
++    }
++    *p = 0;
++    p = strchr(cname, ',');
++    if (p) {
++        if (!pmd) {
++            fprintf(stderr, "Parse error: unexpected digest\n");
++            return NID_undef;
++        }
++        *p = 0;
++        p++;
++
++        if (!strcmp(p, "SHA-1"))
++            *pmd = EVP_sha1();
++        else if (!strcmp(p, "SHA-224"))
++            *pmd = EVP_sha224();
++        else if (!strcmp(p, "SHA-256"))
++            *pmd = EVP_sha256();
++        else if (!strcmp(p, "SHA-384"))
++            *pmd = EVP_sha384();
++        else if (!strcmp(p, "SHA-512"))
++            *pmd = EVP_sha512();
++        else {
++            fprintf(stderr, "Unknown digest %s\n", p);
++            return NID_undef;
++        }
++    } else if (pmd)
++        *pmd = EVP_sha1();
++
++    if (!strcmp(cname, "B-163"))
++        return NID_sect163r2;
++    if (!strcmp(cname, "B-233"))
++        return NID_sect233r1;
++    if (!strcmp(cname, "B-283"))
++        return NID_sect283r1;
++    if (!strcmp(cname, "B-409"))
++        return NID_sect409r1;
++    if (!strcmp(cname, "B-571"))
++        return NID_sect571r1;
++    if (!strcmp(cname, "K-163"))
++        return NID_sect163k1;
++    if (!strcmp(cname, "K-233"))
++        return NID_sect233k1;
++    if (!strcmp(cname, "K-283"))
++        return NID_sect283k1;
++    if (!strcmp(cname, "K-409"))
++        return NID_sect409k1;
++    if (!strcmp(cname, "K-571"))
++        return NID_sect571k1;
++    if (!strcmp(cname, "P-192"))
++        return NID_X9_62_prime192v1;
++    if (!strcmp(cname, "P-224"))
++        return NID_secp224r1;
++    if (!strcmp(cname, "P-256"))
++        return NID_X9_62_prime256v1;
++    if (!strcmp(cname, "P-384"))
++        return NID_secp384r1;
++    if (!strcmp(cname, "P-521"))
++        return NID_secp521r1;
++
++    fprintf(stderr, "Unknown Curve name %s\n", cname);
++    return NID_undef;
++}
++
++static int ec_get_pubkey(EC_KEY *key, BIGNUM *x, BIGNUM *y)
++{
++    const EC_POINT *pt;
++    const EC_GROUP *grp;
++    const EC_METHOD *meth;
++    int rv;
++    BN_CTX *ctx;
++    ctx = BN_CTX_new();
++    if (!ctx)
++        return 0;
++    grp = EC_KEY_get0_group(key);
++    pt = EC_KEY_get0_public_key(key);
++    meth = EC_GROUP_method_of(grp);
++    if (EC_METHOD_get_field_type(meth) == NID_X9_62_prime_field)
++        rv = EC_POINT_get_affine_coordinates_GFp(grp, pt, x, y, ctx);
++    else
++# ifdef OPENSSL_NO_EC2M
++    {
++        fprintf(stderr, "ERROR: GF2m not supported\n");
++        exit(1);
++    }
++# else
++        rv = EC_POINT_get_affine_coordinates_GF2m(grp, pt, x, y, ctx);
++# endif
++
++    BN_CTX_free(ctx);
++
++    return rv;
++
++}
++
++static int KeyPair(FILE *in, FILE *out)
++{
++    char buf[2048], lbuf[2048];
++    char *keyword, *value;
++    int curve_nid = NID_undef;
++    int i, count;
++    BIGNUM *Qx = NULL, *Qy = NULL;
++    const BIGNUM *d = NULL;
++    EC_KEY *key = NULL;
++    Qx = BN_new();
++    Qy = BN_new();
++    while (fgets(buf, sizeof buf, in) != NULL) {
++        if (*buf == '[' && buf[2] == '-') {
++            if (buf[2] == '-')
++                curve_nid = elookup_curve(buf, lbuf, NULL);
++            fputs(buf, out);
++            continue;
++        }
++        if (!parse_line(&keyword, &value, lbuf, buf)) {
++            fputs(buf, out);
++            continue;
++        }
++        if (!strcmp(keyword, "N")) {
++            count = atoi(value);
++
++            for (i = 0; i < count; i++) {
++
++                key = EC_KEY_new_by_curve_name(curve_nid);
++                if (!EC_KEY_generate_key(key)) {
++                    fprintf(stderr, "Error generating key\n");
++                    return 0;
++                }
++
++                if (!ec_get_pubkey(key, Qx, Qy)) {
++                    fprintf(stderr, "Error getting public key\n");
++                    return 0;
++                }
++
++                d = EC_KEY_get0_private_key(key);
++
++                do_bn_print_name(out, "d", d);
++                do_bn_print_name(out, "Qx", Qx);
++                do_bn_print_name(out, "Qy", Qy);
++                fputs(RESP_EOL, out);
++                EC_KEY_free(key);
++
++            }
++
++        }
++
++    }
++    BN_free(Qx);
++    BN_free(Qy);
++    return 1;
++}
++
++static int PKV(FILE *in, FILE *out)
++{
++
++    char buf[2048], lbuf[2048];
++    char *keyword, *value;
++    int curve_nid = NID_undef;
++    BIGNUM *Qx = NULL, *Qy = NULL;
++    EC_KEY *key = NULL;
++    while (fgets(buf, sizeof buf, in) != NULL) {
++        fputs(buf, out);
++        if (*buf == '[' && buf[2] == '-') {
++            curve_nid = elookup_curve(buf, lbuf, NULL);
++            if (curve_nid == NID_undef)
++                return 0;
++
++        }
++        if (!parse_line(&keyword, &value, lbuf, buf))
++            continue;
++        if (!strcmp(keyword, "Qx")) {
++            if (!do_hex2bn(&Qx, value)) {
++                fprintf(stderr, "Invalid Qx value\n");
++                return 0;
++            }
++        }
++        if (!strcmp(keyword, "Qy")) {
++            int rv;
++            if (!do_hex2bn(&Qy, value)) {
++                fprintf(stderr, "Invalid Qy value\n");
++                return 0;
++            }
++            key = EC_KEY_new_by_curve_name(curve_nid);
++            no_err = 1;
++            rv = EC_KEY_set_public_key_affine_coordinates(key, Qx, Qy);
++            no_err = 0;
++            EC_KEY_free(key);
++            fprintf(out, "Result = %s" RESP_EOL, rv ? "P" : "F");
++        }
++
++    }
++    BN_free(Qx);
++    BN_free(Qy);
++    return 1;
++}
++
++static int SigGen(FILE *in, FILE *out)
++{
++    char buf[2048], lbuf[2048];
++    char *keyword, *value;
++    unsigned char *msg;
++    int curve_nid = NID_undef;
++    long mlen;
++    BIGNUM *Qx = NULL, *Qy = NULL;
++    EC_KEY *key = NULL;
++    ECDSA_SIG *sig = NULL;
++    const EVP_MD *digest = NULL;
++    Qx = BN_new();
++    Qy = BN_new();
++    while (fgets(buf, sizeof buf, in) != NULL) {
++        fputs(buf, out);
++        if (*buf == '[') {
++            curve_nid = elookup_curve(buf, lbuf, &digest);
++            if (curve_nid == NID_undef)
++                return 0;
++        }
++        if (!parse_line(&keyword, &value, lbuf, buf))
++            continue;
++        if (!strcmp(keyword, "Msg")) {
++            msg = hex2bin_m(value, &mlen);
++            if (!msg) {
++                fprintf(stderr, "Invalid Message\n");
++                return 0;
++            }
++
++            key = EC_KEY_new_by_curve_name(curve_nid);
++            if (!EC_KEY_generate_key(key)) {
++                fprintf(stderr, "Error generating key\n");
++                return 0;
++            }
++
++            if (!ec_get_pubkey(key, Qx, Qy)) {
++                fprintf(stderr, "Error getting public key\n");
++                return 0;
++            }
++
++            sig = FIPS_ecdsa_sign(key, msg, mlen, digest);
++
++            if (!sig) {
++                fprintf(stderr, "Error signing message\n");
++                return 0;
++            }
++
++            do_bn_print_name(out, "Qx", Qx);
++            do_bn_print_name(out, "Qy", Qy);
++            do_bn_print_name(out, "R", sig->r);
++            do_bn_print_name(out, "S", sig->s);
++
++            EC_KEY_free(key);
++            OPENSSL_free(msg);
++            FIPS_ecdsa_sig_free(sig);
++
++        }
++
++    }
++    BN_free(Qx);
++    BN_free(Qy);
++    return 1;
++}
++
++static int SigVer(FILE *in, FILE *out)
++{
++    char buf[2048], lbuf[2048];
++    char *keyword, *value;
++    unsigned char *msg = NULL;
++    int curve_nid = NID_undef;
++    long mlen;
++    BIGNUM *Qx = NULL, *Qy = NULL;
++    EC_KEY *key = NULL;
++    ECDSA_SIG sg, *sig = &sg;
++    const EVP_MD *digest = NULL;
++    sig->r = NULL;
++    sig->s = NULL;
++    while (fgets(buf, sizeof buf, in) != NULL) {
++        fputs(buf, out);
++        if (*buf == '[') {
++            curve_nid = elookup_curve(buf, lbuf, &digest);
++            if (curve_nid == NID_undef)
++                return 0;
++        }
++        if (!parse_line(&keyword, &value, lbuf, buf))
++            continue;
++        if (!strcmp(keyword, "Msg")) {
++            msg = hex2bin_m(value, &mlen);
++            if (!msg) {
++                fprintf(stderr, "Invalid Message\n");
++                return 0;
++            }
++        }
++
++        if (!strcmp(keyword, "Qx")) {
++            if (!do_hex2bn(&Qx, value)) {
++                fprintf(stderr, "Invalid Qx value\n");
++                return 0;
++            }
++        }
++        if (!strcmp(keyword, "Qy")) {
++            if (!do_hex2bn(&Qy, value)) {
++                fprintf(stderr, "Invalid Qy value\n");
++                return 0;
++            }
++        }
++        if (!strcmp(keyword, "R")) {
++            if (!do_hex2bn(&sig->r, value)) {
++                fprintf(stderr, "Invalid R value\n");
++                return 0;
++            }
++        }
++        if (!strcmp(keyword, "S")) {
++            int rv;
++            if (!do_hex2bn(&sig->s, value)) {
++                fprintf(stderr, "Invalid S value\n");
++                return 0;
++            }
++            key = EC_KEY_new_by_curve_name(curve_nid);
++            rv = EC_KEY_set_public_key_affine_coordinates(key, Qx, Qy);
++
++            if (rv != 1) {
++                fprintf(stderr, "Error setting public key\n");
++                return 0;
++            }
++
++            no_err = 1;
++            rv = FIPS_ecdsa_verify(key, msg, mlen, digest, sig);
++            EC_KEY_free(key);
++            if (msg)
++                OPENSSL_free(msg);
++            no_err = 0;
++
++            fprintf(out, "Result = %s" RESP_EOL, rv ? "P" : "F");
++        }
++
++    }
++    if (sig->r)
++        BN_free(sig->r);
++    if (sig->s)
++        BN_free(sig->s);
++    if (Qx)
++        BN_free(Qx);
++    if (Qy)
++        BN_free(Qy);
++    return 1;
++}
++
++# ifdef FIPS_ALGVS
++int fips_ecdsavs_main(int argc, char **argv)
++# else
++int main(int argc, char **argv)
++# endif
++{
++    FILE *in = NULL, *out = NULL;
++    const char *cmd = argv[1];
++    int rv = 0;
++    fips_algtest_init();
++
++    if (argc == 4) {
++        in = fopen(argv[2], "r");
++        if (!in) {
++            fprintf(stderr, "Error opening input file\n");
++            exit(1);
++        }
++        out = fopen(argv[3], "w");
++        if (!out) {
++            fprintf(stderr, "Error opening output file\n");
++            exit(1);
++        }
++    } else if (argc == 2) {
++        in = stdin;
++        out = stdout;
++    }
++
++    if (!cmd) {
++        fprintf(stderr, "fips_ecdsavs [KeyPair|PKV|SigGen|SigVer]\n");
++        return 1;
++    }
++    if (!strcmp(cmd, "KeyPair"))
++        rv = KeyPair(in, out);
++    else if (!strcmp(cmd, "PKV"))
++        rv = PKV(in, out);
++    else if (!strcmp(cmd, "SigVer"))
++        rv = SigVer(in, out);
++    else if (!strcmp(cmd, "SigGen"))
++        rv = SigGen(in, out);
++    else {
++        fprintf(stderr, "Unknown command %s\n", cmd);
++        return 1;
++    }
++
++    if (argc == 4) {
++        fclose(in);
++        fclose(out);
++    }
++
++    if (rv <= 0) {
++        fprintf(stderr, "Error running %s\n", cmd);
++        return 1;
++    }
++
++    return 0;
++}
++
++#endif
+diff -up openssl-1.0.2a/crypto/fips/fips_ecdh_selftest.c.fips-ec openssl-1.0.2a/crypto/fips/fips_ecdh_selftest.c
+--- openssl-1.0.2a/crypto/fips/fips_ecdh_selftest.c.fips-ec	2015-04-22 19:00:19.724884583 +0200
++++ openssl-1.0.2a/crypto/fips/fips_ecdh_selftest.c	2015-04-22 19:00:19.724884583 +0200
+@@ -0,0 +1,242 @@
++/* fips/ecdh/fips_ecdh_selftest.c */
++/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
++ * project 2011.
++ */
++/* ====================================================================
++ * Copyright (c) 2011 The OpenSSL Project.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. All advertising materials mentioning features or use of this
++ *    software must display the following acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
++ *
++ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For written permission, please contact
++ *    licensing@OpenSSL.org.
++ *
++ * 5. Products derived from this software may not be called "OpenSSL"
++ *    nor may "OpenSSL" appear in their names without prior written
++ *    permission of the OpenSSL Project.
++ *
++ * 6. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
++ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
++ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
++ * OF THE POSSIBILITY OF SUCH DAMAGE.
++ * ====================================================================
++ *
++ */
++
++#define OPENSSL_FIPSAPI
++
++#include <string.h>
++#include <openssl/crypto.h>
++#include <openssl/ec.h>
++#include <openssl/ecdh.h>
++#include <openssl/fips.h>
++#include <openssl/err.h>
++#include <openssl/evp.h>
++#include <openssl/bn.h>
++
++#ifdef OPENSSL_FIPS
++
++# include "fips_locl.h"
++
++static const unsigned char p256_qcavsx[] = {
++    0x52, 0xc6, 0xa5, 0x75, 0xf3, 0x04, 0x98, 0xb3, 0x29, 0x66, 0x0c, 0x62,
++    0x18, 0x60, 0x55, 0x41, 0x59, 0xd4, 0x60, 0x85, 0x99, 0xc1, 0x51, 0x13,
++    0x6f, 0x97, 0x85, 0x93, 0x33, 0x34, 0x07, 0x50
++};
++
++static const unsigned char p256_qcavsy[] = {
++    0x6f, 0x69, 0x24, 0xeb, 0xe9, 0x3b, 0xa7, 0xcc, 0x47, 0x17, 0xaa, 0x3f,
++    0x70, 0xfc, 0x10, 0x73, 0x0a, 0xcd, 0x21, 0xee, 0x29, 0x19, 0x1f, 0xaf,
++    0xb4, 0x1c, 0x1e, 0xc2, 0x8e, 0x97, 0x81, 0x6e
++};
++
++static const unsigned char p256_qiutx[] = {
++    0x71, 0x46, 0x88, 0x08, 0x92, 0x21, 0x1b, 0x10, 0x21, 0x74, 0xff, 0x0c,
++    0x94, 0xde, 0x34, 0x7c, 0x86, 0x74, 0xbe, 0x67, 0x41, 0x68, 0xd4, 0xc1,
++    0xe5, 0x75, 0x63, 0x9c, 0xa7, 0x46, 0x93, 0x6f
++};
++
++static const unsigned char p256_qiuty[] = {
++    0x33, 0x40, 0xa9, 0x6a, 0xf5, 0x20, 0xb5, 0x9e, 0xfc, 0x60, 0x1a, 0xae,
++    0x3d, 0xf8, 0x21, 0xd2, 0xa7, 0xca, 0x52, 0x34, 0xb9, 0x5f, 0x27, 0x75,
++    0x6c, 0x81, 0xbe, 0x32, 0x4d, 0xba, 0xbb, 0xf8
++};
++
++static const unsigned char p256_qiutd[] = {
++    0x1a, 0x48, 0x55, 0x6b, 0x11, 0xbe, 0x92, 0xd4, 0x1c, 0xd7, 0x45, 0xc3,
++    0x82, 0x81, 0x51, 0xf1, 0x23, 0x40, 0xb7, 0x83, 0xfd, 0x01, 0x6d, 0xbc,
++    0xa1, 0x66, 0xaf, 0x0a, 0x03, 0x23, 0xcd, 0xc8
++};
++
++static const unsigned char p256_ziut[] = {
++    0x77, 0x2a, 0x1e, 0x37, 0xee, 0xe6, 0x51, 0x02, 0x71, 0x40, 0xf8, 0x6a,
++    0x36, 0xf8, 0x65, 0x61, 0x2b, 0x18, 0x71, 0x82, 0x23, 0xe6, 0xf2, 0x77,
++    0xce, 0xec, 0xb8, 0x49, 0xc7, 0xbf, 0x36, 0x4f
++};
++
++typedef struct {
++    int curve;
++    const unsigned char *x1;
++    size_t x1len;
++    const unsigned char *y1;
++    size_t y1len;
++    const unsigned char *d1;
++    size_t d1len;
++    const unsigned char *x2;
++    size_t x2len;
++    const unsigned char *y2;
++    size_t y2len;
++    const unsigned char *z;
++    size_t zlen;
++} ECDH_SELFTEST_DATA;
++
++# define make_ecdh_test(nid, pr) { nid, \
++                                pr##_qiutx, sizeof(pr##_qiutx), \
++                                pr##_qiuty, sizeof(pr##_qiuty), \
++                                pr##_qiutd, sizeof(pr##_qiutd), \
++                                pr##_qcavsx, sizeof(pr##_qcavsx), \
++                                pr##_qcavsy, sizeof(pr##_qcavsy), \
++                                pr##_ziut, sizeof(pr##_ziut) }
++
++static ECDH_SELFTEST_DATA test_ecdh_data[] = {
++    make_ecdh_test(NID_X9_62_prime256v1, p256),
++};
++
++int FIPS_selftest_ecdh(void)
++{
++    EC_KEY *ec1 = NULL, *ec2 = NULL;
++    const EC_POINT *ecp = NULL;
++    BIGNUM *x = NULL, *y = NULL, *d = NULL;
++    unsigned char *ztmp = NULL;
++    int rv = 1;
++    size_t i;
++
++    for (i = 0; i < sizeof(test_ecdh_data) / sizeof(ECDH_SELFTEST_DATA); i++) {
++        ECDH_SELFTEST_DATA *ecd = test_ecdh_data + i;
++        if (!fips_post_started(FIPS_TEST_ECDH, ecd->curve, 0))
++            continue;
++        ztmp = OPENSSL_malloc(ecd->zlen);
++
++        x = BN_bin2bn(ecd->x1, ecd->x1len, x);
++        y = BN_bin2bn(ecd->y1, ecd->y1len, y);
++        d = BN_bin2bn(ecd->d1, ecd->d1len, d);
++
++        if (!x || !y || !d || !ztmp) {
++            rv = -1;
++            goto err;
++        }
++
++        ec1 = EC_KEY_new_by_curve_name(ecd->curve);
++        if (!ec1) {
++            rv = -1;
++            goto err;
++        }
++        EC_KEY_set_flags(ec1, EC_FLAG_COFACTOR_ECDH);
++
++        if (!EC_KEY_set_public_key_affine_coordinates(ec1, x, y)) {
++            rv = -1;
++            goto err;
++        }
++
++        if (!EC_KEY_set_private_key(ec1, d)) {
++            rv = -1;
++            goto err;
++        }
++
++        x = BN_bin2bn(ecd->x2, ecd->x2len, x);
++        y = BN_bin2bn(ecd->y2, ecd->y2len, y);
++
++        if (!x || !y) {
++            rv = -1;
++            goto err;
++        }
++
++        ec2 = EC_KEY_new_by_curve_name(ecd->curve);
++        if (!ec2) {
++            rv = -1;
++            goto err;
++        }
++        EC_KEY_set_flags(ec1, EC_FLAG_COFACTOR_ECDH);
++
++        if (!EC_KEY_set_public_key_affine_coordinates(ec2, x, y)) {
++            rv = -1;
++            goto err;
++        }
++
++        ecp = EC_KEY_get0_public_key(ec2);
++        if (!ecp) {
++            rv = -1;
++            goto err;
++        }
++
++        if (!ECDH_compute_key(ztmp, ecd->zlen, ecp, ec1, 0)) {
++            rv = -1;
++            goto err;
++        }
++
++        if (!fips_post_corrupt(FIPS_TEST_ECDH, ecd->curve, NULL))
++            ztmp[0] ^= 0x1;
++
++        if (memcmp(ztmp, ecd->z, ecd->zlen)) {
++            fips_post_failed(FIPS_TEST_ECDH, ecd->curve, 0);
++            rv = 0;
++        } else if (!fips_post_success(FIPS_TEST_ECDH, ecd->curve, 0))
++            goto err;
++
++        EC_KEY_free(ec1);
++        ec1 = NULL;
++        EC_KEY_free(ec2);
++        ec2 = NULL;
++        OPENSSL_free(ztmp);
++        ztmp = NULL;
++    }
++
++ err:
++
++    if (x)
++        BN_clear_free(x);
++    if (y)
++        BN_clear_free(y);
++    if (d)
++        BN_clear_free(d);
++    if (ec1)
++        EC_KEY_free(ec1);
++    if (ec2)
++        EC_KEY_free(ec2);
++    if (ztmp)
++        OPENSSL_free(ztmp);
++
++    return rv;
++
++}
++
++#endif
+diff -up openssl-1.0.2a/crypto/fips/fips_ecdsa_selftest.c.fips-ec openssl-1.0.2a/crypto/fips/fips_ecdsa_selftest.c
+--- openssl-1.0.2a/crypto/fips/fips_ecdsa_selftest.c.fips-ec	2015-04-22 19:00:19.724884583 +0200
++++ openssl-1.0.2a/crypto/fips/fips_ecdsa_selftest.c	2015-04-22 19:00:19.724884583 +0200
+@@ -0,0 +1,165 @@
++/* fips/ecdsa/fips_ecdsa_selftest.c */
++/* Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
++ * project 2011.
++ */
++/* ====================================================================
++ * Copyright (c) 2011 The OpenSSL Project.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer. 
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ *
++ * 3. All advertising materials mentioning features or use of this
++ *    software must display the following acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
++ *
++ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
++ *    endorse or promote products derived from this software without
++ *    prior written permission. For written permission, please contact
++ *    licensing@OpenSSL.org.
++ *
++ * 5. Products derived from this software may not be called "OpenSSL"
++ *    nor may "OpenSSL" appear in their names without prior written
++ *    permission of the OpenSSL Project.
++ *
++ * 6. Redistributions of any form whatsoever must retain the following
++ *    acknowledgment:
++ *    "This product includes software developed by the OpenSSL Project
++ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
++ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
++ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
++ * OF THE POSSIBILITY OF SUCH DAMAGE.
++ * ====================================================================
++ *
++ */
++
++#define OPENSSL_FIPSAPI
++
++#include <string.h>
++#include <openssl/crypto.h>
++#include <openssl/ec.h>
++#include <openssl/ecdsa.h>
++#include <openssl/fips.h>
++#include <openssl/err.h>
++#include <openssl/evp.h>
++#include <openssl/bn.h>
++
++#ifdef OPENSSL_FIPS
++
++static const char P_256_name[] = "ECDSA P-256";
++
++static const unsigned char P_256_d[] = {
++    0x51, 0xbd, 0x06, 0xa1, 0x1c, 0xda, 0xe2, 0x12, 0x99, 0xc9, 0x52, 0x3f,
++    0xea, 0xa4, 0xd2, 0xd1, 0xf4, 0x7f, 0xd4, 0x3e, 0xbd, 0xf8, 0xfc, 0x87,
++    0xdc, 0x82, 0x53, 0x21, 0xee, 0xa0, 0xdc, 0x64
++};
++
++static const unsigned char P_256_qx[] = {
++    0x23, 0x89, 0xe0, 0xf4, 0x69, 0xe0, 0x49, 0xe5, 0xc7, 0xe5, 0x40, 0x6e,
++    0x8f, 0x25, 0xdd, 0xad, 0x11, 0x16, 0x14, 0x9b, 0xab, 0x44, 0x06, 0x31,
++    0xbf, 0x5e, 0xa6, 0x44, 0xac, 0x86, 0x00, 0x07
++};
++
++static const unsigned char P_256_qy[] = {
++    0xb3, 0x05, 0x0d, 0xd0, 0xdc, 0xf7, 0x40, 0xe6, 0xf9, 0xd8, 0x6d, 0x7b,
++    0x63, 0xca, 0x97, 0xe6, 0x12, 0xf9, 0xd4, 0x18, 0x59, 0xbe, 0xb2, 0x5e,
++    0x4a, 0x6a, 0x77, 0x23, 0xf4, 0x11, 0x9d, 0xeb
++};
++
++typedef struct {
++    int curve;
++    const char *name;
++    const unsigned char *x;
++    size_t xlen;
++    const unsigned char *y;
++    size_t ylen;
++    const unsigned char *d;
++    size_t dlen;
++} EC_SELFTEST_DATA;
++
++# define make_ecdsa_test(nid, pr) { nid, pr##_name, \
++                                pr##_qx, sizeof(pr##_qx), \
++                                pr##_qy, sizeof(pr##_qy), \
++                                pr##_d, sizeof(pr##_d)}
++
++static EC_SELFTEST_DATA test_ec_data[] = {
++    make_ecdsa_test(NID_X9_62_prime256v1, P_256),
++};
++
++int FIPS_selftest_ecdsa()
++{
++    EC_KEY *ec = NULL;
++    BIGNUM *x = NULL, *y = NULL, *d = NULL;
++    EVP_PKEY *pk = NULL;
++    int rv = 0;
++    size_t i;
++
++    for (i = 0; i < sizeof(test_ec_data) / sizeof(EC_SELFTEST_DATA); i++) {
++        EC_SELFTEST_DATA *ecd = test_ec_data + i;
++
++        x = BN_bin2bn(ecd->x, ecd->xlen, x);
++        y = BN_bin2bn(ecd->y, ecd->ylen, y);
++        d = BN_bin2bn(ecd->d, ecd->dlen, d);
++
++        if (!x || !y || !d)
++            goto err;
++
++        ec = EC_KEY_new_by_curve_name(ecd->curve);
++        if (!ec)
++            goto err;
++
++        if (!EC_KEY_set_public_key_affine_coordinates(ec, x, y))
++            goto err;
++
++        if (!EC_KEY_set_private_key(ec, d))
++            goto err;
++
++        if ((pk = EVP_PKEY_new()) == NULL)
++            goto err;
++
++        EVP_PKEY_assign_EC_KEY(pk, ec);
++
++        if (!fips_pkey_signature_test(pk, NULL, 0,
++                                      NULL, 0, EVP_sha256(), 0, ecd->name))
++            goto err;
++    }
++
++    rv = 1;
++
++ err:
++
++    if (x)
++        BN_clear_free(x);
++    if (y)
++        BN_clear_free(y);
++    if (d)
++        BN_clear_free(d);
++    if (pk)
++        EVP_PKEY_free(pk);
++    else if (ec)
++        EC_KEY_free(ec);
++
++    return rv;
++
++}
++
++#endif
+diff -up openssl-1.0.2a/crypto/fips/fips.h.fips-ec openssl-1.0.2a/crypto/fips/fips.h
+--- openssl-1.0.2a/crypto/fips/fips.h.fips-ec	2015-04-22 19:00:19.688883733 +0200
++++ openssl-1.0.2a/crypto/fips/fips.h	2015-04-22 19:00:19.724884583 +0200
+@@ -93,6 +93,8 @@ extern "C" {
+     void FIPS_corrupt_dsa(void);
+     void FIPS_corrupt_dsa_keygen(void);
+     int FIPS_selftest_dsa(void);
++    int FIPS_selftest_ecdsa(void);
++    int FIPS_selftest_ecdh(void);
+     void FIPS_corrupt_rng(void);
+     void FIPS_rng_stick(void);
+     void FIPS_x931_stick(int onoff);
+diff -up openssl-1.0.2a/crypto/fips/fips_post.c.fips-ec openssl-1.0.2a/crypto/fips/fips_post.c
+--- openssl-1.0.2a/crypto/fips/fips_post.c.fips-ec	2015-04-22 19:00:19.688883733 +0200
++++ openssl-1.0.2a/crypto/fips/fips_post.c	2015-04-22 19:00:19.724884583 +0200
+@@ -95,8 +95,12 @@ int FIPS_selftest(void)
+         rv = 0;
+     if (!FIPS_selftest_rsa())
+         rv = 0;
++    if (!FIPS_selftest_ecdsa())
++        rv = 0;
+     if (!FIPS_selftest_dsa())
+         rv = 0;
++    if (!FIPS_selftest_ecdh())
++        rv = 0;
+     return rv;
+ }
+ 
+diff -up openssl-1.0.2a/crypto/fips/Makefile.fips-ec openssl-1.0.2a/crypto/fips/Makefile
+--- openssl-1.0.2a/crypto/fips/Makefile.fips-ec	2015-04-22 19:00:19.691883805 +0200
++++ openssl-1.0.2a/crypto/fips/Makefile	2015-04-22 19:00:19.724884583 +0200
+@@ -24,13 +24,13 @@ LIBSRC=fips_aes_selftest.c fips_des_self
+     fips_rsa_selftest.c fips_sha_selftest.c fips.c fips_dsa_selftest.c  fips_rand.c \
+     fips_rsa_x931g.c fips_post.c fips_drbg_ctr.c fips_drbg_hash.c fips_drbg_hmac.c \
+     fips_drbg_lib.c fips_drbg_rand.c fips_drbg_selftest.c fips_rand_lib.c \
+-    fips_cmac_selftest.c fips_enc.c fips_md.c
++    fips_cmac_selftest.c fips_ecdh_selftest.c fips_ecdsa_selftest.c fips_enc.c fips_md.c
+ 
+ LIBOBJ=fips_aes_selftest.o fips_des_selftest.o fips_hmac_selftest.o fips_rand_selftest.o \
+     fips_rsa_selftest.o fips_sha_selftest.o fips.o fips_dsa_selftest.o  fips_rand.o \
+     fips_rsa_x931g.o fips_post.o fips_drbg_ctr.o fips_drbg_hash.o fips_drbg_hmac.o \
+     fips_drbg_lib.o fips_drbg_rand.o fips_drbg_selftest.o fips_rand_lib.o \
+-    fips_cmac_selftest.o fips_enc.o fips_md.o
++    fips_cmac_selftest.o fips_ecdh_selftest.o fips_ecdsa_selftest.o fips_enc.o fips_md.o
+ 
+ LIBCRYPTO=-L.. -lcrypto
+ 
+@@ -119,6 +119,21 @@ fips_aes_selftest.o: ../../include/opens
+ fips_aes_selftest.o: ../../include/openssl/safestack.h
+ fips_aes_selftest.o: ../../include/openssl/stack.h
+ fips_aes_selftest.o: ../../include/openssl/symhacks.h fips_aes_selftest.c
++fips_cmac_selftest.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++fips_cmac_selftest.o: ../../include/openssl/cmac.h
++fips_cmac_selftest.o: ../../include/openssl/crypto.h
++fips_cmac_selftest.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
++fips_cmac_selftest.o: ../../include/openssl/evp.h ../../include/openssl/fips.h
++fips_cmac_selftest.o: ../../include/openssl/lhash.h
++fips_cmac_selftest.o: ../../include/openssl/obj_mac.h
++fips_cmac_selftest.o: ../../include/openssl/objects.h
++fips_cmac_selftest.o: ../../include/openssl/opensslconf.h
++fips_cmac_selftest.o: ../../include/openssl/opensslv.h
++fips_cmac_selftest.o: ../../include/openssl/ossl_typ.h
++fips_cmac_selftest.o: ../../include/openssl/safestack.h
++fips_cmac_selftest.o: ../../include/openssl/stack.h
++fips_cmac_selftest.o: ../../include/openssl/symhacks.h fips_cmac_selftest.c
++fips_cmac_selftest.o: fips_locl.h
+ fips_des_selftest.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
+ fips_des_selftest.o: ../../include/openssl/crypto.h
+ fips_des_selftest.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
+@@ -232,6 +247,46 @@ fips_dsa_selftest.o: ../../include/opens
+ fips_dsa_selftest.o: ../../include/openssl/stack.h
+ fips_dsa_selftest.o: ../../include/openssl/symhacks.h fips_dsa_selftest.c
+ fips_dsa_selftest.o: fips_locl.h
++fips_ecdh_selftest.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++fips_ecdh_selftest.o: ../../include/openssl/bn.h ../../include/openssl/crypto.h
++fips_ecdh_selftest.o: ../../include/openssl/e_os2.h ../../include/openssl/ec.h
++fips_ecdh_selftest.o: ../../include/openssl/ecdh.h ../../include/openssl/err.h
++fips_ecdh_selftest.o: ../../include/openssl/evp.h ../../include/openssl/fips.h
++fips_ecdh_selftest.o: ../../include/openssl/lhash.h
++fips_ecdh_selftest.o: ../../include/openssl/obj_mac.h
++fips_ecdh_selftest.o: ../../include/openssl/objects.h
++fips_ecdh_selftest.o: ../../include/openssl/opensslconf.h
++fips_ecdh_selftest.o: ../../include/openssl/opensslv.h
++fips_ecdh_selftest.o: ../../include/openssl/ossl_typ.h
++fips_ecdh_selftest.o: ../../include/openssl/safestack.h
++fips_ecdh_selftest.o: ../../include/openssl/stack.h
++fips_ecdh_selftest.o: ../../include/openssl/symhacks.h fips_ecdh_selftest.c
++fips_ecdh_selftest.o: fips_locl.h
++fips_ecdsa_selftest.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++fips_ecdsa_selftest.o: ../../include/openssl/bn.h
++fips_ecdsa_selftest.o: ../../include/openssl/crypto.h
++fips_ecdsa_selftest.o: ../../include/openssl/e_os2.h ../../include/openssl/ec.h
++fips_ecdsa_selftest.o: ../../include/openssl/ecdsa.h
++fips_ecdsa_selftest.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++fips_ecdsa_selftest.o: ../../include/openssl/fips.h
++fips_ecdsa_selftest.o: ../../include/openssl/lhash.h
++fips_ecdsa_selftest.o: ../../include/openssl/obj_mac.h
++fips_ecdsa_selftest.o: ../../include/openssl/objects.h
++fips_ecdsa_selftest.o: ../../include/openssl/opensslconf.h
++fips_ecdsa_selftest.o: ../../include/openssl/opensslv.h
++fips_ecdsa_selftest.o: ../../include/openssl/ossl_typ.h
++fips_ecdsa_selftest.o: ../../include/openssl/safestack.h
++fips_ecdsa_selftest.o: ../../include/openssl/stack.h
++fips_ecdsa_selftest.o: ../../include/openssl/symhacks.h fips_ecdsa_selftest.c
++fips_enc.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++fips_enc.o: ../../include/openssl/crypto.h ../../include/openssl/e_os2.h
++fips_enc.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++fips_enc.o: ../../include/openssl/fips.h ../../include/openssl/lhash.h
++fips_enc.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++fips_enc.o: ../../include/openssl/opensslconf.h
++fips_enc.o: ../../include/openssl/opensslv.h ../../include/openssl/ossl_typ.h
++fips_enc.o: ../../include/openssl/safestack.h ../../include/openssl/stack.h
++fips_enc.o: ../../include/openssl/symhacks.h fips_enc.c
+ fips_hmac_selftest.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
+ fips_hmac_selftest.o: ../../include/openssl/crypto.h
+ fips_hmac_selftest.o: ../../include/openssl/e_os2.h ../../include/openssl/err.h
+@@ -246,6 +301,15 @@ fips_hmac_selftest.o: ../../include/open
+ fips_hmac_selftest.o: ../../include/openssl/safestack.h
+ fips_hmac_selftest.o: ../../include/openssl/stack.h
+ fips_hmac_selftest.o: ../../include/openssl/symhacks.h fips_hmac_selftest.c
++fips_md.o: ../../include/openssl/asn1.h ../../include/openssl/bio.h
++fips_md.o: ../../include/openssl/crypto.h ../../include/openssl/e_os2.h
++fips_md.o: ../../include/openssl/err.h ../../include/openssl/evp.h
++fips_md.o: ../../include/openssl/fips.h ../../include/openssl/lhash.h
++fips_md.o: ../../include/openssl/obj_mac.h ../../include/openssl/objects.h
++fips_md.o: ../../include/openssl/opensslconf.h ../../include/openssl/opensslv.h
++fips_md.o: ../../include/openssl/ossl_typ.h ../../include/openssl/safestack.h
++fips_md.o: ../../include/openssl/stack.h ../../include/openssl/symhacks.h
++fips_md.o: fips_md.c
+ fips_post.o: ../../include/openssl/aes.h ../../include/openssl/asn1.h
+ fips_post.o: ../../include/openssl/bio.h ../../include/openssl/crypto.h
+ fips_post.o: ../../include/openssl/dsa.h ../../include/openssl/e_os2.h
+diff -up openssl-1.0.2a/version.map.fips-ec openssl-1.0.2a/version.map
+--- openssl-1.0.2a/version.map.fips-ec	2015-04-22 19:00:19.704884111 +0200
++++ openssl-1.0.2a/version.map	2015-04-22 19:00:19.724884583 +0200
+@@ -6,6 +6,10 @@ OPENSSL_1.0.1 {
+ 	    _original*;
+ 	    _current*;
+ };
++OPENSSL_1.0.1_EC {
++    global:
++            EC*;
++};
+ OPENSSL_1.0.2 {
+     global:
+ 	    SSLeay;

@@ -1,0 +1,541 @@
+diff -up openssl-1.0.2e/crypto/evp/c_allc.c.wrap openssl-1.0.2e/crypto/evp/c_allc.c
+--- openssl-1.0.2e/crypto/evp/c_allc.c.wrap	2015-12-04 13:33:42.118550036 +0100
++++ openssl-1.0.2e/crypto/evp/c_allc.c	2015-12-04 13:33:42.190551722 +0100
+@@ -179,6 +179,7 @@ void OpenSSL_add_all_ciphers(void)
+     EVP_add_cipher(EVP_aes_128_xts());
+     EVP_add_cipher(EVP_aes_128_ccm());
+     EVP_add_cipher(EVP_aes_128_wrap());
++    EVP_add_cipher(EVP_aes_128_wrap_pad());
+     EVP_add_cipher_alias(SN_aes_128_cbc, "AES128");
+     EVP_add_cipher_alias(SN_aes_128_cbc, "aes128");
+     EVP_add_cipher(EVP_aes_192_ecb());
+@@ -191,6 +192,7 @@ void OpenSSL_add_all_ciphers(void)
+     EVP_add_cipher(EVP_aes_192_gcm());
+     EVP_add_cipher(EVP_aes_192_ccm());
+     EVP_add_cipher(EVP_aes_192_wrap());
++    EVP_add_cipher(EVP_aes_192_wrap_pad());
+     EVP_add_cipher_alias(SN_aes_192_cbc, "AES192");
+     EVP_add_cipher_alias(SN_aes_192_cbc, "aes192");
+     EVP_add_cipher(EVP_aes_256_ecb());
+@@ -204,6 +206,7 @@ void OpenSSL_add_all_ciphers(void)
+     EVP_add_cipher(EVP_aes_256_xts());
+     EVP_add_cipher(EVP_aes_256_ccm());
+     EVP_add_cipher(EVP_aes_256_wrap());
++    EVP_add_cipher(EVP_aes_256_wrap_pad());
+     EVP_add_cipher_alias(SN_aes_256_cbc, "AES256");
+     EVP_add_cipher_alias(SN_aes_256_cbc, "aes256");
+ # if !defined(OPENSSL_NO_SHA) && !defined(OPENSSL_NO_SHA1)
+@@ -258,6 +261,7 @@ void OpenSSL_add_all_ciphers(void)
+ 
+         EVP_add_cipher(EVP_des_ede());
+         EVP_add_cipher(EVP_des_ede3());
++        EVP_add_cipher(EVP_des_ede3_wrap());
+ # endif
+ 
+ # ifndef OPENSSL_NO_AES
+@@ -272,6 +276,7 @@ void OpenSSL_add_all_ciphers(void)
+         EVP_add_cipher(EVP_aes_128_xts());
+         EVP_add_cipher(EVP_aes_128_ccm());
+         EVP_add_cipher(EVP_aes_128_wrap());
++        EVP_add_cipher(EVP_aes_128_wrap_pad());
+         EVP_add_cipher_alias(SN_aes_128_cbc, "AES128");
+         EVP_add_cipher_alias(SN_aes_128_cbc, "aes128");
+         EVP_add_cipher(EVP_aes_192_ecb());
+@@ -284,6 +289,7 @@ void OpenSSL_add_all_ciphers(void)
+         EVP_add_cipher(EVP_aes_192_gcm());
+         EVP_add_cipher(EVP_aes_192_ccm());
+         EVP_add_cipher(EVP_aes_192_wrap());
++        EVP_add_cipher(EVP_aes_192_wrap_pad());
+         EVP_add_cipher_alias(SN_aes_192_cbc, "AES192");
+         EVP_add_cipher_alias(SN_aes_192_cbc, "aes192");
+         EVP_add_cipher(EVP_aes_256_ecb());
+@@ -297,6 +303,7 @@ void OpenSSL_add_all_ciphers(void)
+         EVP_add_cipher(EVP_aes_256_xts());
+         EVP_add_cipher(EVP_aes_256_ccm());
+         EVP_add_cipher(EVP_aes_256_wrap());
++        EVP_add_cipher(EVP_aes_256_wrap_pad());
+         EVP_add_cipher_alias(SN_aes_256_cbc, "AES256");
+         EVP_add_cipher_alias(SN_aes_256_cbc, "aes256");
+ # endif
+diff -up openssl-1.0.2e/crypto/evp/e_aes.c.wrap openssl-1.0.2e/crypto/evp/e_aes.c
+--- openssl-1.0.2e/crypto/evp/e_aes.c.wrap	2015-12-04 13:33:42.119550059 +0100
++++ openssl-1.0.2e/crypto/evp/e_aes.c	2015-12-04 13:33:42.190551722 +0100
+@@ -1,5 +1,5 @@
+ /* ====================================================================
+- * Copyright (c) 2001-2011 The OpenSSL Project.  All rights reserved.
++ * Copyright (c) 2001-2014 The OpenSSL Project.  All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -1953,7 +1953,7 @@ static int aes_wrap_init_key(EVP_CIPHER_
+             wctx->iv = NULL;
+     }
+     if (iv) {
+-        memcpy(ctx->iv, iv, 8);
++        memcpy(ctx->iv, iv, EVP_CIPHER_CTX_iv_length(ctx));
+         wctx->iv = ctx->iv;
+     }
+     return 1;
+@@ -1964,30 +1964,57 @@ static int aes_wrap_cipher(EVP_CIPHER_CT
+ {
+     EVP_AES_WRAP_CTX *wctx = ctx->cipher_data;
+     size_t rv;
++    /* AES wrap with padding has IV length of 4, without padding 8 */
++    int pad = EVP_CIPHER_CTX_iv_length(ctx) == 4;
++    /* No final operation so always return zero length */
+     if (!in)
+         return 0;
+-    if (inlen % 8)
++    /* Input length must always be non-zero */
++    if (!inlen)
+         return -1;
+-    if (ctx->encrypt && inlen < 8)
++    /* If decrypting need at least 16 bytes and multiple of 8 */
++    if (!ctx->encrypt && (inlen < 16 || inlen & 0x7))
+         return -1;
+-    if (!ctx->encrypt && inlen < 16)
++    /* If not padding input must be multiple of 8 */
++    if (!pad && inlen & 0x7)
+         return -1;
+     if (!out) {
+-        if (ctx->encrypt)
++        if (ctx->encrypt) {
++            /* If padding round up to multiple of 8 */
++            if (pad)
++                inlen = (inlen + 7) / 8 * 8;
++            /* 8 byte prefix */
+             return inlen + 8;
+-        else
++        } else {
++            /* If not padding output will be exactly 8 bytes
++             * smaller than input. If padding it will be at
++             * least 8 bytes smaller but we don't know how
++             * much.
++             */
+             return inlen - 8;
+     }
++    }
++    if (pad) {
+     if (ctx->encrypt)
+-        rv = CRYPTO_128_wrap(&wctx->ks.ks, wctx->iv, out, in, inlen,
++            rv = CRYPTO_128_wrap_pad(&wctx->ks.ks, wctx->iv,
++                                     out, in, inlen,
+                              (block128_f) AES_encrypt);
+     else
+-        rv = CRYPTO_128_unwrap(&wctx->ks.ks, wctx->iv, out, in, inlen,
++            rv = CRYPTO_128_unwrap_pad(&wctx->ks.ks, wctx->iv,
++                                       out, in, inlen,
+                                (block128_f) AES_decrypt);
++    } else {
++        if (ctx->encrypt)
++            rv = CRYPTO_128_wrap(&wctx->ks.ks, wctx->iv,
++                                 out, in, inlen, (block128_f) AES_encrypt);
++        else
++            rv = CRYPTO_128_unwrap(&wctx->ks.ks, wctx->iv,
++                                   out, in, inlen, (block128_f) AES_decrypt);
++    }
+     return rv ? (int)rv : -1;
+ }
+ 
+-#define WRAP_FLAGS      (EVP_CIPH_WRAP_MODE \
++# define WRAP_FLAGS      (EVP_CIPH_WRAP_MODE | EVP_CIPH_FLAG_FIPS \
+                 | EVP_CIPH_CUSTOM_IV | EVP_CIPH_FLAG_CUSTOM_CIPHER \
+                 | EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_FLAG_DEFAULT_ASN1)
+ 
+@@ -2032,3 +2059,45 @@ const EVP_CIPHER *EVP_aes_256_wrap(void)
+ {
+     return &aes_256_wrap;
+ }
++
++static const EVP_CIPHER aes_128_wrap_pad = {
++    NID_id_aes128_wrap_pad,
++    8, 16, 4, WRAP_FLAGS,
++    aes_wrap_init_key, aes_wrap_cipher,
++    NULL,
++    sizeof(EVP_AES_WRAP_CTX),
++    NULL, NULL, NULL, NULL
++};
++
++const EVP_CIPHER *EVP_aes_128_wrap_pad(void)
++{
++    return &aes_128_wrap_pad;
++}
++
++static const EVP_CIPHER aes_192_wrap_pad = {
++    NID_id_aes192_wrap_pad,
++    8, 24, 4, WRAP_FLAGS,
++    aes_wrap_init_key, aes_wrap_cipher,
++    NULL,
++    sizeof(EVP_AES_WRAP_CTX),
++    NULL, NULL, NULL, NULL
++};
++
++const EVP_CIPHER *EVP_aes_192_wrap_pad(void)
++{
++    return &aes_192_wrap_pad;
++}
++
++static const EVP_CIPHER aes_256_wrap_pad = {
++    NID_id_aes256_wrap_pad,
++    8, 32, 4, WRAP_FLAGS,
++    aes_wrap_init_key, aes_wrap_cipher,
++    NULL,
++    sizeof(EVP_AES_WRAP_CTX),
++    NULL, NULL, NULL, NULL
++};
++
++const EVP_CIPHER *EVP_aes_256_wrap_pad(void)
++{
++    return &aes_256_wrap_pad;
++}
+diff -up openssl-1.0.2e/crypto/evp/e_des3.c.wrap openssl-1.0.2e/crypto/evp/e_des3.c
+--- openssl-1.0.2e/crypto/evp/e_des3.c.wrap	2015-12-04 13:33:42.119550059 +0100
++++ openssl-1.0.2e/crypto/evp/e_des3.c	2015-12-04 13:33:42.191551745 +0100
+@@ -474,7 +474,7 @@ static const EVP_CIPHER des3_wrap = {
+     NID_id_smime_alg_CMS3DESwrap,
+     8, 24, 0,
+     EVP_CIPH_WRAP_MODE | EVP_CIPH_CUSTOM_IV | EVP_CIPH_FLAG_CUSTOM_CIPHER
+-        | EVP_CIPH_FLAG_DEFAULT_ASN1,
++        | EVP_CIPH_FLAG_DEFAULT_ASN1 | EVP_CIPH_FLAG_FIPS,
+     des_ede3_init_key, des_ede3_wrap_cipher,
+     NULL,
+     sizeof(DES_EDE_KEY),
+diff -up openssl-1.0.2e/crypto/evp/evp.h.wrap openssl-1.0.2e/crypto/evp/evp.h
+--- openssl-1.0.2e/crypto/evp/evp.h.wrap	2015-12-04 13:33:42.120550083 +0100
++++ openssl-1.0.2e/crypto/evp/evp.h	2015-12-04 13:33:42.191551745 +0100
+@@ -834,6 +834,7 @@ const EVP_CIPHER *EVP_aes_128_ccm(void);
+ const EVP_CIPHER *EVP_aes_128_gcm(void);
+ const EVP_CIPHER *EVP_aes_128_xts(void);
+ const EVP_CIPHER *EVP_aes_128_wrap(void);
++const EVP_CIPHER *EVP_aes_128_wrap_pad(void);
+ const EVP_CIPHER *EVP_aes_192_ecb(void);
+ const EVP_CIPHER *EVP_aes_192_cbc(void);
+ const EVP_CIPHER *EVP_aes_192_cfb1(void);
+@@ -845,6 +846,7 @@ const EVP_CIPHER *EVP_aes_192_ctr(void);
+ const EVP_CIPHER *EVP_aes_192_ccm(void);
+ const EVP_CIPHER *EVP_aes_192_gcm(void);
+ const EVP_CIPHER *EVP_aes_192_wrap(void);
++const EVP_CIPHER *EVP_aes_192_wrap_pad(void);
+ const EVP_CIPHER *EVP_aes_256_ecb(void);
+ const EVP_CIPHER *EVP_aes_256_cbc(void);
+ const EVP_CIPHER *EVP_aes_256_cfb1(void);
+@@ -857,6 +859,7 @@ const EVP_CIPHER *EVP_aes_256_ccm(void);
+ const EVP_CIPHER *EVP_aes_256_gcm(void);
+ const EVP_CIPHER *EVP_aes_256_xts(void);
+ const EVP_CIPHER *EVP_aes_256_wrap(void);
++const EVP_CIPHER *EVP_aes_256_wrap_pad(void);
+ #  if !defined(OPENSSL_NO_SHA) && !defined(OPENSSL_NO_SHA1)
+ const EVP_CIPHER *EVP_aes_128_cbc_hmac_sha1(void);
+ const EVP_CIPHER *EVP_aes_256_cbc_hmac_sha1(void);
+diff -up openssl-1.0.2e/crypto/evp/evptests.txt.wrap openssl-1.0.2e/crypto/evp/evptests.txt
+--- openssl-1.0.2e/crypto/evp/evptests.txt.wrap	2015-12-03 15:04:23.000000000 +0100
++++ openssl-1.0.2e/crypto/evp/evptests.txt	2015-12-04 13:33:42.191551745 +0100
+@@ -399,3 +399,7 @@ id-aes256-wrap:000102030405060708090A0B0
+ id-aes192-wrap:000102030405060708090A0B0C0D0E0F1011121314151617::00112233445566778899AABBCCDDEEFF0001020304050607:031D33264E15D33268F24EC260743EDCE1C6C7DDEE725A936BA814915C6762D2
+ id-aes256-wrap:000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F::00112233445566778899AABBCCDDEEFF0001020304050607:A8F9BC1612C68B3FF6E6F4FBE30E71E4769C8B80A32CB8958CD5D17D6B254DA1
+ id-aes256-wrap:000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F::00112233445566778899AABBCCDDEEFF000102030405060708090A0B0C0D0E0F:28C9F404C4B810F4CBCCB35CFB87F8263F5786E2D80ED326CBC7F0E71A99F43BFB988B9B7A02DD21
++# AES wrap tests from RFC5649
++id-aes192-wrap-pad:5840df6e29b02af1ab493b705bf16ea1ae8338f4dcc176a8::c37b7e6492584340bed12207808941155068f738:138bdeaa9b8fa7fc61f97742e72248ee5ae6ae5360d1ae6a5f54f373fa543b6a
++id-aes192-wrap-pad:5840df6e29b02af1ab493b705bf16ea1ae8338f4dcc176a8::466f7250617369:afbeb0f07dfbf5419200f2ccb50bb24f
++
+diff -up openssl-1.0.2e/crypto/modes/modes.h.wrap openssl-1.0.2e/crypto/modes/modes.h
+--- openssl-1.0.2e/crypto/modes/modes.h.wrap	2015-12-04 13:33:41.770541886 +0100
++++ openssl-1.0.2e/crypto/modes/modes.h	2015-12-04 13:33:42.191551745 +0100
+@@ -157,6 +157,12 @@ size_t CRYPTO_128_unwrap(void *key, cons
+                          unsigned char *out,
+                          const unsigned char *in, size_t inlen,
+                          block128_f block);
++size_t CRYPTO_128_wrap_pad(void *key, const unsigned char *icv,
++                           unsigned char *out, const unsigned char *in,
++                           size_t inlen, block128_f block);
++size_t CRYPTO_128_unwrap_pad(void *key, const unsigned char *icv,
++                             unsigned char *out, const unsigned char *in,
++                             size_t inlen, block128_f block);
+ 
+ #ifdef  __cplusplus
+ }
+diff -up openssl-1.0.2e/crypto/modes/wrap128.c.wrap openssl-1.0.2e/crypto/modes/wrap128.c
+--- openssl-1.0.2e/crypto/modes/wrap128.c.wrap	2015-12-03 15:04:23.000000000 +0100
++++ openssl-1.0.2e/crypto/modes/wrap128.c	2015-12-04 13:37:51.486366984 +0100
+@@ -2,6 +2,7 @@
+ /*
+  * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
+  * project.
++ * Mode with padding contributed by Petr Spacek (pspacek@redhat.com).
+  */
+ /* ====================================================================
+  * Copyright (c) 2013 The OpenSSL Project.  All rights reserved.
+@@ -52,19 +53,44 @@
+  * ====================================================================
+  */
+ 
++/**  Beware!
++ *
++ *  Following wrapping modes were designed for AES but this implementation
++ *  allows you to use them for any 128 bit block cipher.
++ */
++
+ #include "cryptlib.h"
+ #include <openssl/modes.h>
+ 
++/** RFC 3394 section 2.2.3.1 Default Initial Value */
+ static const unsigned char default_iv[] = {
+     0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6,
+ };
+ 
+-/*
+- * Input size limit: lower than maximum of standards but far larger than
++/** RFC 5649 section 3 Alternative Initial Value 32-bit constant */
++static const unsigned char default_aiv[] = {
++    0xA6, 0x59, 0x59, 0xA6
++};
++
++/** Input size limit: lower than maximum of standards but far larger than
+  * anything that will be used in practice.
+  */
+ #define CRYPTO128_WRAP_MAX (1UL << 31)
+ 
++/** Wrapping according to RFC 3394 section 2.2.1.
++ *
++ *  @param[in]  key    Key value. 
++ *  @param[in]  iv     IV value. Length = 8 bytes. NULL = use default_iv.
++ *  @param[in]  in     Plain text as n 64-bit blocks, n >= 2.
++ *  @param[in]  inlen  Length of in.
++ *  @param[out] out    Cipher text. Minimal buffer length = (inlen + 8) bytes.
++ *                     Input and output buffers can overlap if block function
++ *                     supports that.
++ *  @param[in]  block  Block processing function.
++ *  @return            0 if inlen does not consist of n 64-bit blocks, n >= 2.
++ *                     or if inlen > CRYPTO128_WRAP_MAX.
++ *                     Output length if wrapping succeeded.
++ */
+ size_t CRYPTO_128_wrap(void *key, const unsigned char *iv,
+                        unsigned char *out,
+                        const unsigned char *in, size_t inlen,
+@@ -72,7 +98,7 @@ size_t CRYPTO_128_wrap(void *key, const
+ {
+     unsigned char *A, B[16], *R;
+     size_t i, j, t;
+-    if ((inlen & 0x7) || (inlen < 8) || (inlen > CRYPTO128_WRAP_MAX))
++    if ((inlen & 0x7) || (inlen < 16) || (inlen > CRYPTO128_WRAP_MAX))
+         return 0;
+     A = B;
+     t = 1;
+@@ -100,7 +126,23 @@ size_t CRYPTO_128_wrap(void *key, const
+     return inlen + 8;
+ }
+ 
+-size_t CRYPTO_128_unwrap(void *key, const unsigned char *iv,
++/** Unwrapping according to RFC 3394 section 2.2.2 steps 1-2.
++ *  IV check (step 3) is responsibility of the caller.
++ *
++ *  @param[in]  key    Key value. 
++ *  @param[out] iv     Unchecked IV value. Minimal buffer length = 8 bytes.
++ *  @param[out] out    Plain text without IV.
++ *                     Minimal buffer length = (inlen - 8) bytes.
++ *                     Input and output buffers can overlap if block function
++ *                     supports that.
++ *  @param[in]  in     Ciphertext text as n 64-bit blocks
++ *  @param[in]  inlen  Length of in.
++ *  @param[in]  block  Block processing function.
++ *  @return            0 if inlen is out of range [24, CRYPTO128_WRAP_MAX]
++ *                     or if inlen is not multiply of 8.
++ *                     Output length otherwise.
++ */
++static size_t crypto_128_unwrap_raw(void *key, unsigned char *iv,
+                          unsigned char *out,
+                          const unsigned char *in, size_t inlen,
+                          block128_f block)
+@@ -128,11 +170,190 @@ size_t CRYPTO_128_unwrap(void *key, cons
+             memcpy(R, B + 8, 8);
+         }
+     }
++    memcpy(iv, A, 8);
++    return inlen;
++}
++
++/** Unwrapping according to RFC 3394 section 2.2.2 including IV check.
++ *  First block of plain text have to match supplied IV otherwise an error is
++ *  returned.
++ *
++ *  @param[in]  key    Key value. 
++ *  @param[out] iv     Unchecked IV value. Minimal buffer length = 8 bytes.
++ *  @param[out] out    Plain text without IV.
++ *                     Minimal buffer length = (inlen - 8) bytes.
++ *                     Input and output buffers can overlap if block function
++ *                     supports that.
++ *  @param[in]  in     Ciphertext text as n 64-bit blocks
++ *  @param[in]  inlen  Length of in.
++ *  @param[in]  block  Block processing function.
++ *  @return            0 if inlen is out of range [24, CRYPTO128_WRAP_MAX]
++ *                     or if inlen is not multiply of 8
++ *                     or if IV doesn't match expected value.
++ *                     Output length otherwise.
++ */
++size_t CRYPTO_128_unwrap(void *key, const unsigned char *iv,
++                         unsigned char *out, const unsigned char *in,
++                         size_t inlen, block128_f block)
++{
++    size_t ret;
++    unsigned char got_iv[8];
++
++    ret = crypto_128_unwrap_raw(key, got_iv, out, in, inlen, block);
++    if (ret == 0)
++        return 0;
++
+     if (!iv)
+         iv = default_iv;
+-    if (memcmp(A, iv, 8)) {
++    if (CRYPTO_memcmp(got_iv, iv, 8)) {
++        OPENSSL_cleanse(out, ret);
++        return 0;
++    }
++    return ret;
++}
++
++/** Wrapping according to RFC 5649 section 4.1.
++ *
++ *  @param[in]  key    Key value. 
++ *  @param[in]  icv    (Non-standard) IV, 4 bytes. NULL = use default_aiv.
++ *  @param[out] out    Cipher text. Minimal buffer length = (inlen + 15) bytes.
++ *                     Input and output buffers can overlap if block function
++ *                     supports that.
++ *  @param[in]  in     Plain text as n 64-bit blocks, n >= 2.
++ *  @param[in]  inlen  Length of in.
++ *  @param[in]  block  Block processing function.
++ *  @return            0 if inlen is out of range [1, CRYPTO128_WRAP_MAX].
++ *                     Output length if wrapping succeeded.
++ */
++size_t CRYPTO_128_wrap_pad(void *key, const unsigned char *icv,
++                           unsigned char *out,
++                           const unsigned char *in, size_t inlen,
++                           block128_f block)
++{
++    /* n: number of 64-bit blocks in the padded key data */
++    const size_t blocks_padded = (inlen + 7) / 8;
++    const size_t padded_len = blocks_padded * 8;
++    const size_t padding_len = padded_len - inlen;
++    /* RFC 5649 section 3: Alternative Initial Value */
++    unsigned char aiv[8];
++    int ret;
++
++    /* Section 1: use 32-bit fixed field for plaintext octet length */
++    if (inlen == 0 || inlen >= CRYPTO128_WRAP_MAX)
++        return 0;
++
++    /* Section 3: Alternative Initial Value */
++    if (!icv)
++        memcpy(aiv, default_aiv, 4);
++    else
++        memcpy(aiv, icv, 4);    /* Standard doesn't mention this. */
++
++    aiv[4] = (inlen >> 24) & 0xFF;
++    aiv[5] = (inlen >> 16) & 0xFF;
++    aiv[6] = (inlen >> 8) & 0xFF;
++    aiv[7] = inlen & 0xFF;
++
++    if (padded_len == 8) {
++        /* Section 4.1 - special case in step 2:
++         * If the padded plaintext contains exactly eight octets, then
++         * prepend the AIV and encrypt the resulting 128-bit block
++         * using AES in ECB mode. */
++        memmove(out + 8, in, inlen);
++        memcpy(out, aiv, 8);
++        memset(out + 8 + inlen, 0, padding_len);
++        block(out, out, key);
++        ret = 16;               /* AIV + padded input */
++    } else {
++        memmove(out, in, inlen);
++        memset(out + inlen, 0, padding_len); /* Section 4.1 step 1 */
++        ret = CRYPTO_128_wrap(key, aiv, out, out, padded_len, block);
++    }
++
++    return ret;
++}
++
++/** Unwrapping according to RFC 5649 section 4.2.
++ *
++ *  @param[in]  key    Key value. 
++ *  @param[in]  icv    (Non-standard) IV, 4 bytes. NULL = use default_aiv.
++ *  @param[out] out    Plain text. Minimal buffer length = inlen bytes.
++ *                     Input and output buffers can overlap if block function
++ *                     supports that.
++ *  @param[in]  in     Ciphertext text as n 64-bit blocks
++ *  @param[in]  inlen  Length of in.
++ *  @param[in]  block  Block processing function.
++ *  @return            0 if inlen is out of range [16, CRYPTO128_WRAP_MAX],
++ *                     or if inlen is not multiply of 8
++ *                     or if IV and message length indicator doesn't match.
++ *                     Output length if unwrapping succeeded and IV matches.
++ */
++size_t CRYPTO_128_unwrap_pad(void *key, const unsigned char *icv,
++                             unsigned char *out,
++                             const unsigned char *in, size_t inlen,
++                             block128_f block)
++{
++    /* n: number of 64-bit blocks in the padded key data */
++    size_t n = inlen / 8 - 1;
++    size_t padded_len;
++    size_t padding_len;
++    size_t ptext_len;
++    /* RFC 5649 section 3: Alternative Initial Value */
++    unsigned char aiv[8];
++    static unsigned char zeros[8] = { 0x0 };
++    size_t ret;
++
++    /* Section 4.2: Cipher text length has to be (n+1) 64-bit blocks. */
++    if ((inlen & 0x7) != 0 || inlen < 16 || inlen >= CRYPTO128_WRAP_MAX)
++        return 0;
++
++    memmove(out, in, inlen);
++    if (inlen == 16) {
++        /* Section 4.2 - special case in step 1:
++         * When n=1, the ciphertext contains exactly two 64-bit
++         * blocks and they are decrypted as a single AES
++         * block using AES in ECB mode:
++         * AIV | P[1] = DEC(K, C[0] | C[1])
++         */
++        block(out, out, key);
++        memcpy(aiv, out, 8);
++        /* Remove AIV */
++        memmove(out, out + 8, 8);
++        padded_len = 8;
++    } else {
++        padded_len = inlen - 8;
++        ret = crypto_128_unwrap_raw(key, aiv, out, out, inlen, block);
++        if (padded_len != ret) {
+         OPENSSL_cleanse(out, inlen);
+         return 0;
+     }
+-    return inlen;
++    }
++
++    /* Section 3: AIV checks: Check that MSB(32,A) = A65959A6.
++     * Optionally a user-supplied value can be used
++     * (even if standard doesn't mention this). */
++    if ((!icv && CRYPTO_memcmp(aiv, default_aiv, 4))
++        || (icv && CRYPTO_memcmp(aiv, icv, 4))) {
++        OPENSSL_cleanse(out, inlen);
++        return 0;
++    }
++
++    /* Check that 8*(n-1) < LSB(32,AIV) <= 8*n.
++     * If so, let ptext_len = LSB(32,AIV). */
++
++    ptext_len = (aiv[4] << 24) | (aiv[5] << 16) | (aiv[6] << 8) | aiv[7];
++    if (8 * (n - 1) >= ptext_len || ptext_len > 8 * n) {
++        OPENSSL_cleanse(out, inlen);
++        return 0;
++    }
++
++    /* Check that the rightmost padding_len octets of the output data
++     * are zero. */
++    padding_len = padded_len - ptext_len;
++    if (CRYPTO_memcmp(out + ptext_len, zeros, padding_len) != 0) {
++        OPENSSL_cleanse(out, inlen);
++        return 0;
++    }
++
++    /* Section 4.2 step 3: Remove padding */
++    return ptext_len;
+ }

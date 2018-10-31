@@ -1,0 +1,53 @@
+Guide for legacy support enablement
+===================================
+
+To improve security provided by use of OpenSSL especially in context of
+TLS connections we regularly review and deprecate algorithms and algorithm
+settings which are no longer viewed as secure.
+
+For some of these deprecated algorithms we provide a way for the
+system administrator to reenable them.
+
+Deprecated algorithms, protocols and settings in OpenSSL
+========================================================
+
+Previous Red Hat Enterprise Linux 7 update releases:
+
+* SSL2 protocol disabled by default.
+* Minimum DH group size accepted by SSL/TLS client 768 bits.
+* Verification of certificates and signatures using MD5 hash
+  disabled.
+
+Red Hat Enterprise Linux 7.4:
+
+* SSL2 protocol support completely disabled (cannot be re-enabled).
+* All SSL/TLS export ciphers disabled.
+* All SSL/TLS ciphersuites with keys smaller than 128 bits disabled.
+* Minimum DH group size accepted by SSL/TLS client 1024 bits.
+* Disabled support for verification of certificates and signatures
+  using MD2, MD4, MD5, and SHA0 hashes.
+
+Legacy support enablement
+=========================
+
+The OpenSSL now supports /etc/pki/tls/legacy-settings configuration file
+which can be created by the system administrator which contains lines with
+simple Key Value pairs.
+
+The library recognizes the following possible configuration settings in
+that file:
+
+LegacySigningMDs md2 md5
+MinimumDHBits 512
+
+The LegacySigningMDs option allows reenabling support for verification of
+signatures with the specified hash algorithms. These can be any combination
+of md2, md4, md5 and sha. (sha represents SHA0 algorithm, not SHA1.) Any
+unrecognized algorithms are ignored.
+
+The MinimumDHBits option allows setting of the minimum bit size of DH group
+accepted by SSL/TLS client. It can be any value between 512 and 10000.
+
+If the configuration file is not present the built-in defaults (that is the
+secure defaults) are used. Any unrecognized lines (with other parameter
+names or comments) are ignored.

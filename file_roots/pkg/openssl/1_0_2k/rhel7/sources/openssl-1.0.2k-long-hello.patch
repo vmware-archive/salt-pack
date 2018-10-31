@@ -1,0 +1,36 @@
+diff -up openssl-1.0.2k/ssl/s3_srvr.c.long-hello openssl-1.0.2k/ssl/s3_srvr.c
+--- openssl-1.0.2k/ssl/s3_srvr.c.long-hello	2017-03-09 17:59:26.000000000 +0100
++++ openssl-1.0.2k/ssl/s3_srvr.c	2017-03-30 09:11:35.639338753 +0200
+@@ -899,6 +899,23 @@ int ssl3_send_hello_request(SSL *s)
+     return ssl_do_write(s);
+ }
+ 
++/*
++ * Maximum size (excluding the Handshake header) of a ClientHello message,
++ * calculated as follows:
++ *
++ *  2 + # client_version
++ *  32 + # only valid length for random
++ *  1 + # length of session_id
++ *  32 + # maximum size for session_id
++ *  2 + # length of cipher suites
++ *  2^16-2 + # maximum length of cipher suites array
++ *  1 + # length of compression_methods
++ *  2^8-1 + # maximum length of compression methods
++ *  2 + # length of extensions
++ *  2^16-1 # maximum length of extensions
++ */
++#define CLIENT_HELLO_MAX_LENGTH         131396
++
+ int ssl3_get_client_hello(SSL *s)
+ {
+     int i, j, ok, al = SSL_AD_INTERNAL_ERROR, ret = -1, cookie_valid = 0;
+@@ -930,7 +947,7 @@ int ssl3_get_client_hello(SSL *s)
+                                    SSL3_ST_SR_CLNT_HELLO_B,
+                                    SSL3_ST_SR_CLNT_HELLO_C,
+                                    SSL3_MT_CLIENT_HELLO,
+-                                   SSL3_RT_MAX_PLAIN_LENGTH, &ok);
++                                   CLIENT_HELLO_MAX_LENGTH, &ok);
+ 
+     if (!ok)
+         return ((int)n);

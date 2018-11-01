@@ -146,7 +146,7 @@ Requires: PyYAML
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 5.0 
+Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0 
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
 Requires: python%{?__python_ver}-psutil
@@ -216,8 +216,7 @@ infrastructure.
 Summary: REST API for Salt, a parallel remote execution system
 Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-Requires: python%{?__python_ver}-cherrypy
-
+Requires: python%{?__python_ver}-cherrypy >= 3.2.2, python%{?__python_ver}-cherrypy < 18.0.0
 
 %description api
 salt-api provides a REST interface to the Salt master.
@@ -626,7 +625,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Wed Apr 18 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.x-0
+- Revised versions of cherrypy acceptable
+
+* Thu Jun 07 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.6-1
+- Update to feature release 2017.7.6-1
 - Revised minimum msgpack version >= 0.4
 
 * Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2017.7.5-1

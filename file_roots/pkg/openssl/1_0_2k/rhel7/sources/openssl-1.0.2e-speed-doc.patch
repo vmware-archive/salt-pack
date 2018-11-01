@@ -1,0 +1,58 @@
+diff -up openssl-1.0.2e/apps/speed.c.speed-doc openssl-1.0.2e/apps/speed.c
+--- openssl-1.0.2e/apps/speed.c.speed-doc	2015-12-04 14:00:58.000000000 +0100
++++ openssl-1.0.2e/apps/speed.c	2016-01-15 14:15:56.482343557 +0100
+@@ -648,10 +648,6 @@ int MAIN(int argc, char **argv)
+ # endif
+     int multiblock = 0;
+ 
+-# ifndef TIMES
+-    usertime = -1;
+-# endif
+-
+     apps_startup();
+     memset(results, 0, sizeof(results));
+ # ifndef OPENSSL_NO_DSA
+@@ -1145,10 +1141,8 @@ int MAIN(int argc, char **argv)
+ 
+             BIO_printf(bio_err, "\n");
+             BIO_printf(bio_err, "Available options:\n");
+-# if defined(TIMES) || defined(USE_TOD)
+             BIO_printf(bio_err, "-elapsed        "
+                        "measure time in real time instead of CPU user time.\n");
+-# endif
+ # ifndef OPENSSL_NO_ENGINE
+             BIO_printf(bio_err,
+                        "-engine e       "
+diff -up openssl-1.0.2e/doc/apps/speed.pod.speed-doc openssl-1.0.2e/doc/apps/speed.pod
+--- openssl-1.0.2e/doc/apps/speed.pod.speed-doc	2015-12-03 14:42:07.000000000 +0100
++++ openssl-1.0.2e/doc/apps/speed.pod	2016-01-15 14:05:23.044222376 +0100
+@@ -8,6 +8,9 @@ speed - test library performance
+ 
+ B<openssl speed>
+ [B<-engine id>]
++[B<-elapsed>]
++[B<-evp algo>]
++[B<-decrypt>]
+ [B<md2>]
+ [B<mdc2>]
+ [B<md5>]
+@@ -49,6 +52,19 @@ to attempt to obtain a functional refere
+ thus initialising it if needed. The engine will then be set as the default
+ for all available algorithms.
+ 
++=item B<-elapsed>
++
++Measure time in real time instead of CPU time. It can be useful when testing
++speed of hardware engines.
++
++=item B<-evp algo>
++
++Use the specified cipher or message digest algorithm via the EVP interface.
++
++=item B<-decrypt>
++
++Time the decryption instead of encryption. Affects only the EVP testing.
++
+ =item B<[zero or more test algorithms]>
+ 
+ If any options are given, B<speed> tests those algorithms, otherwise all of

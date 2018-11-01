@@ -119,6 +119,14 @@ pkgbuild_registry:
       results:
         - openpgm
         - openpgm-devel
+    openssl:
+      version: 1.0.2k-13
+      results:
+        - openssl
+        - openssl-devel
+        - openssl-libs
+        - openssl-perl
+        - openssl-static
     python-chardet:
       version: 2.2.1-1
       noarch: True
@@ -150,10 +158,11 @@ pkgbuild_registry:
       results:
         - python-libnacl
     python-m2crypto:
-      version: 0.28.2-3
+      version: 0.28.2-4
       results:
         - m2crypto
       build_deps:
+        - openssl
         - python-typing
     python-msgpack:
       version: 0.4.6-1
@@ -174,7 +183,7 @@ pkgbuild_registry:
         - libtomcrypt-devel
     python-pyzmq:
       name: python-zmq
-      version: 15.3.0-2
+      version: 15.3.0-3
       build_deps:
         - zeromq
     python-raet:

@@ -5,7 +5,7 @@
 Summary: Support for using OpenSSL in Python 3 scripts
 Name: m2crypto
 Version: 0.28.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 Source0: https://pypi.python.org/packages/4e/bd/690f9b8aa87b82b0905c6e928da4cb0ce3ac65b1fc43c8efd3f8104e345e/M2Crypto-0.28.2.tar.gz
 # Should generally be available at pypi; for this release it has been obtained independently.
 Source1: M2Crypto-0.28.2.tar.gz.asc
@@ -13,11 +13,14 @@ Source1: M2Crypto-0.28.2.tar.gz.asc
 # This is only precautionary, it does fix anything - not sent upstream
 Patch0: m2crypto-0.26.4-gcc_macros.patch
 Requires: python2-typing
+Requires: openssl >= 1:1.0.2
  
 License: MIT
 Group: System Environment/Libraries
 URL: https://gitlab.com/m2crypto/m2crypto/
-BuildRequires: openssl, openssl-devel, python2-devel, python2-setuptools
+BuildRequires: openssl >= 1:1.0.2
+BuildRequires: openssl-devel >= 1:1.0.2
+BuildRequires: python2-devel, python2-setuptools
 BuildRequires: perl-interpreter, pkgconfig, python2-typing, swig, which
 
 %if 0%{?with_python3}
@@ -115,6 +118,9 @@ popd
 %endif
 
 %changelog
+* Tue Aug 28 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-4
+- Added version check >= openssl 1:1.0.2
+
 * Tue Mar 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 0.28.2-3
 - Adjusted support for Python 3 for Redhat 7
 

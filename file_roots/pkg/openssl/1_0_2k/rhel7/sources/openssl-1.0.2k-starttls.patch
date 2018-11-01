@@ -1,0 +1,604 @@
+diff -up openssl-1.0.2k/apps/apps.c.starttls openssl-1.0.2k/apps/apps.c
+--- openssl-1.0.2k/apps/apps.c.starttls	2017-01-26 14:22:03.000000000 +0100
++++ openssl-1.0.2k/apps/apps.c	2017-03-09 17:35:35.519765927 +0100
+@@ -3277,3 +3277,11 @@ int raw_write_stdout(const void *buf, in
+     return write(fileno_stdout(), buf, siz);
+ }
+ #endif
++
++void make_uppercase(char *string)
++{
++    int i;
++
++    for (i = 0; string[i] != '\0'; i++)
++        string[i] = toupper((unsigned char)string[i]);
++}
+diff -up openssl-1.0.2k/apps/apps.h.starttls openssl-1.0.2k/apps/apps.h
+--- openssl-1.0.2k/apps/apps.h.starttls	2017-03-09 17:35:28.632604234 +0100
++++ openssl-1.0.2k/apps/apps.h	2017-03-09 17:35:35.520765950 +0100
+@@ -384,6 +384,8 @@ int raw_write_stdout(const void *, int);
+ # define TM_STOP         1
+ double app_tminterval(int stop, int usertime);
+ 
++void make_uppercase(char *string);
++
+ # define OPENSSL_NO_SSL_INTERN
+ 
+ #endif
+diff -up openssl-1.0.2k/apps/s_client.c.starttls openssl-1.0.2k/apps/s_client.c
+--- openssl-1.0.2k/apps/s_client.c.starttls	2017-03-09 17:35:28.684605455 +0100
++++ openssl-1.0.2k/apps/s_client.c	2017-03-09 17:52:59.153207946 +0100
+@@ -134,7 +134,8 @@
+  * OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS OR
+  * OTHERWISE.
+  */
+-
++/* for strcasestr */
++#define _GNU_SOURCE
+ #include <assert.h>
+ #include <ctype.h>
+ #include <stdio.h>
+@@ -202,6 +203,7 @@ static char *krb5svc = NULL;
+ 
+ #undef BUFSIZZ
+ #define BUFSIZZ 1024*8
++#define S_CLIENT_IRC_READ_TIMEOUT 8
+ 
+ extern int verify_depth;
+ extern int verify_error;
+@@ -228,6 +230,7 @@ static void print_stuff(BIO *berr, SSL *
+ #ifndef OPENSSL_NO_TLSEXT
+ static int ocsp_resp_cb(SSL *s, void *arg);
+ #endif
++static int ldap_ExtendedResponse_parse(const char *buf, long rem);
+ static BIO *bio_c_out = NULL;
+ static BIO *bio_c_msg = NULL;
+ static int c_quiet = 0;
+@@ -402,8 +405,14 @@ static void sc_usage(void)
+     BIO_printf(bio_err,
+                "                 'prot' defines which one to assume.  Currently,\n");
+     BIO_printf(bio_err,
+-               "                 only \"smtp\", \"pop3\", \"imap\", \"ftp\" and \"xmpp\"\n");
+-    BIO_printf(bio_err, "                 are supported.\n");
++               "                 only \"smtp\", \"pop3\", \"imap\", \"ftp\", \"xmpp\",\n");
++    BIO_printf(bio_err,
++               "                 \"xmpp-server\", \"irc\", \"postgres\", \"lmtp\", \"nntp\",\n");
++    BIO_printf(bio_err, "                 \"sieve\" and \"ldap\" are supported.\n");
++    BIO_printf(bio_err,
++               " -xmpphost host - Host to use with \"-starttls xmpp[-server]\"\n");
++    BIO_printf(bio_err,
++               " -name host     - Hostname to use for \"-starttls lmtp\" or \"-starttls smtp\"\n");
+ #ifndef OPENSSL_NO_KRB5
+     BIO_printf(bio_err, " -krb5svc arg  - Kerberos service name\n");
+ #endif
+@@ -657,7 +666,15 @@ enum {
+     PROTO_POP3,
+     PROTO_IMAP,
+     PROTO_FTP,
+-    PROTO_XMPP
++    PROTO_TELNET,
++    PROTO_XMPP,
++    PROTO_XMPP_SERVER,
++    PROTO_IRC,
++    PROTO_POSTGRES,
++    PROTO_LMTP,
++    PROTO_NNTP,
++    PROTO_SIEVE,
++    PROTO_LDAP
+ };
+ 
+ int MAIN(int, char **);
+@@ -726,6 +743,8 @@ int MAIN(int argc, char **argv)
+ #endif
+     char *sess_in = NULL;
+     char *sess_out = NULL;
++    char *xmpphost = NULL;
++    const char *ehlo = "openssl.client.net";
+     struct sockaddr peer;
+     int peerlen = sizeof(peer);
+     int fallback_scsv = 0;
+@@ -1097,8 +1116,32 @@ int MAIN(int argc, char **argv)
+                 starttls_proto = PROTO_FTP;
+             else if (strcmp(*argv, "xmpp") == 0)
+                 starttls_proto = PROTO_XMPP;
++            else if (strcmp(*argv, "xmpp-server") == 0)
++                starttls_proto = PROTO_XMPP_SERVER;
++            else if (strcmp(*argv, "telnet") == 0)
++                starttls_proto = PROTO_TELNET;
++            else if (strcmp(*argv, "irc") == 0)
++                starttls_proto = PROTO_IRC;
++            else if (strcmp(*argv, "postgres") == 0)
++                starttls_proto = PROTO_POSTGRES;
++            else if (strcmp(*argv, "lmtp") == 0)
++                starttls_proto = PROTO_LMTP;
++            else if (strcmp(*argv, "nntp") == 0)
++                starttls_proto = PROTO_NNTP;
++            else if (strcmp(*argv, "sieve") == 0)
++                starttls_proto = PROTO_SIEVE;
++            else if (strcmp(*argv, "ldap") == 0)
++                starttls_proto = PROTO_LDAP;
+             else
+                 goto bad;
++        } else if (strcmp(*argv, "-xmpphost") == 0) {
++            if (--argc < 1)
++                goto bad;
++            xmpphost = *(++argv);
++        } else if (strcmp(*argv, "-name") == 0) {
++            if (--argc < 1)
++                goto bad;
++            ehlo = *(++argv);
+         }
+ #ifndef OPENSSL_NO_ENGINE
+         else if (strcmp(*argv, "-engine") == 0) {
+@@ -1599,19 +1642,24 @@ int MAIN(int argc, char **argv)
+      * BIO into the chain that is removed again later on to not disturb the
+      * rest of the s_client operation.
+      */
+-    if (starttls_proto == PROTO_SMTP) {
++    if (starttls_proto == PROTO_SMTP || starttls_proto == PROTO_LMTP) {
+         int foundit = 0;
+         BIO *fbio = BIO_new(BIO_f_buffer());
+         BIO_push(fbio, sbio);
+-        /* wait for multi-line response to end from SMTP */
++        /* Wait for multi-line response to end from LMTP or SMTP */
+         do {
+             mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+         }
+         while (mbuf_len > 3 && mbuf[3] == '-');
+-        /* STARTTLS command requires EHLO... */
+-        BIO_printf(fbio, "EHLO openssl.client.net\r\n");
++        if (starttls_proto == PROTO_LMTP)
++            BIO_printf(fbio, "LHLO %s\r\n", ehlo);
++        else
++            BIO_printf(fbio, "EHLO %s\r\n", ehlo);
+         (void)BIO_flush(fbio);
+-        /* wait for multi-line response to end EHLO SMTP response */
++        /*
++         * Wait for multi-line response to end LHLO LMTP or EHLO SMTP
++         * response.
++         */
+         do {
+             mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+             if (strstr(mbuf, "STARTTLS"))
+@@ -1630,10 +1678,15 @@ int MAIN(int argc, char **argv)
+     } else if (starttls_proto == PROTO_POP3) {
+         BIO_read(sbio, mbuf, BUFSIZZ);
+         BIO_printf(sbio, "STLS\r\n");
+-        BIO_read(sbio, sbuf, BUFSIZZ);
++        mbuf_len = BIO_read(sbio, sbuf, BUFSIZZ);
++        if (mbuf_len < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto end;
++        }
+     } else if (starttls_proto == PROTO_IMAP) {
+         int foundit = 0;
+         BIO *fbio = BIO_new(BIO_f_buffer());
++
+         BIO_push(fbio, sbio);
+         BIO_gets(fbio, mbuf, BUFSIZZ);
+         /* STARTTLS command requires CAPABILITY... */
+@@ -1669,27 +1722,287 @@ int MAIN(int argc, char **argv)
+         BIO_printf(sbio, "AUTH TLS\r\n");
+         BIO_read(sbio, sbuf, BUFSIZZ);
+     }
+-    if (starttls_proto == PROTO_XMPP) {
++    else if (starttls_proto == PROTO_XMPP || starttls_proto == PROTO_XMPP_SERVER) {
+         int seen = 0;
+         BIO_printf(sbio, "<stream:stream "
+                    "xmlns:stream='http://etherx.jabber.org/streams' "
+-                   "xmlns='jabber:client' to='%s' version='1.0'>", host);
++                   "xmlns='jabber:%s' to='%s' version='1.0'>",
++                   starttls_proto == PROTO_XMPP ? "client" : "server",
++                   xmpphost ? xmpphost : host);
+         seen = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (seen < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto end;
++        }
+         mbuf[seen] = 0;
+-        while (!strstr
+-               (mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'")) {
+-            if (strstr(mbuf, "/stream:features>"))
+-                goto shut;
++        while (!strcasestr
++               (mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'")
++               && !strcasestr(mbuf,
++                              "<starttls xmlns=\"urn:ietf:params:xml:ns:xmpp-tls\""))
++        {
+             seen = BIO_read(sbio, mbuf, BUFSIZZ);
++
++            if (seen <= 0)
++               goto shut;
++
+             mbuf[seen] = 0;
+         }
+         BIO_printf(sbio,
+                    "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
+         seen = BIO_read(sbio, sbuf, BUFSIZZ);
++        if (seen < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto shut;
++        }
+         sbuf[seen] = 0;
+         if (!strstr(sbuf, "<proceed"))
+             goto shut;
+         mbuf[0] = 0;
++    } else if (starttls_proto == PROTO_TELNET) {
++        static const unsigned char tls_do[] = {
++            /* IAC    DO   START_TLS */
++               255,   253, 46
++        };
++        static const unsigned char tls_will[] = {
++            /* IAC  WILL START_TLS */
++               255, 251, 46
++        };
++        static const unsigned char tls_follows[] = {
++            /* IAC  SB   START_TLS FOLLOWS IAC  SE */
++               255, 250, 46,       1,      255, 240
++        };
++        int bytes;
++
++        /* Telnet server should demand we issue START_TLS */
++        bytes = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (bytes != 3 || memcmp(mbuf, tls_do, 3) != 0)
++            goto shut;
++        /* Agree to issue START_TLS and send the FOLLOWS sub-command */
++        BIO_write(sbio, tls_will, 3);
++        BIO_write(sbio, tls_follows, 6);
++        (void)BIO_flush(sbio);
++        /* Telnet server also sent the FOLLOWS sub-command */
++        bytes = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (bytes != 6 || memcmp(mbuf, tls_follows, 6) != 0)
++            goto shut;
++    } else if (starttls_proto == PROTO_IRC) {
++        int numeric;
++        BIO *fbio = BIO_new(BIO_f_buffer());
++
++        BIO_push(fbio, sbio);
++        BIO_printf(fbio, "STARTTLS\r\n");
++        (void)BIO_flush(fbio);
++        width = SSL_get_fd(con) + 1;
++
++        do {
++            numeric = 0;
++
++            FD_ZERO(&readfds);
++            openssl_fdset(SSL_get_fd(con), &readfds);
++            timeout.tv_sec = S_CLIENT_IRC_READ_TIMEOUT;
++            timeout.tv_usec = 0;
++            /*
++             * If the IRCd doesn't respond within
++             * S_CLIENT_IRC_READ_TIMEOUT seconds, assume
++             * it doesn't support STARTTLS. Many IRCds
++             * will not give _any_ sort of response to a
++             * STARTTLS command when it's not supported.
++             */
++            if (!BIO_get_buffer_num_lines(fbio)
++                && !BIO_pending(fbio)
++                && !BIO_pending(sbio)
++                && select(width, (void *)&readfds, NULL, NULL,
++                          &timeout) < 1) {
++                BIO_printf(bio_err,
++                           "Timeout waiting for response (%d seconds).\n",
++                           S_CLIENT_IRC_READ_TIMEOUT);
++                break;
++            }
++
++            mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
++            if (mbuf_len < 1 || sscanf(mbuf, "%*s %d", &numeric) != 1)
++                break;
++            /* :example.net 451 STARTTLS :You have not registered */
++            /* :example.net 421 STARTTLS :Unknown command */
++            if ((numeric == 451 || numeric == 421)
++                && strstr(mbuf, "STARTTLS") != NULL) {
++                BIO_printf(bio_err, "STARTTLS not supported: %s", mbuf);
++                break;
++            }
++            if (numeric == 691) {
++                BIO_printf(bio_err, "STARTTLS negotiation failed: ");
++                ERR_print_errors(bio_err);
++                break;
++            }
++        } while (numeric != 670);
++
++        (void)BIO_flush(fbio);
++        BIO_pop(fbio);
++        BIO_free(fbio);
++        if (numeric != 670) {
++            BIO_printf(bio_err, "Server does not support STARTTLS.\n");
++            ret = 1;
++            goto shut;
++        }
++    } else if (starttls_proto == PROTO_POSTGRES) {
++        static const unsigned char ssl_request[] = {
++            /* Length        SSLRequest */
++               0, 0, 0, 8,   4, 210, 22, 47
++        };
++        int bytes;
++
++        /* Send SSLRequest packet */
++        BIO_write(sbio, ssl_request, 8);
++        (void)BIO_flush(sbio);
++
++        /* Reply will be a single S if SSL is enabled */
++        bytes = BIO_read(sbio, sbuf, BUFSIZZ);
++        if (bytes != 1 || sbuf[0] != 'S')
++            goto shut;
++    } else if (starttls_proto == PROTO_NNTP) {
++        int foundit = 0;
++        BIO *fbio = BIO_new(BIO_f_buffer());
++
++        BIO_push(fbio, sbio);
++        BIO_gets(fbio, mbuf, BUFSIZZ);
++        /* STARTTLS command requires CAPABILITIES... */
++        BIO_printf(fbio, "CAPABILITIES\r\n");
++        (void)BIO_flush(fbio);
++        /* wait for multi-line CAPABILITIES response */
++        do {
++            mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
++            if (strstr(mbuf, "STARTTLS"))
++                foundit = 1;
++        } while (mbuf_len > 1 && mbuf[0] != '.');
++        (void)BIO_flush(fbio);
++        BIO_pop(fbio);
++        BIO_free(fbio);
++        if (!foundit)
++            BIO_printf(bio_err,
++                       "Didn't find STARTTLS in server response,"
++                       " trying anyway...\n");
++        BIO_printf(sbio, "STARTTLS\r\n");
++        mbuf_len = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (mbuf_len < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto end;
++        }
++        mbuf[mbuf_len] = '\0';
++        if (strstr(mbuf, "382") == NULL) {
++            BIO_printf(bio_err, "STARTTLS failed: %s", mbuf);
++            goto shut;
++        }
++    } else if (starttls_proto == PROTO_SIEVE) {
++        int foundit = 0;
++        BIO *fbio = BIO_new(BIO_f_buffer());
++
++        BIO_push(fbio, sbio);
++        /* wait for multi-line response to end from Sieve */
++        do {
++            mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
++            /*
++             * According to RFC 5804 § 1.7, capability
++             * is case-insensitive, make it uppercase
++             */
++            if (mbuf_len > 1 && mbuf[0] == '"') {
++                make_uppercase(mbuf);
++                if (strncmp(mbuf, "\"STARTTLS\"", 10) == 0)
++                    foundit = 1;
++            }
++        } while (mbuf_len > 1 && mbuf[0] == '"');
++        (void)BIO_flush(fbio);
++        BIO_pop(fbio);
++        BIO_free(fbio);
++        if (!foundit)
++            BIO_printf(bio_err,
++                       "Didn't find STARTTLS in server response,"
++                       " trying anyway...\n");
++        BIO_printf(sbio, "STARTTLS\r\n");
++        mbuf_len = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (mbuf_len < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto end;
++        }
++        mbuf[mbuf_len] = '\0';
++        if (mbuf_len < 2) {
++            BIO_printf(bio_err, "STARTTLS failed: %s", mbuf);
++            goto shut;
++        }
++        /*
++         * According to RFC 5804 § 2.2, response codes are case-
++         * insensitive, make it uppercase but preserve the response.
++         */
++        strncpy(sbuf, mbuf, 2);
++        make_uppercase(sbuf);
++        if (strncmp(sbuf, "OK", 2) != 0) {
++            BIO_printf(bio_err, "STARTTLS not supported: %s", mbuf);
++            goto shut;
++        }
++    } else if (starttls_proto == PROTO_LDAP) {
++        /* StartTLS Operation according to RFC 4511 */
++        static char ldap_tls_genconf[] = "asn1=SEQUENCE:LDAPMessage\n"
++            "[LDAPMessage]\n"
++            "messageID=INTEGER:1\n"
++            "extendedReq=EXPLICIT:23A,IMPLICIT:0C,"
++            "FORMAT:ASCII,OCT:1.3.6.1.4.1.1466.20037\n";
++        long errline = -1;
++        char *genstr = NULL;
++        int result = -1;
++        ASN1_TYPE *atyp = NULL;
++        BIO *ldapbio = BIO_new(BIO_s_mem());
++        CONF *cnf = NCONF_new(NULL);
++
++        if (cnf == NULL) {
++            BIO_free(ldapbio);
++            goto end;
++        }
++        BIO_puts(ldapbio, ldap_tls_genconf);
++        if (NCONF_load_bio(cnf, ldapbio, &errline) <= 0) {
++            BIO_free(ldapbio);
++            NCONF_free(cnf);
++            if (errline <= 0) {
++                BIO_printf(bio_err, "NCONF_load_bio failed\n");
++                goto end;
++            } else {
++                BIO_printf(bio_err, "Error on line %ld\n", errline);
++                goto end;
++            }
++        }
++        BIO_free(ldapbio);
++        genstr = NCONF_get_string(cnf, "default", "asn1");
++        if (genstr == NULL) {
++            NCONF_free(cnf);
++            BIO_printf(bio_err, "NCONF_get_string failed\n");
++            goto end;
++        }
++        atyp = ASN1_generate_nconf(genstr, cnf);
++        if (atyp == NULL) {
++            NCONF_free(cnf);
++            BIO_printf(bio_err, "ASN1_generate_nconf failed\n");
++            goto end;
++        }
++        NCONF_free(cnf);
++        /* Send SSLRequest packet */
++        BIO_write(sbio, atyp->value.sequence->data,
++                  atyp->value.sequence->length);
++        (void)BIO_flush(sbio);
++        ASN1_TYPE_free(atyp);
++
++        mbuf_len = BIO_read(sbio, mbuf, BUFSIZZ);
++        if (mbuf_len < 0) {
++            BIO_printf(bio_err, "BIO_read failed\n");
++            goto end;
++        }
++        result = ldap_ExtendedResponse_parse(mbuf, mbuf_len);
++        if (result < 0) {
++            BIO_printf(bio_err, "ldap_ExtendedResponse_parse failed\n");
++            goto shut;
++        } else if (result > 0) {
++            BIO_printf(bio_err, "STARTTLS failed, LDAP Result Code: %i\n",
++                       result);
++            goto shut;
++        }
++        mbuf_len = 0;
+     }
+ 
+     for (;;) {
+@@ -1738,7 +2051,7 @@ int MAIN(int argc, char **argv)
+                     full_log--;
+ 
+                 if (starttls_proto) {
+-                    BIO_printf(bio_err, "%s", mbuf);
++                    BIO_write(bio_err, mbuf, mbuf_len);
+                     /* We don't need to know any more */
+                     starttls_proto = PROTO_OFF;
+                 }
+@@ -2372,3 +2685,87 @@ static int ocsp_resp_cb(SSL *s, void *ar
+ }
+ 
+ #endif
++
++static int ldap_ExtendedResponse_parse(const char *buf, long rem)
++{
++    const unsigned char *cur, *end;
++    long len;
++    int tag, xclass, inf, ret = -1;
++
++    cur = (const unsigned char *)buf;
++    end = cur + rem;
++
++    /*
++     * From RFC 4511:
++     *
++     *    LDAPMessage ::= SEQUENCE {
++     *         messageID       MessageID,
++     *         protocolOp      CHOICE {
++     *              ...
++     *              extendedResp          ExtendedResponse,
++     *              ... },
++     *         controls       [0] Controls OPTIONAL }
++     *
++     *    ExtendedResponse ::= [APPLICATION 24] SEQUENCE {
++     *         COMPONENTS OF LDAPResult,
++     *         responseName     [10] LDAPOID OPTIONAL,
++     *         responseValue    [11] OCTET STRING OPTIONAL }
++     *
++     *    LDAPResult ::= SEQUENCE {
++     *         resultCode         ENUMERATED {
++     *              success                      (0),
++     *              ...
++     *              other                        (80),
++     *              ...  },
++     *         matchedDN          LDAPDN,
++     *         diagnosticMessage  LDAPString,
++     *         referral           [3] Referral OPTIONAL }
++     */
++
++    /* pull SEQUENCE */
++    inf = ASN1_get_object(&cur, &len, &tag, &xclass, rem);
++    if (inf != V_ASN1_CONSTRUCTED || tag != V_ASN1_SEQUENCE ||
++        (rem = end - cur, len > rem)) {
++        BIO_printf(bio_err, "Unexpected LDAP response\n");
++        goto end;
++    }
++
++    rem = len;  /* ensure that we don't overstep the SEQUENCE */
++
++    /* pull MessageID */
++    inf = ASN1_get_object(&cur, &len, &tag, &xclass, rem);
++    if (inf != V_ASN1_UNIVERSAL || tag != V_ASN1_INTEGER ||
++        (rem = end - cur, len > rem)) {
++        BIO_printf(bio_err, "No MessageID\n");
++        goto end;
++    }
++
++    cur += len; /* shall we check for MessageId match or just skip? */
++
++    /* pull [APPLICATION 24] */
++    rem = end - cur;
++    inf = ASN1_get_object(&cur, &len, &tag, &xclass, rem);
++    if (inf != V_ASN1_CONSTRUCTED || xclass != V_ASN1_APPLICATION ||
++        tag != 24) {
++        BIO_printf(bio_err, "Not ExtendedResponse\n");
++        goto end;
++    }
++
++    /* pull resultCode */
++    rem = end - cur;
++    inf = ASN1_get_object(&cur, &len, &tag, &xclass, rem);
++    if (inf != V_ASN1_UNIVERSAL || tag != V_ASN1_ENUMERATED || len == 0 ||
++        (rem = end - cur, len > rem)) {
++        BIO_printf(bio_err, "Not LDAPResult\n");
++        goto end;
++    }
++
++    /* len should always be one, but just in case... */
++    for (ret = 0, inf = 0; inf < len; inf++) {
++        ret <<= 8;
++        ret |= cur[inf];
++    }
++    /* There is more data, but we don't care... */
++ end:
++    return ret;
++}
+diff -up openssl-1.0.2k/doc/apps/s_client.pod.starttls openssl-1.0.2k/doc/apps/s_client.pod
+--- openssl-1.0.2k/doc/apps/s_client.pod.starttls	2017-03-09 17:35:28.684605455 +0100
++++ openssl-1.0.2k/doc/apps/s_client.pod	2017-03-09 17:42:54.455070967 +0100
+@@ -46,6 +46,8 @@ B<openssl> B<s_client>
+ [B<-krb5svc service>]
+ [B<-serverpref>]
+ [B<-starttls protocol>]
++[B<-xmpphost hostname>]
++[B<-name hostname>]
+ [B<-engine id>]
+ [B<-tlsextdebug>]
+ [B<-no_ticket>]
+@@ -239,7 +241,20 @@ need keys for that principal in its keyt
+ 
+ send the protocol-specific message(s) to switch to TLS for communication.
+ B<protocol> is a keyword for the intended protocol.  Currently, the only
+-supported keywords are "smtp", "pop3", "imap", and "ftp".
++supported keywords are "smtp", "pop3", "imap", "ftp", "xmpp", "xmpp-server",
++"irc", "postgres", "lmtp", "nntp", "sieve" and "ldap".
++
++=item B<-xmpphost hostname>
++
++This option, when used with "-starttls xmpp" or "-starttls xmpp-server",
++specifies the host for the "to" attribute of the stream element.
++If this option is not specified, then the host specified with "-connect"
++will be used.
++
++=item B<-name hostname>
++
++the host name to use with "-starttls smtp".
++If this option is not specified, the default "openssl.client.net" will be used.
+ 
+ =item B<-tlsextdebug>
+ 

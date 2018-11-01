@@ -1,0 +1,286 @@
+diff -up openssl-1.0.2i/apps/cms.c.trusted-first openssl-1.0.2i/apps/cms.c
+--- openssl-1.0.2i/apps/cms.c.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/apps/cms.c	2016-09-22 14:01:27.436630359 +0200
+@@ -646,6 +646,8 @@ int MAIN(int argc, char **argv)
+                    "-CApath dir    trusted certificates directory\n");
+         BIO_printf(bio_err, "-CAfile file   trusted certificates file\n");
+         BIO_printf(bio_err,
++                   "-trusted_first use trusted certificates first when building the trust chain\n");
++        BIO_printf(bio_err,
+                    "-no_alt_chains only ever use the first certificate chain found\n");
+         BIO_printf(bio_err,
+                    "-crl_check     check revocation status of signer's certificate using CRLs\n");
+diff -up openssl-1.0.2i/apps/ocsp.c.trusted-first openssl-1.0.2i/apps/ocsp.c
+--- openssl-1.0.2i/apps/ocsp.c.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/apps/ocsp.c	2016-09-22 14:01:27.436630359 +0200
+@@ -537,6 +537,8 @@ int MAIN(int argc, char **argv)
+         BIO_printf(bio_err,
+                    "-CAfile file         trusted certificates file\n");
+         BIO_printf(bio_err,
++                   "-trusted_first       use trusted certificates first when building the trust chain\n");
++        BIO_printf(bio_err,
+                    "-no_alt_chains       only ever use the first certificate chain found\n");
+         BIO_printf(bio_err,
+                    "-VAfile file         validator certificates file\n");
+diff -up openssl-1.0.2i/apps/s_client.c.trusted-first openssl-1.0.2i/apps/s_client.c
+--- openssl-1.0.2i/apps/s_client.c.trusted-first	2016-09-22 14:01:27.402629569 +0200
++++ openssl-1.0.2i/apps/s_client.c	2016-09-22 14:01:27.436630359 +0200
+@@ -330,6 +330,8 @@ static void sc_usage(void)
+     BIO_printf(bio_err, " -CApath arg   - PEM format directory of CA's\n");
+     BIO_printf(bio_err, " -CAfile arg   - PEM format file of CA's\n");
+     BIO_printf(bio_err,
++               " -trusted_first - Use trusted CA's first when building the trust chain\n");
++    BIO_printf(bio_err,
+                " -no_alt_chains - only ever use the first certificate chain found\n");
+     BIO_printf(bio_err,
+                " -reconnect    - Drop and re-make the connection with the same Session-ID\n");
+diff -up openssl-1.0.2i/apps/smime.c.trusted-first openssl-1.0.2i/apps/smime.c
+--- openssl-1.0.2i/apps/smime.c.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/apps/smime.c	2016-09-22 14:01:27.436630359 +0200
+@@ -442,6 +442,8 @@ int MAIN(int argc, char **argv)
+                    "-CApath dir    trusted certificates directory\n");
+         BIO_printf(bio_err, "-CAfile file   trusted certificates file\n");
+         BIO_printf(bio_err,
++                   "-trusted_first use trusted certificates first when building the trust chain\n");
++        BIO_printf(bio_err,
+                    "-no_alt_chains only ever use the first certificate chain found\n");
+         BIO_printf(bio_err,
+                    "-crl_check     check revocation status of signer's certificate using CRLs\n");
+diff -up openssl-1.0.2i/apps/s_server.c.trusted-first openssl-1.0.2i/apps/s_server.c
+--- openssl-1.0.2i/apps/s_server.c.trusted-first	2016-09-22 14:01:27.374628918 +0200
++++ openssl-1.0.2i/apps/s_server.c	2016-09-22 14:01:27.437630382 +0200
+@@ -571,6 +571,8 @@ static void sv_usage(void)
+     BIO_printf(bio_err, " -CApath arg   - PEM format directory of CA's\n");
+     BIO_printf(bio_err, " -CAfile arg   - PEM format file of CA's\n");
+     BIO_printf(bio_err,
++               " -trusted_first - Use trusted CA's first when building the trust chain\n");
++    BIO_printf(bio_err,
+                " -no_alt_chains - only ever use the first certificate chain found\n");
+     BIO_printf(bio_err,
+                " -nocert       - Don't use any certificates (Anon-DH)\n");
+diff -up openssl-1.0.2i/apps/s_time.c.trusted-first openssl-1.0.2i/apps/s_time.c
+--- openssl-1.0.2i/apps/s_time.c.trusted-first	2016-09-22 14:01:27.368628779 +0200
++++ openssl-1.0.2i/apps/s_time.c	2016-09-22 14:01:27.437630382 +0200
+@@ -182,6 +182,7 @@ static void s_time_usage(void)
+                 file if not specified by this option\n\
+ -CApath arg   - PEM format directory of CA's\n\
+ -CAfile arg   - PEM format file of CA's\n\
++-trusted_first - Use trusted CA's first when building the trust chain\n\
+ -cipher       - preferred cipher to use, play with 'openssl ciphers'\n\n";
+ 
+     printf("usage: s_time <args>\n\n");
+diff -up openssl-1.0.2i/apps/ts.c.trusted-first openssl-1.0.2i/apps/ts.c
+--- openssl-1.0.2i/apps/ts.c.trusted-first	2016-09-22 14:01:27.400629522 +0200
++++ openssl-1.0.2i/apps/ts.c	2016-09-22 14:01:27.437630382 +0200
+@@ -352,7 +352,7 @@ int MAIN(int argc, char **argv)
+                "ts -verify [-data file_to_hash] [-digest digest_bytes] "
+                "[-queryfile request.tsq] "
+                "-in response.tsr [-token_in] "
+-               "-CApath ca_path -CAfile ca_file.pem "
++               "-CApath ca_path -CAfile ca_file.pem -trusted_first"
+                "-untrusted cert_file.pem\n");
+  cleanup:
+     /* Clean up. */
+diff -up openssl-1.0.2i/apps/verify.c.trusted-first openssl-1.0.2i/apps/verify.c
+--- openssl-1.0.2i/apps/verify.c.trusted-first	2016-09-22 14:01:27.438630405 +0200
++++ openssl-1.0.2i/apps/verify.c	2016-09-22 14:02:37.951269140 +0200
+@@ -231,7 +231,7 @@ int MAIN(int argc, char **argv)
+  usage:
+     if (ret == 1) {
+         BIO_printf(bio_err,
+-                   "usage: verify [-verbose] [-CApath path] [-CAfile file] [-purpose purpose] [-crl_check]");
++                   "usage: verify [-verbose] [-CApath path] [-CAfile file] [-trusted_first] [-purpose purpose] [-crl_check]");
+         BIO_printf(bio_err, " [-no_alt_chains] [-attime timestamp]");
+ #ifndef OPENSSL_NO_ENGINE
+         BIO_printf(bio_err, " [-engine e]");
+diff -up openssl-1.0.2i/doc/apps/cms.pod.trusted-first openssl-1.0.2i/doc/apps/cms.pod
+--- openssl-1.0.2i/doc/apps/cms.pod.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/doc/apps/cms.pod	2016-09-22 14:01:27.438630405 +0200
+@@ -35,6 +35,7 @@ B<openssl> B<cms>
+ [B<-print>]
+ [B<-CAfile file>]
+ [B<-CApath dir>]
++[B<-trusted_first>]
+ [B<-no_alt_chains>]
+ [B<-md digest>]
+ [B<-[cipher]>]
+@@ -248,6 +249,12 @@ B<-verify>. This directory must be a sta
+ is a hash of each subject name (using B<x509 -hash>) should be linked
+ to each certificate.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory before untrusted certificates
++from the message when building the trust chain to verify certificates.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-md digest>
+ 
+ digest algorithm to use when signing or resigning. If not present then the
+diff -up openssl-1.0.2i/doc/apps/ocsp.pod.trusted-first openssl-1.0.2i/doc/apps/ocsp.pod
+--- openssl-1.0.2i/doc/apps/ocsp.pod.trusted-first	2016-09-22 14:01:27.401629545 +0200
++++ openssl-1.0.2i/doc/apps/ocsp.pod	2016-09-22 14:01:27.438630405 +0200
+@@ -29,6 +29,7 @@ B<openssl> B<ocsp>
+ [B<-path>]
+ [B<-CApath dir>]
+ [B<-CAfile file>]
++[B<-trusted_first>]
+ [B<-no_alt_chains>]
+ [B<-VAfile file>]
+ [B<-validity_period n>]
+@@ -144,6 +145,13 @@ connection timeout to the OCSP responder
+ file or pathname containing trusted CA certificates. These are used to verify
+ the signature on the OCSP response.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory over certificates provided
++in the response or residing in other certificates file when building the trust
++chain to verify responder certificate.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-no_alt_chains>
+ 
+ See L<B<verify>|verify(1)> manual page for details.
+diff -up openssl-1.0.2i/doc/apps/s_client.pod.trusted-first openssl-1.0.2i/doc/apps/s_client.pod
+--- openssl-1.0.2i/doc/apps/s_client.pod.trusted-first	2016-09-22 14:01:27.412629801 +0200
++++ openssl-1.0.2i/doc/apps/s_client.pod	2016-09-22 14:01:27.438630405 +0200
+@@ -19,6 +19,7 @@ B<openssl> B<s_client>
+ [B<-pass arg>]
+ [B<-CApath directory>]
+ [B<-CAfile filename>]
++[B<-trusted_first>]
+ [B<-no_alt_chains>]
+ [B<-reconnect>]
+ [B<-pause>]
+@@ -125,7 +126,7 @@ also used when building the client certi
+ A file containing trusted certificates to use during server authentication
+ and to use when attempting to build the client certificate chain.
+ 
+-=item B<-purpose, -ignore_critical, -issuer_checks, -crl_check, -crl_check_all, -policy_check, -extended_crl, -x509_strict, -policy -check_ss_sig -no_alt_chains>
++=item B<-purpose, -ignore_critical, -issuer_checks, -crl_check, -crl_check_all, -policy_check, -extended_crl, -x509_strict, -policy -check_ss_sig, -trusted_first -no_alt_chains>
+ 
+ Set various certificate chain valiadition option. See the
+ L<B<verify>|verify(1)> manual page for details.
+diff -up openssl-1.0.2i/doc/apps/smime.pod.trusted-first openssl-1.0.2i/doc/apps/smime.pod
+--- openssl-1.0.2i/doc/apps/smime.pod.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/doc/apps/smime.pod	2016-09-22 14:01:27.438630405 +0200
+@@ -15,6 +15,9 @@ B<openssl> B<smime>
+ [B<-pk7out>]
+ [B<-[cipher]>]
+ [B<-in file>]
++[B<-CAfile file>]
++[B<-CApath dir>]
++[B<-trusted_first>]
+ [B<-no_alt_chains>]
+ [B<-certfile file>]
+ [B<-signer file>]
+@@ -150,6 +153,12 @@ B<-verify>. This directory must be a sta
+ is a hash of each subject name (using B<x509 -hash>) should be linked
+ to each certificate.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory over certificates provided
++in the message when building the trust chain to verify a certificate.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-md digest>
+ 
+ digest algorithm to use when signing or resigning. If not present then the
+diff -up openssl-1.0.2i/doc/apps/s_server.pod.trusted-first openssl-1.0.2i/doc/apps/s_server.pod
+--- openssl-1.0.2i/doc/apps/s_server.pod.trusted-first	2016-09-22 14:01:27.412629801 +0200
++++ openssl-1.0.2i/doc/apps/s_server.pod	2016-09-22 14:01:27.438630405 +0200
+@@ -33,6 +33,7 @@ B<openssl> B<s_server>
+ [B<-state>]
+ [B<-CApath directory>]
+ [B<-CAfile filename>]
++[B<-trusted_first>]
+ [B<-no_alt_chains>]
+ [B<-nocert>]
+ [B<-cipher cipherlist>]
+@@ -178,6 +179,12 @@ and to use when attempting to build the
+ is also used in the list of acceptable client CAs passed to the client when
+ a certificate is requested.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory before other certificates 
++when building the trust chain to verify client certificates.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-no_alt_chains>
+ 
+ See the L<B<verify>|verify(1)> manual page for details.
+diff -up openssl-1.0.2i/doc/apps/s_time.pod.trusted-first openssl-1.0.2i/doc/apps/s_time.pod
+--- openssl-1.0.2i/doc/apps/s_time.pod.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/doc/apps/s_time.pod	2016-09-22 14:01:27.439630429 +0200
+@@ -14,6 +14,7 @@ B<openssl> B<s_time>
+ [B<-key filename>]
+ [B<-CApath directory>]
+ [B<-CAfile filename>]
++[B<-trusted_first>]
+ [B<-reuse>]
+ [B<-new>]
+ [B<-verify depth>]
+@@ -76,6 +77,12 @@ also used when building the client certi
+ A file containing trusted certificates to use during server authentication
+ and to use when attempting to build the client certificate chain.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory over the certificates provided
++by the server when building the trust chain to verify server certificate.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-new>
+ 
+ performs the timing test using a new session ID for each connection.
+diff -up openssl-1.0.2i/doc/apps/ts.pod.trusted-first openssl-1.0.2i/doc/apps/ts.pod
+--- openssl-1.0.2i/doc/apps/ts.pod.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/doc/apps/ts.pod	2016-09-22 14:01:27.439630429 +0200
+@@ -46,6 +46,7 @@ B<-verify>
+ [B<-token_in>]
+ [B<-CApath> trusted_cert_path]
+ [B<-CAfile> trusted_certs.pem]
++[B<-trusted_first>]
+ [B<-untrusted> cert_file.pem]
+ 
+ =head1 DESCRIPTION
+@@ -324,6 +325,12 @@ L<verify(1)|verify(1)> for additional de
+ or B<-CApath> must be specified.
+ (Optional)
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory before other certificates
++when building the trust chain to verify certificates.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-untrusted> cert_file.pem
+ 
+ Set of additional untrusted certificates in PEM format which may be
+diff -up openssl-1.0.2i/doc/apps/verify.pod.trusted-first openssl-1.0.2i/doc/apps/verify.pod
+--- openssl-1.0.2i/doc/apps/verify.pod.trusted-first	2016-09-22 12:23:06.000000000 +0200
++++ openssl-1.0.2i/doc/apps/verify.pod	2016-09-22 14:01:27.439630429 +0200
+@@ -9,6 +9,7 @@ verify - Utility to verify certificates.
+ B<openssl> B<verify>
+ [B<-CApath directory>]
+ [B<-CAfile file>]
++[B<-trusted_first>]
+ [B<-purpose purpose>]
+ [B<-policy arg>]
+ [B<-ignore_critical>]
+@@ -86,6 +87,12 @@ If a valid CRL cannot be found an error
+ A file of untrusted certificates. The file should contain multiple certificates
+ in PEM format concatenated together.
+ 
++=item B<-trusted_first>
++
++Use certificates in CA file or CA directory before the certificates in the untrusted
++file when building the trust chain to verify certificates.
++This is mainly useful in environments with Bridge CA or Cross-Certified CAs.
++
+ =item B<-purpose purpose>
+ 
+ The intended use for the certificate. If this option is not specified,

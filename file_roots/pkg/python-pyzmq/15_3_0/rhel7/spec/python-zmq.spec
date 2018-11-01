@@ -12,7 +12,7 @@
 
 Name:           python-zmq
 Version:        15.3.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Software library for fast, message-based applications
 
 Group:          Development/Libraries
@@ -52,6 +52,7 @@ BuildRequires:  python%{python3_pkgversion}-tornado
 %endif
 %endif
 
+Requires:   zeromq >= 4
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -216,6 +217,9 @@ rm  %{buildroot}%{python2_sitearch}/zmq/asyncio.py \
 
 
 %changelog
+* Fri Aug 03 2018 SaltStack Packaging Team <packagin@saltstack.com> - 15.3.0-3
+- Added dependency on zeromq >= 4, zeromq provided by Salt
+
 * Tue Jul 19 2016 SaltStack Packaging Team <packagin@saltstack.com> - 15.3.0-2
 - Disabled python3, tests and reverted output python2-* to python-*
 

@@ -130,7 +130,7 @@ pkgbuild_registry:
     python-crypto:
       version: 2.6.1-2
     python-pycryptodome:
-      version: 3.4.11-2
+      version: 3.6.1-2
       results:
         - python2-pycryptodomex
       build_deps:
@@ -168,7 +168,7 @@ pkgbuild_registry:
       version: 2.2.1-1
     python-pyzmq:
       name: python-zmq
-      version: 15.3.0-2
+      version: 15.3.0-3
       build_deps:
         - zeromq
     python-raet:
@@ -329,7 +329,7 @@ pkgbuild_registry:
         - python27-crypto
     python-pycryptodome:
       name: python27-pycryptodome
-      version: 3.4.11-2
+      version: 3.6.1-2
       build_deps:
         - python27
         - python-setuptools

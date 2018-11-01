@@ -20,6 +20,7 @@ build_pkgs:
       - pkg-config
       - ccache
       - nfs-common
+      - bash-completion
 
 
 {{build_cfg.build_runas}}:

@@ -207,6 +207,8 @@ pkgbuild_registry:
       name: python2-urllib3
       version: 1.23-5
       noarch: True
+      build_deps:
+        - python-pysocks
     python-yaml:
       name: PyYAML
       version: 3.11-1
@@ -394,6 +396,8 @@ pkgbuild_registry:
       name: python2-urllib3
       version: 1.23-5
       noarch: True
+      build_deps:
+        - python-pysocks
     python-yaml:
       name: PyYAML
       version: 3.11-1

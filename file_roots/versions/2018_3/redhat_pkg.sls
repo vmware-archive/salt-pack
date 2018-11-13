@@ -29,7 +29,7 @@ include:
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-tornado.4_2_1.rhel7
     - pkg.python-typing.3_5_2_2.rhel7
-    - pkg.python-urllib3.1_10_2.rhel7
+    - pkg.python-urllib3.1_23.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2018_3.rhel7
     - pkg.zeromq.4_1_4.rhel7
@@ -76,7 +76,7 @@ include:
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
-    - pkg.python-urllib3.1_10_4.rhel6
+    - pkg.python-urllib3.1_23.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2018_3.rhel6
     - pkg.yum-utils.1_1_30.rhel6

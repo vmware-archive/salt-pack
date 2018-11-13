@@ -56,8 +56,8 @@ Summary: HTTP library, written in Python, for human beings
 %if 0%{?backport_rhel7}
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
-BuildRequires:  python-chardet >= 2.2.1-1
-BuildRequires:  python-urllib3 >= 1.10.2-1
+BuildRequires:  python-chardet >= 3.0.4
+BuildRequires:  python-urllib3 >= 1.23
 BuildRequires:  python-idna
 %else
 BuildRequires:  python2-devel
@@ -75,8 +75,8 @@ BuildRequires:  python2-pytest-mock
 
 Requires:       ca-certificates
 %if 0%{?backport_rhel7}
-Requires:       python-chardet >= 2.2.1-1
-Requires:       python-urllib3 >= 1.10.2-1
+Requires:       python-chardet >= 3.0.4
+Requires:       python-urllib3 >= 1.23
 Requires:       python-idna
 %else
 Requires:       python2-chardet
@@ -169,7 +169,7 @@ PYTHONPATH=%{buildroot}%{python3_sitelib} %{__python3} -m pytest -v
 %endif
 
 %changelog
-* Mon Nov 12 2018 SaltStack Packaging Team >packaging@saltstack.com> - 2.20.1-2
+* Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> - 2.20.1-2
 - Update to pick up CVE-2018-18074 for python-requests and backport to RHEL 7
 
 * Mon Oct 29 2018 Jeremy Cline <jeremy@jcline.org> - 2.20.0-1

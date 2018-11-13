@@ -7,7 +7,7 @@ include:
     - pkg.libtomcrypt.1_17.rhel7
     - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
-    - pkg.python-chardet.2_2_1.rhel7
+    - pkg.python-chardet.3_0_4.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
     - pkg.python-crypto.2_6_1.rhel7
     - pkg.python-pycryptodome.3_6_1.rhel7
@@ -19,9 +19,10 @@ include:
     - pkg.python-msgpack.0_4_6.rhel7
     - pkg.python-mock.1_0_1.rhel7
     - pkg.python-psutil.2_2_1.rhel7
+    - pkg.python-pysocks.1_6_8.rhel7
     - pkg.python-pyzmq.15_3_0.rhel7
     - pkg.python-raet.0_6_5.rhel7
-    - pkg.python-requests.2_6_0.rhel7
+    - pkg.python-requests.2_20_1.rhel7
     - pkg.python-simplejson.3_3_3.rhel7
     - pkg.python-tornado.4_2_1.rhel7
     - pkg.python-timelib.0_2_4.rhel7
@@ -41,7 +42,7 @@ include:
     - pkg.python27.2_7_13.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
-    - pkg.python-chardet.2_2_1.rhel6
+    - pkg.python-chardet.3_0_4.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
     - pkg.python-crypto.2_6_1.rhel6
 {% if buildcfg.build_arch == 'x86_64' %}
@@ -62,9 +63,10 @@ include:
     - pkg.python-psutil.5_4_2.rhel6
     - pkg.python-py.1_4_27.rhel6
     - pkg.python-pycurl.7_19_0.rhel6
+    - pkg.python-pysocks.1_6_8.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
-    - pkg.python-requests.2_7_0.rhel6
+    - pkg.python-requests.2_20_1.rhel6
     - pkg.python-setuptools.36_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6

@@ -1,17 +1,10 @@
-## %if 0%{?rhel} && 0%{?rhel} <= 6
-## %{!?__python2:        %global __python2 /usr/bin/python2}
-## %{!?python2_sitelib:  %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-## %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-## %endif
+%global backport_rhel6 1
 
-%if 0%{?fedora}
-%global with_python3 1
-%else
-%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
-%endif
+%global srcname urllib3
 
-%if 0%{?rhel} == 6
+%if 0%{?backport_rhel6}
 %global with_python3 0
+%bcond_with tests
 
 %global with_explicit_python27 1
 %global pybasever 2.7
@@ -19,134 +12,129 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
+%else
+# When bootstrapping Python, we cannot test this yet
+%bcond_without tests
 %endif
 
-%global srcname urllib3
-
-Name:           python%{?__python_ver}-%{srcname}
-Version:        1.10.4
-Release:        8%{?dist}
+Name:           python-%{srcname}
+Version:        1.23
+Release:        5%{?dist}
 Summary:        Python HTTP library with thread-safe connection pooling and file post
 
 License:        MIT
-URL:            http://urllib3.readthedocs.org/
-Source0:        https://pypi.io/packages/source/u/%{srcname}/%{srcname}-%{version}.tar.gz
-
-# Only used for python3 (and for python2 on F22 and newer)
+URL:            https://github.com/shazow/urllib3
+Source0:        %{url}/archive/%{version}/%{srcname}-%{version}.tar.gz
+# Used with Python 3.5+
 Source1:        ssl_match_hostname_py3.py
-
-# Only used for F21.
-Patch0:         python-urllib3-pyopenssl.patch
-
-# Remove logging-clear-handlers from setup.cfg because it's not available in RHEL6's nose
-Patch100:       python-urllib3-old-nose-compat.patch
-
 BuildArch:      noarch
-
-Requires:       ca-certificates
-
-# Previously bundled things:
-Requires:       python%{?__python_ver}-six
-
-%if 0%{?with_explicit_python27}
-BuildRequires:  python%{?__python_ver}-devel
-Requires: python%{?__python_ver}  >= 2.7.9-1
-%else
-%if 0%{?rhel} <= 6
-BuildRequires:  python-ordereddict
-Requires:       python-ordereddict
-BuildRequires:  python-backports-ssl_match_hostname
-Requires:       python-backports-ssl_match_hostname
-%endif
-
-BuildRequires:  python2-devel
-
-# See comment-block in the %%install section.
-# https://bugzilla.redhat.com/show_bug.cgi?id=1231381
-%if 0%{?fedora} && 0%{?fedora} <= 21
-Requires:       python-backports-ssl_match_hostname
-BuildRequires:  python-backports-ssl_match_hostname
-%endif
-
-%endif
-
-BuildRequires:  python%{?__python_ver}-setuptools
-BuildRequires:  python%{?__python_ver}-six
-
-
-## # For unittests
-## BuildRequires:  python-nose
-## BuildRequires:  python-mock
-## BuildRequires:  python-six
-## BuildRequires:  python-tornado
-
-%if 0%{?with_python3}
-BuildRequires:  python3-devel
-# For unittests
-BuildRequires:  python3-nose
-BuildRequires:  python3-mock
-BuildRequires:  python3-six
-BuildRequires:  python3-tornado
-%endif # with_python3
-
-
-%if 0%{?fedora} == 21
-BuildRequires:  pyOpenSSL
-BuildRequires:  python-ndg_httpsclient
-BuildRequires:  python-pyasn1
-Requires:       pyOpenSSL
-Requires:       python-ndg_httpsclient
-Requires:       python-pyasn1
-%endif
-
 
 %description
 Python HTTP module with connection pooling and file POST abilities.
 
+%package -n python%{?__python_ver}-%{srcname}
+Summary:        Python2 HTTP library with thread-safe connection pooling and file post
+## %{?python_provide:%python_provide python2-%{srcname}}
+Provides: python%{?__python_ver}-%{srcname}
+
+Requires:       ca-certificates
+
+%if 0%{?backport_rhel6}
+# Previously bundled things:
+Requires:       python%{?__python_ver}-six
+Requires:       python%{?__python_ver}-backports-ssl_match_hostname
+
+# Secure extra requirements
+Requires:       python%{?__python_ver}-ipaddress
+Requires:       python%{?__python_ver}-pysocks
+
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+Requires: python%{?__python_ver}  >= 2.7.9-1
+
+%if %{with tests}
+BuildRequires:  python-nose
+BuildRequires:  python-nose-exclude
+BuildRequires:  python-coverage
+BuildRequires:  python-mock
+BuildRequires:  python-six
+BuildRequires:  python-pysocks
+BuildRequires:  python-pytest
+BuildRequires:  python-tornado
+%endif
+%else
+# Previously bundled things:
+Requires:       python2-six
+Requires:       python2-backports-ssl_match_hostname
+
+# Secure extra requirements
+Requires:       python2-ipaddress
+Requires:       python2-pysocks
+
+BuildRequires:  python2-devel
+%if %{with tests}
+BuildRequires:  python2-nose
+BuildRequires:  python2-nose-exclude
+BuildRequires:  python2-coverage
+BuildRequires:  python2-mock
+BuildRequires:  python2-six
+BuildRequires:  python2-pysocks
+BuildRequires:  python2-pytest
+BuildRequires:  python2-tornado
+%endif
+%endif
+
+%description -n python%{?__python_ver}-%{srcname}
+Python2 HTTP module with connection pooling and file POST abilities.
+
+
 %if 0%{?with_python3}
 %package -n python3-%{srcname}
+Summary:        Python3 HTTP library with thread-safe connection pooling and file post
+
+BuildRequires:  python3-devel
+%if %{with tests}
+BuildRequires:  python3-nose
+BuildRequires:  python3-mock
+BuildRequires:  python3-six
+BuildRequires:  python3-pysocks
+BuildRequires:  python3-pytest
+BuildRequires:  python3-tornado
+%endif
+
 Requires:       ca-certificates
 Requires:       python3-six
-# Note: Will not run with python3 < 3.2 (unless python3-backports-ssl_match_hostname is created)
-Summary:        Python3 HTTP library with thread-safe connection pooling and file post
+Requires:       python3-pysocks
+
 %description -n python3-%{srcname}
 Python3 HTTP module with connection pooling and file POST abilities.
-%endif # with_python3
-
+%endif
 
 %prep
 %setup -q -n %{srcname}-%{version}
-
 # Drop the dummyserver tests in koji.  They fail there in real builds, but not
 # in scratch builds (weird).
 rm -rf test/with_dummyserver/
-
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%patch100 -p1
-%endif
-
-%if 0%{?with_python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif # with_python3
-
-%if 0%{?fedora} == 21
-%patch0 -p1
-%endif
+# Don't run the Google App Engine tests
+rm -rf test/appengine/
+# Lots of these tests started failing, even for old versions, so it has something
+# to do with Fedora in particular. They don't fail in upstream build infrastructure
+rm -rf test/contrib/
 
 %build
-%{__python2} setup.py build
-
+%py2_build
 %if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-popd
-%endif # with_python3
+%py3_build
+%endif
 
 %install
-rm -rf %{buildroot}
-%{__python2} setup.py install --skip-build --root %{buildroot}
+%py2_install
+%if 0%{?with_python3}
+%py3_install
+%endif
 
+# Unbundle the Python 2 build
 rm -rf %{buildroot}/%{python2_sitelib}/urllib3/packages/six.py*
 rm -rf %{buildroot}/%{python2_sitelib}/urllib3/packages/ssl_match_hostname/
 
@@ -155,99 +143,147 @@ ln -s ../../six.py %{buildroot}/%{python2_sitelib}/urllib3/packages/six.py
 ln -s ../../six.pyc %{buildroot}/%{python2_sitelib}/urllib3/packages/six.pyc
 ln -s ../../six.pyo %{buildroot}/%{python2_sitelib}/urllib3/packages/six.pyo
 
-# In Fedora 22 and later, we ship Python 2.7.9 which carries an ssl module that
-# does what we need, so we replace urllib3's bundled ssl_match_hostname module
-# with our own that just proxies to the stdlib ssl module (to avoid carrying an
-# unnecessary dep on the backports.ssl_match_hostname module).
-# In Fedora 21 and earlier, we have an older Python 2.7, and so we require and
-# symlink in that backports.ssl_match_hostname module.
-#   https://bugzilla.redhat.com/show_bug.cgi?id=1231381
-%if 0%{?fedora} >= 22 || 0%{?with_explicit_python27}
-cp %{SOURCE1} %{buildroot}/%{python2_sitelib}/urllib3/packages/ssl_match_hostname.py
-%else
 ln -s ../../backports/ssl_match_hostname %{buildroot}/%{python2_sitelib}/urllib3/packages/ssl_match_hostname
-%endif
-
-## Only for test purposes 
-## # Copy in six.py just for the test suite.
-## %if 0%{?fedora} >= 22
-## cp %{python2_sitelib}/six.* %{buildroot}/%{python2_sitelib}/.
-## %else
-## cp %{python2_sitelib}/six.* %{buildroot}/%{python2_sitelib}/.
-## cp -r %{python2_sitelib}/backports %{buildroot}/%{python2_sitelib}/.
-## %endif
-
-# dummyserver is part of the unittest framework
-rm -rf %{buildroot}%{python2_sitelib}/dummyserver
 
 %if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install --skip-build --root %{buildroot}
-
+# Unbundle the Python 3 build
 rm -rf %{buildroot}/%{python3_sitelib}/urllib3/packages/six.py*
+rm -rf %{buildroot}/%{python3_sitelib}/urllib3/packages/__pycache__/six*
 rm -rf %{buildroot}/%{python3_sitelib}/urllib3/packages/ssl_match_hostname/
 
 mkdir -p %{buildroot}/%{python3_sitelib}/urllib3/packages/
 ln -s ../../six.py %{buildroot}/%{python3_sitelib}/urllib3/packages/six.py
-ln -s ../../six.pyc %{buildroot}/%{python3_sitelib}/urllib3/packages/six.pyc
-ln -s ../../six.pyo %{buildroot}/%{python3_sitelib}/urllib3/packages/six.pyo
+ln -s ../../../__pycache__/six.cpython-%{python3_version_nodots}.opt-1.pyc %{buildroot}/%{python3_sitelib}/urllib3/packages/__pycache__/
+ln -s ../../../__pycache__/six.cpython-%{python3_version_nodots}.pyc %{buildroot}/%{python3_sitelib}/urllib3/packages/__pycache__/
+# urllib3 requires Python 3.5 to use the standard library's match_hostname,
+# which we ship in Fedora 26, so we can safely replace the bundled version with
+# this stub which imports the necessary objects.
 cp %{SOURCE1} %{buildroot}/%{python3_sitelib}/urllib3/packages/ssl_match_hostname.py
+%endif
 
-# Copy in six.py just for the test suite.
-cp %{python3_sitelib}/six.* %{buildroot}/%{python3_sitelib}/.
-
-# dummyserver is part of the unittest framework
-rm -rf %{buildroot}%{python3_sitelib}/dummyserver
-popd
-%endif # with_python3
-
-## %check
-## %if 0%{?fedora} == 21
-## # On Fedora 21, we inject pyopenssl which works, but makes some tests fail, so
-## # skip them.
-## # https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning
-## # https://urllib3.readthedocs.org/en/latest/security.html#pyopenssl
-## %else
-## nosetests
-## %endif
-
-# And after its done, remove our copied in bits
-rm -rf %{buildroot}/%{python2_sitelib}/six*
-rm -rf %{buildroot}/%{python2_sitelib}/backports*
-
+%if %{with tests}
+%check
+py.test
 %if 0%{?with_python3}
-pushd %{py3dir}
-nosetests-%{python3_version}
-popd
+py.test-3
+%endif
+%endif
 
-# And after its done, remove our copied in bits
-rm -rf %{buildroot}/%{python3_sitelib}/six*
-rm -rf %{buildroot}/%{python3_sitelib}/__pycache__*
-%endif # with_python3
 
-%files
-%{!?_licensedir:%global license %%doc}
+%files -n python%{?__python_ver}-%{srcname}
 %license LICENSE.txt
 %doc CHANGES.rst README.rst CONTRIBUTORS.txt
-# For noarch packages: sitelib
 %{python2_sitelib}/urllib3/
 %{python2_sitelib}/urllib3-*.egg-info
 
+
 %if 0%{?with_python3}
 %files -n python3-%{srcname}
-%{!?_licensedir:%global license %%doc}
 %license LICENSE.txt
-# For noarch packages: sitelib
+%doc CHANGES.rst README.rst CONTRIBUTORS.txt
 %{python3_sitelib}/urllib3/
 %{python3_sitelib}/urllib3-*.egg-info
-%endif # with_python3
+%endif
 
 %changelog
-* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.10.4-8
-- Removed os_install_post override
+* Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> - 1.23-5
+- Backport to support RHEL 6 for Python 2.7
 
-* Tue Aug 29 2017 SaltStack Packaging Team <packaging@saltstack.com> - 1.10.4-7
-- Updated to use Python 2.7 on Redhat 6
+* Wed Jun 20 2018 Lumír Balhar <lbalhar@redhat.com> - 1.23-4
+- Removed unneeded dependency python[23]-psutil
+
+* Mon Jun 18 2018 Miro Hrončok <mhroncok@redhat.com> - 1.23-3
+- Rebuilt for Python 3.7
+
+* Thu Jun 14 2018 Miro Hrončok <mhroncok@redhat.com> - 1.23-2
+- Bootstrap for Python 3.7
+
+* Tue Jun 05 2018 Jeremy Cline <jeremy@jcline.org> - 1.23-1
+- Update to the latest upstream release (rhbz 1586072)
+
+* Wed May 30 2018 Jeremy Cline <jeremy@jcline.org> - 1.22-10
+- Backport patch to support Python 3.7 (rhbz 1584112)
+
+* Thu May 03 2018 Lukas Slebodnik <lslebodn@fedoraproject.org> - 1.22-9
+- Do not lowercase hostnames with custom-protocol (rhbz 1567862)
+- upstream: https://github.com/urllib3/urllib3/issues/1267
+
+* Wed Apr 18 2018 Jeremy Cline <jeremy@jcline.org> - 1.22-8
+- Drop the dependency on idna and cryptography (rhbz 1567862)
+
+* Mon Apr 16 2018 Jeremy Cline <jeremy@jcline.org> - 1.22-7
+- Drop the dependency on PyOpenSSL, it's not needed (rhbz 1567862)
+
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.22-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Wed Jan 31 2018 Iryna Shcherbina <ishcherb@redhat.com> - 1.22-5
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
+* Thu Jan 25 2018 Tomas Hoger <thoger@redhat.com> - 1.22-4
+- Fix FTBFS - Move RECENT_DATE to 2017-06-30
+
+* Fri Dec 01 2017 Jeremy Cline <jeremy@jcline.org> - 1.22-3
+- Symlink the Python 3 bytecode for six (rbhz 1519147)
+
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.22-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Fri Jul 21 2017 Jeremy Cline <jeremy@jcline.org> - 1.22-1
+- Update to 1.22 (#1473293)
+
+* Wed May 17 2017 Jeremy Cline <jeremy@jcline.org> - 1.21.1-1
+- Update to 1.21.1 (#1445280)
+
+* Thu Feb 09 2017 Jeremy Cline <jeremy@jcline.org> - 1.20-1
+- Update to 1.20 (#1414775)
+
+* Tue Dec 13 2016 Stratakis Charalampos <cstratak@redhat.com> - 1.19.1-2
+- Rebuild for Python 3.6
+
+* Thu Nov 17 2016 Jeremy Cline <jeremy@jcline.org> 1.19.1-1
+- Update to 1.19.1
+- Clean up the specfile to only support Fedora 26
+
+* Wed Aug 10 2016 Kevin Fenzi <kevin@scrye.com> - 1.16-3
+- Rebuild now that python-requests is ready to update.
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.16-2
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
+* Wed Jun 15 2016 Kevin Fenzi <kevin@scrye.com> - 1.16-1
+- Update to 1.16
+
+* Thu Jun 02 2016 Ralph Bean <rbean@redhat.com> - 1.15.1-3
+- Create python2 subpackage to comply with guidelines.
+
+* Wed Jun 01 2016 Ralph Bean <rbean@redhat.com> - 1.15.1-2
+- Remove broken symlinks to unbundled python3-six files
+  https://bugzilla.redhat.com/show_bug.cgi?id=1295015
+
+* Fri Apr 29 2016 Ralph Bean <rbean@redhat.com> - 1.15.1-1
+- Removed patch for ipv6 support, now applied upstream.
+- Latest version.
+- New dep on pysocks.
+
+* Fri Feb 26 2016 Ralph Bean <rbean@redhat.com> - 1.13.1-3
+- Apply patch from upstream to fix ipv6.
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.13.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Dec 21 2015 Ralph Bean <rbean@redhat.com> - 1.13.1-1
+- new version
+
+* Fri Dec 18 2015 Ralph Bean <rbean@redhat.com> - 1.13-1
+- new version
+
+* Mon Dec 14 2015 Ralph Bean <rbean@redhat.com> - 1.12-1
+- new version
+
+* Thu Oct 15 2015 Robert Kuska <rkuska@redhat.com> - 1.10.4-7
+- Rebuilt for Python3.5 rebuild
 
 * Sat Oct 10 2015 Ralph Bean <rbean@redhat.com> - 1.10.4-6
 - Sync from PyPI instead of a git checkout.

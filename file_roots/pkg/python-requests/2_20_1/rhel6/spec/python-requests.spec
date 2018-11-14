@@ -1,11 +1,9 @@
-%if 0%{?fedora}
-%global _with_python3 1
-%else
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
-%endif
-
-%if 0%{?rhel} == 6
+# backport to RHEL 7 and disable python 3, only python 2.7 support
+%global backport_rhel6 1
 %global _with_python3 0
+
+%if 0%{?backport_rhel6}
+%bcond_with tests
 
 %global with_explicit_python27 1
 %global pybasever 2.7
@@ -13,84 +11,129 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
+%else
+%global __python_ver 2
+
+%if 0%{?_module_build}
+# Don't run tests on module-build for now
+# See: https://bugzilla.redhat.com/show_bug.cgi?id=1450608
+%bcond_with tests
+%else
+# When bootstrapping Python, we cannot test this yet
+%bcond_without tests
+%endif
 %endif
 
-%global urllib3_unbundled_version 1.10.4
-
-Name:           python%{?__python_ver}-requests
-Version:        2.7.0
-Release:        9%{?dist}
+Name:           python-requests
+Version:        2.20.1
+Release:        2%{?dist}
 Summary:        HTTP library, written in Python, for human beings
 
 License:        ASL 2.0
-URL:            http://pypi.python.org/pypi/requests
-Source0:        http://pypi.io/packages/source/r/requests/requests-%{version}.tar.gz
-
+URL:            https://pypi.io/project/requests
+##Source0:        https://github.com/requests/requests/archive/v%%{version}/requests-v%%{version}.tar.gz
+Source0:        http://pypi.python.org/packages/source/r/requests/requests-%{version}.tar.gz
 # Explicitly use the system certificates in ca-certificates.
 # https://bugzilla.redhat.com/show_bug.cgi?id=904614
-Patch0:         python-requests-system-cert-bundle.patch
+Patch0:         patch-requests-certs.py-to-use-the-system-CA-bundle.patch
 
-# Remove an unnecessary reference to a bundled compat lib in urllib3
-# Some discussion with upstream:
-# - https://twitter.com/sigmavirus24/status/529816751651819520
-# - https://github.com/kennethreitz/requests/issues/1811
-# - https://github.com/kennethreitz/requests/pull/1812
-Patch1:         python-requests-remove-nested-bundling-dep.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1450608
+Patch2:         Remove-tests-that-use-the-tarpit.patch
 
-# Tell setuptools about what version of urllib3 we're unbundling
-# - https://github.com/kennethreitz/requests/issues/2816
-Patch2:         python-requests-urllib3-at-%{urllib3_unbundled_version}.patch
+# Use 127.0.0.1 not localhost for socket.bind() in the Server test
+# class, to fix tests in Koji's no-network environment
+# This probably isn't really upstreamable, because I guess localhost
+# could technically be IPv6 or something, and our no-network env is
+# a pretty odd one so this is a niche requirement.
+Patch3:         requests-2.12.4-tests_nonet.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1567862
+Patch4:         Don-t-inject-pyopenssl-into-urllib3.patch
 
 BuildArch:      noarch
 
+%description
+Most existing Python modules for sending HTTP requests are extremely verbose and
+cumbersome. Python’s built-in urllib2 module provides most of the HTTP
+capabilities you should need, but the API is thoroughly broken. This library is
+designed to make HTTP requests easy for developers.
 
-# FIXME - move the python2 stuff into a python2 subpackage so we can use this
-# macro correctly.  See the comment from Carl George in this bz ticket:
-# https://bugzilla.redhat.com/show_bug.cgi?id=1241671#c5
-## Provides:       python2-requests
-#%%{?python_provide:%%python_provide python2-requests}
+%package -n python%{?__python_ver}-requests
+Summary: HTTP library, written in Python, for human beings
+%{?python_provide:%python_provide python2-requests}
 
-## BuildRequires:  python-urllib3 == %%{urllib3_unbundled_version}
-## Requires:       python-urllib3 == %%{urllib3_unbundled_version}
+%if 0%{?backport_rhel6}
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  python%{?__python_ver}-chardet >= 3.0.4
+BuildRequires:  python%{?__python_ver}-urllib3 >= 1.23
+BuildRequires:  python%{?__python_ver}-idna
+%else
+BuildRequires:  python2-devel
+BuildRequires:  python2-chardet
+BuildRequires:  python2-urllib3
+BuildRequires:  python2-idna
+%endif
 
-BuildRequires:  python%{?__python_ver}-chardet >= 2.2.1-1
-BuildRequires:  python%{?__python_ver}-urllib3 >= %{urllib3_unbundled_version}
+%if %{with tests}
+BuildRequires:  python2-pytest
+BuildRequires:  python2-pytest-cov
+BuildRequires:  python2-pytest-httpbin
+BuildRequires:  python2-pytest-mock
+%endif
 
 Requires:       ca-certificates
-Requires:       python%{?__python_ver}-chardet >= 2.2.1-1
-Requires:       python%{?__python_ver}-urllib3 >= %{urllib3_unbundled_version}
+%if 0%{?backport_rhel6}
+Requires:       python%{?__python_ver}  >= 2.7.9-1
+Requires:       python%{?__python_ver}-chardet >= 3.0.4
+Requires:       python%{?__python_ver}-urllib3 >= 1.23
+Requires:       python%{?__python_ver}-idna
 
-%if ! 0%{?with_explicit_python27}
-BuildRequires:  python2-devel
+%else
+Requires:       python2-chardet
+Requires:       python2-urllib3
+Requires:       python2-idna
+%endif
+
+%if 0%{?backport_rhel6}
+BuildRequires:  python%{?__python_ver}-ordereddict >= 1.1
+Requires:       python%{?__python_ver}-ordereddict >= 1.1
+%else
 %if 0%{?rhel} && 0%{?rhel} <= 6
 BuildRequires:  python-ordereddict >= 1.1
 Requires:       python-ordereddict >= 1.1
 %endif
-%else
-BuildRequires:  python%{?__python_ver}-devel
-Requires: python%{?__python_ver} >= 2.7.9-1
-%endif 
+%endif
 
-
-%description
-Most existing Python modules for sending HTTP requests are extremely verbose and 
-cumbersome. Python’s built-in urllib2 module provides most of the HTTP 
-capabilities you should need, but the API is thoroughly broken. This library is 
+%description -n python%{?__python_ver}-requests
+Most existing Python modules for sending HTTP requests are extremely verbose and
+cumbersome. Python’s built-in urllib2 module provides most of the HTTP
+capabilities you should need, but the API is thoroughly broken. This library is
 designed to make HTTP requests easy for developers.
 
 %if 0%{?_with_python3}
-%package -n python3-requests
+%package -n python%{python3_pkgversion}-requests
 Summary: HTTP library, written in Python, for human beings
 
-%{?python_provide:%python_provide python3-requests}
+%{?python_provide:%python_provide python%{python3_pkgversion}-requests}
 
-BuildRequires:  python3-devel
-BuildRequires:  python3-chardet
-BuildRequires:  python3-urllib3 == %{urllib3_unbundled_version}
-Requires:       python3-chardet
-Requires:       python3-urllib3 == %{urllib3_unbundled_version}
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-chardet
+BuildRequires:  python%{python3_pkgversion}-urllib3
+BuildRequires:  python%{python3_pkgversion}-idna
+%if %{with tests}
+BuildRequires:  python%{python3_pkgversion}-pytest
+BuildRequires:  python%{python3_pkgversion}-pytest-cov
+BuildRequires:  python%{python3_pkgversion}-pytest-httpbin
+BuildRequires:  python%{python3_pkgversion}-pytest-mock
+%endif
 
-%description -n python3-requests
+Requires:       python%{python3_pkgversion}-chardet
+Requires:       python%{python3_pkgversion}-urllib3
+Requires:       python%{python3_pkgversion}-idna
+
+%description -n python%{python3_pkgversion}-requests
 Most existing Python modules for sending HTTP requests are extremely verbose and
 cumbersome. Python’s built-in urllib2 module provides most of the HTTP
 capabilities you should need, but the API is thoroughly broken. This library is
@@ -98,97 +141,166 @@ designed to make HTTP requests easy for developers.
 %endif
 
 %prep
-%setup -q -n requests-%{version}
-
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%autosetup -p1 -n requests-%{version}
 
 # Unbundle the certificate bundle from mozilla.
 rm -rf requests/cacert.pem
 
-%if 0%{?_with_python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif # with_python3
+# env shebang in nonexecutable file
+sed -i '/#!\/usr\/.*python/d' requests/certs.py
 
 %build
+%py2_build
 %if 0%{?_with_python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-
-# Unbundle chardet and urllib3.  We replace these with symlinks to system libs.
-rm -rf build/lib/requests/packages/chardet
-rm -rf build/lib/requests/packages/urllib3
-
-popd
+%py3_build
 %endif
 
-%{__python} setup.py build
-
-# Unbundle chardet and urllib3.  We replace these with symlinks to system libs.
-rm -rf build/lib/requests/packages/chardet
-rm -rf build/lib/requests/packages/urllib3
 
 %install
-rm -rf $RPM_BUILD_ROOT
+%py2_install
 %if 0%{?_with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install --skip-build --root $RPM_BUILD_ROOT
-ln -s ../../chardet %{buildroot}/%{python3_sitelib}/requests/packages/chardet
-ln -s ../../urllib3 %{buildroot}/%{python3_sitelib}/requests/packages/urllib3
-popd
+%py3_install
 %endif
 
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
-ln -s ../../chardet %{buildroot}/%{python_sitelib}/requests/packages/chardet
-ln -s ../../urllib3 %{buildroot}/%{python_sitelib}/requests/packages/urllib3
-
-## The tests succeed if run locally, but fail in koji.
-## They require an active network connection to query httpbin.org
-## %%check
-
-#%%{__python} test_requests.py
-#%%if 0%%{?_with_python3}
-#pushd %%{py3dir}
-#%%{__python3} test_requests.py
-#popd
-#%%endif
-
-# At very, very least, we'll try to start python and import requests
-PYTHONPATH=. %{__python} -c "import requests"
-
+%if %{with tests}
+%check
+PYTHONPATH=%{buildroot}%{python2_sitelib} %{__python2} -m pytest -v
 %if 0%{?_with_python3}
-pushd %{py3dir}
-PYTHONPATH=. %{__python3} -c "import requests"
-popd
+PYTHONPATH=%{buildroot}%{python3_sitelib} %{__python3} -m pytest -v
 %endif
+%endif # tests
 
 
-%files
-%defattr(-,root,root,-)
-%{!?_licensedir:%global license %%doc}
+%files -n python%{?__python_ver}-requests
 %license LICENSE
-%doc NOTICE README.rst HISTORY.rst
-%{python_sitelib}/*.egg-info
-%dir %{python_sitelib}/requests
-%{python_sitelib}/requests/*
+%doc README.md HISTORY.md
+%{python2_sitelib}/*.egg-info
+%{python2_sitelib}/requests/
 
 %if 0%{?_with_python3}
-%files -n python3-requests
-%{!?_licensedir:%global license %%doc}
+%files -n python%{python3_pkgversion}-requests
 %license LICENSE
-%doc NOTICE README.rst HISTORY.rst
+%doc README.md HISTORY.md
 %{python3_sitelib}/*.egg-info
 %{python3_sitelib}/requests/
 %endif
 
 %changelog
-* Mon Jan 22 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2.7.0-9
-- Removed os_install_post override
+* Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> - 2.20.1-2
+- Update to pick up CVE-2018-18074 and backport RHEL 6 with Python 2.7
 
-* Tue Aug 29 2017 SaltStack Packaging Team <packaging@saltstack.com> - 2.7.0-8
-- Updated to use Python 2.7 on Redhat 6
+* Mon Oct 29 2018 Jeremy Cline <jeremy@jcline.org> - 2.20.0-1
+- Update to v2.20.0
+
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.19.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Mon Jun 18 2018 Miro Hrončok <mhroncok@redhat.com> - 2.19.1-2
+- Rebuilt for Python 3.7
+
+* Thu Jun 14 2018 Jeremy Cline <jeremy@jcline.org> - 2.19.1-1
+- Update to v2.19.1 (rhbz 1591531)
+
+* Thu Jun 14 2018 Miro Hrončok <mhroncok@redhat.com> - 2.19.0-2
+- Bootstrap for Python 3.7
+
+* Tue Jun 12 2018 Jeremy Cline <jeremy@jcline.org> - 2.19.0-1
+- Update to v2.19.0 (rhbz 1590508)
+
+* Fri Jun 08 2018 Jeremy Cline <jeremy@jcline.org> - 2.18.4-6
+- Don't print runtime warning about urllib3 v1.23 (rhbz 1589306)
+
+* Tue Jun 05 2018 Jeremy Cline <jeremy@jcline.org> - 2.18.4-5
+- Allow urllib3 v1.23 (rhbz 1586311)
+
+* Mon Apr 16 2018 Jeremy Cline <jeremy@jcline.org> - 2.18.4-4
+- Stop injecting PyOpenSSL (rhbz 1567862)
+
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.18.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Mon Dec 11 2017 Iryna Shcherbina <ishcherb@redhat.com> - 2.18.4-2
+- Fix ambiguous Python 2 dependency declarations
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
+* Fri Aug 18 2017 Jeremy Cline <jeremy@jcline.org> - 2.18.4-1
+- Update to 2.18.4
+
+* Wed Jul 26 2017 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 2.18.2-1
+- Update to 2.18.2
+
+* Tue Jun 20 2017 Jeremy Cline <jeremy@jcline.org> - 2.18.1-2
+- Drop the dependency on certifi in setup.py
+
+* Mon Jun 19 2017 Jeremy Cline <jeremy@jcline.org> - 2.18.1-1
+- Update to 2.18.1 (#1449432)
+- Remove tests that require non-local network (#1450608)
+
+* Wed May 17 2017 Jeremy Cline <jeremy@jcline.org> - 2.14.2-1
+- Update to 2.14.2 (#1449432)
+- Switch to autosetup to apply patches
+
+* Sun May 14 2017 Stephen Gallagher <sgallagh@redhat.com> - 2.13.0-2
+- Don't run tests when building as a module
+
+* Thu Feb 09 2017 Jeremy Cline <jeremy@jcline.org> - 2.13.0-1
+- Update to 2.13.0 (#1418138)
+
+* Fri Dec 30 2016 Adam Williamson <awilliam@redhat.com> - 2.12.4-3
+- Include and enable tests (now python-pytest-httpbin is packaged)
+
+* Wed Dec 21 2016 Kevin Fenzi <kevin@scrye.com> - 2.12.4-2
+- Rebuild for Python 3.6 again.
+
+* Tue Dec 20 2016 Jeremy Cline <jeremy@jcline.org> - 2.12.4-1
+- Update to 2.12.4. Fixes #1404680
+
+* Tue Dec 13 2016 Stratakis Charalampos <cstratak@redhat.com> - 2.12.3-2
+- Rebuild for Python 3.6
+
+* Thu Dec 01 2016 Jeremy Cline <jeremy@jcline.org> - 2.12.3-1
+- Update to 2.12.3. Fixes #1400601
+
+* Wed Nov 30 2016 Jeremy Cline <jeremy@jcline.org> - 2.12.2-1
+- Update to 2.12.2
+
+* Wed Nov 23 2016 Jeremy Cline <jeremy@jcline.org> - 2.12.1-2
+- Backport #3713. Fixes #1397149
+
+* Thu Nov 17 2016 Jeremy Cline <jeremy@jcline.org> - 2.12.1-1
+- Update to 2.12.1. Fixes #1395469
+- Unbundle idna, a new upstream dependency
+
+* Sat Aug 27 2016 Kevin Fenzi <kevin@scrye.com> - 2.11.1-1
+- Update to 2.11.1. Fixes #1370814
+
+* Wed Aug 10 2016 Kevin Fenzi <kevin@scrye.com> - 2.11.0-1
+- Update to 2.11.0. Fixes #1365332
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.10.0-4
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
+* Fri Jul 15 2016 Ralph Bean <rbean@redhat.com> - 2.10.0-3
+- Update python2 packaging.
+
+* Thu Jun 02 2016 Ralph Bean <rbean@redhat.com> - 2.10.0-2
+- Fix python2 subpackage to comply with guidelines.
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Dec 21 2015 Ralph Bean <rbean@redhat.com> - 2.9.1-1
+- new version
+
+* Fri Dec 18 2015 Ralph Bean <rbean@redhat.com> - 2.9.0-1
+- new version
+
+* Mon Dec 14 2015 Ralph Bean <rbean@redhat.com> - 2.8.1-1
+- Latest upstream.
+- Bump hard dep on urllib3 to 1.12.
+
+* Mon Nov 02 2015 Robert Kuska <rkuska@redhat.com> - 2.7.0-8
+- Rebuilt for Python3.5 rebuild
 
 * Sat Oct 10 2015 Ralph Bean <rbean@redhat.com> - 2.7.0-7
 - Tell setuptools about what version of urllib3 we're unbundling

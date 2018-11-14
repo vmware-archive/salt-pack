@@ -51,7 +51,9 @@ include:
     - pkg.python-enum34.1_0.rhel6
     - pkg.python-futures.3_0_3.rhel6
     - pkg.python-importlib.1_0_2.rhel6
+    - pkg.python-idna.2_7.rhel6
     - pkg.python-ioflo.1_3_8.rhel6
+    - pkg.python-ipaddress.1_0_18.rhel6
     - pkg.python-jinja2.2_8_1.rhel6
     - pkg.python-libcloud.2_0_0.rhel6
     - pkg.python-libnacl.1_6_1.rhel6

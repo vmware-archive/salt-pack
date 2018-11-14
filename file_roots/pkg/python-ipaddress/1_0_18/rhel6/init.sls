@@ -2,8 +2,8 @@
 {% import "setup/macros.jinja" as macros with context %}
 {% set pkg_data = salt["pillar.get"]("pkgbuild_registry:" ~ buildcfg.build_release, {}) %}
 {% set force = salt["pillar.get"]("pkgbuild_force.all", False) or salt["pillar.get"]("pkgbuild_force." ~ slspath, False) %}
-{% set sls_name = "python-requests" %}
-{% set pypi_name = "requests" %}
+{% set sls_name = "python-ipaddress" %}
+{% set pypi_name = "ipaddress" %}
 
 {% set pkg_info = pkg_data.get(sls_name, {}) %}
 {% if "version" in pkg_info %}
@@ -33,10 +33,6 @@
 {{ macros.requires(sls_name, pkg_data) }}
 
     - sources:
-      - salt://{{slspath}}/sources/requests-2.12.4-tests_nonet.patch
-      - salt://{{slspath}}/sources/Remove-tests-that-use-the-tarpit.patch
-      - salt://{{slspath}}/sources/patch-requests-certs.py-to-use-the-system-CA-bundle.patch
-      - salt://{{slspath}}/sources/Don-t-inject-pyopenssl-into-urllib3.patch
-      - {{ macros.pypi_source(pypi_name, version) }}
-
+      - salt://{{slspath}}/sources/{{pypi_name}}-{{version}}.tar.gz
+##      - {{ macros.pypi_source(pypi_name, version) }}
 {% endif %}

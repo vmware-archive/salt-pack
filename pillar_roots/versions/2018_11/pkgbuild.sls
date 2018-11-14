@@ -386,6 +386,15 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-futures
+    python-idna:
+      name: python27-idna
+      version: 2.7-4
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-idna
     python-ioflo:
       name: python27-ioflo
       version: 1.3.8-4
@@ -395,6 +404,15 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-ioflo
+    python-ipaddress:
+      name: python27-ipaddress
+      version: 1.0.18-6
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-ipaddress
     python-jinja2:
       name: python27-jinja2
       version: 2.8.1-3
@@ -534,6 +552,7 @@ pkgbuild_registry:
       build_deps:
         - python27
         - python-chardet
+        - python-idna
         - python-pysocks
         - python-urllib3
       results:
@@ -589,6 +608,8 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-backports-ssl_match_hostname
+        - python-ipaddress
         - python-pysocks
         - python-setuptools
         - python-six
@@ -714,6 +735,9 @@ pkgbuild_registry:
       name: python27-pysocks
       version: 1.6.8-7
       noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
       results:
         - python27-pysocks
     python-pyzmq:

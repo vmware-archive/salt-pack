@@ -8,7 +8,7 @@ include:
     - pkg.libtommath.0_42_0.rhel7
     - pkg.openpgm.5_2_122.rhel7
     - pkg.openssl.1_0_2k.rhel7
-    - pkg.python-chardet.3_0_4.rhel7
+    - pkg.python-chardet.2_2_1.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7
     - pkg.python-crypto.2_6_1.rhel7
     - pkg.python-pycryptodome.3_6_1.rhel7
@@ -24,12 +24,11 @@ include:
     - pkg.python-pysocks.1_6_8.rhel7
     - pkg.python-pyzmq.15_3_0.rhel7
     - pkg.python-raet.0_6_5.rhel7
-    - pkg.python-requests.2_20_1.rhel7
     - pkg.python-simplejson.3_3_3.rhel7
     - pkg.python-timelib.0_2_4.rhel7
     - pkg.python-tornado.4_2_1.rhel7
     - pkg.python-typing.3_5_2_2.rhel7
-    - pkg.python-urllib3.1_23.rhel7
+    - pkg.python-urllib3.1_10_2.rhel7
     - pkg.python-yaml.3_11.rhel7
     - pkg.salt.2018_3.rhel7
     - pkg.zeromq.4_1_4.rhel7

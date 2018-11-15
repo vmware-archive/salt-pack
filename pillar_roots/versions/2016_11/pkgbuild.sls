@@ -120,8 +120,7 @@ pkgbuild_registry:
         - openpgm
         - openpgm-devel
     python-chardet:
-      name: python2-chardet
-      version: 3.0.4-8
+      version: 2.2.1-1
       noarch: True
     python-cherrypy:
       version: 5.6.0-2
@@ -168,12 +167,6 @@ pkgbuild_registry:
       noarch: True
       results:
         - python2-mock
-    python-pysocks:
-      name: python2-pysocks
-      version: 1.6.8-7
-      noarch: True
-      results:
-        - python2-pysocks
     python-pyzmq:
       name: python-zmq
       version: 15.3.0-2
@@ -187,15 +180,6 @@ pkgbuild_registry:
       additonal_deps:
         - python-libnacl
         - python-simplejson
-    python-requests:
-      name: python2-requests
-      version: 2.20.1-2
-      noarch: True
-      build_deps:
-        - python-chardet
-        - python-ordereddict
-        - python-pysocks
-        - python-urllib3
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
@@ -204,11 +188,8 @@ pkgbuild_registry:
       version: 0.2.4-1
       noarch: True
     python-urllib3:
-      name: python2-urllib3
-      version: 1.23-5
+      version: 1.10.2-1
       noarch: True
-      build_deps:
-        - python-pysocks
     python-yaml:
       name: PyYAML
       version: 3.11-1
@@ -219,7 +200,6 @@ pkgbuild_registry:
         - python-pycrypto
         - python-msgpack
         - python-yaml
-        - python-requests
         - python-pyzmq
         - python-markupsafe
         - python-tornado

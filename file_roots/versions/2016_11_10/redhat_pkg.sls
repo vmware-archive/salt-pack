@@ -42,7 +42,7 @@ include:
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python-backports.1_0.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
-    - pkg.python-chardet.3_0_4.rhel6
+    - pkg.python-chardet.2_2_1.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
     - pkg.python-crypto.2_6_1.rhel6
 {% if buildcfg.build_arch == 'x86_64' %}
@@ -61,14 +61,12 @@ include:
     - pkg.python-mock.1_0_1.rhel6
     - pkg.python-ordereddict.1_1.rhel6
     - pkg.python-pip.7_1_0.rhel6
-    - pkg.python-pysocks.1_6_8.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
-    - pkg.python-requests.2_20_1.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6
-    - pkg.python-urllib3.1_23.rhel6
+    - pkg.python-urllib3.1_10_2.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.2016_11_10.rhel6
 ##    - pkg.winexe.1_1.rhel6

@@ -48,6 +48,7 @@ smart as your browser. Open source.
 %package -n python%{?__python_ver}-%{pypi_name}
 Summary: %summary
 ## %%{?python_provide:%%python_provide %%{python}-%%{pypi_name}}
+Requires: python%{?__python_ver}
 Provides: python%{?__python_ver}-chardet
 
 %description -n python%{?__python_ver}-%{pypi_name} %_description
@@ -92,13 +93,14 @@ popd
 %endif # with_python3
 
 %{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+mv ${RPM_BUILD_ROOT}/%{_bindir}/chardetect ${RPM_BUILD_ROOT}/%{_bindir}/python%{?__python_ver}-chardetect
 
 %files -n python%{?__python_ver}-%{pypi_name}
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc README.rst
 %{python2_sitelib}/*
-%{_bindir}/chardetect
+%{_bindir}/python%{?__python_ver}-chardetect
 
 %if 0%{?with_python3}
 %files -n python3-%{pypi_name}
@@ -111,7 +113,7 @@ popd
 
 
 %changelog
-* Tue Nov 13 2018 SaltStack Packaging Team <packaging@saltstack.com> - 3.0.4-8
+* Tue Nov 20 2018 SaltStack Packaging Team <packaging@saltstack.com> - 3.0.4-8
 - backport to RHEL 6 with Python 2.7 support
 
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.4-7

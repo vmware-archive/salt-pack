@@ -21,7 +21,6 @@ include:
     - pkg.python-msgpack.0_4_6.rhel7
     - pkg.python-mock.1_0_1.rhel7
     - pkg.python-psutil.2_2_1.rhel7
-    - pkg.python-pysocks.1_6_8.rhel7
     - pkg.python-pyzmq.15_3_0.rhel7
     - pkg.python-raet.0_6_5.rhel7
     - pkg.python-simplejson.3_3_3.rhel7

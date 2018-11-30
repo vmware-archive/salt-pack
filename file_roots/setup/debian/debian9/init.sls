@@ -32,7 +32,7 @@ build_additional_pkgs:
       - python-setuptools-git
 
 
-{% if build_cfg.build_py3 %}
+{%- if build_cfg.build_py3 %}
 build_additional_py3_pkgs:
   pkg.installed:
     - pkgs:
@@ -47,7 +47,7 @@ build_additional_py3_pkgs:
       - python3-all-dev
       - python3-debian
       - apt-utils
-{% endif %}
+{%- endif %}
 
 
 build_pbldhooks_rm_G05:
@@ -83,11 +83,28 @@ build_prefs_rm:
 ##         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 
 
+build_pbldhooks_perms:
+  file.directory:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - dir_mode: 755
+    - file_mode: 755
+    - recurse:
+        - user
+        - group
+        - mode
+
+
 build_pbldhooks_file_G05:
-  file.append:
+  file.managed:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
     - makedirs: True
-    - text: |
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
         #!/bin/sh
         set -e
         cat > "/etc/apt/preferences" << @EOF
@@ -96,10 +113,14 @@ build_pbldhooks_file_G05:
 
 
 build_pbldhooks_file_D04:
-  file.append:
+  file.managed:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
     - makedirs: True
-    - text: |
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
         #!/bin/sh
         # path to local repo
         LOCAL_REPO="{{build_cfg.build_dest_dir}}"
@@ -109,28 +130,20 @@ build_pbldhooks_file_D04:
         apt-get --allow-unauthenticated update
 
 
-build_pbldhooks_perms:
-  file.directory:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
-    - user: root
-    - group: root
-    - dir_mode: 755
-    - file_mode: 755
-    - recurse:
-        - user
-        - group
-        - mode
-
-
 build_pbldrc:
-  file.append:
+  file.managed:
     - name: {{build_cfg.build_homedir}}/.pbuilderrc
-    - text: |
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         ## export CCACHE_DIR='/var/cache/pbuilder/ccache'
         ## export PATH="/usr/lib/ccache":${PATH}
-
+        #
         # create local repository if it doesn't exist,
         # such as during initial 'pbuilder create'
         if [ ! -d ${LOCAL_REPO} ] ; then
@@ -151,15 +164,15 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-{% if build_cfg.build_arch == 'armhf' %}
+{%- if build_cfg.build_arch == 'armhf' %}
         DEBOOTSTRAPOPTS=( 
             '--variant=buildd' 
             '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
-{% else %}
+{%- else %}
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}} main | deb http://ftp.us.debian.org/debian/ {{os_codename}} contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}}-updates main | deb http://ftp.us.debian.org/debian/ {{os_codename}}-backports main "
-{% endif %}
+{%- endif %}
 
 
 build_prefs:

@@ -29,15 +29,15 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
-{% if build_cfg.build_arch == 'amd64' %}
+{%- if build_cfg.build_arch == 'amd64' %}
       - python3-lockfile
-{% endif %}
+{%- endif %}
       - dh-systemd
       - dh-python
       - python-setuptools-git
 
 
-{% if build_cfg.build_py3 %}
+{%- if build_cfg.build_py3 %}
 build_additional_py3_pkgs:
   pkg.installed:
     - pkgs:
@@ -52,7 +52,7 @@ build_additional_py3_pkgs:
       - python3-all-dev
       - python3-debian
       - apt-utils
-{% endif %}
+{%- endif %}
 
 
 build_pbldhooks_rm_G05:
@@ -75,32 +75,6 @@ build_prefs_rm:
     - name: /etc/apt/preferences
 
 
-build_pbldhooks_file_G05:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
-    - makedirs: True
-    - text: |
-        #!/bin/sh
-        set -e
-        cat > "/etc/apt/preferences" << @EOF
-        {{prefs_text}}
-        @EOF
-
-
-build_pbldhooks_file_D04:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
-    - makedirs: True
-    - text: |
-        #!/bin/sh
-        # path to local repo
-        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
-        # Generate a Packages file
-        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
-        # Update to include any new packagers in the local repo
-        apt-get --allow-unauthenticated update
-
-
 build_pbldhooks_perms:
   file.directory:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
@@ -114,10 +88,49 @@ build_pbldhooks_perms:
         - mode
 
 
+build_pbldhooks_file_G05:
+  file.managed:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
+        #!/bin/sh
+        set -e
+        cat > "/etc/apt/preferences" << @EOF
+        {{prefs_text}}
+        @EOF
+
+
+build_pbldhooks_file_D04:
+  file.managed:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
+        #!/bin/sh
+        # path to local repo
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
+        # Generate a Packages file
+        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
+        # Update to include any new packagers in the local repo
+        apt-get --allow-unauthenticated update
+
+
 build_pbldrc:
-  file.append:
+  file.managed:
     - name: {{build_cfg.build_homedir}}/.pbuilderrc
-    - text: |
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{build_cfg.build_dest_dir}}"
         ## export CCACHE_DIR='/var/cache/pbuilder/ccache'
@@ -143,15 +156,15 @@ build_pbldrc:
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-{% if build_cfg.build_arch == 'armhf' %}
+{%- if build_cfg.build_arch == 'armhf' %}
         DEBOOTSTRAPOPTS=( 
             '--variant=buildd' 
             '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
-{% else %}
+{%- else %}
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}} main | deb http://ftp.us.debian.org/debian/ {{os_codename}} contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}}-updates main | deb http://ftp.us.debian.org/debian/ {{os_codename}}-backports main "
-{% endif %}
+{%- endif %}
 
 
 build_prefs:

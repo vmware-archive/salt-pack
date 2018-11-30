@@ -5,24 +5,31 @@
 {% set prefs_text = 'Package: *
         Pin: origin ""
         Pin-Priority: 1001
+
         Package: *
-        Pin: release a=' ~ os_codename ~ '-backports
+        Pin: release n=' ~ os_codename ~ '-backports
         Pin-Priority: 750
+
         Package: *
-        Pin: release a=' ~ os_codename ~ '-security
+        Pin: release n=' ~ os_codename ~ '-security
         Pin-Priority: 740
+
         Package: *
-        Pin: release a=' ~ os_codename ~ '-updates
+        Pin: release n=' ~ os_codename ~ '-updates
         Pin-Priority: 730
+
         Package: *
         Pin: release a=main
         Pin-Priority: 700
+
         Package: *
         Pin: release a=restricted
         Pin-Priority: 650
+
         Package: *
         Pin: release a=universe
         Pin-Priority: 600
+
         Package: *
         Pin: release a=multiverse
         Pin-Priority: 550

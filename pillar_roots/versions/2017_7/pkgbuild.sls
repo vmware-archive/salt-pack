@@ -179,12 +179,6 @@ pkgbuild_registry:
       additonal_deps:
         - python-libnacl
         - python-simplejson
-    python-requests:
-      version: 2.6.0-1
-      noarch: True
-      build_deps:
-        - python-chardet
-        - python-urllib3
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
@@ -205,7 +199,6 @@ pkgbuild_registry:
         - python-pycryptodome
         - python-msgpack
         - python-yaml
-        - python-requests
         - python-pyzmq
         - python-markupsafe
         - python-tornado
@@ -302,7 +295,7 @@ pkgbuild_registry:
         - python-setuptools
     python-chardet:
       name: python27-chardet
-      version: 2.2.1-4
+      version: 3.0.4-8
       noarch: True
       build_deps:
         - python27
@@ -356,6 +349,15 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-futures
+    python-idna:
+      name: python27-idna
+      version: 2.7-4
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-idna
     python-ioflo:
       name: python27-ioflo
       version: 1.3.8-4
@@ -365,6 +367,15 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-ioflo
+    python-ipaddress:
+      name: python27-ipaddress
+      version: 1.0.18-6
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-ipaddress
     python-jinja2:
       name: python27-jinja2
       version: 2.8.1-3
@@ -462,6 +473,15 @@ pkgbuild_registry:
         - python27
       results:
         - python27-pycurl
+    python-pysocks:
+      name: python27-pysocks
+      version: 1.6.8-7
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-pysocks
     python-pyzmq:
       name: python27-zmq
       version: 14.5.0-4
@@ -482,11 +502,14 @@ pkgbuild_registry:
         - python-libnacl
     python-requests:
       name: python27-requests
-      version: 2.7.0-9
+      version: 2.20.1-2
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-chardet
+        - python-idna
+        - python-pysocks
         - python-urllib3
       results:
         - python27-requests
@@ -537,10 +560,13 @@ pkgbuild_registry:
         - python27-unittest2
     python-urllib3:
       name: python27-urllib3
-      version: 1.10.4-8
+      version: 1.23-5
       noarch: True
       build_deps:
         - python27
+        - python-backports-ssl_match_hostname
+        - python-ipaddress
+        - python-pysocks
         - python-setuptools
         - python-six
       results:

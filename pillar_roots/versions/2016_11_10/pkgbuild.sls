@@ -180,13 +180,6 @@ pkgbuild_registry:
       additonal_deps:
         - python-libnacl
         - python-simplejson
-    python-requests:
-      version: 2.6.0-1
-      noarch: True
-      build_deps:
-        - python-chardet
-        - python-ordereddict
-        - python-urllib3
     python-simplejson:
       version: 3.3.3-1
     python-tornado:
@@ -207,7 +200,6 @@ pkgbuild_registry:
         - python-pycrypto
         - python-msgpack
         - python-yaml
-        - python-requests
         - python-pyzmq
         - python-markupsafe
         - python-tornado
@@ -354,13 +346,6 @@ pkgbuild_registry:
         - python-ioflo
       additional_deps:
         - python-libnacl
-    python-requests:
-      version: 2.6.0-3
-      noarch: True
-      build_deps:
-        - python-chardet
-        - python-ordereddict
-        - python-urllib3
     python-six:
       version: 1.9.0-2
       noarch: True
@@ -387,7 +372,6 @@ pkgbuild_registry:
 ##        - python-pycryptodome
         - python-msgpack
         - python-yaml
-        - python-requests
         - python-pyzmq
         - python-markupsafe
         - python-tornado

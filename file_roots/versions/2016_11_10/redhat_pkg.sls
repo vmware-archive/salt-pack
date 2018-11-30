@@ -21,7 +21,6 @@ include:
     - pkg.python-mock.1_0_1.rhel7
     - pkg.python-pyzmq.15_3_0.rhel7
     - pkg.python-raet.0_6_5.rhel7
-    - pkg.python-requests.2_6_0.rhel7
     - pkg.python-simplejson.3_3_3.rhel7
     - pkg.python-tornado.4_2_1.rhel7
     - pkg.python-timelib.0_2_4.rhel7
@@ -62,7 +61,6 @@ include:
     - pkg.python-pip.7_1_0.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
-    - pkg.python-requests.2_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6
     - pkg.python-tornado.4_2_1.rhel6

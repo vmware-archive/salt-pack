@@ -84,32 +84,6 @@ build_prefs_rm:
     - name: /etc/apt/preferences
 
 
-build_pbldhooks_file_G05:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
-    - makedirs: True
-    - text: |
-        #!/bin/sh
-        set -e
-        cat > "/etc/apt/preferences" << EOF
-        {{prefs_text}}
-        EOF
-
-
-build_pbldhooks_file_D04:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
-    - makedirs: True
-    - text: |
-        #!/bin/sh
-        # path to local repo
-        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
-        # Generate a Packages file
-        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
-        # Update to include any new packagers in the local repo
-        apt-get --allow-unauthenticated update
-
-
 build_pbldhooks_perms:
   file.directory:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
@@ -123,10 +97,49 @@ build_pbldhooks_perms:
         - mode
 
 
+build_pbldhooks_file_G05:
+  file.managed:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
+        #!/bin/sh
+        set -e
+        cat > "/etc/apt/preferences" << @EOF
+        {{prefs_text}}
+        @EOF
+
+
+build_pbldhooks_file_D04:
+  file.managed:
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
+        #!/bin/sh
+        # path to local repo
+        LOCAL_REPO="{{build_cfg.build_dest_dir}}"
+        # Generate a Packages file
+        ( cd ${LOCAL_REPO} ; /usr/bin/apt-ftparchive packages . > "${LOCAL_REPO}/Packages" )
+        # Update to include any new packagers in the local repo
+        apt-get --allow-unauthenticated update
+
+
 build_pbldrc:
-  file.append:
+  file.managed:
     - name: {{build_cfg.build_homedir}}/.pbuilderrc
-    - text: |
+    - makedirs: True
+    - dir_mode: 0755
+    - mode: 0775
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - contents: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{build_cfg.build_dest_dir}}"
 

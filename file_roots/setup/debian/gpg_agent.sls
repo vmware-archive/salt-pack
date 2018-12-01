@@ -48,11 +48,11 @@
 
 {% set gpg_agent_script_file = build_cfg.build_homedir ~ '/gpg-agent_start.sh' %}
 
-{% set gpg_agent_script_text = 'gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 300 --daemon
-    GPG_TTY=$(tty)
-    export GPG_TTY
-    echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info
-%}
+{% set gpg_agent_script_text = 'gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
+        GPG_TTY=$(tty);
+        export GPG_TTY
+        echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+' %}
 
 
 gpg_agent_stop:
@@ -140,7 +140,7 @@ gpg_agent_conf_file:
 
 gpg_agent_script_file_exists:
   file.managed:
-    - name: {{gpg_agent_config_file}}
+    - name: {{gpg_agent_script_file}}
     - dir_mode: 755
     - mode: 755
     - show_changes: False
@@ -153,7 +153,7 @@ gpg_agent_script_file_exists:
 
 gpg_agent_start:
   cmd.run:
-   - name:  {{build_cfg.build_homedir}}/{{gpg_agent_script_file}}
+   - name:  {{gpg_agent_script_file}}
    - runas: {{build_cfg.build_runas}}
    - use_vt: True
    - reload_modules: True

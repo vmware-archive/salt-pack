@@ -71,7 +71,7 @@ build_pbldhooks_rm_G05:
 
 build_pbldhooks_rm_D04:
   file.absent:
-    - name: {{build_cfg.build_homedir}}t/.pbuilder-hooks/D04update_local_repo
+    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/D04update_local_repo
 
 
 build_pbldrc_rm:

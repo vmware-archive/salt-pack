@@ -20,7 +20,7 @@
 {% set write_env_file_prefix = '' %}
 {% set write_env_file = '' %}
 {% set pinentry_parms = '
-        pinentry-timeout 20
+        pinentry-timeout 30
         allow-loopback-pinentry' %}
 {% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
 {% endif %}
@@ -28,14 +28,14 @@
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
 
-{% set gpg_agent_log_file = '/root/gpg-agent.log' %}
+{% set gpg_agent_log_file = build_cfg.build_homedir ~ '/gpg-agent.log' %}
 
 {% set gpg_agent_text = '# enable-ssh-support
         ' ~ write_env_file  ~ '
-        default-cache-ttl 300
-        default-cache-ttl-ssh 300
-        max-cache-ttl 300
-        max-cache-ttl-ssh 300
+        default-cache-ttl 600
+        default-cache-ttl-ssh 600
+        max-cache-ttl 600
+        max-cache-ttl-ssh 600
         allow-preset-passphrase
         daemon
         debug-all
@@ -45,6 +45,14 @@
         # PIN entry program
         ' ~ pinentry_text ~ pinentry_parms
 %}
+
+{% set gpg_agent_script_file = build_cfg.build_homedir ~ '/gpg-agent_start.sh' %}
+
+{% set gpg_agent_script_text = 'gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
+        GPG_TTY=$(tty);
+        export GPG_TTY
+        echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+' %}
 
 
 gpg_agent_stop:
@@ -64,6 +72,11 @@ gpg_clear_agent_log:
     - name: {{gpg_agent_log_file}}
 
 
+gpg_agent_script_file_rm:
+  file.absent:
+    - name: {{gpg_agent_script_file}}
+
+
 manage_priv_key:
   file.managed:
     - name: {{pkg_priv_key_absfile}}
@@ -72,7 +85,7 @@ manage_priv_key:
     - contents_pillar: gpg_pkg_priv_key
     - show_changes: False
     - user: {{build_cfg.build_runas}}
-    - group: adm
+    - group: {{build_cfg.build_runas}}
     - makedirs: True
 
 
@@ -84,56 +97,68 @@ manage_pub_key:
     - contents_pillar: gpg_pkg_pub_key
     - show_changes: False
     - user: {{build_cfg.build_runas}}
-    - group: adm
+    - group: {{build_cfg.build_runas}}
     - makedirs: True
 
 
 gpg_conf_file_exists:
-  file.touch:
+  file.managed:
     - name: {{gpg_config_file}}
+    - dir_mode: 700
+    - mode: 644
+    - show_changes: False
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - makedirs: True
+    - contents: 'use-agent'
 
 
 gpg_tty_file_exists:
-  file.touch:
+  file.managed:
     - name: {{gpg_tty_info}}
+    - dir_mode: 700
+    - mode: 644
+    - show_changes: False
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - makedirs: True
-
-
-gpg_conf_file:
-  file.replace:
-    - name: {{gpg_config_file}}
-    - pattern: |
-        ^#\s*use-agent\s*\.*
-    - repl: |
-        use-agent
-    - count: 1
-    - append_if_not_found: True
-    - require:
-      - file: gpg_conf_file_exists
+    - contents: ''
 
 
 gpg_agent_conf_file:
-  file.append:
+  file.managed:
     - name: {{gpg_agent_config_file}}
+    - dir_mode: 700
+    - mode: 644
+    - show_changes: False
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - makedirs: True
-    - text: |
+    - contents: |
         {{gpg_agent_text}}
+
+
+gpg_agent_script_file_exists:
+  file.managed:
+    - name: {{gpg_agent_script_file}}
+    - dir_mode: 755
+    - mode: 755
+    - show_changes: False
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - makedirs: True
+    - contents: |
+        {{gpg_agent_script_text}}
 
 
 gpg_agent_start:
   cmd.run:
-    - name: |
-        eval $(gpg-agent --homedir {{gpg_key_dir}} {{write_env_file_prefix}}{{write_env_file}} --allow-preset-passphrase --max-cache-ttl 300 --daemon)
-        GPG_TTY=$(tty)
-        export GPG_TTY
-        echo "GPG_TTY=${GPG_TTY}" > {{gpg_tty_info}}
-#    - python_shell: True
-    - use_vt: True
-    - runas: {{build_cfg.build_runas}}
-    - reload_modules: True
-    - require:
-      - cmd: gpg_agent_stop
+   - name:  {{gpg_agent_script_file}}
+   - runas: {{build_cfg.build_runas}}
+   - use_vt: True
+   - reload_modules: True
+   - require:
+     - cmd: gpg_agent_stop
 
 
 gpg_load_pub_key:

@@ -1,4 +1,4 @@
-{% import "setup/debian/map.jinja" as buildcfg %}
+{% import "setup/ubuntu/map.jinja" as buildcfg %}
 {% set force = salt['pillar.get']('build_force.all', False) or salt['pillar.get']('build_force.' ~ slspath, False) %}
 
 {% set name = 'zeromq' %}

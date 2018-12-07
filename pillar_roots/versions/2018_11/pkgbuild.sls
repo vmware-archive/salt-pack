@@ -120,7 +120,7 @@ pkgbuild_registry:
         - openpgm
         - openpgm-devel
     openssl:
-      version: 1.0.2k-13
+      version: 1.0.2k-14
       results:
         - openssl
         - openssl-devel

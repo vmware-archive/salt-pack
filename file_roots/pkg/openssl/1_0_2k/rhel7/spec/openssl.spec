@@ -23,7 +23,7 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name: openssl
 Version: 1.0.2k
-Release: 13%{?dist}
+Release: 14%{?dist}
 Epoch: 1
 # We have to remove certain patented algorithms from the openssl source
 # tarball with the hobble-openssl script which is included below.
@@ -107,7 +107,7 @@ BuildRequires: lksctp-tools-devel
 BuildRequires: /usr/bin/rename
 BuildRequires: /usr/bin/pod2man
 Requires: coreutils, make
-Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} >= %{epoch}:%{version}-%{release}
 
 %description
 The OpenSSL toolkit provides support for secure communications between
@@ -130,7 +130,7 @@ support cryptographic algorithms and protocols.
 %package devel
 Summary: Files for development of applications which will use OpenSSL
 Group: Development/Libraries
-Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} >= %{epoch}:%{version}-%{release}
 Requires: krb5-devel%{?_isa}, zlib-devel%{?_isa}
 Requires: pkgconfig
 
@@ -142,7 +142,7 @@ support various cryptographic algorithms and protocols.
 %package static
 Summary:  Libraries for static linking of applications which will use OpenSSL
 Group: Development/Libraries
-Requires: %{name}-devel%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-devel%{?_isa} >= %{epoch}:%{version}-%{release}
 
 %description static
 OpenSSL is a toolkit for supporting cryptography. The openssl-static
@@ -154,7 +154,7 @@ protocols.
 Summary: Perl scripts provided with OpenSSL
 Group: Applications/Internet
 Requires: perl
-Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}%{?_isa} >= %{epoch}:%{version}-%{release}
 
 %description perl
 OpenSSL is a toolkit for supporting cryptography. The openssl-perl
@@ -526,6 +526,9 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
+* Fri Dev 07 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-14
+- Allow Requires for versions of libs, etc. greater than or equal to this release
+
 * Mon Aug 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-13
 - Ensure hobble-openssl is executable, Rebuilt to ensure present for use with RHEL 7.2
 

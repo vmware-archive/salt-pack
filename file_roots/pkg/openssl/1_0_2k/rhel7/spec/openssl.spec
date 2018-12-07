@@ -526,7 +526,7 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
-* Fri Dev 07 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-14
+* Fri Dec 07 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-14
 - Allow Requires for versions of libs, etc. greater than or equal to this release
 
 * Mon Aug 27 2018 SaltStack Packaging Team <packaging@saltstack.com> - 1.0.2k-13

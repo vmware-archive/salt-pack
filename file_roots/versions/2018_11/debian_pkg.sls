@@ -48,7 +48,7 @@ include:
     - pkg.python-urllib3.1_10_4.debian8     ## jessie 1.9.1-3, jessie-backports 1.16-1~bpo8+1
 ##    - pkg.python-yaml.3_11.debian8        ## jessie 3.11-2
     - pkg.salt.2018_11.debian8
-    - pkg.zeromq.4_0_5.debian8              ## jessie libzmq3 4.0.5+dfsg-2+deb8u1
+##    - pkg.zeromq.4_0_5.debian8            ## jessie libzmq3 4.0.5+dfsg-2+deb8u1
 
 {% endif %}
 

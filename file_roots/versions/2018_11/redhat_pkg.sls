@@ -7,7 +7,7 @@ include:
 ##     - pkg.libtomcrypt.1_17.rhel7     ## extras   1.17-26.el7
 ##     - pkg.libtommath.0_42_0.rhel7    ## extras   0.42.0-6.el7
     - pkg.openpgm.5_2_122.rhel7         ## EPEL     5.2.122-2.el7
-##    - pkg.openssl.1_0_2k.rhel7        ## base     1:1.0.2k-16.el7
+    - pkg.openssl.1_0_2k.rhel7        ## base     1:1.0.2k-16.el7
 ##    - pkg.python-chardet.2_2_1.rhel7  ## base     2.2.1-1.el7_1
     - pkg.python-cherrypy.5_6_0.rhel7   ## base     3.2.2-4.el7
     - pkg.python-crypto.2_6_1.rhel7     ## extras   2.6.1-1.el7.centos

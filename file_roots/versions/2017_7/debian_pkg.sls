@@ -52,7 +52,7 @@ include:
 ##    - pkg.python-msgpack.0_4_2.debian8    ## jessie 0.4.2-1, jessie-backports 0.4.6-1~bpo8+1
 ##    - pkg.python-pyzmq.14_4_0.debian8     ## jessie 14.4.0-1
     - pkg.python-raet.0_6_3.debian8
-##    - pkg.python-systemd.231.debian8      ## jessie 233-1~bpo8+1
+    - pkg.python-systemd.231.debian8        ## jessie 215-17+deb8u7
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
     - pkg.python-urllib3.1_10_4.debian8

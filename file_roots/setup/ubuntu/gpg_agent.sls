@@ -48,7 +48,8 @@
 
 {% set gpg_agent_script_file = build_cfg.build_homedir ~ '/gpg-agent_start.sh' %}
 
-{% set gpg_agent_script_text = 'gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
+{% set gpg_agent_script_text = '#!/bin/sh
+        gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
         GPG_TTY=$(tty);
         export GPG_TTY
         echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
@@ -156,7 +157,6 @@ gpg_agent_start:
    - name:  {{gpg_agent_script_file}}
    - runas: {{build_cfg.build_runas}}
    - use_vt: True
-   - reload_modules: True
    - require:
      - cmd: gpg_agent_stop
 

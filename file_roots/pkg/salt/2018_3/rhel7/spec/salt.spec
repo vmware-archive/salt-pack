@@ -625,6 +625,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Oct 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.3-1
+- Update to feature release 2018.3.3-1  for Python 2
 - Revised acceptable versions of cherrypy, futures
 
 * Thu Jun 21 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-1

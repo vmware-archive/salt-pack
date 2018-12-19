@@ -48,10 +48,11 @@
 
 {% set gpg_agent_script_file = build_cfg.build_homedir ~ '/gpg-agent_start.sh' %}
 
+## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
 {% set gpg_agent_script_text = '#!/bin/sh
         killall -v -w gpg-agent
         gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
-        GPG_TTY=$(tty);
+        GPG_TTY=/dev/pts/0
         export GPG_TTY
         echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
 ' %}

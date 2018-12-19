@@ -55,6 +55,7 @@
         GPG_TTY=/dev/pts/0
         export GPG_TTY
         echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+        sleep 5
 ' %}
 
 

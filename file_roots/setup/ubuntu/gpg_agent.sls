@@ -169,6 +169,7 @@ gpg_agent_start:
   module.run:
     - name : cmd.shell
     - cmd: {{gpg_agent_script_file}}
+    - cwd: {{build_cfg.build_homedir}}
     - runas: {{build_cfg.build_runas}}
     - require:
       - module: gpg_agent_stop2

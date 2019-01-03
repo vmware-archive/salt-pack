@@ -16,6 +16,7 @@
 {% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
 {% set pinentry_parms = '' -%}
 {% set pinentry_text = '' %}
+{% set kill_gpg_agent_text = 'killall -v -w gpg-agent' %}
 {% else %}
 {% set write_env_file_prefix = '' %}
 {% set write_env_file = '' %}
@@ -23,6 +24,7 @@
         pinentry-timeout 30
         allow-loopback-pinentry' %}
 {% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
+{% set kill_gpg_agent_text = 'gpgconf --kill gpg-agent' %}
 {% endif %}
 
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
@@ -50,7 +52,7 @@
 
 ## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
 {% set gpg_agent_script_text = '#!/bin/sh
-        killall -v -w gpg-agent 
+        ' ~ kill_gpg_agent_text ~ '
         gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
         GPG_TTY=/dev/pts/0
         export GPG_TTY
@@ -61,7 +63,7 @@
 
 gpg_agent_stop:
   cmd.run:
-    - name: killall -v -w gpg-agent
+    - name: {{kill_gpg_agent_text}}
     - use_vt: True
     - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
 
@@ -158,7 +160,7 @@ gpg_agent_script_file_exists:
 gpg_agent_stop2:
   module.run:
     - cmd.shell:
-      - cmd: killall -v -w gpg-agent
+      - cmd: {{kill_gpg_agent_text}}
       - runas: 'root'
     - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
     - require:

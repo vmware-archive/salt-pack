@@ -51,6 +51,17 @@
 {% set gpg_agent_script_file = build_cfg.build_homedir ~ '/gpg-agent_start.sh' %}
 
 ## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
+{% if build_cfg.build_release == 'ubuntu1804' %}
+{% set gpg_agent_script_text = '#!/bin/sh
+        gpgconf --kill gpg-agent
+        gpgconf --kill dirmngr
+        gpgconf --launch gpg-agent
+        GPG_TTY=/dev/pts/0
+        export GPG_TTY
+        echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+        sleep 5
+' %}
+{% else %}
 {% set gpg_agent_script_text = '#!/bin/sh
         ' ~  kill_gpg_agent_text ~ '
         gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
@@ -59,6 +70,7 @@
         echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
         sleep 5
 ' %}
+{% endif %}
 
 
 gpg_agent_stop:

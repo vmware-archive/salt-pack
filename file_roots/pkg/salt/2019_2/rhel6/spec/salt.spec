@@ -41,7 +41,7 @@
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2018.11.0%{?__rc_ver}
+Version: 2019.2.0%{?__rc_ver}
 Release: 0%{?dist}
 Summary: A parallel remote execution system
 
@@ -92,11 +92,7 @@ Requires: yum-utils
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
-%if (0%{?rhel} >= 7)
-BuildRequires: python2-futures >= 2.0
-%else
 BuildRequires: python%{?__python_ver}-futures >= 2.0
-%endif
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
 BuildRequires: python%{?__python_ver}-msgpack >= 0.4
@@ -150,12 +146,8 @@ Requires: PyYAML
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0
-%if (0%{?rhel} >= 7)
-Requires: python2-futures >= 2.0
-%else
+Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0 
 Requires: python%{?__python_ver}-futures >= 2.0
-%endif
 Requires: python%{?__python_ver}-six
 Requires: python%{?__python_ver}-psutil
 
@@ -623,10 +615,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-- Revised acceptable versions of cherrypy, futures
+* Mon Jan 07 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
+- Update to feature release branch 2019.2.0-0 for Python 2
 
-* Wed Aug 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.11.0-0
-- Update to feature release branch 2018.11.0-0 for Python 2
+* Mon Oct 08 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-1
+- Update to feature release 2018.3.3-1  for Python 2
+- Revised versions of cherrypy acceptable
 
 * Thu Jun 21 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-1
 - Update to feature release 2018.3.2-1  for Python 2

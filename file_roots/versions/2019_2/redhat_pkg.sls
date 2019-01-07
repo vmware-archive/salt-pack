@@ -29,7 +29,7 @@ include:
     - pkg.python-typing.3_5_2_2.rhel7
 ##    - pkg.python-urllib3.1_10_2.rhel7 ## base     1.10.2-2.el7_1  available 1.10.2-5.el7
     - pkg.python-yaml.3_11.rhel7
-    - pkg.salt.2018_11.rhel7
+    - pkg.salt.2019_2.rhel7
     - pkg.zeromq.4_1_4.rhel7            ## EPEL     4.1.4-5.el7
 
 {% elif buildcfg.build_release == 'rhel6' %}
@@ -78,12 +78,12 @@ include:
     - pkg.python-tornado.4_2_1.rhel6
     - pkg.python-urllib3.1_23.rhel6
     - pkg.python-yaml.3_11.rhel6
-    - pkg.salt.2018_11.rhel6
+    - pkg.salt.2019_2.rhel6
     - pkg.yum-utils.1_1_30.rhel6
     - pkg.zeromq.4_0_5.rhel6
 
 {% elif buildcfg.build_release == 'fedora' %}
 
-    - pkg.salt.2018_11.fedora
+    - pkg.salt.2019_2.fedora
 
 {% endif %}

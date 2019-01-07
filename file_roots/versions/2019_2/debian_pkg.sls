@@ -7,7 +7,7 @@ include:
     - pkg.python-jinja2.2_9_4.debian9
     - pkg.python-raet.0_6_7.debian9         ## need update to latest, was 0.6.3
     - pkg.python-timelib.0_2_4.debian9
-    - pkg.salt.2018_11.debian9
+    - pkg.salt.2019_2.debian9
 
 {% elif buildcfg.build_release == 'debian8' %}
 
@@ -24,7 +24,7 @@ include:
     - pkg.python-systemd.231.debian8
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
-    - pkg.salt.2018_11.debian8
+    - pkg.salt.2019_2.debian8
     - pkg.zeromq.4_0_5.debian8
 
 {% else %}
@@ -47,7 +47,7 @@ include:
     - pkg.python-tornado.4_2_1.debian8      ## jessie 3.2.2-1.1, jessie-backports 4.4.3-1~bpo8+1
     - pkg.python-urllib3.1_10_4.debian8     ## jessie 1.9.1-3, jessie-backports 1.16-1~bpo8+1
 ##    - pkg.python-yaml.3_11.debian8        ## jessie 3.11-2
-    - pkg.salt.2018_11.debian8
+    - pkg.salt.2019_2.debian8
 ##    - pkg.zeromq.4_0_5.debian8            ## jessie libzmq3 4.0.5+dfsg-2+deb8u1
 
 {% endif %}

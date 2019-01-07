@@ -7,7 +7,7 @@ include:
     - pkg.python-ioflo.1_5_0.ubuntu1804
     - pkg.python-raet.0_6_5.ubuntu1804
     - pkg.python-timelib.0_2_4.ubuntu1804
-    - pkg.salt.2018_11.ubuntu1804
+    - pkg.salt.2019_2.ubuntu1804
 
 {% elif buildcfg.build_release == 'ubuntu1604' %}
 
@@ -18,7 +18,7 @@ include:
     - pkg.python-raet.0_6_5.ubuntu1604
     - pkg.python-timelib.0_2_4.ubuntu1604
 ##    - pkg.python-tornado.4_2_1.ubuntu1604 ## xenial 4.2.1-1ubuntu3
-    - pkg.salt.2018_11.ubuntu1604
+    - pkg.salt.2019_2.ubuntu1604
 
 {% elif buildcfg.build_release == 'ubuntu1404' %}
 
@@ -34,7 +34,7 @@ include:
     - pkg.python-raet.0_6_3.ubuntu1404
     - pkg.python-timelib.0_2_4.ubuntu1404
     - pkg.python-tornado.4_2_1.ubuntu1404   ## trusty 3.1.1-1ubuntu2
-    - pkg.salt.2018_11.ubuntu1404
+    - pkg.salt.2019_2.ubuntu1404
     - pkg.zeromq.4_0_5.ubuntu1404           ## trusty libzmq3 4.0.4+dfsg-2ubuntu0.1
 
 {% endif %}

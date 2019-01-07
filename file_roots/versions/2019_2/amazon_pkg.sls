@@ -13,7 +13,7 @@ include:
     - pkg.python-psutil.5_2_2.amzn
     - pkg.python-pyzmq.14_5_0.amzn
     - pkg.python-raet.0_6_3.amzn
-    - pkg.salt.2018_11.amzn
+    - pkg.salt.2019_2.amzn
     - pkg.python-timelib.0_2_4.amzn
     - pkg.python-tornado.4_2_1.amzn
     - pkg.winexe.1_1.amzn

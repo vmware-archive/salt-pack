@@ -58,7 +58,7 @@
         gpgconf --launch gpg-agent
         GPG_TTY=/dev/pts/0
         export GPG_TTY
-        echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+        echo "GPG_TTY=/dev/pts/0" > ' ~ gpg_tty_info ~ '
         sleep 5
 ' %}
 {% else %}
@@ -67,7 +67,7 @@
         gpg-agent --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
         GPG_TTY=/dev/pts/0
         export GPG_TTY
-        echo "GPG_TTY=${GPG_TTY}" > ' ~ gpg_tty_info ~ '
+        echo "GPG_TTY=/dev/pts/0" > ' ~ gpg_tty_info ~ '
         sleep 5
 ' %}
 {% endif %}

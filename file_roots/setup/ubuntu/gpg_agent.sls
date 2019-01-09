@@ -52,6 +52,9 @@
 
 ## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
 {% if build_cfg.build_release == 'ubuntu1804' %}
+
+{% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg-agent_kill.sh' %}
+
 {% set gpg_agent_script_text = '#!/bin/sh
         gpgconf --kill gpg-agent
         gpgconf --kill dirmngr
@@ -94,6 +97,11 @@ gpg_agent_script_file_rm:
   file.absent:
     - name: {{gpg_agent_script_file}}
 
+{% if build_cfg.build_release == 'ubuntu1804' %}
+gpg_ps_kill_script_file_rm:
+  file.absent:
+    - name: {{gpg_ps_kill_script_file}}
+{% endif %}
 
 manage_priv_key:
   file.managed:
@@ -167,6 +175,44 @@ gpg_agent_script_file_exists:
     - makedirs: True
     - contents: |
         {{gpg_agent_script_text}}
+
+
+{% if build_cfg.build_release == 'ubuntu1804' %}
+## finding killall and gpgpconf to stop gpg-agent failing on Ubuntu 18.04
+## even as root from the command line, reqs investigation
+## explicit kill with gusto for now
+gpg_agent_ps_kill_script_file_exists:
+  file.managed:
+    - name: {{gpg_ps_kill_script_file}}
+    - dir_mode: 755
+    - mode: 755
+    - show_changes: False
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
+    - makedirs: True
+    - contents: |
+        #!/bin/bash
+        gpg_active=$(ps -ef | grep -v 'grep' | grep gpg-agent)
+        IFS=$'\n'	# make newlines the only seperator
+        if [[ -n "$gpg_active" ]]; then
+            for gpg_line in $gpg_active; do
+                ps_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
+                kill -9 $ps_gpg_agent
+            done
+        fi
+        unset IFS
+
+
+
+gpg_agent_ps_kill_run:
+  module.run:
+    - cmd.shell:
+      - cmd: {{gpg_ps_kill_script_file}}
+      - runas: 'root'
+    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
+    - require:
+      - file: gpg_agent_ps_kill_script_file_exists
+{% endif %}
 
 
 gpg_agent_stop2:

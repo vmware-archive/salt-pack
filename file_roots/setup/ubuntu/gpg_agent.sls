@@ -206,9 +206,9 @@ gpg_agent_ps_kill_script_file_exists:
 
 gpg_agent_ps_kill_run:
   module.run:
-    - cmd.shell:
-      - cmd: {{gpg_ps_kill_script_file}}
-      - runas: 'root'
+    - name: cmd.shell
+    - cmd: {{gpg_ps_kill_script_file}}
+    - runas: 'root'
     - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
     - require:
       - file: gpg_agent_ps_kill_script_file_exists
@@ -217,9 +217,9 @@ gpg_agent_ps_kill_run:
 
 gpg_agent_stop2:
   module.run:
-    - cmd.shell:
-      - cmd: {{kill_gpg_agent_text}}
-      - runas: 'root'
+    - name: cmd.shell
+    - cmd: {{kill_gpg_agent_text}}
+    - runas: 'root'
     - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
     - require:
       - file: gpg_agent_script_file_exists
@@ -227,7 +227,7 @@ gpg_agent_stop2:
 
 gpg_agent_start:
   module.run:
-    - name : cmd.shell
+    - name: cmd.shell
     - cmd: {{gpg_agent_script_file}}
     - cwd: {{build_cfg.build_homedir}}
     - runas: {{build_cfg.build_runas}}

@@ -35,7 +35,7 @@ include:
     - pkg.python-timelib.0_2_4.debian8
     - pkg.python-tornado.4_2_1.debian8
     - pkg.salt.2018_3.debian8
-    - pkg.zeromq.4_0_5.debian8
+##    - pkg.zeromq.4_0_5.debian8            ## jessie libzmq3 4.0.5+dfsg-2+deb8u1
 
 {% else %}
     - pkg.libsodium.1_0_3.debian8

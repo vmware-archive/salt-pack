@@ -17,7 +17,7 @@ include:
     - pkg.python-ioflo.1_3_8.rhel7
     - pkg.python-libcloud.2_0_0.rhel7   ## EPEL     python2-libcloud    2.0.0rc2-1.el7
     - pkg.python-libnacl.1_6_1.rhel7
-    - pkg.python-m2crypto.0_28_2.rhel7  ## base     0.21.1-17.el7
+    - pkg.python-m2crypto.0_31_0.rhel7  ## base     0.21.1-17.el7
     - pkg.python-msgpack.0_4_6.rhel7    ## EPEL     python2-msgpack     0.5.6-4.el7
     - pkg.python-mock.1_0_1.rhel7       ## extras   1.2.17-1.el7.centos
     - pkg.python-psutil.2_2_1.rhel7     ## EPEL     python2-psutil      2.2.1-4.el7

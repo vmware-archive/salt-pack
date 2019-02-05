@@ -158,7 +158,7 @@ pkgbuild_registry:
       results:
         - python-libnacl
     python-m2crypto:
-      version: 0.31.0-2
+      version: 0.31.0-3
       results:
         - m2crypto
       build_deps:

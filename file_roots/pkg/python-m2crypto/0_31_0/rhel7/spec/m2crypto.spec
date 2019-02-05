@@ -5,7 +5,7 @@
 Summary: Support for using OpenSSL in Python 3 scripts
 Name: m2crypto
 Version: 0.31.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Source0: https://files.pythonhosted.org/packages/0a/d3/ecef6a0eaef77448deb6c9768af936fec71c0c4b42af983699cfa1499962/M2Crypto-0.31.0.tar.gz
 Source1: https://files.pythonhosted.org/packages/0a/d3/ecef6a0eaef77448deb6c9768af936fec71c0c4b42af983699cfa1499962/M2Crypto-0.31.0.tar.gz.asc
 # This is only precautionary, it does fix anything - not sent upstream
@@ -44,7 +44,7 @@ This package allows you to call OpenSSL functions from Python 3 scripts.
 %endif
 
 %prep
-%%setup -q -T -c -a 0
+%setup -q -T -c -a 0
 
 pushd M2Crypto-%{version}
 %patch0 -p1 -b .gcc_macros
@@ -117,6 +117,9 @@ popd
 %endif
 
 %changelog
+* Tue Feb 05 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.31.0-3
+- Removed extra % typo from setup
+
 * Thu Jan 24 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.31.0-2
 - Adjusted support for Python 3 for Redhat 7 and update to 0.31.0
 - Added version check >= openssl 1:1.0.2

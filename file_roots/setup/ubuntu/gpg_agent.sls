@@ -56,8 +56,6 @@
 {% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg-agent_kill.sh' %}
 
 {% set gpg_agent_script_text = '#!/bin/sh
-        gpgconf --kill gpg-agent
-        gpgconf --kill dirmngr
         gpgconf --launch gpg-agent
         GPG_TTY=/dev/pts/0
         export GPG_TTY
@@ -84,8 +82,9 @@ gpg_agent_stop:
 
 
 gpg_dir_rm:
-  file.absent:
-    - name: {{gpg_key_dir}}
+  cmd.run:
+    - name: rm -fR {{gpg_key_dir}}
+    - use_vt: True
 
 
 gpg_clear_agent_log:

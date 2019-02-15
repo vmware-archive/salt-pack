@@ -96,11 +96,13 @@ gpg_agent_script_file_rm:
   file.absent:
     - name: {{gpg_agent_script_file}}
 
+
 {% if build_cfg.build_release == 'ubuntu1804' %}
 gpg_ps_kill_script_file_rm:
   file.absent:
     - name: {{gpg_ps_kill_script_file}}
 {% endif %}
+
 
 manage_priv_key:
   file.managed:
@@ -176,6 +178,16 @@ gpg_agent_script_file_exists:
         {{gpg_agent_script_text}}
 
 
+gpg_agent_stop2:
+  module.run:
+    - name: cmd.shell
+    - cmd: {{kill_gpg_agent_text}}
+    - runas: 'root'
+    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
+    - require:
+      - file: gpg_agent_script_file_exists
+
+
 {% if build_cfg.build_release == 'ubuntu1804' %}
 ## finding killall and gpgpconf to stop gpg-agent failing on Ubuntu 18.04
 ## even as root from the command line, reqs investigation
@@ -205,26 +217,14 @@ gpg_agent_ps_kill_script_file_exists:
         unset IFS
 
 
-
 gpg_agent_ps_kill_run:
   module.run:
     - name: cmd.shell
     - cmd: {{gpg_ps_kill_script_file}}
     - runas: 'root'
-    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
     - require:
       - file: gpg_agent_ps_kill_script_file_exists
 {% endif %}
-
-
-gpg_agent_stop2:
-  module.run:
-    - name: cmd.shell
-    - cmd: {{kill_gpg_agent_text}}
-    - runas: 'root'
-    - onlyif: ps -ef | grep -v 'grep' | grep  gpg-agent
-    - require:
-      - file: gpg_agent_script_file_exists
 
 
 gpg_agent_start:

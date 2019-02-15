@@ -204,12 +204,13 @@ gpg_agent_ps_kill_script_file_exists:
     - contents: |
         #!/bin/bash
         gpg_active=$(ps -ef | grep -v 'grep' | grep gpg-agent)
-        script_pid=$$
+        script_pid=$BASHPID
         IFS=$'\n'	# make newlines the only seperator
         if [[ -n "$gpg_active" ]]; then
             for gpg_line in $gpg_active; do
-                ps_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
-                if [[ "$script_pid" -ne "$ps_gpg_agent" ]]; then
+                pid_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
+                ppid_gpg_agent=$(echo "$gpg_line" | awk '{print $3}')
+                if [[ ! ("$script_pid" -eq "$pid_gpg_agent" || "$script_pid" -eq "$ppid_gpg_agent") ]]; then
                     kill -9 $ps_gpg_agent
                 fi
             done

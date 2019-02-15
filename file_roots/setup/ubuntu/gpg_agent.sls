@@ -211,7 +211,7 @@ gpg_agent_ps_kill_script_file_exists:
                 pid_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
                 ppid_gpg_agent=$(echo "$gpg_line" | awk '{print $3}')
                 if [[ ! ("$script_pid" -eq "$pid_gpg_agent" || "$script_pid" -eq "$ppid_gpg_agent") ]]; then
-                    kill -9 $ps_gpg_agent
+                    kill -9 $pid_gpg_agent
                 fi
             done
         fi

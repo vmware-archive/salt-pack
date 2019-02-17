@@ -71,7 +71,7 @@ include:
     - pkg.python-pysocks.1_6_8.rhel6
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-raet.0_6_6.rhel6
-    - pkg.python-requests.2_7_0.rhel6
+    - pkg.python-requests.2_20_1.rhel6
     - pkg.python-setuptools.36_6_0.rhel6
     - pkg.python-six.1_9_0.rhel6
     - pkg.python-timelib.0_2_4.rhel6

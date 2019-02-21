@@ -501,7 +501,6 @@ pkgbuild_registry:
         - python-setuptools
         - python-nose
         - libgit2
-## TBD        - http-parser
       results:
         - python27-pygit2
     python-pycurl:

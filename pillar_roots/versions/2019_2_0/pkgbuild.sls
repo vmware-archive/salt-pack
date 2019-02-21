@@ -501,7 +501,6 @@ pkgbuild_registry:
         - python-setuptools
         - python-nose
         - libgit2
-## TBD        - http-parser
       results:
         - python27-pygit2
     python-pycurl:
@@ -512,11 +511,14 @@ pkgbuild_registry:
       results:
         - python27-pycurl
     python-pysocks:
-      name: python2-pysocks
+      name: python27-pysocks
       version: 1.6.8-7
       noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
       results:
-        - python2-pysocks
+        - python27-pysocks
     python-pyzmq:
       name: python27-zmq
       version: 14.5.0-4

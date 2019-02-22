@@ -345,6 +345,7 @@ pkgbuild_registry:
       version: 2.6.1-5
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-crypto
     python-pycryptodome:
@@ -508,6 +509,7 @@ pkgbuild_registry:
       version: 7.19.0-11
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-pycurl
     python-pysocks:
@@ -543,6 +545,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-chardet
         - python-idna
         - python-pysocks
@@ -563,6 +566,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-six
     python-tornado:

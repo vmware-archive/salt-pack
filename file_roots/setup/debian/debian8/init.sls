@@ -81,12 +81,11 @@ build_prefs_rm:
 
 
 {%- if build_cfg.build_arch == 'armhf' %}
-##  Only needed for Raspbian 8
 build_pbldhookskeys_file:
   file.append:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
     - text: |
-        /usr/bin/gpg --keyserver pgpkeys.mit.edu --recv 90FDDD2E
+        /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv-keys 90FDDD2E
         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
 {%- endif %}
 

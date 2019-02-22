@@ -345,6 +345,7 @@ pkgbuild_registry:
       version: 2.6.1-5
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-crypto
     python-pycryptodome:
@@ -409,6 +410,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-babel
         - python-markupsafe
       results:
@@ -508,6 +510,7 @@ pkgbuild_registry:
       version: 7.19.0-11
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-pycurl
     python-pysocks:
@@ -543,6 +546,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-chardet
         - python-idna
         - python-pysocks
@@ -565,6 +569,7 @@ pkgbuild_registry:
         - python27
       results:
         - python27-six
+        - python-setuptools
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4

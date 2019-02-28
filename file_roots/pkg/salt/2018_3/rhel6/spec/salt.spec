@@ -216,7 +216,7 @@ infrastructure.
 Summary: REST API for Salt, a parallel remote execution system
 Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-Requires: python%{?__python_ver}-cherrypy
+Requires: python%{?__python_ver}-cherrypy >= 3.2.2, python%{?__python_ver}-cherrypy < 18.0.0
 
 
 %description api

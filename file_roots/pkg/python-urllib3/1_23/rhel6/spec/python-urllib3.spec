@@ -20,7 +20,7 @@
 
 Name:           python-%{srcname}
 Version:        1.23
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Python HTTP library with thread-safe connection pooling and file post
 
 License:        MIT
@@ -35,7 +35,7 @@ Python HTTP module with connection pooling and file POST abilities.
 
 %package -n python%{?__python_ver}-%{srcname}
 Summary:        Python2 HTTP library with thread-safe connection pooling and file post
-## %{?python_provide:%python_provide python2-%{srcname}}
+## %%{?python_provide:%%python_provide python2-%%{srcname}}
 Provides: python%{?__python_ver}-%{srcname}
 
 Requires:       ca-certificates
@@ -186,7 +186,10 @@ py.test-3
 %endif
 
 %changelog
-* Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> - 1.23-5
+* Thu Jan 03 2019 SaltStack Packaging Team >packaging@saltstack.com> 1.23-6
+- Removed provides python-urllib3
+
+* Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> 1.23-5
 - Backport to support RHEL 6 for Python 2.7
 
 * Wed Jun 20 2018 Lumír Balhar <lbalhar@redhat.com> - 1.23-4

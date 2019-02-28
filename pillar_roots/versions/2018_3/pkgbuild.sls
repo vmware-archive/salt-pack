@@ -120,7 +120,7 @@ pkgbuild_registry:
         - openpgm
         - openpgm-devel
     openssl:
-      version: 1.0.2k-13
+      version: 1.0.2k-14
       results:
         - openssl
         - openssl-devel
@@ -158,7 +158,7 @@ pkgbuild_registry:
       results:
         - python-libnacl
     python-m2crypto:
-      version: 0.28.2-4
+      version: 0.31.0-3
       results:
         - m2crypto
       build_deps:
@@ -345,6 +345,7 @@ pkgbuild_registry:
       version: 2.6.1-5
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-crypto
     python-pycryptodome:
@@ -409,6 +410,7 @@ pkgbuild_registry:
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-babel
         - python-markupsafe
       results:
@@ -501,7 +503,6 @@ pkgbuild_registry:
         - python-setuptools
         - python-nose
         - libgit2
-## TBD        - http-parser
       results:
         - python27-pygit2
     python-pycurl:
@@ -509,6 +510,7 @@ pkgbuild_registry:
       version: 7.19.0-11
       build_deps:
         - python27
+        - python-setuptools
       results:
         - python27-pycurl
     python-pysocks:
@@ -540,10 +542,11 @@ pkgbuild_registry:
         - python-libnacl
     python-requests:
       name: python27-requests
-      version: 2.20.1-2
+      version: 2.20.1-3
       noarch: True
       build_deps:
         - python27
+        - python-setuptools
         - python-chardet
         - python-idna
         - python-pysocks
@@ -566,6 +569,7 @@ pkgbuild_registry:
         - python27
       results:
         - python27-six
+        - python-setuptools
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4
@@ -597,7 +601,7 @@ pkgbuild_registry:
         - python27-unittest2
     python-urllib3:
       name: python27-urllib3
-      version: 1.23-5
+      version: 1.23-6
       noarch: True
       build_deps:
         - python27

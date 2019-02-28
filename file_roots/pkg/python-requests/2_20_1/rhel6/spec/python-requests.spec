@@ -27,7 +27,7 @@
 
 Name:           python-requests
 Version:        2.20.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        HTTP library, written in Python, for human beings
 
 License:        ASL 2.0
@@ -61,7 +61,7 @@ designed to make HTTP requests easy for developers.
 
 %package -n python%{?__python_ver}-requests
 Summary: HTTP library, written in Python, for human beings
-%{?python_provide:%python_provide python2-requests}
+## %%{?python_provide:%%python_provide python2-requests}
 
 %if 0%{?backport_rhel6}
 BuildRequires:  python%{?__python_ver}-devel
@@ -96,10 +96,7 @@ Requires:       python2-urllib3
 Requires:       python2-idna
 %endif
 
-%if 0%{?backport_rhel6}
-BuildRequires:  python%{?__python_ver}-ordereddict >= 1.1
-Requires:       python%{?__python_ver}-ordereddict >= 1.1
-%else
+%if ! 0%{?backport_rhel6}
 %if 0%{?rhel} && 0%{?rhel} <= 6
 BuildRequires:  python-ordereddict >= 1.1
 Requires:       python-ordereddict >= 1.1
@@ -141,7 +138,13 @@ designed to make HTTP requests easy for developers.
 %endif
 
 %prep
-%autosetup -p1 -n requests-%{version}
+## %%autosetup -p1 -n requests-%%{version}
+%setup -n requests-%{version}
+%patch0 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+
 
 # Unbundle the certificate bundle from mozilla.
 rm -rf requests/cacert.pem
@@ -186,6 +189,9 @@ PYTHONPATH=%{buildroot}%{python3_sitelib} %{__python3} -m pytest -v
 %endif
 
 %changelog
+* Thu Jan 03 2019 SaltStack Packaging Team >packaging@saltstack.com> - 2.20.1-3
+- remove provides python-requests
+
 * Tue Nov 13 2018 SaltStack Packaging Team >packaging@saltstack.com> - 2.20.1-2
 - Update to pick up CVE-2018-18074 and backport RHEL 6 with Python 2.7
 

@@ -2,8 +2,9 @@
 {% import "setup/base_map.jinja" as basecfg %}
 
 # Get the user under which to build
-{# {% set build_runas = pillar.get('build_runas', basecfg.build_runas) %} #}
-{% set build_runas = 'root' %}
+{% set build_runas = pillar.get('build_runas', basecfg.build_runas) %}
+## {# {% set build_runas = 'root' %} #}
+## {# {% set build_runas = 'admin' %} #}
 
 # Get the repo signing timeout
 {% set repo_sign_timeout = basecfg.repo_sign_timeout %}

@@ -1,51 +1,20 @@
-%if ( "0%{?dist}" == "0.amzn1" )
-%global with_explicit_python27 1
 %global pybasever 2.7
-%global __python_ver 27
-%global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 
-%global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%{!?pythonpath: %global pythonpath %(%{__python2} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
 
-%{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
-
-%global __inst_layout --install-layout=unix
-
-%else
-
-%{!?python2_sitelib: %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python2_sitearch: %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%{!?pythonpath: %global pythonpath %(%{__python} -c "import os, sys; print(os.pathsep.join(x for x in sys.path if x))")}
-
-
-%if 0%{?rhel} == 6
-%global with_python3 0
-
-%global with_explicit_python27 1
-%global pybasever 2.7
-%global __python_ver 27
-%global __python %{_bindir}/python%{?pybasever}
-%global __python2 %{_bindir}/python%{?pybasever}
-%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%endif
-
-%endif
 
 %global include_tests 0
-
-# Release Candidate
-%define __rc_ver %{nil}
 
 %define fish_dir %{_datadir}/fish/vendor_functions.d
 
 Name: salt
-Version: 2019.2.0%{?__rc_ver}
+Version: 2019.2.0
 Release: 1%{?dist}
 Summary: A parallel remote execution system
 
-Group:   System Environment/Daemons
 License: ASL 2.0
 URL:     http://saltstack.org/
 Source0: https://pypi.io/packages/source/s/%{name}/%{name}-%{version}.tar.gz
@@ -74,7 +43,6 @@ Source21: salt-syndic.fish
 ## Patch0:  salt-%%{version}-tests.patch
 
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 
 %ifarch %{ix86} x86_64
@@ -84,90 +52,46 @@ Requires: dmidecode
 Requires: pciutils
 Requires: which
 
-%if 0%{?fedora} >= 26
 Requires: dnf-utils
-%else
-Requires: yum-utils
-%endif
 
-%if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
-%if (0%{?rhel} >= 7)
+%if ((0%{?fedora} >= 28) && 0%{?include_tests})
+BuildRequires: python2-tornado >= 4.2.1
 BuildRequires: python2-futures >= 2.0
-%else
-BuildRequires: python%{?__python_ver}-futures >= 2.0
-%endif
-BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
-BuildRequires: python%{?__python_ver}-jinja2
-BuildRequires: python%{?__python_ver}-msgpack >= 0.4
-BuildRequires: python%{?__python_ver}-pip
-BuildRequires: python%{?__python_ver}-zmq >= 14.5
+BuildRequires: python2-crypto >= 2.6.1
+BuildRequires: python2-jinja2
+BuildRequires: python2-msgpack >= 0.4
+BuildRequires: python2-pip
+BuildRequires: python2-zmq >= 14.5
 
-%if 0%{?with_explicit_python27}
-BuildRequires: PyYAML%{?__python_ver}
-%else
-BuildRequires: PyYAML
-%endif
+BuildRequires: python2-pyyaml
 
-BuildRequires: python%{?__python_ver}-requests
-## BuildRequires: python%{?__python_ver}-unittest2
+BuildRequires: python2-requests
+## BuildRequires: python2-unittest2
 
 # this BR causes windows tests to happen
 # clearly, that's not desired
 # https://github.com/saltstack/salt/issues/3749
-BuildRequires: python%{?__python_ver}-mock
+BuildRequires: python2-mock
 BuildRequires: git
-BuildRequires: python%{?__python_ver}-libcloud
-BuildRequires: python%{?__python_ver}-six
+BuildRequires: python2-libcloud
+BuildRequires: python2-six
 
-%if ((0%{?rhel} == 6) && 0%{?include_tests})
-# argparse now a salt-testing requirement
-BuildRequires: python-argparse
-%endif
+%endif  ##  (0%%{?fedora} >= 28) && 0%%{?include_tests})
 
-%endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+BuildRequires: python2-devel
 
-BuildRequires: python%{?__python_ver}-devel
-
-
-Requires: python%{?__python_ver}-jinja2
-Requires: python%{?__python_ver}-msgpack >= 0.4
-Requires: python%{?__python_ver}-crypto >= 2.6.1
-
-%if ( "0%{?dist}" == "0.amzn1" )
-Requires: python27-PyYAML
-Requires: python%{?__python_ver}
-%else
-%if 0%{?with_explicit_python27}
-Requires: python%{?__python_ver}  >= 2.7.9-1
-Requires: PyYAML%{?__python_ver}
-%else
-Requires: PyYAML
-%endif
-
-%endif
-
-Requires: python%{?__python_ver}-requests >= 1.0.0
-Requires: python%{?__python_ver}-zmq
-Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0
-%if (0%{?rhel} >= 7)
+Requires: python2-jinja2
+Requires: python2-msgpack >= 0.4
+Requires: python2-crypto >= 2.6.1
+Requires: python2-pyyaml
+Requires: python2-requests >= 1.0.0
+Requires: python2-zmq
+Requires: python2-markupsafe
+Requires: python2-tornado >= 4.2.1, python2-tornado < 6.0 
 Requires: python2-futures >= 2.0
-%else
-Requires: python%{?__python_ver}-futures >= 2.0
-%endif
-Requires: python%{?__python_ver}-six
-Requires: python%{?__python_ver}-psutil
+Requires: python2-six
+Requires: python2-psutil
 
-
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-
-Requires(post): chkconfig
-Requires(preun): chkconfig
-Requires(preun): initscripts
-Requires(postun): initscripts
-
-%else
 
 %if 0%{?systemd_preun:1}
 
@@ -180,7 +104,6 @@ Requires(postun): systemd-units
 BuildRequires: systemd-units
 Requires:      systemd-python
 
-%endif
 
 %description
 Salt is a distributed remote execution system used to execute commands and
@@ -192,18 +115,14 @@ servers, handle them quickly and through a simple and manageable interface.
 
 %package master
 Summary: Management component for salt, a parallel remote execution system
-Group:   System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
-%if (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
 Requires: systemd-python
-%endif
 
 %description master
 The Salt master is the central server to which all minions connect.
 
 %package minion
 Summary: Client component for Salt, a parallel remote execution system
-Group:   System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 
 %description minion
@@ -212,7 +131,6 @@ from the master, runs jobs, and returns results back to the master.
 
 %package syndic
 Summary: Master-of-master component for Salt, a parallel remote execution system
-Group:   System Environment/Daemons
 Requires: %{name}-master = %{version}-%{release}
 
 %description syndic
@@ -222,18 +140,16 @@ infrastructure.
 
 %package api
 Summary: REST API for Salt, a parallel remote execution system
-Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-Requires: python%{?__python_ver}-cherrypy >= 3.2.2, python%{?__python_ver}-cherrypy < 18.0.0
+Requires: python2-cherrypy >= 3.2.2, python2-cherrypy < 18.0.0
 
 %description api
 salt-api provides a REST interface to the Salt master.
 
 %package cloud
 Summary: Cloud provisioner for Salt, a parallel remote execution system
-Group:   Applications/System
 Requires: %{name}-master = %{version}-%{release}
-Requires: python%{?__python_ver}-libcloud
+Requires: python2-libcloud
 
 %description cloud
 The salt-cloud tool provisions new cloud VMs, installs salt-minion on them, and
@@ -241,7 +157,6 @@ adds them to the master's collection of controllable minions.
 
 %package ssh
 Summary: Agentless SSH-based version of Salt, a parallel remote execution system
-Group:   Applications/System
 Requires: %{name} = %{version}-%{release}
 
 %description ssh
@@ -250,6 +165,7 @@ of an agent (salt-minion) service.
 
 %prep
 %setup -q -c
+## %%setup -q -T -D -a 1
 
 cd %{name}-%{version}
 ## %%patch0 -p1
@@ -260,7 +176,7 @@ cd %{name}-%{version}
 %install
 rm -rf %{buildroot}
 cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
-%{__python} setup.py install -O1 %{?__inst_layout } --root %{buildroot}
+%{__python2} setup.py install -O1 %{?__inst_layout } --root %{buildroot}
 
 # Add some directories
 install -d -m 0755 %{buildroot}%{_var}/log/salt
@@ -287,13 +203,6 @@ install -p -m 0640 conf/cloud %{buildroot}%{_sysconfdir}/salt/cloud
 install -p -m 0640 conf/roster %{buildroot}%{_sysconfdir}/salt/roster
 install -p -m 0640 conf/proxy %{buildroot}%{_sysconfdir}/salt/proxy
 
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-mkdir -p %{buildroot}%{_initrddir}
-install -p %{SOURCE2} %{buildroot}%{_initrddir}/
-install -p %{SOURCE3} %{buildroot}%{_initrddir}/
-install -p %{SOURCE4} %{buildroot}%{_initrddir}/
-install -p %{SOURCE5} %{buildroot}%{_initrddir}/
-%else
 # Add the unit files
 mkdir -p %{buildroot}%{_unitdir}
 install -p -m 0644 %{SOURCE6} %{buildroot}%{_unitdir}/
@@ -301,7 +210,6 @@ install -p -m 0644 %{SOURCE7} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE8} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE9} %{buildroot}%{_unitdir}/
 install -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/
-%endif
 
 # Logrotate
 install -p %{SOURCE10} .
@@ -324,27 +232,19 @@ install -p -m 0644  %{SOURCE19} %{buildroot}%{fish_dir}/salt-minion.fish
 install -p -m 0644  %{SOURCE20} %{buildroot}%{fish_dir}/salt-run.fish
 install -p -m 0644  %{SOURCE21} %{buildroot}%{fish_dir}/salt-syndic.fish
 
-%if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
+%if ((0%{?fedora} >= 28) && 0%{?include_tests})
 %check
 cd $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}
 mkdir %{_tmppath}/salt-test-cache
-PYTHONPATH=%{pythonpath} %{__python} setup.py test --runtests-opts=-u
+PYTHONPATH=%{pythonpath} %{__python2} setup.py test --runtests-opts=-u
 %endif
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root,-)
 %doc $RPM_BUILD_DIR/%{name}-%{version}/%{name}-%{version}/LICENSE
 %{python2_sitelib}/%{name}/*
 #%%{python2_sitelib}/%%{name}-%%{version}-py?.?.egg-info
 
-%if ( "0%{?dist}" == "0.amzn1" )
-%{python2_sitelib}/%{name}-%{version}.egg-info
-%else
 %{python2_sitelib}/%{name}-*-py?.?.egg-info
-%endif
 
 %{_sysconfdir}/logrotate.d/salt
 %{_sysconfdir}/bash_completion.d/salt.bash
@@ -358,7 +258,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{fish_dir}/salt*.fish
 
 %files master
-%defattr(-,root,root)
 %doc %{_mandir}/man7/salt.7*
 %doc %{_mandir}/man1/salt.1*
 %doc %{_mandir}/man1/salt-cp.1*
@@ -372,29 +271,20 @@ rm -rf %{buildroot}
 %{_bindir}/salt-master
 %{_bindir}/salt-run
 %{_bindir}/salt-unity
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-%attr(0755, root, root) %{_initrddir}/salt-master
-%else
 %{_unitdir}/salt-master.service
-%endif
 %config(noreplace) %{_sysconfdir}/salt/master
 %config(noreplace) %{_sysconfdir}/salt/master.d
 %config(noreplace) %{_sysconfdir}/salt/pki/master
 
 %files minion
-%defattr(-,root,root)
 %doc %{_mandir}/man1/salt-call.1*
 %doc %{_mandir}/man1/salt-minion.1*
 %doc %{_mandir}/man1/salt-proxy.1*
 %{_bindir}/salt-minion
 %{_bindir}/salt-call
 %{_bindir}/salt-proxy
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-%attr(0755, root, root) %{_initrddir}/salt-minion
-%else
 %{_unitdir}/salt-minion.service
 %{_unitdir}/salt-proxy@.service
-%endif
 %config(noreplace) %{_sysconfdir}/salt/minion
 %config(noreplace) %{_sysconfdir}/salt/proxy
 %config(noreplace) %{_sysconfdir}/salt/minion.d
@@ -403,21 +293,12 @@ rm -rf %{buildroot}
 %files syndic
 %doc %{_mandir}/man1/salt-syndic.1*
 %{_bindir}/salt-syndic
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-%attr(0755, root, root) %{_initrddir}/salt-syndic
-%else
 %{_unitdir}/salt-syndic.service
-%endif
 
 %files api
-%defattr(-,root,root)
 %doc %{_mandir}/man1/salt-api.1*
 %{_bindir}/salt-api
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-%attr(0755, root, root) %{_initrddir}/salt-api
-%else
 %{_unitdir}/salt-api.service
-%endif
 
 %files cloud
 %doc %{_mandir}/man1/salt-cloud.1*
@@ -434,72 +315,6 @@ rm -rf %{buildroot}
 %{_bindir}/salt-ssh
 %config(noreplace) %{_sysconfdir}/salt/roster
 
-
-# less than RHEL 8 / Fedora 16
-# not sure if RHEL 7 will use systemd yet
-%if ! (0%{?rhel} >= 7 || 0%{?fedora} >= 15)
-
-%preun master
-  if [ $1 -eq 0 ] ; then
-    /sbin/service salt-master stop >/dev/null 2>&1
-  fi
-
-%preun syndic
-  if [ $1 -eq 0 ] ; then
-      /sbin/service salt-syndic stop >/dev/null 2>&1
-  fi
-
-%preun minion
-  if [ $1 -eq 0 ] ; then
-      /sbin/service salt-minion stop >/dev/null 2>&1
-  fi
-
-%preun api
-  if [ $1 -eq 0 ] ; then
-      /sbin/service salt-api stop >/dev/null 2>&1
-  fi
-
-%post master
-  if [ "$1" -ge "2" ] ; then
-    /sbin/service salt-master condrestart >/dev/null 2>&1 || :
-  fi
-
-%post syndic
-  if [ "$1" -ge "2" ] ; then
-    /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
-  fi
-
-%post minion
-  if [ "$1" -ge "2" ] ; then
-    /sbin/service salt-minion condrestart >/dev/null 2>&1 || :
-  fi
-
-%post api
-  if [ "$1" -ge "2" ] ; then
-    /sbin/service salt-api condrestart >/dev/null 2>&1 || :
-  fi
-
-%postun master
-  if [ "$1" -ge "1" ] ; then
-      /sbin/service salt-master condrestart >/dev/null 2>&1 || :
-  fi
-
-%postun syndic
-  if [ "$1" -ge "1" ] ; then
-      /sbin/service salt-syndic condrestart >/dev/null 2>&1 || :
-  fi
-
-%postun minion
-  if [ "$1" -ge "1" ] ; then
-      /sbin/service salt-minion condrestart >/dev/null 2>&1 || :
-  fi
-
-%postun api
-  if [ "$1" -ge "1" ] ; then
-      /sbin/service salt-api condrestart >/dev/null 2>&1 || :
-  fi
-
-%else
 
 %preun master
 %if 0%{?systemd_preun:1}
@@ -620,19 +435,34 @@ rm -rf %{buildroot}
   /bin/systemctl daemon-reload &>/dev/null
   [ $1 -gt 0 ] && /bin/systemctl try-restart salt-api.service &>/dev/null || :
 %endif
-%endif
+
 
 %changelog
-* Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
-- Update to feature release 2019.2.0-1  for Python 2
+* Mon Mar 04 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2019.2.0-1
+- Update to feature release 2019.2.0-1 for Python 2
 
-* Mon Jan 09 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
-- Update to feature release branch 2019.2.0-0 for Python 2
-- Revised acceptable versions of cherrypy, futures
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2018.3.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
-* Mon Oct 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.3-1
-- Update to feature release 2018.3.3-1  for Python 2
+* Thu Nov 29 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-2
+- Revised BuildRequires and Requires to use python2 versions of packages
+- Cleaned up spec file to apply to Fedora 28 and above
+
+* Mon Oct 15 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-1
+- Update to feature release 2018.3.3-1 for Python 2
 - Revised versions of cherrypy acceptable
+
+* Tue Jul 24 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-5
+- Fix version of python used, multiple addition of 2.7 
+
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2018.3.2-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Mon Jul 09 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-3
+- Allow for removal of /usr/bin/python
+
+* Mon Jul 09 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-2
+- Correct tornado version check
 
 * Thu Jun 21 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.2-1
 - Update to feature release 2018.3.2-1  for Python 2

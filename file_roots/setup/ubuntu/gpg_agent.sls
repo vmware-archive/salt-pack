@@ -53,7 +53,8 @@
 ## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
 {% if build_cfg.build_release == 'ubuntu1804' %}
 
-{% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg-agent_kill.sh' %}
+## don't name kill script with gpg-agent as part of name, makes script easier
+{% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg_kill.sh' %}
 
 {% set gpg_agent_script_text = '#!/bin/sh
         gpgconf --launch gpg-agent
@@ -203,16 +204,13 @@ gpg_agent_ps_kill_script_file_exists:
     - makedirs: True
     - contents: |
         #!/bin/bash
-        gpg_active=$(ps -ef | grep -v 'grep' | grep gpg-agent)
-        script_pid=$BASHPID
+        gpg_active=$(ps -ef | grep -v 'grep' | grep 'gpg-agent')
         IFS=$'\n'	# make newlines the only seperator
         if [[ -n "$gpg_active" ]]; then
             for gpg_line in $gpg_active; do
-                pid_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
-                ppid_gpg_agent=$(echo "$gpg_line" | awk '{print $3}')
-                if [[ ! ("$script_pid" -eq "$pid_gpg_agent" || "$script_pid" -eq "$ppid_gpg_agent") ]]; then
-                    kill -9 $pid_gpg_agent
-                fi
+                kpid=$(echo "$gpg_line" | awk '{print $2}')
+                kill -9 $kpid
+                sleep 1
             done
         fi
         unset IFS
@@ -235,7 +233,12 @@ gpg_agent_start:
     - cwd: {{build_cfg.build_homedir}}
     - runas: {{build_cfg.build_runas}}
     - require:
+{%- if build_cfg.build_release == 'ubuntu1804' %}
+      - module: gpg_agent_ps_kill_run
+{%- else %}
       - module: gpg_agent_stop2
+{%- endif %}
+
 
 
 gpg_load_pub_key:

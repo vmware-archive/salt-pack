@@ -57,7 +57,7 @@
 {% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg_kill.sh' %}
 
 {% set gpg_agent_script_text = '#!/bin/sh
-        gpgconf --launch gpg-agent
+        gpg-agent -vv
         GPG_TTY=/dev/pts/0
         export GPG_TTY
         echo "GPG_TTY=/dev/pts/0" > ' ~ gpg_tty_info ~ '
@@ -215,7 +215,6 @@ gpg_agent_ps_kill_script_file_exists:
         fi
         unset IFS
 
-
 gpg_agent_ps_kill_run:
   module.run:
     - name: cmd.shell
@@ -239,7 +238,6 @@ gpg_agent_start:
 {%- else %}
       - module: gpg_agent_stop2
 {%- endif %}
-
 
 
 gpg_load_pub_key:

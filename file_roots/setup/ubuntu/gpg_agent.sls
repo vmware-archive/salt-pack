@@ -57,7 +57,7 @@
 {% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg_kill.sh' %}
 
 {% set gpg_agent_script_text = '#!/bin/sh
-        gpg-agent -vv
+        gpg-agent -vv --homedir ' ~ gpg_key_dir ~ ' ' ~ write_env_file_prefix ~ write_env_file ~ ' --allow-preset-passphrase --max-cache-ttl 600 --daemon
         GPG_TTY=/dev/pts/0
         export GPG_TTY
         echo "GPG_TTY=/dev/pts/0" > ' ~ gpg_tty_info ~ '

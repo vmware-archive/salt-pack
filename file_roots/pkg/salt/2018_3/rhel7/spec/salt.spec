@@ -93,7 +93,7 @@ Requires: yum-utils
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
 %if (0%{?rhel} >= 7)
-BuildRequires: python2-futures >= 2.0
+BuildRequires: python-futures >= 2.0
 %else
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 %endif
@@ -150,9 +150,9 @@ Requires: PyYAML
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0 
+Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0
 %if (0%{?rhel} >= 7)
-Requires: python2-futures >= 2.0
+Requires: python-futures >= 2.0
 %else
 Requires: python%{?__python_ver}-futures >= 2.0
 %endif
@@ -625,6 +625,11 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+- Renamed python2-futures to python-futures for Python 2
+
+* Sun Feb 17 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.4-1
+- Update to feature release 2018.3.4-1  for Python 2
+
 * Mon Oct 08 2018 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.3-1
 - Update to feature release 2018.3.3-1  for Python 2
 - Revised acceptable versions of cherrypy, futures

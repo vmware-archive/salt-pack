@@ -29,9 +29,6 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
-{%- if build_cfg.build_arch == 'amd64' %}
-      - python3-lockfile
-{%- endif %}
       - dh-systemd
       - dh-python
       - python-setuptools-git

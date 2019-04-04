@@ -14,7 +14,7 @@ base7_deps:
     - makedirs: True
     - user: root
     - group: root
-    - file_mode: 644
+    - mode: 644
     - dir_mode: 755
 
 

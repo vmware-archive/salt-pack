@@ -1,8 +1,13 @@
 {% import "setup/ubuntu/map.jinja" as buildcfg %}
 
 include:
-{% if buildcfg.build_release == 'ubuntu1804' %}
+{% if buildcfg.build_release == 'ubuntu1810' %}
 
+    - pkg.salt.2019_2.ubuntu1810
+
+{% elif buildcfg.build_release == 'ubuntu1804' %}
+
+##    - pkg.libsodium.1_0_16.ubuntu1804     ## bionic libsodium23 1.0.16-2
     - pkg.python-ioflo.1_5_0.ubuntu1804
     - pkg.python-raet.0_6_5.ubuntu1804
     - pkg.python-timelib.0_2_4.ubuntu1804

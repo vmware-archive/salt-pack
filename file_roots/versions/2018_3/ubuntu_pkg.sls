@@ -3,7 +3,7 @@
 include:
 {% if buildcfg.build_release == 'ubuntu1810' %}
 
-    - pkg.salt.2019_2.ubuntu1810
+    - pkg.salt.2018_3.ubuntu1810
 
 {% elif buildcfg.build_release == 'ubuntu1804' %}
 

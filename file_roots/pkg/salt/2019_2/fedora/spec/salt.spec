@@ -201,17 +201,17 @@ install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/minion.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/master
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/minion
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.conf.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.conf.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/proxy.d
 
 # Add the config files
 install -p -m 0640 conf/minion %{buildroot}%{_sysconfdir}/salt/minion
 install -p -m 0640 conf/master %{buildroot}%{_sysconfdir}/salt/master
-install -p -m 0640 conf/cloud %{buildroot}%{_sysconfdir}/salt/cloud
+install -p -m 0600 conf/cloud %{buildroot}%{_sysconfdir}/salt/cloud
 install -p -m 0640 conf/roster %{buildroot}%{_sysconfdir}/salt/roster
 install -p -m 0640 conf/proxy %{buildroot}%{_sysconfdir}/salt/proxy
 
@@ -453,8 +453,13 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Mon Jan 09 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
-- Update to feature release branch 2019.2.0-0 for Python 2
+- Revised permissions for cloud directories and files
+
+* Mon Mar 04 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2019.2.0-1
+- Update to feature release 2019.2.0-1 for Python 2
+
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2018.3.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
 * Thu Nov 29 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2018.3.3-2
 - Revised BuildRequires and Requires to use python2 versions of packages
@@ -845,3 +850,4 @@ rm -rf %{buildroot}
 
 * Fri Sep 09 2011 Clint Savage <herlo1@gmail.com> - 0.9.1-1
 - Initial packages
+

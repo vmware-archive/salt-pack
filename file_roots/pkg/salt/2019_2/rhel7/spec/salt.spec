@@ -629,7 +629,7 @@ rm -rf %{buildroot}
 * Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
 - Update to feature release 2019.2.0-1  for Python 2
 
-* Mon Jan 09 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
+* Mon Jan 07 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
 - Update to feature release branch 2019.2.0-0 for Python 2
 - Revised acceptable versions of cherrypy, futures
 

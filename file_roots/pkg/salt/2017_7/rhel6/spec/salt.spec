@@ -626,7 +626,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-- Revised permissions for cloud directories and files
+## - Revised permissions for cloud directories and files
 
 * Wed Sep 19 2018 SaltStack Packaging Team <packaging@Ch3LL.com> - 2017.7.8-1
 - Update to feature release 2017.7.8-1  for Python 2

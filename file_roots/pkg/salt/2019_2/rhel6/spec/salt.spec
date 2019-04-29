@@ -615,12 +615,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-- Revised permissions for cloud directories and files
+## - Revised permissions for cloud directories and files
 
 * Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
 - Update to feature release 2019.2.0-1  for Python 2
 
-* Sun Feb 17 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.4-1
+* Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.4-1
 - Update to feature release 2018.3.4-1  for Python 2
 
 * Mon Jan 07 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0

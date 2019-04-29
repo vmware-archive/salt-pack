@@ -611,7 +611,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-- Revised permissions for cloud directories and files
+## - Revised permissions for cloud directories and files
 
 * Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
 - Update to feature release 2019.2.0-1

@@ -625,8 +625,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-- Revised permissions for cloud directories and files
-- Renamed python2-futures to python-futures for Python 2
+## - Revised permissions for cloud directories and files
+## - Renamed python2-futures to python-futures for Python 2
 
 * Sun Feb 17 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.4-1
 - Update to feature release 2018.3.4-1  for Python 2

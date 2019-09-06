@@ -11,7 +11,7 @@
         Pin-Priority: 750
 
         Package: *
-        Pin: release a=stable
+        Pin: release a=oldstable
         Pin-Priority: 720
 ' %}
 

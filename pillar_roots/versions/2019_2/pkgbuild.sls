@@ -202,7 +202,7 @@ pkgbuild_registry:
       version: 0.2.4-1
       noarch: True
     python-typing:
-      version: 3.5.2.2-3
+      version: 3.5.2.2-4
       noarch: True
       results:
         - python2-typing
@@ -689,7 +689,7 @@ pkgbuild_registry:
         - libsodium-devel
     python-cherrypy:
       name: python27-cherrypy
-      version: 3.2.2-5
+      version: 3.2.2-6
       noarch: True
     python-enum34:
       name: python27-enum34

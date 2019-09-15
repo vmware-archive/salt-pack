@@ -79,6 +79,7 @@ build_prefs_rm:
 build_pbldhookskeys_file:
   file.append:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
+    - makedirs: True
     - text: |
         /usr/bin/gpg --keyserver keyserver.ubuntu.com --receive-keys 90FDDD2E
         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -

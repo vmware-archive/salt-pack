@@ -615,6 +615,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Sep 10 2019 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.1-1
+- Update to feature release 2019.2.1-1  for Python 2
+
 ## - Revised permissions for cloud directories and files
 
 * Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1

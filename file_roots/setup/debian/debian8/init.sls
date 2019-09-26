@@ -165,8 +165,8 @@ build_pbldrc:
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
 {%- if build_cfg.build_arch == 'armhf' %}
-        DEBOOTSTRAPOPTS=( 
-            '--variant=buildd' 
+        DEBOOTSTRAPOPTS=(
+            '--variant=buildd'
             '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"

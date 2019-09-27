@@ -165,7 +165,9 @@ pkgbuild_registry:
         - openssl
         - python-typing
     python-msgpack:
-      version: 0.4.6-1
+      version: 0.5.6-7
+      results:
+        - python2-msgpack
     python-mock:
       version: 1.0.1-9
       noarch: True

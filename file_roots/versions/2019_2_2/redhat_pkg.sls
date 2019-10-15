@@ -84,6 +84,6 @@ include:
 
 {% elif buildcfg.build_release == 'fedora' %}
 
-    - pkg.salt.2019_2.fedora
+    - pkg.salt.2019_2_2.fedora
 
 {% endif %}

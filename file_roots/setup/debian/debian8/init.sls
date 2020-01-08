@@ -25,6 +25,8 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
+      - python-debian
+      - python-sphinx
       - dh-systemd
       - dh-python
       - python-setuptools-git

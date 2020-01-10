@@ -332,7 +332,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-5
+      version: 5.6.0-6
       noarch: True
       build_deps:
         - python27
@@ -690,7 +690,7 @@ pkgbuild_registry:
         - libsodium-devel
     python-cherrypy:
       name: python27-cherrypy
-      version: 3.2.2-5
+      version: 3.2.2-6
       noarch: True
     python-enum34:
       name: python27-enum34

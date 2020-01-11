@@ -332,7 +332,7 @@ pkgbuild_registry:
         - python27-chardet
     python-cherrypy:
       name: python27-cherrypy
-      version: 5.6.0-6
+      version: 5.6.0-5
       noarch: True
       build_deps:
         - python27
@@ -569,7 +569,6 @@ pkgbuild_registry:
         - python27
       results:
         - python27-six
-        - python-setuptools
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4

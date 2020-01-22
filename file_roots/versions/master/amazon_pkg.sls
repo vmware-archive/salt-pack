@@ -5,7 +5,6 @@ include:
     - pkg.python-cherrypy.3_2_2.amzn
     - pkg.python-enum34.1_0.amzn
     - pkg.python-gnupg.0_3_8.amzn
-    - pkg.python-impacket.0_9_14.amzn
     - pkg.python-libcloud.2_0_0.amzn
     - pkg.python-msgpack.0_4_6.amzn
     - pkg.python-psutil.5_2_2.amzn

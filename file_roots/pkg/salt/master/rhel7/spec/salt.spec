@@ -91,7 +91,9 @@ Requires: yum-utils
 %endif
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
+## BuildRequires: python%%{?__python_ver}-tornado >= 4.2.1
+## Tornado removed in Neon, hence need its BuildRequires
+BuildRequires:  python%{?__python_ver}-backports-ssl_match_hostname
 %if (0%{?rhel} >= 7)
 BuildRequires: python-futures >= 2.0
 %else
@@ -150,7 +152,13 @@ Requires: PyYAML
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0
+
+## Requires: python%%{?__python_ver}-tornado >= 4.2.1, python%%{?__python_ver}-tornado < 6.0
+## Tornado removed in Neon, hence need its BuildRequires
+Requires: python%{?__python_ver}-backports-ssl_match_hostname
+Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-ipaddress
+
 %if (0%{?rhel} >= 7)
 Requires: python-futures >= 2.0
 %else
@@ -623,6 +631,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+## - Removed Torando since salt.ext.tornado, add dependencies for Tornado
+
 * Tue Jan 21 2020 SaltStack Packaging Team <packaging@garethgreenaway.com> - 3000.0.0rc2-1
 - Update to Neon Release Candidate 2 for Python 3
 

@@ -11,7 +11,7 @@
 {% set gpg_tty_info = gpg_key_dir ~ '/gpg-tty-info-salt' %}
 {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %}
 
-{% if build_cfg.build_release != 'debian9' %}
+{% if build_cfg.build_release == 'debian8' %}
 {% set write_env_file_prefix = '--' %}
 {% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
 {% set pinentry_parms = '' -%}
@@ -186,6 +186,16 @@ gpg_load_pub_key:
         gnupghome: {{gpg_key_dir}}
     - require:
         - module: gpg_agent_start
+
+
+gpg_load_priv_key:
+  module.run:
+    - name: gpg.import_key
+    - kwargs:
+        user: {{build_cfg.build_runas}}
+        filename: {{pkg_priv_key_absfile}}
+        gnupghome: {{gpg_key_dir}}
+
 
 {% endif %}
 

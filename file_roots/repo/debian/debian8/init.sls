@@ -15,12 +15,12 @@ include:
     - timeout: {{buildcfg.repo_sign_timeout}}
 {% endif %}
     - env:
-{%- if buildcfg.repo_use_passphrase %}    
+{%- if buildcfg.repo_use_passphrase %}
         OPTIONS : 'ask-passphrase'
 {%- endif %}
         ORIGIN : 'SaltStack'
         LABEL : 'salt_debian8'
-        SUITE: 'oldstable'
+        SUITE: 'oldoldstable'
         CODENAME : 'jessie'
 {%- if buildcfg.build_arch == 'armhf' %}
         ARCHS : '{{buildcfg.build_arch}} source'

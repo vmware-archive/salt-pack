@@ -10,6 +10,5 @@ include:
     - pkg.python-psutil.5_2_2.amzn
     - pkg.python-pyzmq.14_5_0.amzn
     - pkg.salt.master.amzn
-    - pkg.python-tornado.4_2_1.amzn
     - pkg.winexe.1_1.amzn
     - pkg.zeromq.4_0_5.amzn

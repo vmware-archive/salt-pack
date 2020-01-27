@@ -623,13 +623,19 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-## - Update to Neon naming
+* Tue Jan 21 2020 SaltStack Packaging Team <packaging@garethgreenaway.com> - 3000.0.0rc2-1
+- Update to Neon Release Candidate 2 for Python 3
+
+* Wed Jan 08 2020 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.3-1
+- Update to feature release 2019.2.3-1  for Python 2
+
+* Tue Oct 15 2019 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.2-1
+- Update to feature release 2019.2.2-1  for Python 2
 
 * Tue Sep 10 2019 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.1-1
 - Update to feature release 2019.2.1-1  for Python 2
-
-## - Revised permissions for cloud directories and files
-## - Renamed python2-futures to python-futures for Python 2
+- Revised permissions for cloud directories and files
+- Renamed python2-futures to python-futures for Python 2
 
 * Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
 - Update to feature release 2019.2.0-1  for Python 2

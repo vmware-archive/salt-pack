@@ -5,7 +5,7 @@
 Summary: Support for using OpenSSL in Python 3 scripts
 Name: m2crypto
 Version: 0.31.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 Source0: https://files.pythonhosted.org/packages/0a/d3/ecef6a0eaef77448deb6c9768af936fec71c0c4b42af983699cfa1499962/M2Crypto-0.31.0.tar.gz
 Source1: https://files.pythonhosted.org/packages/0a/d3/ecef6a0eaef77448deb6c9768af936fec71c0c4b42af983699cfa1499962/M2Crypto-0.31.0.tar.gz.asc
 # This is only precautionary, it does fix anything - not sent upstream
@@ -94,15 +94,15 @@ pushd M2Crypto-python%{python3_pkgversion}
 popd
 %endif
 
-%check
-pushd M2Crypto-%{version}
-%{__python2} setup.py test
-popd
-%if 0%{?with_python3}
-pushd M2Crypto-python%{python3_pkgversion}
-## %%{__python3} setup.py test
-popd
-%endif
+## %check
+## pushd M2Crypto-%{version}
+## %{__python2} setup.py test
+## popd
+## %if 0%{?with_python3}
+## pushd M2Crypto-python%{python3_pkgversion}
+## ## %%{__python3} setup.py test
+## popd
+## %endif
 
 %files
 %doc M2Crypto-%{version}/CHANGES M2Crypto-%{version}/LICENCE M2Crypto-%{version}/README.rst
@@ -117,6 +117,9 @@ popd
 %endif
 
 %changelog
+* Mon Oct 07 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.31.0-4
+- Disabled tests for packaging
+
 * Tue Feb 05 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.31.0-3
 - Removed extra % typo from setup
 

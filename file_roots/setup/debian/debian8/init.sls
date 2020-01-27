@@ -7,15 +7,11 @@
         Pin-Priority: 1001
 
         Package: *
-        Pin: release n=' ~ os_codename ~ '-backports
-        Pin-Priority: 750
-
-        Package: *
         Pin: release n=' ~ os_codename ~ '
         Pin-Priority: 720
 
         Package: *
-        Pin: release a=oldstable
+        Pin: release a=oldoldstable
         Pin-Priority: 700
 ' %}
 
@@ -29,9 +25,8 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
-{%- if build_cfg.build_arch == 'amd64' %}
-      - python3-lockfile
-{%- endif %}
+      - python-debian
+      - python-sphinx
       - dh-systemd
       - dh-python
       - python-setuptools-git
@@ -84,6 +79,7 @@ build_prefs_rm:
 build_pbldhookskeys_file:
   file.append:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
+    - makedirs: True
     - text: |
         /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv-keys 90FDDD2E
         /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
@@ -171,13 +167,13 @@ build_pbldrc:
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
 {%- if build_cfg.build_arch == 'armhf' %}
-        DEBOOTSTRAPOPTS=( 
-            '--variant=buildd' 
+        DEBOOTSTRAPOPTS=(
+            '--variant=buildd'
             '--keyring' "/etc/apt/trusted.gpg"
         )
         OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
 {%- else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://ftp.us.debian.org/debian/ {{os_codename}} main | deb http://ftp.us.debian.org/debian/ {{os_codename}} contrib | deb http://ftp.us.debian.org/debian/ {{os_codename}}-updates main | deb http://ftp.us.debian.org/debian/ {{os_codename}}-backports main "
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.debian.org/debian/ {{os_codename}} main | deb http://archive.debian.org/debian/ {{os_codename}} contrib "
 {%- endif %}
 
 

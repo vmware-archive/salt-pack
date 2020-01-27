@@ -11,13 +11,6 @@
 {% set gpg_tty_info = gpg_key_dir ~ '/gpg-tty-info-salt' %}
 {% set gpg_agent_config_file = gpg_key_dir ~ '/gpg-agent.conf' %}
 
-{% if build_cfg.build_release == 'ubuntu1404' %}
-{% set write_env_file_prefix = '--' %}
-{% set write_env_file = 'write-env-file ' ~  gpg_key_dir ~ '/gpg-agent-info-salt' %}
-{% set pinentry_parms = '' %}
-{% set pinentry_text = '' %}
-{% set kill_gpg_agent_text = 'killall -v -w gpg-agent' %}
-{% else %}
 {% set write_env_file_prefix = '' %}
 {% set write_env_file = '' %}
 {% set pinentry_parms = '
@@ -25,7 +18,6 @@
         allow-loopback-pinentry' %}
 {% set pinentry_text = 'pinentry-program /usr/bin/pinentry-tty' %}
 {% set kill_gpg_agent_text = 'gpgconf --kill gpg-agent' %}
-{% endif %}
 
 {% set pkg_pub_key_absfile = gpg_key_dir ~ '/' ~ pkg_pub_key_file %}
 {% set pkg_priv_key_absfile = gpg_key_dir ~ '/' ~ pkg_priv_key_file %}
@@ -53,7 +45,8 @@
 ## GPG_TTY=$(tty) getting 'not a tty', TDB this fix is temp
 {% if build_cfg.build_release == 'ubuntu1804' %}
 
-{% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg-agent_kill.sh' %}
+## don't name kill script with gpg-agent as part of name, makes script easier
+{% set gpg_ps_kill_script_file = build_cfg.build_homedir ~ '/gpg_kill.sh' %}
 
 {% set gpg_agent_script_text = '#!/bin/sh
         gpgconf --launch gpg-agent
@@ -189,7 +182,7 @@ gpg_agent_stop2:
 
 
 {% if build_cfg.build_release == 'ubuntu1804' %}
-## finding killall and gpgpconf to stop gpg-agent failing on Ubuntu 18.04
+## finding killall and gpgpconf to stop gpg-agent failing on Ubuntu 18.04 or higher
 ## even as root from the command line, reqs investigation
 ## explicit kill with gusto for now
 gpg_agent_ps_kill_script_file_exists:
@@ -203,20 +196,16 @@ gpg_agent_ps_kill_script_file_exists:
     - makedirs: True
     - contents: |
         #!/bin/bash
-        gpg_active=$(ps -ef | grep -v 'grep' | grep gpg-agent)
-        script_pid=$BASHPID
+        gpg_active=$(ps -ef | grep -v 'grep' | grep 'gpg-agent')
         IFS=$'\n'	# make newlines the only seperator
         if [[ -n "$gpg_active" ]]; then
             for gpg_line in $gpg_active; do
-                pid_gpg_agent=$(echo "$gpg_line" | awk '{print $2}')
-                ppid_gpg_agent=$(echo "$gpg_line" | awk '{print $3}')
-                if [[ ! ("$script_pid" -eq "$pid_gpg_agent" || "$script_pid" -eq "$ppid_gpg_agent") ]]; then
-                    kill -9 $pid_gpg_agent
-                fi
+                kpid=$(echo "$gpg_line" | awk '{print $2}')
+                kill -9 $kpid
+                sleep 1
             done
         fi
         unset IFS
-
 
 gpg_agent_ps_kill_run:
   module.run:
@@ -234,8 +223,13 @@ gpg_agent_start:
     - cmd: {{gpg_agent_script_file}}
     - cwd: {{build_cfg.build_homedir}}
     - runas: {{build_cfg.build_runas}}
+    - use_vt: True
     - require:
+{%- if build_cfg.build_release == 'ubuntu1804' %}
+      - module: gpg_agent_ps_kill_run
+{%- else %}
       - module: gpg_agent_stop2
+{%- endif %}
 
 
 gpg_load_pub_key:

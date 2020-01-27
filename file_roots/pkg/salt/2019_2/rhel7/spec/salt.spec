@@ -93,7 +93,7 @@ Requires: yum-utils
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
 %if (0%{?rhel} >= 7)
-BuildRequires: python2-futures >= 2.0
+BuildRequires: python-futures >= 2.0
 %else
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 %endif
@@ -152,7 +152,7 @@ Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
 Requires: python%{?__python_ver}-tornado >= 4.2.1, python%{?__python_ver}-tornado < 6.0
 %if (0%{?rhel} >= 7)
-Requires: python2-futures >= 2.0
+Requires: python-futures >= 2.0
 %else
 Requires: python%{?__python_ver}-futures >= 2.0
 %endif
@@ -273,17 +273,17 @@ install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/minion.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/master
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/pki/minion
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.conf.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
-install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.conf.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.deploy.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.maps.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.profiles.d
+install -d -m 0700 %{buildroot}%{_sysconfdir}/salt/cloud.providers.d
 install -d -m 0755 %{buildroot}%{_sysconfdir}/salt/proxy.d
 
 # Add the config files
 install -p -m 0640 conf/minion %{buildroot}%{_sysconfdir}/salt/minion
 install -p -m 0640 conf/master %{buildroot}%{_sysconfdir}/salt/master
-install -p -m 0640 conf/cloud %{buildroot}%{_sysconfdir}/salt/cloud
+install -p -m 0600 conf/cloud %{buildroot}%{_sysconfdir}/salt/cloud
 install -p -m 0640 conf/roster %{buildroot}%{_sysconfdir}/salt/roster
 install -p -m 0640 conf/proxy %{buildroot}%{_sysconfdir}/salt/proxy
 
@@ -623,7 +623,27 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Mon Jan 09 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
+* Tue Jan 21 2020 SaltStack Packaging Team <packaging@garethgreenaway.com> - 3000.0.0rc2-1
+- Update to Neon Release Candidate 2 for Python 3
+
+* Wed Jan 08 2020 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.3-1
+- Update to feature release 2019.2.3-1  for Python 2
+
+* Tue Oct 15 2019 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.2-1
+- Update to feature release 2019.2.2-1  for Python 2
+
+* Tue Sep 10 2019 SaltStack Packaging Team <packaging@frogunder.com> - 2019.2.1-1
+- Update to feature release 2019.2.1-1  for Python 2
+- Revised permissions for cloud directories and files
+- Renamed python2-futures to python-futures for Python 2
+
+* Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-1
+- Update to feature release 2019.2.0-1  for Python 2
+
+* Sat Feb 16 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2018.3.4-1
+- Update to feature release 2018.3.4-1  for Python 2
+
+* Mon Jan 07 2019 SaltStack Packaging Team <packaging@saltstack.com> - 2019.2.0-0
 - Update to feature release branch 2019.2.0-0 for Python 2
 - Revised acceptable versions of cherrypy, futures
 

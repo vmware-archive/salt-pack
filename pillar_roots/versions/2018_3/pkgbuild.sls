@@ -131,7 +131,7 @@ pkgbuild_registry:
       version: 2.2.1-1
       noarch: True
     python-cherrypy:
-      version: 5.6.0-2
+      version: 5.6.0-3
       noarch: True
       build_deps:
         - python-mock
@@ -158,7 +158,7 @@ pkgbuild_registry:
       results:
         - python-libnacl
     python-m2crypto:
-      version: 0.31.0-3
+      version: 0.31.0-4
       results:
         - m2crypto
       build_deps:
@@ -202,7 +202,7 @@ pkgbuild_registry:
       version: 0.2.4-1
       noarch: True
     python-typing:
-      version: 3.5.2.2-3
+      version: 3.5.2.2-4
       noarch: True
       results:
         - python2-typing
@@ -569,7 +569,6 @@ pkgbuild_registry:
         - python27
       results:
         - python27-six
-        - python-setuptools
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4
@@ -690,7 +689,7 @@ pkgbuild_registry:
         - libsodium-devel
     python-cherrypy:
       name: python27-cherrypy
-      version: 3.2.2-5
+      version: 3.2.2-6
       noarch: True
     python-enum34:
       name: python27-enum34

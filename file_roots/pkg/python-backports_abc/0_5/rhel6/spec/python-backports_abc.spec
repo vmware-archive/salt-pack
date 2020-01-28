@@ -1,6 +1,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
 %if ( "0%{?dist}" == "0.amzn1" )
+
 %global with_explicit_python27 1
 %global pybasever 2.7
 %global __python_ver 27
@@ -43,8 +44,8 @@ BuildArch:      noarch
 BuildRequires:  python27-devel
 BuildRequires:  python27-setuptools
 %else
-BuildRequires:  python2-devel
-BuildRequires:  python2-setuptools
+BuildRequires:  python-devel
+BuildRequires:  python-setuptools
 %endif
 
 
@@ -54,7 +55,6 @@ BuildRequires:  python2-setuptools
 %if 0%{?with_explicit_python27}
 %package -n python%{?__python_ver}-%{srcname}
 Summary:        %{sum}
-%{?python_provide:%python_provide python%{?__python_ver}-%{srcname}}
 
 %description -n python%{?__python_ver}-%{srcname}
 %{sum}.
@@ -66,11 +66,11 @@ Summary:        %{sum}
 
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
+CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 %if %{with tests}
 %check
@@ -95,8 +95,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Jan 27 2020 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-11
-- Made support for Amazon Linux 1, RHEL 7 and 6, stripped Python 3 support, purely Python 2.7
+* Tue Jan 28 2020 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-11
+- Made support for Amazon Linux 1, stripped Python 3 support, purely Python 2.7
 
 * Mon Jun 17 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-10
 - Made support for Python 2 optional and Python3 default

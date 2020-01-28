@@ -89,8 +89,10 @@ Requires: yum-utils
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 ## BuildRequires: python%%{?__python_ver}-tornado >= 4.2.1
-## Tornado removed in Neon, hence need its BuildRequires
-BuildRequires: python%{?__python_ver}-backports-ssl_match_hostname
+## Tornado removed in Neon, hence need its Requires for 4.5.3
+Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
 
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1

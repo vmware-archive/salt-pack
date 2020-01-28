@@ -8,6 +8,7 @@ include:
     - pkg.libtommath.0_42_0.rhel7    ## extras   0.42.0-6.el7
     - pkg.openpgm.5_2_122.rhel7         ## EPEL     5.2.122-2.el7
     - pkg.openssl.1_0_2k.rhel7        ## base     1:1.0.2k-16.el7
+    - pkg.python-backports_abc.0_5.rhel7
     - pkg.python-cherrypy.5_6_0.rhel7   ## base     3.2.2-4.el7
     - pkg.python-crypto.2_6_1.rhel7     ## extras   2.6.1-1.el7.centos
     - pkg.python-pycryptodome.3_6_1.rhel7   ## EPEL python2-pycryptodomex.x86_64    3.7.0-1.el7
@@ -19,7 +20,7 @@ include:
     - pkg.python-psutil.2_2_1.rhel7     ## EPEL     python2-psutil      2.2.1-4.el7
     - pkg.python-pyzmq.15_3_0.rhel7     ## EPEL     14.3.1-1.el7
     - pkg.python-simplejson.3_3_3.rhel7 ## EPEL     python2-simplejson  3.10.0-1.el7
-    - pkg.python-tornado.4_2_1.rhel7  ## base     4.2.1-4.el7
+    - pkg.python-singledispatch.3_4_0_3.rhel7
     - pkg.python-typing.3_5_2_2.rhel7
     - pkg.python-urllib3.1_10_2.rhel7 ## base     1.10.2-2.el7_1  available 1.10.2-5.el7
     - pkg.python-yaml.3_11.rhel7
@@ -37,6 +38,7 @@ include:
     - pkg.pciutils.3_1_10.rhel6
     - pkg.python27.2_7_13.rhel6
     - pkg.python-backports.1_0.rhel6
+    - pkg.python-backports_abc.0_5.rhel6
     - pkg.python-backports-ssl_match_hostname.3_4_0_2.rhel6
     - pkg.python-chardet.3_0_4.rhel6
     - pkg.python-cherrypy.5_6_0.rhel6
@@ -64,8 +66,8 @@ include:
     - pkg.python-pyzmq.14_5_0.rhel6
     - pkg.python-requests.2_20_1.rhel6
     - pkg.python-setuptools.36_6_0.rhel6
+    - pkg.python-singledispatch.3_4_0_3.rhel6
     - pkg.python-six.1_9_0.rhel6
-    - pkg.python-tornado.4_2_1.rhel6
     - pkg.python-urllib3.1_23.rhel6
     - pkg.python-yaml.3_11.rhel6
     - pkg.salt.master.rhel6

@@ -589,8 +589,12 @@ pkgbuild_registry:
       name: python27-singledispatch
       version: 3.4.0.3-16
       noarch: True
-      results:
+      build_deps:
         - python27
+        - python-setuptools
+        - python-six
+      results:
+        - python27-singledispatch
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4
@@ -781,8 +785,12 @@ pkgbuild_registry:
       name: python27-singledispatch
       version: 3.4.0.3-16
       noarch: True
-      results:
+      build_deps:
         - python27
+        - python-setuptools
+        - python-six
+      results:
+        - python27-singledispatch
     python-tornado:
       name: python27-tornado
       version: 4.2.1-2

@@ -1,11 +1,6 @@
-%global pypi_name singledispatch
-%{!?upstream_version: %global upstream_version %{version}%{?milestone}}
-
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
 %if ( "0%{?dist}" == "0.amzn1" )
-%global with_amzn1 1
-
 %global with_explicit_python27 1
 %global pybasever 2.7
 %global __python_ver 27
@@ -16,7 +11,6 @@
 %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")
 %global __inst_layout --install-layout=unix
-
 %endif
 
 %if ( 0%{?rhel} == 6)
@@ -26,11 +20,11 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%bcond_with tests
 %endif
 
 %bcond_with tests
 
+%global pypi_name singledispatch
 
 Name:           python-%{pypi_name}
 Version:        3.4.0.3
@@ -42,6 +36,12 @@ URL:            http://docs.python.org/3/library/functools.html#functools.single
 Source0:        https://pypi.python.org/packages/source/s/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
 
+BuildRequires:  python%{?__python_ver}-devel
+BuildRequires:  python%{?__python_ver}-setuptools
+BuildRequires:  python%{?__python_ver}-six
+
+Requires:       python%{?__python_ver}-six
+
 %description
 PEP 443 proposed to expose a mechanism in the functools standard library
 module in Python 3.4 that provides a simple form of generic programming 
@@ -52,18 +52,12 @@ This library is a backport of this functionality to Python 2.6 - 3.3.
 %if 0%{?with_explicit_python27}
 %package -n python%{?__python_ver}-%{pypi_name}
 Summary:        This library brings functools.singledispatch from Python 3.4 to Python 2.6-3.3
-%{?python_provide:%python_provide python%{?__python_ver}-%{pypi_name}}
+
 # python_provide does not exist in CBS Cloud buildroot
 Provides:       python-%{pypi_name} = %{version}-%{release}
 Obsoletes:      python-%{pypi_name} < 3.4.0.3-2
 
-BuildRequires:  python%{?__python_ver}-devel
-BuildRequires:  python%{?__python_ver}-setuptools
-BuildRequires:  python%{?__python_ver}-six
-
-Requires:       python%{?__python_ver}-six
-
-%description -n python2-%{pypi_name}
+%description -n python%{?__python_ver}-%{pypi_name}
 PEP 443 proposed to expose a mechanism in the functools standard library
 module in Python 3.4 that provides a simple form of generic programming 
 known as single-dispatch generic functions.
@@ -80,33 +74,33 @@ sed -i '1d' singledispatch.py
 sed -i '1d' singledispatch_helpers.py
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
+CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 %if %{with tests}
 %check
-%{__python2} setup.py test
+%{__python} setup.py test
 %endif
 
 %if 0%{?with_explicit_python27}
 %files -n python%{?__python_ver}-%{pypi_name}
 %doc README.rst
-%{python2_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
-%{python2_sitelib}/%{pypi_name}.py*
-%{python2_sitelib}/%{pypi_name}_helpers.py*
+%{python_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%{python_sitelib}/%{pypi_name}.py*
+%{python_sitelib}/%{pypi_name}_helpers.py*
 %else
 %files
 %doc README.rst
-%{python2_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
-%{python2_sitelib}/%{pypi_name}.py*
-%{python2_sitelib}/%{pypi_name}_helpers.py*
+%{python_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%{python_sitelib}/%{pypi_name}.py*
+%{python_sitelib}/%{pypi_name}_helpers.py*
 %endif
 
 %changelog
-* Mon Jan 27 2020 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.0.3-16
+* Tue Jan 28 2020 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.0.3-16
 - Made support for Amazon Linux 1, RHEL 7 and 6, stripped Python 3 support, purely Python 2.7
 
 * Tue Jun 11 2019 SaltStack Packaging Team <packaging@saltstack.com> - 3.4.0.3-15

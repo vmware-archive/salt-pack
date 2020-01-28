@@ -1,9 +1,6 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
 %if ( "0%{?dist}" == "0.amzn1" )
-%global with_amzn1 1
-%bcond_without python2
-%bcond_with tests
 
 %global with_explicit_python27 1
 %global pybasever 2.7
@@ -15,8 +12,6 @@
 %global python2_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 %global python2_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")
 %global __inst_layout --install-layout=unix
-
-%bcond_with tests
 %endif
 
 %if ( 0%{?rhel} == 6)
@@ -26,9 +21,9 @@
 %global __python %{_bindir}/python%{?pybasever}
 %global __python2 %{_bindir}/python%{?pybasever}
 %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-%bcond_with tests
 %endif
 
+%bcond_with tests
 
 %global srcname backports_abc
 %global sum A backport of recent additions to the 'collections.abc' module
@@ -49,8 +44,8 @@ BuildArch:      noarch
 BuildRequires:  python27-devel
 BuildRequires:  python27-setuptools
 %else
-BuildRequires:  python2-devel
-BuildRequires:  python2-setuptools
+BuildRequires:  python-devel
+BuildRequires:  python-setuptools
 %endif
 
 
@@ -60,7 +55,6 @@ BuildRequires:  python2-setuptools
 %if 0%{?with_explicit_python27}
 %package -n python%{?__python_ver}-%{srcname}
 Summary:        %{sum}
-%{?python_provide:%python_provide python%{?__python_ver}-%{srcname}}
 
 %description -n python%{?__python_ver}-%{srcname}
 %{sum}.
@@ -101,7 +95,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Jan 27 2020 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-11
+* Tue Jan 28 2020 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-11
 - Made support for Amazon Linux 1, stripped Python 3 support, purely Python 2.7
 
 * Mon Jun 17 2019 SaltStack Packaging Team <packaging@saltstack.com> - 0.5-10

@@ -127,6 +127,9 @@ pkgbuild_registry:
         - openssl-libs
         - openssl-perl
         - openssl-static
+    python-backports_abc:
+      version: 0.5-11
+      noarch: True
     python-chardet:
       version: 2.2.1-1
       noarch: True
@@ -198,6 +201,9 @@ pkgbuild_registry:
         - python-simplejson
     python-simplejson:
       version: 3.3.3-1
+    python-singledispatch:
+      version: 3.4.0.3-16
+      noarch: True
     python-tornado:
       version: 4.2.1-1
     python-timelib:
@@ -223,7 +229,8 @@ pkgbuild_registry:
         - python-yaml
         - python-pyzmq
         - python-markupsafe
-        - python-tornado
+        - python-backports_abc
+        - python-singledispatch
         - python-futures
         - python-libcloud
       results:
@@ -314,6 +321,13 @@ pkgbuild_registry:
       version: 1.0-7
       build_deps:
         - python27
+    python-backports_abc:
+      name: python27-backports_abc
+      version: 0.5-11
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
     python-backports-ssl_match_hostname:
       name: python27-backports-ssl_match_hostname
       version: 3.4.0.2-4
@@ -571,6 +585,12 @@ pkgbuild_registry:
         - python-setuptools
       results:
         - python27-six
+    python-singledispatch:
+      name: python27-singledispatch
+      version: 3.4.0.3-16
+      noarch: True
+      results:
+        - python27
     python-tornado:
       name: python27-tornado
       version: 4.2.1-4
@@ -633,9 +653,9 @@ pkgbuild_registry:
         - python-requests
         - python-pyzmq
         - python-markupsafe
-        - python-tornado
         - python-futures
-        - python-libcloud
+        - python-backports_abc
+        - python-singledispatch
       results:
         - salt
         - salt-master
@@ -689,6 +709,12 @@ pkgbuild_registry:
         - libsodium
         - libsodium-debuginfo
         - libsodium-devel
+    python-backports_abc:
+      name: python27-backports_abc
+      version: 0.5-11
+      noarch: True
+      build_deps:
+        - python-setuptools
     python-cherrypy:
       name: python27-cherrypy
       version: 3.2.2-6
@@ -751,6 +777,12 @@ pkgbuild_registry:
         - python-ioflo
       additional_deps:
         - python-libnacl
+    python-singledispatch:
+      name: python27-singledispatch
+      version: 3.4.0.3-16
+      noarch: True
+      results:
+        - python27
     python-tornado:
       name: python27-tornado
       version: 4.2.1-2
@@ -764,10 +796,11 @@ pkgbuild_registry:
       build_deps:
         - python-msgpack
         - python-pyzmq
-        - python-tornado
         - python-libcloud
         - python-gnupg
         - python-futures
+        - python-backports_abc
+        - python-singledispatch
       results:
         - salt
         - salt-master

@@ -2,6 +2,7 @@
 
 include:
     - pkg.libsodium.0_4_5.amzn
+    - pkg.python-backports_abc.0_5.amzn
     - pkg.python-cherrypy.3_2_2.amzn
     - pkg.python-enum34.1_0.amzn
     - pkg.python-gnupg.0_3_8.amzn
@@ -9,6 +10,7 @@ include:
     - pkg.python-msgpack.0_4_6.amzn
     - pkg.python-psutil.5_2_2.amzn
     - pkg.python-pyzmq.14_5_0.amzn
+    - pkg.python-singledispatch.3_4_0_3.amzn
     - pkg.salt.master.amzn
     - pkg.winexe.1_1.amzn
     - pkg.zeromq.4_0_5.amzn

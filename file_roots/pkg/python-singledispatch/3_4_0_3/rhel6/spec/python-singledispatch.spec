@@ -88,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %if 0%{?with_explicit_python27}
 %files -n python%{?__python_ver}-%{pypi_name}
 %doc README.rst
-%{python_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%{python_sitelib}/%{pypi_name}-%{version}*
 %{python_sitelib}/%{pypi_name}.py*
 %{python_sitelib}/%{pypi_name}_helpers.py*
 %else

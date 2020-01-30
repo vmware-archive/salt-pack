@@ -97,13 +97,12 @@ BuildRequires: python%{?__python_ver}-singledispatch
 BuildRequires: python%{?__python_ver}-backports_abc
 
 BuildRequires: python%{?__python_ver}-futures >= 2.0
-BuildRequires: python%{?__python_ver}-futures >= 2.0
-BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
 BuildRequires: python%{?__python_ver}-msgpack >= 0.4
 BuildRequires: python%{?__python_ver}-pip
 BuildRequires: python%{?__python_ver}-zmq >= 14.5
+BuildRequires: python%{?__python_ver}-setuptools >= 9.1
 
 %if 0%{?with_explicit_python27}
 BuildRequires: PyYAML%{?__python_ver}
@@ -135,6 +134,7 @@ BuildRequires: python%{?__python_ver}-devel
 Requires: python%{?__python_ver}-jinja2
 Requires: python%{?__python_ver}-msgpack >= 0.4
 Requires: python%{?__python_ver}-crypto >= 2.6.1
+Requires: python%{?__python_ver}-setuptools >= 9.1
 
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
@@ -628,6 +628,7 @@ rm -rf %{buildroot}
 
 %changelog
 ## - Removed Torando since salt.ext.tornado, add dependencies for Tornado
+## - Added dependency on setuptools >= 9.1
 
 * Tue Jan 21 2020 SaltStack Packaging Team <packaging@garethgreenaway.com> - 3000.0.0rc2-1
 - Update to Neon Release Candidate 2 for Python 3

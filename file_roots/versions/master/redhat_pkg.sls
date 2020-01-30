@@ -19,6 +19,7 @@ include:
     - pkg.python-mock.1_0_1.rhel7       ## extras   1.2.17-1.el7.centos
     - pkg.python-psutil.2_2_1.rhel7     ## EPEL     python2-psutil      2.2.1-4.el7
     - pkg.python-pyzmq.15_3_0.rhel7     ## EPEL     14.3.1-1.el7
+    - pkg.python-setuptools.36_6_0.rhel7
     - pkg.python-simplejson.3_3_3.rhel7 ## EPEL     python2-simplejson  3.10.0-1.el7
     - pkg.python-singledispatch.3_4_0_3.rhel7
     - pkg.python-typing.3_5_2_2.rhel7

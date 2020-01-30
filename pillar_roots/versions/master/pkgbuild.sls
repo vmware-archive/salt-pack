@@ -199,6 +199,9 @@ pkgbuild_registry:
         - python-libnacl
       additonal_deps:
         - python-simplejson
+    python-setuptools:
+      version: 36.6.0-2.ius
+      noarch: True
     python-simplejson:
       version: 3.3.3-1
     python-singledispatch:
@@ -233,6 +236,7 @@ pkgbuild_registry:
         - python-singledispatch
         - python-futures
         - python-libcloud
+        - python-setuptools
       results:
         - salt
         - salt-master
@@ -660,6 +664,7 @@ pkgbuild_registry:
         - python-futures
         - python-backports_abc
         - python-singledispatch
+        - python-setuptools
       results:
         - salt
         - salt-master

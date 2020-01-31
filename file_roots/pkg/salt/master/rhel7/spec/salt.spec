@@ -97,7 +97,7 @@ BuildRequires:  python%{?__python_ver}-singledispatch
 
 %if (0%{?rhel} >= 7)
 BuildRequires: python-futures >= 2.0
-BuildRequires: python2-backports_abc
+BuildRequires: python-backports_abc
 %else
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-backports_abc

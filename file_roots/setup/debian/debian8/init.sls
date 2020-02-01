@@ -32,6 +32,7 @@ build_additional_pkgs:
       - dh-python
       - pypy
       - python-setuptools-git
+      - python-all-dev
 
 
 build_additional_py3_pkgs:

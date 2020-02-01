@@ -100,7 +100,6 @@ BuildRequires: python%{?__python_ver}-jinja2
 BuildRequires: python%{?__python_ver}-msgpack >= 0.4
 BuildRequires: python%{?__python_ver}-pip
 BuildRequires: python%{?__python_ver}-zmq >= 14.5
-BuildRequires: python%{?__python_ver}-setuptools >= 9.1
 
 %if 0%{?with_explicit_python27}
 BuildRequires: PyYAML%{?__python_ver}
@@ -126,6 +125,7 @@ BuildRequires: python-argparse
 %endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 
 BuildRequires: python%{?__python_ver}-devel
+BuildRequires: python%{?__python_ver}-setuptools >= 9.1
 
 
 Requires: python%{?__python_ver}-jinja2

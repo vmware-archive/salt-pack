@@ -1,40 +1,55 @@
 # Import base config
-{% import "setup/debian/map.jinja" as build_cfg %}
+{% import "setup/ubuntu/map.jinja" as build_cfg %}
 
-{% set os_codename = 'jessie' %}
+{% set os_codename = 'xenial' %}
 {% set prefs_text = 'Package: *
         Pin: origin ""
         Pin-Priority: 1001
 
         Package: *
-        Pin: release n=' ~ os_codename ~ '
-        Pin-Priority: 720
+        Pin: release n=' ~ os_codename ~ '-backports
+        Pin-Priority: 750
 
         Package: *
-        Pin: release a=oldoldstable
+        Pin: release n=' ~ os_codename ~ '-security
+        Pin-Priority: 740
+
+        Package: *
+        Pin: release n=' ~ os_codename ~ '-updates
+        Pin-Priority: 730
+
+        Package: *
+        Pin: release a=main
         Pin-Priority: 700
+
+        Package: *
+        Pin: release a=restricted
+        Pin-Priority: 650
+
+        Package: *
+        Pin: release a=universe
+        Pin-Priority: 600
+
+        Package: *
+        Pin: release a=multiverse
+        Pin-Priority: 550
 ' %}
 
 
 include:
-  - setup.debian
-  - setup.debian.gpg_agent
-
+  - setup.ubuntu
 
 build_additional_pkgs:
   pkg.installed:
     - pkgs:
-      - python-support
-      - python-all
-      - python-debian
-      - python-sphinx
       - dh-systemd
-      - dh-python
-      - pypy
-      - python-setuptools-git
+      - pinentry-tty
+      - python-sphinx
+      - python-singledispatch
       - python-all-dev
 
 
+{% if build_cfg.build_py3 %}
 build_additional_py3_pkgs:
   pkg.installed:
     - pkgs:
@@ -42,24 +57,19 @@ build_additional_py3_pkgs:
       - python3-all
       - python3-dev
       - python3-setuptools
-      - python3-setuptools-git
       - python3-apt
       - python3-pkg-resources
       - python3-sphinx
       - python3-all-dev
       - python3-debian
-      - python3-wheel
+      - python3-gnupg
       - apt-utils
+{% endif %}
 
 
 build_pbldhooks_rm_G05:
   file.absent:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G05apt-preferences
-
-
-build_pbldhookskeys_rm:
-  file.absent:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
 
 
 build_pbldhooks_rm_D04:
@@ -77,21 +87,11 @@ build_prefs_rm:
     - name: /etc/apt/preferences
 
 
-{%- if build_cfg.build_arch == 'armhf' %}
-build_pbldhookskeys_file:
-  file.append:
-    - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/G04importkeys
-    - makedirs: True
-    - text: |
-        /usr/bin/gpg --keyserver keyserver.ubuntu.com --recv-keys 90FDDD2E
-        /usr/bin/gpg --export --armor 90FDDD2E | apt-key add -
-{%- endif %}
-
 build_pbldhooks_perms:
   file.directory:
     - name: {{build_cfg.build_homedir}}/.pbuilder-hooks/
-    - user: root
-    - group: root
+    - user: {{build_cfg.build_runas}}
+    - group: {{build_cfg.build_runas}}
     - dir_mode: 755
     - file_mode: 755
     - recurse:
@@ -145,8 +145,6 @@ build_pbldrc:
     - contents: |
         DIST="{{os_codename}}"
         LOCAL_REPO="{{build_cfg.build_dest_dir}}"
-        ## export CCACHE_DIR='/var/cache/pbuilder/ccache'
-        ## export PATH="/usr/lib/ccache":${PATH}
 
         # create local repository if it doesn't exist,
         # such as during initial 'pbuilder create'
@@ -157,26 +155,17 @@ build_pbldrc:
             touch ${LOCAL_REPO}/Packages
         fi
 
-        ## EXTRAPACKAGES="apt-utils ccache"
-        ## BINDMOUNTS="${LOCAL_REPO} ${CCACHE_DIR}"
-        EXTRAPACKAGES="apt-utils"
         BINDMOUNTS="${LOCAL_REPO}"
+        EXTRAPACKAGES="apt-utils"
         if [ -n "${DIST}" ]; then
           TMPDIR=/tmp
           BASETGZ="`dirname $BASETGZ`/${DIST}-base.tgz"
           DISTRIBUTION=${DIST}
           APTCACHE="/var/cache/pbuilder/${DIST}/aptcache"
+          mkdir -p ${APTCACHE}
         fi
         HOOKDIR="${HOME}/.pbuilder-hooks"
-{%- if build_cfg.build_arch == 'armhf' %}
-        DEBOOTSTRAPOPTS=(
-            '--variant=buildd'
-            '--keyring' "/etc/apt/trusted.gpg"
-        )
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.raspbian.org/raspbian/ {{os_codename}} main contrib non-free rpi"
-{%- else %}
-        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://archive.debian.org/debian/ {{os_codename}} main | deb http://archive.debian.org/debian/ {{os_codename}} contrib "
-{%- endif %}
+        OTHERMIRROR="deb [trusted=yes] file:${LOCAL_REPO} ./ | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}} multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-updates multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-backports main restricted universe multiverse | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security main restricted | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security universe | deb http://us.archive.ubuntu.com/ubuntu {{os_codename}}-security multiverse"
 
 
 build_prefs:

@@ -99,7 +99,7 @@ BuildRequires: python%{?__python_ver}-backports_abc
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
-BuildRequires: python%{?__python_ver}-msgpack >= 0.4
+BuildRequires: python%{?__python_ver}-msgpack >= 0.6
 BuildRequires: python%{?__python_ver}-pip
 BuildRequires: python%{?__python_ver}-zmq >= 14.5
 
@@ -132,7 +132,7 @@ BuildRequires: python%{?__python_ver}-setuptools >= 9.1
 
 
 Requires: python%{?__python_ver}-jinja2
-Requires: python%{?__python_ver}-msgpack >= 0.4
+Requires: python%{?__python_ver}-msgpack >= 0.6
 Requires: python%{?__python_ver}-crypto >= 2.6.1
 Requires: python%{?__python_ver}-setuptools >= 9.1
 

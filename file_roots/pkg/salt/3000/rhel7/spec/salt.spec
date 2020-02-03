@@ -165,7 +165,7 @@ Requires: python%{?__python_ver}-singledispatch
 
 %if (0%{?rhel} >= 7)
 Requires: python-futures >= 2.0
-Requires: python2-backports_abc
+Requires: python-backports_abc
 %else
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-backports_abc

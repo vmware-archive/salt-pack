@@ -168,7 +168,7 @@ pkgbuild_registry:
         - openssl
         - python-typing
     python-msgpack:
-      version: 0.5.6-7
+      version: 0.6.2-2
       results:
         - python2-msgpack
     python-mock:
@@ -463,7 +463,7 @@ pkgbuild_registry:
         - python27-markupsafe
     python-msgpack:
       name: python27-msgpack
-      version: 0.4.6-3
+      version: 0.6.2-2
       build_deps:
         - python27
         - python-setuptools
@@ -758,7 +758,7 @@ pkgbuild_registry:
         - libsodium
     python-msgpack:
       name: python27-msgpack
-      version: 0.4.6-2
+      version: 0.6.2-2
     python-psutil:
       name: python27-psutil
       version: 5.2.2-2.ius

@@ -744,6 +744,15 @@ pkgbuild_registry:
       name: python27-ioflo
       version: 1.3.8-2
       noarch: True
+    python-ipaddress:
+      name: python27-ipaddress
+      version: 1.0.18-7
+      noarch: True
+      build_deps:
+        - python27
+        - python-setuptools
+      results:
+        - python27-ipaddress
     python-libcloud:
       name: python27-libcloud
       version: 2.0.0-2
@@ -814,6 +823,7 @@ pkgbuild_registry:
         - python-futures
         - python-backports_abc
         - python-singledispatch
+        - python-ipaddress
       results:
         - salt
         - salt-master

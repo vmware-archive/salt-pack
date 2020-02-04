@@ -143,6 +143,9 @@ Requires: python%{?__python_ver}
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
 Requires: PyYAML%{?__python_ver}
+Requires: python%{?__python_ver}-ipaddress
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
 %else
 Requires: PyYAML
 %endif
@@ -156,6 +159,7 @@ Requires: python%{?__python_ver}-markupsafe
 ## Requires: python%%{?__python_ver}-tornado >= 4.2.1, python%%{?__python_ver}-tornado < 6.0
 ## Tornado removed in Neon, hence need its Requires for 4.5.3
 Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-ipaddress
 Requires: python%{?__python_ver}-singledispatch
 Requires: python%{?__python_ver}-backports_abc
 

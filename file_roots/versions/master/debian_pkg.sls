@@ -4,6 +4,7 @@ include:
 {% if buildcfg.build_release == 'debian9' %}
 
     - pkg.python-jinja2.2_9_4.debian9
+    - pkg.python-msgpack.0_6_2.debian9
     - pkg.salt.master.debian9
 
 {% elif buildcfg.build_release == 'debian8' %}
@@ -15,6 +16,7 @@ include:
     - pkg.python-future.0_14_3.debian8
     - pkg.python-futures.3_0_3.debian8
     - pkg.python-libcloud.1_5_0.debian8
+    - pkg.python-msgpack.0_5_6.debian8
     - pkg.python-pyzmq.14_4_0.debian8
     - pkg.python-setuptools.33_1_1.debian8
     - pkg.python-systemd.231.debian8

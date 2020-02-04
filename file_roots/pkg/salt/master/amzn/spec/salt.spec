@@ -136,6 +136,9 @@ Requires: python%{?__python_ver}-setuptools >= 9.1
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
 Requires: python%{?__python_ver}
+Requires: python%{?__python_ver}-ipaddress
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
 %else
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
@@ -155,6 +158,8 @@ Requires: python%{?__python_ver}-markupsafe
 Requires: python%{?__python_ver}-backports-ssl_match_hostname
 Requires: python%{?__python_ver}-pycurl
 Requires: python%{?__python_ver}-ipaddress
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
 
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six

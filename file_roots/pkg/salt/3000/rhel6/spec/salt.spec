@@ -156,6 +156,7 @@ Requires: python%{?__python_ver}-markupsafe
 ## Requires: python%%{?__python_ver}-tornado >= 4.2.1, python%%{?__python_ver}-tornado < 6.0
 ## Tornado removed in Neon, hence need its Requires for 4.5.3
 Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-ipaddress
 Requires: python%{?__python_ver}-singledispatch
 Requires: python%{?__python_ver}-backports_abc
 

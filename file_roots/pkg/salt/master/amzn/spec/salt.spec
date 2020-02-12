@@ -88,11 +88,16 @@ Requires: yum-utils
 
 
 %if ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
-BuildRequires: python%{?__python_ver}-tornado >= 4.2.1
+## BuildRequires: python%%{?__python_ver}-tornado >= 4.2.1
+## Tornado removed in Neon, hence need its Requires for 4.5.3
+Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
+
 BuildRequires: python%{?__python_ver}-futures >= 2.0
 BuildRequires: python%{?__python_ver}-crypto >= 2.6.1
 BuildRequires: python%{?__python_ver}-jinja2
-BuildRequires: python%{?__python_ver}-msgpack >= 0.4
+BuildRequires: python%{?__python_ver}-msgpack >= 0.6
 BuildRequires: python%{?__python_ver}-pip
 BuildRequires: python%{?__python_ver}-zmq >= 14.5
 
@@ -120,15 +125,20 @@ BuildRequires: python-argparse
 %endif  ##  ((0%{?rhel} >= 6 || 0%{?fedora} > 12) && 0%{?include_tests})
 
 BuildRequires: python%{?__python_ver}-devel
+BuildRequires: python%{?__python_ver}-setuptools >= 9.1
 
 
 Requires: python%{?__python_ver}-jinja2
-Requires: python%{?__python_ver}-msgpack >= 0.4
+Requires: python%{?__python_ver}-msgpack >= 0.6
 Requires: python%{?__python_ver}-crypto >= 2.6.1
+Requires: python%{?__python_ver}-setuptools >= 9.1
 
 %if ( "0%{?dist}" == "0.amzn1" )
 Requires: python27-PyYAML
 Requires: python%{?__python_ver}
+Requires: python%{?__python_ver}-ipaddress
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
 %else
 %if 0%{?with_explicit_python27}
 Requires: python%{?__python_ver}  >= 2.7.9-1
@@ -142,7 +152,15 @@ Requires: PyYAML
 Requires: python%{?__python_ver}-requests >= 1.0.0
 Requires: python%{?__python_ver}-zmq
 Requires: python%{?__python_ver}-markupsafe
-Requires: python%{?__python_ver}-tornado >= 4.2.1
+
+## Requires: python%%{?__python_ver}-tornado >= 4.2.1, python%%{?__python_ver}-tornado < 6.0
+## Tornado removed in Neon, hence need its BuildRequires
+Requires: python%{?__python_ver}-backports-ssl_match_hostname
+Requires: python%{?__python_ver}-pycurl
+Requires: python%{?__python_ver}-ipaddress
+Requires: python%{?__python_ver}-singledispatch
+Requires: python%{?__python_ver}-backports_abc
+
 Requires: python%{?__python_ver}-futures >= 2.0
 Requires: python%{?__python_ver}-six
 Requires: python%{?__python_ver}-psutil
@@ -611,6 +629,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+## - Removed Torando since salt.ext.tornado, add dependencies for Tornado
+## - Added dependency on setuptools >= 9.1
+
 * Tue Jan 21 2020 SaltStack Packaging Team <packaging@garethgreenaway.com> - 3000.0.0rc2-1
 - Update to Neon Release Candidate 2 for Python 3
 

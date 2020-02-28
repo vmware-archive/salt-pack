@@ -6,7 +6,7 @@
 {% set name3 = 'python3-' ~ pypi_name %}
 {% set version = '0.5.6' %}
 {% set release_nameadd = '' %}
-{% set release_ver = '1' %}
+{% set release_ver = '2' %}
 
 {{name}}-{{version.replace('.', '_')}}:
   pkgbuild.built:

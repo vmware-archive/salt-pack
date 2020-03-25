@@ -200,7 +200,7 @@ pkgbuild_registry:
       additonal_deps:
         - python-simplejson
     python-setuptools:
-      version: 36.6.0-2.ius
+      version: 36.6.0-3.ius
       noarch: True
     python-simplejson:
       version: 3.3.3-1

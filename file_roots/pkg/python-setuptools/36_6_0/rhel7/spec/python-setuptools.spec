@@ -8,7 +8,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        36.6.0
-Release:        2.ius%{?dist}
+Release:        3.ius%{?dist}
 Summary:        Easily build and distribute Python packages
 Vendor:         IUS Community Project
 Group:          Applications/System
@@ -18,6 +18,8 @@ Source0:        https://files.pythonhosted.org/packages/source/s/%{srcname}/%{sr
 BuildArch:      noarch
 BuildRequires:  %{python}-devel
 Requires:       %{python}
+Provides:       python2-setuptools = %{version}-%{release}
+Provides:       python-setuptools = %{version}-%{release}
 # Keep the python-distribute name active for a few releases.  Eventually we'll
 # want to get rid of the Provides and just keep the Obsoletes
 Provides:       %{python}-distribute = %{version}-%{release}
@@ -73,6 +75,9 @@ LC_CTYPE=en_US.utf8 %{__python2} setup.py ptr
 
 
 %changelog
+* Wed Mar 25 2020 SaltStack Packaging Team <packaging@saltstack.com> - 36.6.0-3.ius
+- Added provides for python2-setuptools and python-setuptools
+
 * Thu Jan 30 2020 SaltStack Packaging Team <packaging@saltstack.com> - 36.6.0-2.ius
 - Ported to RHEL 7 for Python 2
 

@@ -1,5 +1,5 @@
 # set version to build
-{% set build_version = 'master' %}
+{% set build_version = '3000_1' %}
 
 
 {% if build_version != '' %}

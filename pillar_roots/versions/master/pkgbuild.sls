@@ -171,10 +171,6 @@ pkgbuild_registry:
       version: 0.6.2-2
       results:
         - python2-msgpack
-      version: 0.6.2-2
-      version: 0.5.6-7
-      results:
-        - python2-msgpack
     python-mock:
       version: 1.0.1-9
       noarch: True
@@ -204,7 +200,7 @@ pkgbuild_registry:
       additonal_deps:
         - python-simplejson
     python-setuptools:
-      version: 36.6.0-2.ius
+      version: 36.6.0-3.ius
       noarch: True
     python-simplejson:
       version: 3.3.3-1

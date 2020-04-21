@@ -168,7 +168,7 @@ pkgbuild_registry:
         - openssl
         - python-typing
     python-msgpack:
-      version: 0.6.2-2
+      version: 0.5.6-7
       results:
         - python2-msgpack
     python-mock:
@@ -232,11 +232,9 @@ pkgbuild_registry:
         - python-yaml
         - python-pyzmq
         - python-markupsafe
-        - python-backports_abc
-        - python-singledispatch
+        - python-tornado
         - python-futures
         - python-libcloud
-        - python-setuptools
       results:
         - salt
         - salt-master
@@ -463,7 +461,7 @@ pkgbuild_registry:
         - python27-markupsafe
     python-msgpack:
       name: python27-msgpack
-      version: 0.6.2-2
+      version: 0.4.6-3
       build_deps:
         - python27
         - python-setuptools
@@ -661,10 +659,9 @@ pkgbuild_registry:
         - python-requests
         - python-pyzmq
         - python-markupsafe
+        - python-tornado
         - python-futures
-        - python-backports_abc
-        - python-singledispatch
-        - python-setuptools
+        - python-libcloud
       results:
         - salt
         - salt-master
@@ -767,7 +764,7 @@ pkgbuild_registry:
         - libsodium
     python-msgpack:
       name: python27-msgpack
-      version: 0.6.2-2
+      version: 0.4.6-2
     python-psutil:
       name: python27-psutil
       version: 5.2.2-2.ius
@@ -818,12 +815,10 @@ pkgbuild_registry:
       build_deps:
         - python-msgpack
         - python-pyzmq
+        - python-tornado
         - python-libcloud
         - python-gnupg
         - python-futures
-        - python-backports_abc
-        - python-singledispatch
-        - python-ipaddress
       results:
         - salt
         - salt-master

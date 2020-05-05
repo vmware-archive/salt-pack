@@ -18,8 +18,8 @@ build_additional_py3_pkgs:
   pkg.installed:
     - pkgs:
       - epel-release
-      - python34
-      - python34-devel
-      - python34-setuptools
+      - python36
+      - python36-devel
+      - python36-setuptools
 {% endif %}
 

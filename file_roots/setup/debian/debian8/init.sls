@@ -25,14 +25,16 @@ build_additional_pkgs:
   pkg.installed:
     - pkgs:
       - python-support
+      - python-all
       - python-debian
       - python-sphinx
       - dh-systemd
       - dh-python
+      - pypy
       - python-setuptools-git
+      - python-all-dev
 
 
-{%- if build_cfg.build_py3 %}
 build_additional_py3_pkgs:
   pkg.installed:
     - pkgs:
@@ -46,8 +48,8 @@ build_additional_py3_pkgs:
       - python3-sphinx
       - python3-all-dev
       - python3-debian
+      - python3-wheel
       - apt-utils
-{%- endif %}
 
 
 build_pbldhooks_rm_G05:

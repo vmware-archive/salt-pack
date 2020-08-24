@@ -66,7 +66,7 @@ include:
   {% do dep_pkgs.append(build_deps_recur(sls_name, pkg_data, dep_pkgs)) %}
   {% if dep_pkgs %}
     - deps:
-    {% for item in dep_pkgs -%}
+    {% for item in dep_pkgs|unique -%}
       {% set dep_pkg_item = item|trim -%}
       {% if dep_pkg_item %}
       - {{dep_pkg_item}}

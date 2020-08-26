@@ -743,4 +743,3 @@ salt redhat7_minion state.sls pkg.salt.2015_8_8.rhel7  pillar='{ "build_dest" : 
 ```
 
 Note: that currently the building of 32-bit packages on Debian and Ubuntu does not work.  It had worked in early development of salt-pack but for some as yet undetermined reason it stopped working.  Given the movement to 64-bit architectures, 32-bit support is a low priority task.
-

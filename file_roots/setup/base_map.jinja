@@ -4,6 +4,7 @@
 
 # branch build version
 {% set build_version = pillar.get('build_version', '') %}
+{% set build_number_uscore = build_version|replace(".", "_") %}
 
 {% if build_version == '' %}
 {% set amazon_pkg = 'amazon_pkg' %}
@@ -11,10 +12,10 @@
 {% set debian_pkg = 'debian_pkg' %}
 {% set ubuntu_pkg = 'ubuntu_pkg' %}
 {% else %}
-{% set amazon_pkg = 'versions.' ~ build_version ~ '.amazon_pkg' %}
-{% set redhat_pkg = 'versions.' ~ build_version ~ '.redhat_pkg' %}
-{% set debian_pkg = 'versions.' ~ build_version ~ '.debian_pkg' %}
-{% set ubuntu_pkg = 'versions.' ~ build_version ~ '.ubuntu_pkg' %}
+{% set amazon_pkg = 'versions.' ~ build_number_uscore ~ '.amazon_pkg' %}
+{% set redhat_pkg = 'versions.' ~ build_number_uscore ~ '.redhat_pkg' %}
+{% set debian_pkg = 'versions.' ~ build_number_uscore ~ '.debian_pkg' %}
+{% set ubuntu_pkg = 'versions.' ~ build_number_uscore ~ '.ubuntu_pkg' %}
 {% endif %}
 
 

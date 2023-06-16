@@ -1,3 +1,10 @@
+> **Project is Archived**
+>
+> - Salt Project / VMware has ended active development of this project, this repository will no longer be updated.
+> - This project was for classic packaging of Salt back when packages were developed for Python 2.
+>   - For Python 3, see [salt-pack-py3](https://github.com/saltstack/salt-pack-py3), which will be in use until [Salt v3005.x is EOL](https://docs.saltproject.io/salt/install-guide/en/latest/topics/salt-version-support-lifecycle.html).
+>   - Salt v3006, and later, are packaged as [**onedir** releases](https://docs.saltproject.io/salt/install-guide/en/latest/topics/upgrade-to-onedir.html#what-is-onedir) that take advantage of [relative-environment-for-python (relenv)](https://github.com/saltstack/relative-environment-for-python). Those packaging builds no longer make use of `salt-pack-*` toolsets.
+
 # Salt Package Builder (salt-pack)
 
 Salt-pack is an open-source package builder for most commonly used Linux platforms, for example: Redhat/CentOS and Debian/Ubuntu families, utilizing SaltStack states and execution modules to build Salt and a specified set of dependencies, from which a platform specific repository can be built.
